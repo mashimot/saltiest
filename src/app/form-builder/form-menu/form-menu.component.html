@@ -1,0 +1,67 @@
+<section class="sticky-top scrollable">
+  <div class="px-3 py-3 card bg-white text-black">
+    <div class="row">
+      <section id="page" class="col-md-12">
+        <button (click)="preview()"
+                class="btn btn-block btn-lg btn-link">
+                <i [ngClass]="{ 'fa-eye': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-3x"></i>
+            Preview {{ previewMode? 'Mode' : '' }}
+        </button>
+        <button class="btn btn-primary btn-block btn-sm" (click)="newFile()">New File</button>
+        <div [dragula]="'pages'" [(dragulaModel)]="pageModel" class="menu-page-sortable">
+          <span (click)="newPage()" class="badge badge-primary col-md-12 page-handle">
+            <i class="fa fa-file"></i> New Page
+          </span>
+        </div>
+      </section>
+    </div>
+    <div class="row">
+      <section id="containers" class="col-md-12">
+        <fieldset name="bootstrap_container" [dragula]='"rowSortable"' [(dragulaModel)]="bootstrap" class="menu-row-sortable">
+          <div *ngFor="let b of bootstrap">
+            <form #f="ngForm">
+              <div [hidden]="f.invalid">
+                <strong class="badge badge-primary row-handle col-md-12" [ngStyle]="{ cursor: 'move' }">
+                  <i class="fa fa-arrows-alt fa-1x"></i> GRID {{ b.grid }}
+                </strong>
+              </div>
+              <div class="input-group input-group-sm">
+                <input type="text"
+                       [(ngModel)]="b.grid"
+                       name="grid"
+                       [ngClass]="{ 'is-invalid': f.controls.grid?.invalid }"
+                       class="form-control form-control-sm"
+                       [ngStyle]="{ cursor: 'pointer' }"
+                       sumBeEqualsTo="12"
+                       minlength="2"
+                       pattern="[0-9 ]+"
+                       required>
+                <div *ngIf="f.controls.grid?.invalid || f.controls.grid?.touched" class="invalid-feedback">
+                  <div *ngIf="f.controls.grid?.errors?.required ">* Enter with your grid.</div>
+                  <div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers and space.</div>
+                  <div *ngIf="f.controls.grid?.errors?.minlength">* Min. Length is {{ f.controls.grid?.errors.minlength.requiredLength }}.</div>
+                  <div *ngIf="f.controls.grid?.errors?.isSumInvalid">* The sum must be equals to {{ f.controls.grid.errors?.sumBeEqualsTo }}.</div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </fieldset>
+      </section>
+    </div>
+    <section id="tools" class="py-1">
+      <div *ngFor="let tool of tools | groupBy: 'html.category'; let toolCategoryIndex = index;">
+        <strong class="text-center text-uppercase px-2">{{ tool.key }}</strong>
+        <div [dragula]='"contents"'
+             [(dragulaModel)]="tool.value"
+             class="menu-content-sortable">
+          <kbd *ngFor="let t of tool.value"
+               [ngStyle]="{ 'background-color': 'black', 'cursor': 'move' }"
+               class="badge col-md-6 text-white content-handle"
+               >
+              <span class="content-handle text-white">{{ t.html.tag }}</span>
+          </kbd>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>

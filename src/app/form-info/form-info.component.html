@@ -1,0 +1,85 @@
+<fieldset name="json" class="card">
+  <div *ngFor="let page of pages; let pageIndex = index;" class="px-2 py-2">
+    <span>Page {{ pageIndex + 1 }}</span>
+    <hr />
+    <div *ngFor="let row of page.rows; let rowIndex = index;">
+      <section *ngFor="let column of row.columns; let columnIndex = index;">
+        <div *ngFor="let d of column.contents; let contentIndex = index;">
+          <section *ngIf="d.html?.category === 'form' && column.contents.length > 0" class="row">
+            <div class="col-md-1">
+              <label class="btn btn-link btn-sm btn-block">
+                <input type="checkbox" [(ngModel)]="d.isPrimaryKey" class="checkbox" [ngStyle]="{ display: 'none' }" />
+                <i class="fa fa-key fa-2x" [hidden]="d.isPrimaryKey"></i>
+                <i class="fa fa-ban fa-2x text-danger" [hidden]="!d.isPrimaryKey"></i>
+              </label>
+            </div>
+            <div class="col-md-2">
+              <div class="input-group">
+                <div class="input-group-append" ng-if="d.table.columnName.toLowerCase().indexOf('ind_') != -1 && d.table.columnName">
+                  <button ng-click="vm.buscaDominio(d.table.columnName)" class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-search fa-1x" aria-hidden="true"></i>
+                  </button>
+                  <div class="dropdown-menu" [ngStyle]="{ width: '100%' }">
+                    <a class="dropdown-item" href="#" ng-show="vm.loading">
+                      <i class="fa fa-cog fa-1x fa-spin"></i> Loading...
+                    </a>
+                    <a class="dropdown-item" href="#" ng-show="!vm.loading && vm.dominio.error.has">
+                      <span class="text-danger" ng-bind="vm.dominio.error.msg"></span>
+                    </a>
+                    <a class="dropdown-item" href="#" ng-repeat="(dI, dom) in vm.dominio.data" ng-if="vm.dominio.data.length > 0">
+                      <span ng-bind="dom.val_dominio_item"></span> - <span ng-bind="dom.dsc_dominio_item"></span>
+                    </a>
+                  </div>
+                </div>
+                <input type="text" name="name{{ contentIndex }}" [(ngModel)]="d.table.columnName" class="form-control " required>
+              </div>
+              <div ng-messages="json['name' + contentIndex].$error" role="alert">
+                <div ng-message="required" class="text-danger">This is required!</div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <app-spell-checker [(text)]="d.html.label" (isLoading)="getLoading($event)"></app-spell-checker>
+              <div *ngIf="isLoading" class="text-center">
+                <i class="fa fa-cog fa-spin fa-2x"></i> Loading...
+              </div>
+              <div ng-messages="json['labelName' + contentIndex].$error" role="alert">
+                <div ng-message="required" class="text-danger">This is required!</div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <select name="input_type{{ contentIndex }}" [(ngModel)]="d.html.tag" class="form-control " required>
+                <option value="">Selecione</option>
+                <option value="{{ tag }}" *ngFor="let tag of tags">{{ tag }}</option>
+              </select>
+              <div ng-messages="json['input_type' + contentIndex].$error" role="alert" required>
+                <div ng-message="required" class="text-danger">This is required!</div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <select name="table_type{{ contentIndex }}" [(ngModel)]="d.table.type" class="form-control text-uppercase" required>
+                <option value="">Selecione</option>
+                <option *ngFor="let db of database; let columnName = index;" [value]="db">{{ db }}</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <input type="text" [(ngModel)]="d.table.size" class="form-control ">
+            </div>
+            <div class="col-md-1">
+              <div class="row">
+                <label [ngClass]="{'badge-danger': d.table.nullable, 'badge-default' : !d.table.nullable}"
+                       class="badge col-md-12"
+                       [ngStyle]="{ 'cursor': 'pointer' }">
+                  nullable? {{ d.table.nullable? 'No' : 'Yes' }}
+                  <input type="checkbox" [(ngModel)]="d.table.nullable" class="checkbox" [ngStyle]="{ display: 'none' }">
+                </label>
+              </div>
+            </div>
+            <div class="col-md-1">
+              <button type="button" (click)="column.contents.splice(contentIndex, 1)" class="btn btn-outline-danger btn-sm btn-block"><i class="far fa-trash-alt"></i></button>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+</fieldset>

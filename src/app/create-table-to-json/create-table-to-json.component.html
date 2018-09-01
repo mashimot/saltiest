@@ -1,0 +1,61 @@
+<section class="row py-3">
+  <div class="col-md-12">
+    <form class="card" #f="ngForm" (ngSubmit)="onSubmit()">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-8">
+            <section type="pills" active="active" justified="true">
+              <div index="0" heading="Create Table">
+                <textarea [(ngModel)]="string"
+                          name="string"
+                          [ngClass]="{ 'is-invalid' : errors.length > 0 }"
+                          class="form-control form-control-sm h-100"
+                          rows="10"></textarea>
+                <div *ngIf="errors" class="invalid-feedback">
+                  <div *ngFor="let e of errors">
+                    {{ e.message }}
+                  </div>
+                </div>
+              </div>
+              <div index="1" heading="JSON">
+                <pre>{{ primaryKeys | json }}</pre>
+                <pre>{{ pages | json }}</pre>
+              </div>
+            </section>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="form_ct_database">Database</label>
+              <select id="form_ct_database" class="form-control" [(ngModel)]="options.database" name="database">
+                  <option *ngFor="let db of database" [value]="db">{{ db }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="form_ct_grid">Bootstrap Grid</label>
+              <input type="text"
+                     id="form_ct_grid"
+                     [(ngModel)]="gridModel"
+                     name="grid"
+                     [ngClass]="{ 'is-invalid': f.controls.grid?.invalid }"
+                     class="form-control form-control-sm"
+                     [ngStyle]="{ cursor: 'pointer' }"
+                     sumBeEqualsTo="12"
+                     minlength="2"
+                     pattern="[0-9 ]+"
+                     required>
+              <div *ngIf="f.controls.grid?.invalid || f.controls.grid?.touched" class="invalid-feedback">
+                <div *ngIf="f.controls.grid?.errors?.required ">* Enter with your grid.</div>
+                <div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers and space.</div>
+                <div *ngIf="f.controls.grid?.errors?.minlength">* Min. Length is {{ f.controls.grid?.errors.minlength.requiredLength }}.</div>
+                <div *ngIf="f.controls.grid?.errors?.isSumInvalid">* The sum must be equals to {{ f.controls.grid.errors?.sumBeEqualsTo }}.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary btn-block" (click)="createTable()">Generate</button>
+      </div>
+    </form>
+  </div>
+</section>

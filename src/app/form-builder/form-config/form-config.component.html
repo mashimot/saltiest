@@ -1,0 +1,29 @@
+<form  *ngIf="formConfig" [formGroup]="formConfig" (ngSubmit)="onFormSubmit()">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-8">
+          <app-render-content [content]="formConfig.value"></app-render-content>
+          <div *ngFor="let r of render.components">
+            <app-config-general [parentFormGroup]="formConfig"
+                                *ngIf="r.componentName === 'app-config-general'"></app-config-general>
+            <app-config-img [parentFormGroup]="formConfig"
+                            *ngIf="r.componentName === 'app-config-img'"></app-config-img>
+            <app-config-choices [parentFormGroup]="formConfig"
+                                *ngIf="r.componentName === 'app-config-choices'"></app-config-choices>
+            <app-config-title [parentFormGroup]="formConfig"
+                              *ngIf="r.componentName === 'app-config-title'"></app-config-title>
+            <app-config-html-editor [parentFormGroup]="formConfig"
+                                    *ngIf="r.componentName === 'app-config-html-editor'"></app-config-html-editor>
+          </div>
+          <button type="submit" class="btn btn-outline-primary btn-sm" [disabled]="!formConfig.valid">Submit </button>
+        </div>
+        <div class="col-md-4">
+          <pre>{{ formConfig.value | json }}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</form>
+

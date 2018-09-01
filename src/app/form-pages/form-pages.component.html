@@ -1,0 +1,22 @@
+<div [dragula]='"pages"'
+     [(dragulaModel)]="pages"
+     >
+  <div *ngFor="let page of pages; let pageIndex = index" class="mb-1">
+    <div class="px-3 py-3" [ngClass]="{ 'card bg-white text-dark': !config?.previewMode }">
+      <div class="row" [hidden]="config?.previewMode">
+        <div class="col-md-12 page-handle" [ngStyle]="{ cursor: 'move' }">
+          <div class="float-left">
+            <span class="page-handle">{{ page.name }}</span>
+          </div>
+          <div class="float-right">
+            <small (click)="deletePage(pageIndex)" class="badge btn-outline-danger" [ngStyle]="{ cursor: 'pointer' }">
+              <i class="fas fa-window-close"></i>
+              <strong> page {{ pageIndex + 1 }}</strong>
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="border-bottom border-secondary" [hidden]="config?.previewMode"></div>
+      <app-form-rows [page]="page"></app-form-rows>
+    </div>
+  </div><!--/.ng-repeat-->

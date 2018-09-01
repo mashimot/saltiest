@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="col-md-12">
+    <app-create-table-to-json (pageChange)="getPages($event)"></app-create-table-to-json>
+  </div>
+</div>
+  <app-form-config></app-form-config>
+<div class="row">
+  <app-form-menu (isNewFile)="isNewFile($event)"
+                 (isNewPage)="isNewPage($event)"
+                 class="col-md-3"></app-form-menu>
+  <app-form-pages [pages]="pages"
+                  class="col-md-9"></app-form-pages>
+</div>
+
+<app-form-info [pages]="pages"></app-form-info>
+<section class="pt-3" ng-if="pages.length > 0">
+  
+</section>
+

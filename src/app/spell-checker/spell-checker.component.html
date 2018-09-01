@@ -1,0 +1,20 @@
+<div class="input-group input-group">
+  <input type="text" [(ngModel)]="text" (ngModelChange)="textOnChange()"class="form-control">
+  <div class="input-group-append">
+    <button (click)="checkSpelling()" class="btn btn-outline-info btn-sm" type="button">
+      <i class="fa fa-book" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>
+<div ng-if="!isLoading">
+  <div id="spell-checker" class="py-3">
+  </div>
+    <div class="row" *ngIf="result?.matches.length > 0">
+      <div *ngFor="let match of result?.matches; let mK = index;" class="form-group col-md-6 col-xs-12">
+        <label>{{ match.message }}</label>
+        <select multiple class="form-control" disabled>
+          <option *ngFor="let r of match.replacements; let rK = index;">{{ r.value }}</option>
+        </select>
+      </div>
+    </div>
+</div>

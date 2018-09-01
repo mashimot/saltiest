@@ -1,0 +1,101 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-md-5">
+        <button class="btn btn-secondary btn-sm btn-block" type="button" (click)="orderBy('text')">
+          Order by Text
+          <span ng-show="sortType == 'text' && !sortReverse" class="fa fa-caret-down"></span>
+          <span ng-show="sortType == 'text' && sortReverse" class="fa fa-caret-up"></span>
+        </button>
+      </div>
+      <div class="col-md-5">
+        <button class="btn btn-secondary btn-sm btn-block" type="button" (click)="orderBy('value')">
+          Order by Value
+          <span ng-show="sortType == 'value' && !sortReverse" class="fa fa-caret-down"></span>
+          <span ng-show="sortType == 'value' && sortReverse" class="fa fa-caret-up"></span>
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-secondary btn-sm btn-block" type="button" (click)="addElement()">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="card-body" [formGroup]="parentFormGroup.controls.html"
+    [ngClass]="{ 'is-invalid': elements.invalid }">
+
+    <div *ngIf="elements.invalid || elements.touched" class="invalid-feedback">
+      <div *ngIf="elements.errors?.required">Array, woo woo woo</div>
+    </div>
+    <div [dragula]='"sortableElements"'
+         [(dragulaModel)]="elements.controls"
+         formArrayName="elements">
+      <div *ngFor="let element of elements.controls; let id = index;"
+           [formGroupName]="id"
+           class="sortable-item-contents">
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <input type="text"
+                     formControlName="text"
+                     (input)="elementChanged()"
+                     class="form-control form-control-sm"
+                     [ngClass]="{ 'is-invalid': getField('text', id).invalid }" />
+              <div *ngIf="getField('text', id).invalid || getField('text', id).touched" class="invalid-feedback">
+                <div *ngIf="getField('text', id).errors?.required">You did not enter a field</div>
+                <div *ngIf="getField('text', id).errors?.minlength">Your field is too short</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <input type="text"
+                     formControlName="value"
+                     (input)="elementChanged()"
+                     class="form-control form-control-sm"
+                     [ngClass]="{ 'is-invalid': getField('value', id).invalid }" />
+              <div *ngIf="getField('value', id).invalid || getField('value', id).touched" class="invalid-feedback">
+                <div *ngIf="getField('value', id).errors?.required">You did not enter a field</div>
+                <div *ngIf="getField('value', id).errors?.minlength">Your field is too short</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-outline-danger btn-sm btn-block" (click)="removeContent(id)">
+              <i class="far fa-trash-alt"></i>
+            </button>
+          </div>
+          <div class="col-md-2">
+            <span class="element-handle">
+              move
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <button type="button" (click)="cloneThis('value', content?.html.elements)" class="btn btn-secondary btn-sm btn-block">
+            Clone Text to Values
+          </button>
+        </div>
+        <div class="col-md-5">
+          <button type="button" (click)="cloneThis('text', content.html.elements)" class="btn btn-secondary btn-sm btn-block">
+            Clone Values To Text
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <div class="form-group">
+      <label for="fast-entry">Fast Entry</label>
+      <textarea id="fast-entry"
+                [(ngModel)]="text"
+                (ngModelChange)="stringToElement()"
+                class="form-control"
+                style="resize: none; height: 210px;"></textarea>
+    </div>
+  </div>
+</div>
