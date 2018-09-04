@@ -38,10 +38,8 @@
               </div>
             </div>
             <div class="col-md-2">
-              <app-spell-checker [(text)]="d.html.label" (isLoading)="getLoading($event)"></app-spell-checker>
-              <div *ngIf="isLoading" class="text-center">
-                <i class="fa fa-cog fa-spin fa-2x"></i> Loading...
-              </div>
+              <app-spell-checker [(text)]="d.html.label"></app-spell-checker>
+
               <div ng-messages="json['labelName' + contentIndex].$error" role="alert">
                 <div ng-message="required" class="text-danger">This is required!</div>
               </div>

@@ -54,12 +54,13 @@
         <div [dragula]='"contents"'
              [(dragulaModel)]="tool.value"
              class="menu-content-sortable">
-          <kbd *ngFor="let t of tool.value"
-               [ngStyle]="{ 'background-color': 'black', 'cursor': 'move' }"
-               class="badge col-md-6 text-white content-handle"
+          <div *ngFor="let t of tool.value"
+               [ngStyle]="{ 'cursor': 'move' }"
+               class="badge bg-dark col-md-6 text-white content-handle menu-content-sortable"
+               [attr.data-content]="t | json"
                >
               <span class="content-handle text-white">{{ t.html.tag }}</span>
-          </kbd>
+          </div>
         </div>
       </div>
     </section>

@@ -2,13 +2,36 @@ import { Component, OnInit } from '@angular/core';
 import { FormContentConfigService } from './../../services/form-content-config.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
+interface Html {
+    category?: string;
+    tag: string;
+    label?: string;
+    src?: string;
+    data?: string;
+    elements?: Array<{ text: string, value: string }>;
+}
+
+interface Table {
+    columnName?: string;
+    isPrimaryKey?: boolean;
+    type?: string;
+    nullable?: boolean;
+    size?: string;
+}
+
+interface Content {
+    html?: Html;
+    table?: Table; //optional
+}
+
+
 @Component({
   selector: 'app-form-config',
   templateUrl: './form-config.component.html',
   styleUrls: ['./form-config.component.css']
 })
 export class FormConfigComponent implements OnInit {
-    content: object;
+    content: Content;
     formConfig: FormGroup;
     render: {
       [key: string]: {
@@ -61,16 +84,19 @@ export class FormConfigComponent implements OnInit {
                   this.populate(data.html.elements);
               }
               this.formConfig.valueChanges.subscribe((form) => {
-                  this.content.html = form.html;
-                  this.content.table = form.table;
+                  if(typeof this.content.html !== undefined){
+                      this.content.html = form.html;
+                  }
+                  if(typeof this.content.table !== undefined){
+                      this.content.table = form.table;
+                  }
               });
           }
       );
-  
   }
 
   onFormSubmit() {
-    
+
   }
 
   populate(e) {

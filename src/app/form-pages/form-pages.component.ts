@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormConfigService } from './../services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
+import { RenderHtmlService } from '../services/render-html.service';
 
 @Component({
     selector: 'app-form-pages',
@@ -84,15 +85,14 @@ export class FormPagesComponent implements OnInit {
         );
         dragulaService.createGroup('contents', {
             copy: (el, source) => {
-                return source.className === 'menu-content-sortable';
+                return source.classList.contains('menu-content-sortable');
             },
             copyItem: (el) => {
-
                 return JSON.parse(JSON.stringify(el));
             },
             accepts: (el, target, source, sibling) => {
                 // To avoid dragging from right to left container
-                return target.className !== 'menu-content-sortable';
+                return !target.classList.contains('menu-content-sortable');
             },
             moves: (el, container, handle) => {
                 if (handle.classList) {
@@ -101,6 +101,22 @@ export class FormPagesComponent implements OnInit {
                 return false;
             }
         });
+
+        this.subs.add(this.dragulaService.cloned("contents")
+            .subscribe(({ name, clone, original, cloneType }) => {
+                if (original.classList.contains('menu-content-sortable')) {
+                    let r = new RenderHtmlService();
+                    let dataAttr = JSON.parse(clone.getAttribute('data-content'));
+                    r.setParams(dataAttr);
+                    clone.classList.remove('badge', 'col-md-6', 'bg-primary', 'text-white');
+                    clone.classList.add('col-md-12');
+                    clone.insertAdjacentHTML('afterbegin',
+                        '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get() + '</div>'
+                    );
+                }
+            })
+        );
+
         this.subs.add(dragulaService.dropModel("contents")
             .subscribe(({ sourceModel, targetModel, item }) => {
                 if (item.table && item.html) {

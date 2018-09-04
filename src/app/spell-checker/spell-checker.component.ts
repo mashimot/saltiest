@@ -8,9 +8,8 @@ import { LanguageToolService } from '../shared/services/language-tool.service';
 })
 export class SpellCheckerComponent implements OnInit {
   @Input() text;
-  @Output() isLoading = new EventEmitter();
   @Output() textChange = new EventEmitter();
-
+  isLoading: boolean = false;
   result: {};
 
   constructor(
@@ -27,15 +26,14 @@ export class SpellCheckerComponent implements OnInit {
   }
 
   public checkSpelling(): void {
-    this.isLoading.emit(true);
+    this.isLoading = true;
       if (this.hasText()) {
           this.text = this.langTool();
           this.languageToolService.getCorrectWord(this.text).subscribe(
             (data) => {
-                console.log(data);
                 if (data.matches) {
                     this.result = data;
-                    this.isLoading.emit(false);
+                    this.isLoading = false;
                 }
           });
       }

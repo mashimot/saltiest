@@ -6,6 +6,9 @@
     </button>
   </div>
 </div>
+<div *ngIf="isLoading" class="text-center">
+  <i class="fa fa-cog fa-spin fa-2x"></i> Loading...
+</div>
 <div ng-if="!isLoading">
   <div id="spell-checker" class="py-3">
   </div>
