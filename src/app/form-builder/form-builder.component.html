@@ -1,7 +1,6 @@
 <div class="row">
-    <app-create-table-to-json
-    (pageChange)="getPages($event)"
-    class="col-md-12"></app-create-table-to-json>
+    <app-create-table-to-json (pageChange)="getPages($event)"
+                              class="col-md-12"></app-create-table-to-json>
 </div>
 <app-form-config></app-form-config>
 <div class="row">
@@ -9,3 +8,5 @@
     <app-form-pages [pages]="pages" class="col-md-9"></app-form-pages>
 </div>
 <app-form-info [pages]="pages"></app-form-info>
+
+<textarea class="form-control" rows="40">{{ renderHtml(pages) }}</textarea>

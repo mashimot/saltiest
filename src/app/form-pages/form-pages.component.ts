@@ -108,8 +108,8 @@ export class FormPagesComponent implements OnInit {
                     let r = new RenderHtmlService();
                     let dataAttr = JSON.parse(clone.getAttribute('data-content'));
                     r.setParams(dataAttr);
-                    clone.classList.remove('badge', 'col-md-6', 'bg-primary', 'text-white');
-                    clone.classList.add('col-md-12');
+                    clone.classList.remove('badge', 'bg-dark', 'col-md-6', 'bg-primary', 'text-white');
+                    clone.innerHTML = '';
                     clone.insertAdjacentHTML('afterbegin',
                         '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get() + '</div>'
                     );

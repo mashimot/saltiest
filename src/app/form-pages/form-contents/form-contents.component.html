@@ -1,34 +1,32 @@
 <div [dragula]='"contents"'
      [(dragulaModel)]="column.contents"
-     [ngStyle]="{ 'min-height': '20px' }"
-     >
-  <div *ngFor="let content of column.contents; let contentIndex = index"
-       class="mt-1"
-       >
-    <div class="row" [hidden]="config?.previewMode">
-      <div class="col-md-12">
-        <div class="float-left">
-          <small class="content-handle" [ngStyle]="{ 'cursor': 'move' }">
-            <i class="fa fa-arrows-alt content-handle"></i> move
-          </small>
-          <span (click)="sendDataToModal(content)" class="badge btn-outline-primary">
-            <i class="fa fa-edit"></i> edit
-          </span>
+     [ngStyle]="{ 'min-height': '20px' }">
+    <div *ngFor="let content of column.contents; let contentIndex = index"
+         class="mt-1">
+        <div class="row" [hidden]="config?.previewMode">
+            <div class="col-md-12">
+                <div class="float-left">
+                    <small class="content-handle" [ngStyle]="{ 'cursor': 'move' }">
+                        <i class="fa fa-arrows-alt content-handle"></i> move
+                    </small>
+                    <span (click)="sendDataToModal(content)" class="badge btn-outline-primary">
+                        <i class="fa fa-edit"></i> edit
+                    </span>
+                </div>
+                <div class="float-right" role="group" aria-label="Basic example">
+                    <span (click)="deleteContent(contentIndex)" class="badge btn-outline-danger col-md-12" style="cursor: pointer;">
+                        <i class="fas fa-window-close"></i>
+                    </span>
+                </div>
+            </div>
         </div>
-        <div class="float-right" role="group" aria-label="Basic example">
-          <span (click)="deleteContent(contentIndex)" class="badge btn-outline-danger col-md-12" style="cursor: pointer;">
-            <i class="fas fa-window-close"></i>
-          </span>
+        <div *ngIf="content">
+            <div [hidden]="config?.previewMode">
+                <span *ngIf="content.html.tag" class="badge badge-primary">{{ content.html.tag }}</span>
+                <span *ngIf="content.table?.nullable && content.html.category === 'form'" class="badge badge-success">required</span>
+                <span *ngIf="!content.table?.nullable && content.html.category === 'form'" class="badge badge-danger">not required</span>
+            </div>
+            <app-render-content [content]="content"></app-render-content>
         </div>
-      </div>
     </div>
-    <div *ngIf="content">
-      <div [hidden]="config?.previewMode">
-        <span *ngIf="content.html.tag" class="badge badge-primary">{{ content.html.tag }}</span>
-        <span *ngIf="content.table?.nullable && content.html.category === 'form'" class="badge badge-success">required</span>
-        <span *ngIf="!content.table?.nullable && content.html.category === 'form'" class="badge badge-danger">not required</span>
-      </div>
-      <app-render-content [content]="content"></app-render-content>
-    </div>
-  </div>
 </div>

@@ -46,7 +46,6 @@ export class BootstrapGridSystemService {
     constructor(data?: any[], grid: string = '4 4 4') {
         this._data = data;
         this._grid = grid;
-        //this._page = [];
     }
   
     getGrid() {

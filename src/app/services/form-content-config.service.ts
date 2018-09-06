@@ -8,7 +8,7 @@ export class FormContentConfigService {
 
     newFormConfigSubject = new Subject<any>();
     component: {
-        [ key: string ]: {
+        [key: string]: {
             title: string,
             componentName: string
         }
@@ -46,19 +46,19 @@ export class FormContentConfigService {
                 components: [this.component.title]
             },
             'h2': {
-              components: [this.component.title]
+                components: [this.component.title]
             },
             'h3': {
-              components: [this.component.title]
+                components: [this.component.title]
             },
             'h4': {
-              components: [this.component.title]
+                components: [this.component.title]
             },
             'h5': {
-              components: [this.component.title]
+                components: [this.component.title]
             },
             'h6': {
-              components: [this.component.title]
+                components: [this.component.title]
             },
             'legend': {
                 components: [this.component.title]
@@ -100,12 +100,12 @@ export class FormContentConfigService {
     };
 
     setContent(content) {
-      //Armazena o parametro que foi enviado
-      this.newFormConfigSubject.next(content);
+        //Armazena o parametro que foi enviado
+        this.newFormConfigSubject.next(content);
     }
 
     getContent() {
-      //Fica "observando" por atualizações nos dados
-      return this.newFormConfigSubject.asObservable();
+        //Fica "observando" por atualizações nos dados
+        return this.newFormConfigSubject.asObservable();
     }
 }

@@ -42,6 +42,10 @@ export class ConfigChoicesComponent implements OnInit {
         this.text = this.elementToString();
     }
 
+    ngOnDestroy() {
+        this.dragulaService.destroy('sortableElements');
+    }
+
     elementChanged(): void {
         this.text = this.elementToString();        
     }

@@ -12,27 +12,27 @@ import { MenuComponent } from './menu/menu.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { FormBuilderModule } from './form-builder/form-builder.module';
 import { HomeModule } from './home/home.module';
-import { GroupByPipe } from './shared/pipes/group-by.pipe';
-import { SumBeEqualsToDirective } from './shared/directives/sum-be-equals-to.directive';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MenuComponent,
-    PageNotFoundComponent
-  ],
-  imports: [
-    BrowserModule,
-    RouterModule,
-    FormsModule,
-    FormBuilderModule,
-    HomeModule,
-    DragulaModule,
-    AppRoutingModule,
-    HttpModule,
-    HttpClientModule
-  ],
-  providers: [DragulaService],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        MenuComponent,
+        PageNotFoundComponent
+    ],
+    imports: [
+        BrowserModule,
+        RouterModule,
+        FormsModule,
+        FormBuilderModule,
+        HomeModule,
+        DragulaModule,
+        AppRoutingModule,
+        HttpModule,
+        HttpClientModule,
+        NgbModule
+    ],
+    providers: [DragulaService],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -15,33 +15,35 @@ import { GroupByPipe } from '../shared/pipes/group-by.pipe';
 import { FormInfoModule } from '../form-info/form-info.module';
 import { ConfigTitleComponent } from './config/config-title/config-title.component';
 import { SumBeEqualsToDirective } from '../shared/directives/sum-be-equals-to.directive';
+import { RenderContentModule } from '../form-pages/render-content/render-content.module';
 
 @NgModule({
-  imports: [
-    FormBuilderRoutingModule,
-    CommonModule,
-    FormsModule,
-    DragulaModule,
-    FormPagesModule,
-    FormConfigModule,
-    FormInfoModule
-  ],
-  exports: [
-    FormBuilderRoutingModule,
-    CommonModule,
-    FormsModule,
-    DragulaModule,
-    CreateTableToJsonComponent,
-    FormMenuComponent,
-    FormBuilderComponent
-  ],
-  declarations: [
-    CreateTableToJsonComponent,
-    FormMenuComponent,
-    FormBuilderComponent,
-    GroupByPipe,
-    SumBeEqualsToDirective
-  ],
-  providers: []
+    imports: [
+        FormBuilderRoutingModule,
+        CommonModule,
+        FormsModule,
+        DragulaModule,
+        FormPagesModule,
+        FormConfigModule,
+        FormInfoModule,
+        RenderContentModule
+    ],
+    exports: [
+        FormBuilderRoutingModule,
+        CommonModule,
+        FormsModule,
+        DragulaModule,
+        CreateTableToJsonComponent,
+        FormMenuComponent,
+        FormBuilderComponent
+    ],
+    declarations: [
+        CreateTableToJsonComponent,
+        FormMenuComponent,
+        FormBuilderComponent,
+        GroupByPipe,
+        SumBeEqualsToDirective
+    ],
+    providers: []
 })
 export class FormBuilderModule { }

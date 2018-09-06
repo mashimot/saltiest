@@ -22,7 +22,7 @@ export class CreateTableToJsonComponent implements OnInit {
 
 
 	constructor(private db: DatabaseService) {
-		this.gridModel = '3 2 3 4';
+		this.gridModel = '4 4 4';
 		this.errors = [];
 	}
 
@@ -48,8 +48,8 @@ zip_code varchar2(10)`.trim();
 		ct.convert();
 		this.errors = ct.getError();
 		if (!ct.hasError()) {
-			let data = ct.getData();
-			let bootstrapGridSystem = new BootstrapGridSystemService(data);
+            let data = ct.getData();
+            let bootstrapGridSystem = new BootstrapGridSystemService(data, this.gridModel);
 			bootstrapGridSystem.convert();
 			let pages = bootstrapGridSystem.getPage();
 			this.pageChange.emit(pages);
