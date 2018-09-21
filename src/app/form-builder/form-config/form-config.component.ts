@@ -80,7 +80,7 @@ export class FormConfigComponent implements OnInit {
                         ]]
                     }),
                     table: this.fb.group({
-                        'columnName': [data.table.columName],
+                        'columnName': [data.table.columnName],
                         'nullable': [data.table.nullable, [
                             //Validators.required
                         ]]

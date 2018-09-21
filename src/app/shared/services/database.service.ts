@@ -40,7 +40,7 @@ export class DatabaseService {
                 /*CLOB : true,
                 NCLOB : true,*/
                 LONG: 'text',
-                NUMBER: 'text',
+                NUMBER: 'number',
                 DATE: 'date',
                 INTERVAL: 'text',
                 TIMESTAMP: 'date'

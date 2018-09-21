@@ -5,8 +5,40 @@
 <app-form-config></app-form-config>
 <div class="row">
     <app-form-menu (isNewFile)="isNewFile($event)" (isNewPage)="isNewPage($event)" class="col-md-3"></app-form-menu>
-    <app-form-pages [pages]="pages" class="col-md-9"></app-form-pages>
+    <app-form-pages [(pages)]="pages" class="col-md-9"></app-form-pages>
 </div>
 <app-form-info [pages]="pages"></app-form-info>
 
 <textarea class="form-control" rows="40">{{ renderHtml(pages) }}</textarea>
+<textarea class="form-control" rows="40">
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize(){
+
+        return true;
+    }
+
+    public function rules(){
+        $rules = [
+            {{ validator.rules }}
+        ];
+        return $rules;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function attributes(){
+        $attributes = [
+            {{ validator.attributes }}
+        ];
+        return $attributes;
+    }
+
+
+</textarea>

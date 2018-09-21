@@ -21,5 +21,9 @@ export class FormInfoComponent implements OnInit {
 		console.log(this.database);
 		console.log(this.databaseService.get()['ORACLE']);
 		this.tags = this.htmLElementService.getTags();
-	}
+    }
+
+    public buscaDominio() {
+        alert("implementação");
+    }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormConfigService } from './../services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
@@ -11,6 +11,7 @@ import { RenderHtmlService } from '../services/render-html.service';
 })
 export class FormPagesComponent implements OnInit {
     @Input() pages;
+    @Output() pagesChange = new EventEmitter();
     config: {
         previewMode: boolean
     };
@@ -136,6 +137,7 @@ export class FormPagesComponent implements OnInit {
         this.formConfigService.getConfig().subscribe(
             (data) => { this.config = data; }
         );
+        this.pagesChange.emit(this.pages);
     }
 
     ngOnDestroy() {
