@@ -59,7 +59,11 @@ export class CreateTableToJsonService {
         this._dataBase = new DatabaseService().get()['ORACLE'];
         this._customLabel = this.getCustomLabelName();
     }
-    
+
+    getValBtwParenthesis() {
+
+    }
+
     getDataTypeAndSize(str) {
         let RegexValBtwParen = '\\((.*)\\)';
         let secondMatch = str[1];
@@ -70,7 +74,7 @@ export class CreateTableToJsonService {
             dataType = secondMatch.replace(hasValBtwParen[0], '');
         } else {
             //(2) probably the next element -thirdMatch- must have(or not) the size of the columnName (it must be an integer or float)
-            if (str.length > 2) { //has 2 elements
+            if (str.length > 3) { //has more than 2 elements
                 let thirdMatch = str[2];
                 if (thirdMatch.charAt(0) === '(') {
                     hasValBtwParen = thirdMatch.match(RegexValBtwParen); //get value between parentheses
@@ -84,7 +88,7 @@ export class CreateTableToJsonService {
 
         if (hasValBtwParen !== null) {
               let n = hasValBtwParen[1];
-              if (!this.isFloat(n)) {
+              /*if (!this.isFloat(n)) {
                   this._errors.push({
                       message: `\`${this._columnName}\`: ${n} is not a number!`
                   });
@@ -92,7 +96,7 @@ export class CreateTableToJsonService {
                   this._errors.push({
                       message: `\`${this._columnName}\`: ${n} is not a number!`
                   });
-              }
+              }*/
               size = n;
         }
 
@@ -132,9 +136,9 @@ export class CreateTableToJsonService {
                 correct: 'primary key'
             },
           'unique': {
-            next: [],
-            previous: [],
-            correct: 'unique'
+                next: [],
+                previous: [],
+                correct: 'unique'
           },
         };
         //'not null|null'

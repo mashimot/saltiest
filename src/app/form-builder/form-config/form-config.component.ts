@@ -115,8 +115,6 @@ export class FormConfigComponent implements OnInit {
         );
     }
 
-   
-
     populate(e) {
         return e.map(
             (d) => this.elements['controls'].push(this.getElement(d.text, d.value))

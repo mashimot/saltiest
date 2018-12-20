@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Injectable } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
 
 interface Html {
@@ -37,8 +37,12 @@ interface Page {
     rows?: Array<Row>;
 }
 
-class Validator {
+@Injectable({
+    providedIn: 'root'
+})
+export class Laravel {
 
+    inputs: Array<Content>;
     rules: string;
     attributes: string;
     messages: string;
@@ -78,7 +82,50 @@ class Validator {
         }
     }
 
-    getLaravel() {
+    wrapHtml(html) {
+        return `
+    @extends('Admin.layouts.app')
+
+    @section('breadcrumb')
+        <li>Caminho</li>
+        <li>de</li>
+        <li>pão</li>
+        <li>{{$titulo}}</li>
+    @stop
+
+    @section('pagina_conteudo')
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content tooltip-demo">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <form id="form" class="form" role="form"  
+                        @if($acao == 'create')
+                            action="{{ '' }}" method="post">
+                        @elseif($acao == 'edit')
+                            action="{{ '' }}" method="post">
+                            {{ method_field('put') }}
+                        @else
+                            action="" method="">
+                        @endif
+                            {{ csrf_field() }}
+                            ${html}
+                    </form>
+                </div>
+            </div>      
+        </div>
+    </div>
+    @stop
+
+    @section('bibliotecascript')
+        @include('bibliotecas.js.formulario')  
+    @endsection`;
+    }
+
+    setInputs(inputs) {
+        this.inputs = inputs;
+    }
+
+    getValidator() {
         this.rules = `\t'${this.name}' => '${this.isRequired()}${this.getDataType()}${this.getMaxlength()}',\n`;
         this.attributes = `\t'${this.name}' => '${this.labelName}',\n`;
     }
@@ -104,6 +151,27 @@ class Validator {
         return '';
     }
 
+    getLaravel() {
+        let attr = '';
+        let rules = '';
+        let fillable = '';
+        return this.inputs.reduce(
+            (prev, curr) => {
+                this.setParams(curr);
+                this.getValidator();
+                fillable += `"${curr.table.columnName}",\n`;
+                return {
+                    rules: rules += this.rules,
+                    attributes: attr += this.attributes,
+                    fillable: `[${fillable}]`,
+                    primaryKey: '',
+                    table: ''
+                };
+            }
+        , {});
+    }
+
+
     isRequired(): string {
         return this.nullable ? 'required' : 'nullable';
     }
@@ -111,15 +179,54 @@ class Validator {
     getMessages(): string {
         return this.messages;
     }
+}
 
-    getRules(): string {
-        return this.rules;
+@Injectable({
+    providedIn: 'root'
+})
+export class Bootstrap {
+    pages: Array<Page>;
+    inputs: Array<Content>;
+
+    constructor(private renderHtmlService: RenderHtmlService) {
     }
 
-    getAttributes() {
-        return this.attributes;
+    bootstrap() {
+        this.inputs = [];
+        return this.pages.map((page, pageNumber) => {
+            return `
+            <section class="page-${pageNumber + 1}">
+                ${page.rows.map(row => {
+                    let grid = row.grid.split(' ');
+                    return `
+                    <div class="row">
+                        ${row.columns.map((column, j) => {
+                            return `
+                            <div class="col-md-${grid[j]}">
+                                ${column.contents.map(content => {
+                                    if (content.html.category === 'form') {
+                                        this.inputs.push(content);
+                                    }
+                                    this.renderHtmlService.setParams(content);
+                                    return this.renderHtmlService.get()
+                                })}
+                            </div>`
+                        }).join('')}  
+                    </div>`
+                }).join('')}
+            </section>`
+        }).join('');
+    }
+
+    getInputs() {
+        return this.inputs;
+    }
+
+    setPages(pages) {
+        this.pages = pages;
     }
 }
+
 @Component({
     selector: 'app-form-builder',
     templateUrl: './form-builder.component.html',
@@ -128,56 +235,27 @@ class Validator {
 })
 export class FormBuilderComponent implements OnInit {
     pages: Array<Page>;
-    validator: string;
+    inputs: Array<Content>;
+    validator: { rules: string, attributes: string, fillable: string };
 
-    constructor(private renderHtmlService: RenderHtmlService) {
-        this.pages = this.pages ? this.pages.length > 0 ? this.pages : [] : [];
+    constructor(
+        private b: Bootstrap,
+        private l: Laravel
+    ) {
     }
 
     ngOnInit() {
-        this.pages = [];
     }
 
-    public renderHtml(pages) {
-        let validator = [];
-        let fullHtml = pages.map((page, pageNumber) => {
-        return `
-        <section class="page-${pageNumber + 1}">
-            ${page.rows.map(row => {
-                let grid = row.grid.split(' ');
-                return `
-                <div class="row">
-                    ${row.columns.map((column, j) => {
-                    return `
-                    <div class="col-md-${grid[j]}">
-                        ${column.contents.map(content => {
-                            if (content.html.category === 'form') {
-                                validator.push(content);
-                            }
-                            this.renderHtmlService.setParams(content);
-                            return this.renderHtmlService.get()
-                        })}
-                        </div>`
-                    }).join('')}  
-                </div>`
-            }).join('')}
-        </section>`
-        }).join('');
+    get bootstrap() {
+        this.b.setPages(this.pages);
+        //return this.l.wrapHtml(this.b.bootstrap());
+        return this.b.bootstrap();
+    }
 
-        let attr = '';
-        let rules = '';
-        this.validator = validator.reduce(
-            (prev, d) => {
-                let v = new Validator();
-                v.setParams(d);
-                v.getLaravel();
-                return {
-                    rules: rules += v.getRules(),
-                    attributes: attr += v.getAttributes()
-                };
-            }
-        , '');
-        return fullHtml;
+    get laravel() {
+        this.l.setInputs(this.b.getInputs());
+        return this.l.getLaravel();
     }
 
     public isNewFile(newFile: boolean): void {

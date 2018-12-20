@@ -8,6 +8,9 @@ import { FormConfigService } from './../../services/form-config.service';
 })
 export class FormColumnsComponent implements OnInit {
   @Input() row;
+  @Input() pageIndex;
+  @Input() rowIndex;
+
   config: {
     previewMode: boolean
   };

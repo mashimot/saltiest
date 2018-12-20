@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter,  SimpleChanges } from '@angular/core';
 import { FormConfigService } from './../services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
@@ -9,7 +9,7 @@ import { RenderHtmlService } from '../services/render-html.service';
     templateUrl: './form-pages.component.html',
     styleUrls: ['./form-pages.component.css']
 })
-export class FormPagesComponent implements OnInit {
+export class FormPagesComponent implements OnChanges {
     @Input() pages;
     @Output() pagesChange = new EventEmitter();
     config: {
@@ -21,6 +21,7 @@ export class FormPagesComponent implements OnInit {
         private formConfigService: FormConfigService,
         private dragulaService: DragulaService
     ) {
+
         dragulaService.createGroup('pages', {
             copy: (el, source) => {
                 return source.className === 'menu-page-sortable';
@@ -40,13 +41,42 @@ export class FormPagesComponent implements OnInit {
             }
         });
         dragulaService.createGroup('columns', {
+            accepts: function(el, target, source, sibling) {
+                let currRowIndex    = el.getAttribute('data-current-row-index');                
+                let sRowIndex       = sibling.getAttribute('data-current-row-index');
+
+                let currPageIndex    = el.getAttribute('data-current-page-index');
+                let sPageIndex       = sibling.getAttribute('data-current-page-index');
+
+                return currRowIndex == sRowIndex && currPageIndex == sPageIndex;
+            },
             moves: (el, container, handle) => {
+                //let currColumnIndex = handle.getAttribute('data-current-column-index');
                 if (handle.classList) {
                     return handle.classList.contains('column-handle');
                 }
                 return false;
             }
         });
+
+        this.subs.add(this.dragulaService.drop("columns")
+            .subscribe(({ name, el, target, source, sibling }) => {
+                let currRowIndex        = el.getAttribute('data-current-row-index');
+                let pageIndex           = el.getAttribute('data-current-page-index');
+                let currColumnIndex     = el.getAttribute('data-current-column-index'); 
+                let targetColumnIndex   = sibling.getAttribute('data-current-column-index'); 
+                let grid = this.pages[pageIndex].rows[currRowIndex].grid;
+
+                let gridArr = grid.split(" ");
+
+                let aux = gridArr[currColumnIndex];
+                gridArr[currColumnIndex] = gridArr[targetColumnIndex]; 
+                gridArr[targetColumnIndex] = aux;
+
+                this.pages[pageIndex].rows[currRowIndex].grid = gridArr.join(" ");;
+            })
+        );
+        
         dragulaService.createGroup('rowSortable', {
             copy: (el, source) => {
                 return source.className === 'menu-row-sortable';
@@ -107,8 +137,8 @@ export class FormPagesComponent implements OnInit {
             .subscribe(({ name, clone, original, cloneType }) => {
                 if (original.classList.contains('menu-content-sortable')) {
                     let r = new RenderHtmlService();
-                    let dataAttr = JSON.parse(clone.getAttribute('data-content'));
-                    r.setParams(dataAttr);
+                    let currentDataAttr = JSON.parse(clone.getAttribute('data-content'));
+                    r.setParams(currentDataAttr);
                     clone.classList.remove('badge', 'bg-dark', 'col-md-6', 'bg-primary', 'text-white');
                     clone.innerHTML = '';
                     clone.insertAdjacentHTML('afterbegin',
@@ -132,12 +162,16 @@ export class FormPagesComponent implements OnInit {
         );
     }
 
-
     ngOnInit() {
+        this.pages = this.pages ? this.pages.length > 0 ? this.pages : [] : [];
         this.formConfigService.getConfig().subscribe(
             (data) => { this.config = data; }
         );
         this.pagesChange.emit(this.pages);
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        console.log(changes);
     }
 
     ngOnDestroy() {

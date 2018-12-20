@@ -1,14 +1,19 @@
 <div
-     [attr.data-bootstrap-grid]="row.grid"
-     [dragula]='"columns"'
-     class="row">
-  <div *ngFor="let column of row.columns; let columnIndex = index"
-       class="col-md-{{ colNumber(columnIndex) }}"
-  >
-        <div class="option-column" [hidden]="config?.previewMode">
-          <small class="column-handle">col-md-{{ colNumber(columnIndex) }}</small>
-          <div class="border-bottom border-danger"></div>
-        </div>
-        <app-form-contents [column]="column"></app-form-contents>
-  </div>
+    [attr.data-bootstrap-grid]="row.grid"
+    [dragula]='"columns"'
+	[(dragulaModel)]="row.columns"
+	class="row"
+>
+	<div *ngFor="let column of row.columns; let columnIndex = index"
+		class="col-md-{{ colNumber(columnIndex) }}"
+		[attr.data-current-row-index]="rowIndex"
+		[attr.data-current-page-index]="pageIndex"
+		[attr.data-current-column-index]="columnIndex"
+	>
+		<div class="option-column" [hidden]="config?.previewMode">
+			<small class="column-handle">col-md-{{ colNumber(columnIndex) }}</small>
+			<div class="border-bottom border-danger"></div>
+		</div>
+		<app-form-contents [column]="column"></app-form-contents>
+	</div>
 </div>

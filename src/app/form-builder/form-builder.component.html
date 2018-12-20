@@ -7,9 +7,11 @@
     <app-form-menu (isNewFile)="isNewFile($event)" (isNewPage)="isNewPage($event)" class="col-md-3"></app-form-menu>
     <app-form-pages [(pages)]="pages" class="col-md-9"></app-form-pages>
 </div>
-<app-form-info [pages]="pages"></app-form-info>
-
-<textarea class="form-control" rows="40">{{ renderHtml(pages) }}</textarea>
+<pre>
+<code>
+    {{ bootstrap }}
+</code>
+</pre>
 <textarea class="form-control" rows="40">
     /**
      * Determine if the user is authorized to make this request.
@@ -17,13 +19,12 @@
      * @return bool
      */
     public function authorize(){
-
         return true;
     }
 
     public function rules(){
         $rules = [
-            {{ validator.rules }}
+            {{ laravel.rules }}
         ];
         return $rules;
     }
@@ -35,10 +36,21 @@
      */
     public function attributes(){
         $attributes = [
-            {{ validator.attributes }}
+            {{ laravel.attributes }}
         ];
         return $attributes;
     }
-
-
 </textarea>
+
+<textarea class="form-control" rows="40">
+class AlgumaClasse extends ModelAuditable {
+  protected $table      = '{{ laravel.table }}';
+  protected $primaryKey = '{{ laravel.primaryKey }}';
+  public $incrementing  = true; 
+  public $sequence      = 'sga_{{ laravel.primaryKey }}_seq';  
+  
+  protected $fillable = {{ laravel.fillable }};
+
+}
+</textarea>
+

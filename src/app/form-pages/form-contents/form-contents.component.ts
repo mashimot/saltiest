@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormContentConfigService } from '../../services/form-content-config.service';
 import { FormConfigService } from './../../services/form-config.service';
-import { DragulaService } from 'ng2-dragula';
+import { RenderHtmlService } from '../../services/render-html.service';
+
 
 @Component({
     selector: 'app-form-contents',
@@ -18,7 +19,8 @@ export class FormContentsComponent implements OnInit {
 
     constructor(
         private formContentConfigService: FormContentConfigService,
-        private formConfigService: FormConfigService
+        private formConfigService: FormConfigService,
+        private renderHtmlService: RenderHtmlService
     ) {}
 
     ngOnInit() {
@@ -26,6 +28,10 @@ export class FormContentsComponent implements OnInit {
         this.formConfigService.getConfig().subscribe(
             (data) => this.config = data
         );
+    }
+
+    copyHtml(content): void{
+
     }
 
     sendDataToModal(content): void {

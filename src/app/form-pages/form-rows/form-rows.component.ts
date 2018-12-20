@@ -28,6 +28,7 @@ interface Row {
 })
 export class FormRowsComponent implements OnInit {
     @Input() page;
+    @Input() pageIndex;
 
     config: {
         previewMode: boolean;

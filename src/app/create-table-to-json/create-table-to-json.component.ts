@@ -22,7 +22,7 @@ export class CreateTableToJsonComponent implements OnInit {
 
 
 	constructor(private db: DatabaseService) {
-		this.gridModel = '4 4 4';
+		this.gridModel = '3 4 5';
 		this.errors = [];
 	}
 

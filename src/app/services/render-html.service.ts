@@ -45,7 +45,7 @@ export class RenderHtmlService {
     }
 
     get() {
-        return this.html();
+        return this.htmlBackup();
     }
 
     html() {
@@ -67,7 +67,7 @@ export class RenderHtmlService {
         <!-- start ${this.name} -->
         <div class="form-group" id="div_${this.name}">
             <label for="txt_${this.name}">${this.labelName}</label>
-            <textarea class="form-control" name="${this.name}" id="txt_${this.name}"  ${this.nullable ? `` : `required`}></textarea>
+            <textarea class="form-control" name="${this.name}" id="txt_${this.name}"  ${this.nullable ? `` : `required`}>{{ (old('${this.name}') != null) ? old('${this.name}') : '$mudarAqui->${this.name}' }}</textarea>
         </div>
         <!-- end ${this.name} -->`;
             case "select":
@@ -107,14 +107,14 @@ export class RenderHtmlService {
         <!-- start ${this.name} -->
         <div class="form-group" id="div_${this.name}">
             <label for="i_${this.name}">${this.labelName}</label>
-            <input type="text" class="form-control ${this.size > 0 ? `int${this.size}` : ``} inputEdicao" name="${this.name}" id="i_${this.name}" value=""  ${this.nullable ? `` : `required`} ${this.size > 0 ? `maxlength="${this.size}"` : ``}>
+            <input type="text" class="form-control ${this.size > 0 ? `int${this.size}` : ``} inputEdicao" name="${this.name}" id="i_${this.name}"  value="{{ (old('${this.name}') != null) ? old('${this.name}') : '$mudarAqui->${this.name}' }}"  ${this.nullable ? `` : `required`} ${this.size > 0 ? `maxlength="${this.size}"` : ``}>
         </div>                    
         <!-- end ${this.name} -->`;
             case "date": return `
         <!-- start ${this.name} -->
         <div class="form-group" id="div_${this.name}">
             <label for="i_${this.name}">${this.labelName}</label>
-            <input type="text" class="form-control date inputEdicao" name="${this.name}" id="i_${this.name}" value=""  ${this.nullable ? `` : `required`}>
+            <input type="text" class="form-control date inputEdicao" name="${this.name}" id="i_${this.name}"  value="{{ (old('${this.name}') != null) ? old('${this.name}') : '$mudarAqui->${this.name}' }}"  ${this.nullable ? `` : `required`}>
         </div>
         <!-- end ${this.name} -->`;
         }

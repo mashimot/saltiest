@@ -5,7 +5,6 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
@@ -13,6 +12,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { FormBuilderModule } from './form-builder/form-builder.module';
 import { HomeModule } from './home/home.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HighlightModule } from 'ngx-highlightjs';
+
 
 @NgModule({
     declarations: [
@@ -30,7 +31,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
         AppRoutingModule,
         HttpModule,
         HttpClientModule,
-        NgbModule
+        NgbModule,
+        HighlightModule.forRoot()
     ],
     providers: [DragulaService],
     bootstrap: [AppComponent]
