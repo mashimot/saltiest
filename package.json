@@ -31,7 +31,8 @@
     "ngx-highlightjs": "^2.1.1",
     "popper.js": "^1.14.4",
     "rxjs": "^6.0.0",
-    "zone.js": "~0.8.26"
+    "zone.js": "~0.8.26",
+    "express": "^4.16.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.7.0",
