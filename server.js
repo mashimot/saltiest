@@ -13,4 +13,6 @@ res.sendFile(path.join(__dirname+'/dist/saltiest/index.html'));
 });
 
 // Start the app by listening on the default Heroku port
-app.listen(8080);
+http.listen((process.env.PORT || 8080), function(){
+    console.log('listening on *:8080');
+});
