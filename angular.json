@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "salt": {
+    "saltiest": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/salt",
+            "outputPath": "saltiest",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -54,18 +54,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "salt:build"
+            "browserTarget": "saltiest:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "salt:build:production"
+              "browserTarget": "saltiestiest:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "salt:build"
+            "browserTarget": "saltiest:build"
           }
         },
         "test": {
@@ -99,7 +99,7 @@
         }
       }
     },
-    "salt-e2e": {
+    "saltiest-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -107,11 +107,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "salt:serve"
+            "devServerTarget": "saltiest:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "salt:serve:production"
+              "devServerTarget": "saltiest:serve:production"
             }
           }
         },
@@ -127,5 +127,5 @@
       }
     }
   },
-  "defaultProject": "salt"
+  "defaultProject": "saltiest"
 }

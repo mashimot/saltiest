@@ -15,8 +15,8 @@ export class CreateTableToJsonComponent implements OnInit {
 	database: Array<string>;
 	errors: Array<{ message?: string }>;
 	primaryKeys: any[];
-	options: Object = {
-		database: 'oracle'
+	options = {
+		database: <string> 'oracle'
 	};
 	string: string;
 
@@ -24,6 +24,7 @@ export class CreateTableToJsonComponent implements OnInit {
 	constructor(private db: DatabaseService) {
 		this.gridModel = '3 4 5';
 		this.errors = [];
+		this.database = [];
 	}
 
 	ngOnInit() {

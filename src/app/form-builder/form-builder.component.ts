@@ -42,7 +42,7 @@ interface Page {
 })
 export class Laravel {
 
-    inputs: Array<Content>;
+    inputs: any[];
     rules: string;
     attributes: string;
     messages: string;

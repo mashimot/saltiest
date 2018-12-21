@@ -35,9 +35,7 @@ interface Page {
     rows: Array<Row>;
 }
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class BootstrapGridSystemService {
     _data: any[];
     _grid: string;

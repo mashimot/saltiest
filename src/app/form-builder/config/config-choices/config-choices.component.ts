@@ -3,6 +3,28 @@ import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 
+interface Html {
+    category?: string;
+    tag: string;
+    label?: string;
+    src?: string;
+    data?: string;
+    elements?: Array<{ text: string, value: string }>;
+}
+
+interface Table {
+    columnName?: string;
+    isPrimaryKey?: boolean;
+    type?: string;
+    nullable?: boolean;
+    size?: string;
+}
+
+interface Content {
+    html?: Html;
+    table?: Table; //optional
+}
+
 @Component({
     selector: 'app-config-choices',
     templateUrl: './config-choices.component.html',
@@ -16,7 +38,7 @@ export class ConfigChoicesComponent implements OnInit {
     sortReverse: boolean;
     subs = new Subscription();
     html: any;
-
+    
     constructor(
         private dragulaService: DragulaService,
         private fb: FormBuilder
@@ -112,14 +134,15 @@ export class ConfigChoicesComponent implements OnInit {
         this.sortType    = type;
     }
 
-    public cloneThis(name, elements){
-        let elementsLength = elements.length;
+    public cloneThis(name){
+        let elementsLength = this.elements.value.length;
         if(elementsLength > 0){
             let cloneThisObjectName = (name === 'value')? 'text' : 'value';
             for(let i = 0; i < elementsLength; i++){
-                elements[i][name] = elements[i][cloneThisObjectName];
+                this.elements.value[i][name] = this.elements.value[i][cloneThisObjectName];
             }
             this.text = this.elementToString();
+            this.stringToElement();
         }
     }
 

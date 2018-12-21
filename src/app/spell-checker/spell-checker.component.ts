@@ -10,7 +10,9 @@ export class SpellCheckerComponent implements OnInit {
   @Input() text;
   @Output() textChange = new EventEmitter();
   isLoading: boolean = false;
-  result: {};
+  result: {
+      matches: Array<any>
+  };
 
   constructor(
     private languageToolService: LanguageToolService
@@ -36,6 +38,7 @@ export class SpellCheckerComponent implements OnInit {
                     this.isLoading = false;
                 }
           });
+          console.log(this.result);
       }
   }
 
