@@ -1,5 +1,7 @@
-<div [dragula]='"pages"'
-     [(dragulaModel)]="pages">
+<div 
+    [dragula]="'pages'"
+    [(dragulaModel)]="pages"
+>
     <div *ngFor="let page of pages; let pageIndex = index" class="mb-1">
         <div class="px-3 py-3" [ngClass]="{ 'card bg-white text-dark': !config?.previewMode }">
             <div class="row" [hidden]="config?.previewMode">
@@ -19,3 +21,4 @@
             <app-form-rows [page]="page" [pageIndex]="pageIndex"></app-form-rows>
         </div>
     </div><!--/.ng-repeat-->
+</div>

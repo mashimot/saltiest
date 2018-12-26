@@ -42,14 +42,15 @@ export class FormPagesComponent implements OnChanges {
         });
         dragulaService.createGroup('columns', {
             accepts: function(el, target, source, sibling) {
-                let currRowIndex    = el.getAttribute('data-current-row-index');                
-                let sRowIndex       = sibling.getAttribute('data-current-row-index');
 
-                let currPageIndex    = el.getAttribute('data-current-page-index');
-                let sPageIndex       = sibling.getAttribute('data-current-page-index');
-
-                return currRowIndex == sRowIndex && currPageIndex == sPageIndex;
-            },
+                    let currRowIndex    = el.getAttribute('data-current-row-index');                
+                    //let sRowIndex       = el.getAttribute('data-current-row-index');
+    
+                    let currPageIndex    = el.getAttribute('data-current-page-index');
+                    //let sPageIndex       = target.getAttribute('data-current-page-index');
+                    let currentClass = 'page-' + currPageIndex + '_row-' + currRowIndex;
+                    return target.classList.contains(currentClass);
+            },            
             moves: (el, container, handle) => {
                 //let currColumnIndex = handle.getAttribute('data-current-column-index');
                 if (handle.classList) {
@@ -59,21 +60,22 @@ export class FormPagesComponent implements OnChanges {
             }
         });
 
-        this.subs.add(this.dragulaService.drop("columns")
-            .subscribe(({ name, el, target, source, sibling }) => {
+        this.subs.add(this.dragulaService.dropModel("columns")
+            .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 let currRowIndex        = el.getAttribute('data-current-row-index');
                 let pageIndex           = el.getAttribute('data-current-page-index');
-                let currColumnIndex     = el.getAttribute('data-current-column-index'); 
-                let targetColumnIndex   = sibling.getAttribute('data-current-column-index'); 
-                let grid = this.pages[pageIndex].rows[currRowIndex].grid;
+                let targetColumnIndex   = el.getAttribute('data-current-column-index'); 
+                if(currRowIndex != null && targetColumnIndex != null){
+                    let grid = this.pages[pageIndex].rows[currRowIndex].grid;
+                    let gridArr = grid.split(" ");
 
-                let gridArr = grid.split(" ");
+                    let aux = gridArr[sourceIndex];
+                    let target = gridArr[targetIndex];
+                    gridArr[sourceIndex] = target; 
+                    gridArr[targetIndex] = aux;
 
-                let aux = gridArr[currColumnIndex];
-                gridArr[currColumnIndex] = gridArr[targetColumnIndex]; 
-                gridArr[targetColumnIndex] = aux;
-
-                this.pages[pageIndex].rows[currRowIndex].grid = gridArr.join(" ");;
+                    this.pages[pageIndex].rows[currRowIndex].grid = gridArr.join(" ").trim();
+                }   
             })
         );
         
