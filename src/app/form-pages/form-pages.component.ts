@@ -62,17 +62,14 @@ export class FormPagesComponent implements OnChanges {
 
         this.subs.add(this.dragulaService.dropModel("columns")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
-                let currRowIndex        = el.getAttribute('data-current-row-index');
-                let pageIndex           = el.getAttribute('data-current-page-index');
-                let targetColumnIndex   = el.getAttribute('data-current-column-index'); 
-                if(currRowIndex != null && targetColumnIndex != null){
-                    let grid = this.pages[pageIndex].rows[currRowIndex].grid;
-                    let gridArr = grid.split(" ");
-
-                    let aux = gridArr[sourceIndex];
-                    let target = gridArr[targetIndex];
-                    gridArr[sourceIndex] = target; 
-                    gridArr[targetIndex] = aux;
+                let currRowIndex    = el.getAttribute('data-current-row-index');
+                let pageIndex       = el.getAttribute('data-current-page-index');
+                if(pageIndex != null && currRowIndex != null){
+                    let gridArr = this.pages[pageIndex].rows[currRowIndex].grid.split(" ");
+                    let aux     = gridArr[sourceIndex];
+                    
+                    gridArr.splice(sourceIndex, 1);
+                    gridArr.splice(targetIndex, 0, aux);
 
                     this.pages[pageIndex].rows[currRowIndex].grid = gridArr.join(" ").trim();
                 }   

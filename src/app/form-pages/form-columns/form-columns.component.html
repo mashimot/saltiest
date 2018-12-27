@@ -11,11 +11,13 @@
 		[attr.data-current-column-index]="columnIndex"
 	>
 		<!--b>[{{ pageIndex }}][{{ rowIndex }}][{{ columnIndex }}]</b-->
-		<div class="option-column " [hidden]="config?.previewMode">
-			<small class="column-handle" [ngStyle]="{ 'cursor': 'move' }">
-				<i class="fa fa-arrows-alt"></i> col-md-{{ colNumber(columnIndex) }}
-			</small>
-			<div class="border-bottom border-danger"></div>
+		<div class="option-column">
+			<div [hidden]="config?.previewMode">
+				<small class="column-handle" [ngStyle]="{ 'cursor': 'move' }">
+					<i class="fa fa-arrows-alt"></i> col-md-{{ colNumber(columnIndex) }}
+				</small>
+				<div class="border-bottom border-danger"></div>
+			</div>	
 			<app-form-contents [column]="column"></app-form-contents>
 		</div>
 	</div>
