@@ -27,6 +27,7 @@ interface Content {
     providedIn: 'root'
 })
 export class CreateTableToJsonService {
+    _isTextareaWhenSizeEquals: number = 1000;
     _string: string;
     _nullable: boolean;
     _isPrimaryKey: boolean;
@@ -255,10 +256,7 @@ export class CreateTableToJsonService {
             this._inputType = 'select';
 
         if (this._inputType === 'text' || this._inputType === 'textarea') {
-            if (parseInt(this._size) <= 50)
-                this._inputType = 'text';
-            else
-                this._inputType = 'textarea';
+            this._inputType = (parseInt(this._size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
         }
     }
     getData() {

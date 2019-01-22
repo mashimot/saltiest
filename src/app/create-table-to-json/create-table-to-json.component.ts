@@ -1,7 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CreateTableToJsonService } from '../services/create-table-to-json.service';
 import { BootstrapGridSystemService } from '../services/bootstrap-grid-system.service'
-import { NgForm } from '@angular/forms';
 import { DatabaseService } from '../shared/services/database.service';
 
 @Component({
@@ -22,7 +21,7 @@ export class CreateTableToJsonComponent implements OnInit {
 
 
 	constructor(private db: DatabaseService) {
-		this.gridModel = '3 4 5';
+		this.gridModel = '4 4 4';
 		this.errors = [];
 		this.database = [];
 	}

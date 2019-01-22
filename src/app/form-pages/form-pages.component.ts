@@ -141,7 +141,7 @@ export class FormPagesComponent implements OnChanges {
                     clone.classList.remove('badge', 'bg-dark', 'col-md-6', 'bg-primary', 'text-white');
                     clone.innerHTML = '';
                     clone.insertAdjacentHTML('afterbegin',
-                        '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get() + '</div>'
+                        '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get().html + '</div>'
                     );
                 }
             })

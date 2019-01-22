@@ -29,7 +29,7 @@ export class RenderContentComponent implements OnInit {
     render() {
         if (typeof this.content !== 'undefined') {
             this.renderHtml.setParams(this.content);
-            let html = this.renderHtml.get();
+            let html = this.renderHtml.get().html;
             //console.log(html);
             return this.sanitizer.bypassSecurityTrustHtml(html);
         }

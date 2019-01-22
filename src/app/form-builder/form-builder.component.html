@@ -7,11 +7,40 @@
     <app-form-menu (isNewFile)="isNewFile($event)" (isNewPage)="isNewPage($event)" class="col-md-3"></app-form-menu>
     <app-form-pages [(pages)]="pages" class="col-md-9"></app-form-pages>
 </div>
-<pre>
-<code>
-    {{ bootstrap }}
-</code>
-</pre>
+<textarea class="form-control" rows="40">
+@extends('Admin.layouts.app_index')
+
+@section('css')
+@endsection
+
+@section('breadcrumb-manual')
+<li>Financeiro</li>
+<li></li>
+@endsection
+
+@section('pagina_header')
+@endsection
+
+@section('pagina_conteudo')    
+    {{ bootstrap.init() }}
+
+    {{ bootstrap.table() }}
+
+    <!-- MODAL CRUD -->
+    {!! $HTML::modalOpen('crud_mudar_aqui', 'Adicionar') !!}
+        {!! $HTML::formOpen('form_mudar_aqui', $acao) !!}  
+            {{ bootstrap.html() }}
+        {!! $HTML::formClose() !!}
+    {!! $HTML::modalClose(true, $HTML::modalBotoesSalvar('mudar_aqui')) !!}
+@endsection    
+@section('bibliotecascript')
+    @include('bibliotecas.js.scripts.modalCrud')
+@endsection
+
+@section('script')    
+    {{ bootstrap.script() }}
+@endsection
+</textarea>
 <textarea class="form-control" rows="40">
     /**
      * Determine if the user is authorized to make this request.

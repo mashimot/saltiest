@@ -40,7 +40,7 @@ interface Page {
 @Injectable({
     providedIn: 'root'
 })
-export class Laravel {
+export class Validator {
 
     inputs: any[];
     rules: string;
@@ -60,7 +60,9 @@ export class Laravel {
     size?: number;
     dataType?: string;
 
-    constructor() { }
+    constructor() { 
+        this.inputs = [];
+    }
 
     setParams(d) {
         if (d) {
@@ -80,45 +82,6 @@ export class Laravel {
                 this.elements = typeof d.html.elements === 'undefined' ? [] : d.html.elements;
             }
         }
-    }
-
-    wrapHtml(html) {
-        return `
-    @extends('Admin.layouts.app')
-
-    @section('breadcrumb')
-        <li>Caminho</li>
-        <li>de</li>
-        <li>pão</li>
-        <li>{{$titulo}}</li>
-    @stop
-
-    @section('pagina_conteudo')
-    <div class="col-lg-12">
-        <div class="wrapper wrapper-content tooltip-demo">
-            <div class="ibox">
-                <div class="ibox-content">
-                    <form id="form" class="form" role="form"  
-                        @if($acao == 'create')
-                            action="{{ '' }}" method="post">
-                        @elseif($acao == 'edit')
-                            action="{{ '' }}" method="post">
-                            {{ method_field('put') }}
-                        @else
-                            action="" method="">
-                        @endif
-                            {{ csrf_field() }}
-                            ${html}
-                    </form>
-                </div>
-            </div>      
-        </div>
-    </div>
-    @stop
-
-    @section('bibliotecascript')
-        @include('bibliotecas.js.formulario')  
-    @endsection`;
     }
 
     setInputs(inputs) {
@@ -151,7 +114,7 @@ export class Laravel {
         return '';
     }
 
-    getLaravel() {
+    laravel() {
         let attr = '';
         let rules = '';
         let fillable = '';
@@ -164,13 +127,13 @@ export class Laravel {
                     rules: rules += this.rules,
                     attributes: attr += this.attributes,
                     fillable: `[${fillable}]`,
+                    th: `<th>${curr.html.labelName}</th>`,
                     primaryKey: '',
                     table: ''
                 };
             }
         , {});
     }
-
 
     isRequired(): string {
         return this.nullable ? 'required' : 'nullable';
@@ -185,15 +148,17 @@ export class Laravel {
     providedIn: 'root'
 })
 export class Bootstrap {
+    tableName: string = "i_table_mudar_aqui";
     pages: Array<Page>;
     inputs: Array<Content>;
+    code: string = '';
 
     constructor(private renderHtmlService: RenderHtmlService) {
     }
 
-    bootstrap() {
+    init() {
         this.inputs = [];
-        return this.pages.map((page, pageNumber) => {
+        this.code   = this.pages.map((page, pageNumber) => {
             return `
             <section class="page-${pageNumber + 1}">
                 ${page.rows.map(row => {
@@ -207,8 +172,9 @@ export class Bootstrap {
                                     if (content.html.category === 'form') {
                                         this.inputs.push(content);
                                     }
+                                    content.html['grid'] = grid[j];
                                     this.renderHtmlService.setParams(content);
-                                    return this.renderHtmlService.get()
+                                    return this.renderHtmlService.get().code;
                                 })}
                             </div>`
                         }).join('')}  
@@ -216,6 +182,65 @@ export class Bootstrap {
                 }).join('')}
             </section>`
         }).join('');
+    }
+    
+    html(){
+        return this.code;
+    }
+
+    table(){
+        let th = this.inputs.map((item) => { 
+            return `\n<th>${item.html.label}</th>`;
+        }, '').join('');
+        return `
+        <table class="table table-striped" id="${this.tableName}">
+            <thead>
+                <tr>
+                ${th}
+                <th class="td_justo no-sort text-right">
+                {!! $HTML::iconeCriar(
+                    Auth::user()->can('admin.financeirodescontos.create'), 
+                    '#', 
+                    true, 
+                    route('admin.financeirodescontos.store'))
+                !!}
+                </th>                
+                </tr>
+            </thead>
+        </table>
+        `;
+    }
+
+    script(){
+        var script = this.inputs.map((item) => {
+            return { 
+                data: item.table.columnName,
+                name: item.table.columnName
+            };
+        }, []);
+        script.push({
+            'data': 'action',
+            'name': 'name',
+            'className' : 'td_justo',
+            'orderable' : false,
+            'searchable' : false            
+        });
+
+
+        console.log(script);
+        return `
+<script>
+    /*---------------------Datatables--------------------------------*/
+    var table = $('#${this.tableName}').DataTable({
+        stateSave: true,
+        processing: true,
+        serverSide: true,
+        cache: true,
+        columns: ${JSON.stringify(script, null, '\t')}
+    });
+    /*---------------------/Datatables-------------------------------*/
+</script>        
+        `;
     }
 
     getInputs() {
@@ -236,11 +261,10 @@ export class Bootstrap {
 export class FormBuilderComponent implements OnInit {
     pages: Array<Page>;
     inputs: Array<Content>;
-    validator: { rules: string, attributes: string, fillable: string };
 
     constructor(
         private b: Bootstrap,
-        private l: Laravel
+        private validator: Validator
     ) {
     }
 
@@ -249,13 +273,12 @@ export class FormBuilderComponent implements OnInit {
 
     get bootstrap() {
         this.b.setPages(this.pages);
-        //return this.l.wrapHtml(this.b.bootstrap());
-        return this.b.bootstrap();
+        return this.b;
     }
 
     get laravel() {
-        this.l.setInputs(this.b.getInputs());
-        return this.l.getLaravel();
+        this.validator.setInputs(this.b.getInputs());
+        return this.validator.laravel();
     }
 
     public isNewFile(newFile: boolean): void {

@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormConfigService } from './../../services/form-config.service';
 import { HtmlElementService } from '../../shared/services/html-element.service';
 import { BootstrapGridSystemService } from '../../services/bootstrap-grid-system.service';
-import { NgForm } from '@angular/forms';
 
 @Component({
     selector: 'app-form-menu',
@@ -41,8 +40,8 @@ export class FormMenuComponent implements OnInit {
         this.bootstrap = [this.grids[0]];
         this.tools = this.htmlElementService.get();
         this.pageModel = [{
-          rows: [],
-          name: "Salt - A tool for Lazy Developer"
+            rows: [],
+            name: "Salt - A tool for Lazy Developer"
         }];
     }
 
