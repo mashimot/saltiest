@@ -1,60 +1,33 @@
 import { Injectable } from '@angular/core';
 import { DatabaseService } from './../shared/services/database.service';
-
-interface Html {
-    category: string;
-    tag: string;
-    label?: string;
-    src?: string;
-    data?: string;
-    elements?: Array<{ text: string, value: string }>;
-}
-
-interface Table {
-    columnName?: string;
-    isPrimaryKey?: boolean;
-    type: string;
-    nullable: boolean;
-    size: string;
-}
-
-interface Content {
-    html: Html;
-    table?: Table; //optional
-}
+import { Content } from "./../shared/models/content.model";
+import { Html } from "./../shared/models/html.model";
+import { Table } from "./../shared/models/table.model";
 
 @Injectable({
     providedIn: 'root'
 })
 export class CreateTableToJsonService {
     _isTextareaWhenSizeEquals: number = 1000;
-    _string: string;
-    _nullable: boolean;
-    _isPrimaryKey: boolean;
-    _inputType: string;
-    _columnName: string;
-    _labelName: string;
-    _dataType: string;
-    _size: string;
     _index: number = 2;
+    _string: string;
     _data: Array<Content>;
     _errors: Array<{
         message: string
     }>;
     _dataBase: {
-      [key: string]: string
+        [key: string]: string
     };
     _customLabel: {};
+    html: Html;
+    table: Table;
 
     constructor() {
-        //this._string = string;
-        this._nullable = false;
-        this._isPrimaryKey = false;
-        this._inputType = '';
-        this._columnName = '';
-        this._labelName = '';
-        this._dataType = '';
-        this._size = '';
+        this.html = new Html
+        this.table = new Table;
+
+        this.table.nullable = false;
+        this.table.isPrimaryKey = false;
         this._data = [];
         this._errors = [];
         this._dataBase = new DatabaseService().get()['ORACLE'];
@@ -91,11 +64,11 @@ export class CreateTableToJsonService {
               let n = hasValBtwParen[1];
               /*if (!this.isFloat(n)) {
                   this._errors.push({
-                      message: `\`${this._columnName}\`: ${n} is not a number!`
+                      message: `\`${this.table.columnName}\`: ${n} is not a number!`
                   });
               } else if (!this.isInt(n)) {
                   this._errors.push({
-                      message: `\`${this._columnName}\`: ${n} is not a number!`
+                      message: `\`${this.table.columnName}\`: ${n} is not a number!`
                   });
               }*/
               size = n;
@@ -106,12 +79,12 @@ export class CreateTableToJsonService {
             inputType = database;
         } else {
             this._errors.push({
-                message: `\`${dataType}\` does not exists! ${this._columnName}`
+                message: `\`${dataType}\` does not exists! ${this.table.columnName}`
             });
         }
-        this._dataType = dataType;
-        this._inputType = inputType;
-        this._size = size;
+        this.table.type = dataType;
+        this.html.tag = inputType;
+        this.table.size = parseInt(size);
     }
     validateSyntax(stringArr) {
         let value = '';
@@ -150,7 +123,7 @@ export class CreateTableToJsonService {
             let prevValue = '';
             if (typeof allowed[currentWord] === 'undefined') {
                 this._errors.push({
-                    message: `You have an error in your SQL syntax; check the manual for the right syntax to use near '${this._columnName}'`
+                    message: `You have an error in your SQL syntax; check the manual for the right syntax to use near '${this.table.columnName}'`
                 });
             } else {
                 let index = i + 1;
@@ -177,14 +150,14 @@ export class CreateTableToJsonService {
               value += `${prevValue} ${currentWord} ${nextValue}`;
                 if (hasError && value !== '') {
                     this._errors.push({
-                      message: `error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this._columnName} `
+                      message: `error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this.table.columnName} `
                     });
                 }
             }
         }
         value = value.replace(/\s\s+/g, ' ').trim();
-        this._nullable = (value.indexOf("not null") !== -1) ? true : false;
-        this._isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
+        this.table.nullable = (value.indexOf("not null") !== -1) ? true : false;
+        this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
         this._index = 2;
     }
     convert() {
@@ -206,9 +179,9 @@ export class CreateTableToJsonService {
                     message: `Incompleted`
                 });
             } else {
-                this._columnName = stringArr[0]; // columnName
+                this.table.columnName = stringArr[0]; // columnName
 
-                if (this._columnName === 'create' && stringArr[1] === 'table') {
+                if (this.table.columnName === 'create' && stringArr[1] === 'table') {
                     //this._data.name = stringArr[2];
                 } else {
                     //the firstMatch  (stringArr[0]) will be always the columnName
@@ -220,15 +193,15 @@ export class CreateTableToJsonService {
                     this._data.push({
                         html: {
                             category: 'form',
-                            tag: this._inputType,
-                            label: this._labelName
+                            tag: this.html.tag,
+                            label: this.html.label
                         },
                         table: {
-                            isPrimaryKey: this._isPrimaryKey,
-                            columnName: this._columnName,
-                            type: this._dataType,
-                            nullable: this._nullable,
-                            size: this._size
+                            isPrimaryKey: this.table.isPrimaryKey,
+                            columnName: this.table.columnName,
+                            type: this.table.type,
+                            nullable: this.table.nullable,
+                            size: this.table.size
                         }
                     });
                 }
@@ -238,7 +211,7 @@ export class CreateTableToJsonService {
     }
 
     customLabelName() {
-        let splitColumnName = this._columnName.split('_');
+        let splitColumnName = this.table.columnName.split('_');
         if (splitColumnName.length > 0) {
             for (let i = 0; i < splitColumnName.length; i++) {
                 let currentPartialName = splitColumnName[i];
@@ -248,15 +221,16 @@ export class CreateTableToJsonService {
 
                 splitColumnName[i] = currentPartialName.charAt(0).toUpperCase() + currentPartialName.substr(1);
             }
-            this._labelName = splitColumnName.join(' ').trim();;
+            this.html.label = splitColumnName.join(' ').trim();;
         }
     }
     customInput() {
-        if (this._columnName.indexOf('ind_') !== -1)
-            this._inputType = 'select';
+        if (this.table.columnName.indexOf('ind_') !== -1)
+            this.html.tag = 'select';
 
-        if (this._inputType === 'text' || this._inputType === 'textarea') {
-            this._inputType = (parseInt(this._size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
+        if (this.html.tag === 'text' || this.html.tag === 'textarea') {
+            //this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
+            this.html.tag = (this.table.size <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
         }
     }
     getData() {

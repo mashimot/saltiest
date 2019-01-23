@@ -9,10 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, ChangeDetectionStrategy, Injectable } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
-var Laravel = /** @class */ (function () {
-    function Laravel() {
+var Validator = /** @class */ (function () {
+    function Validator() {
+        this.inputs = [];
     }
-    Laravel.prototype.setParams = function (d) {
+    Validator.prototype.setParams = function (d) {
         if (d) {
             if (d.table) {
                 this.name = typeof d.table.columnName === 'undefined' ? '' : d.table.columnName;
@@ -31,17 +32,14 @@ var Laravel = /** @class */ (function () {
             }
         }
     };
-    Laravel.prototype.wrapHtml = function (html) {
-        return "\n    @extends('Admin.layouts.app_index')\n\n    @section('css')\n    @endsection\n    \n    @section('breadcrumb-manual')\n    <li>Financeiro</li>\n    <li>{{ $objetoPagina->nom_objeto }}</li>\n    @endsection\n    \n    @section('pagina_header')\n    @endsection\n    \n    @section('pagina_conteudo')\n    <table class=\"table table-striped\" id=\"i_table_mudar_aqui\">\n        <thead>\n            <tr>  \n                <th class=\"td_justo no-sort text-right\">\n                {!! $HTML::iconeCriar(\n                    Auth::user()->can('admin.financeirodescontos.create'), \n                    '#', \n                    true, \n                    route('admin.financeirodescontos.store'))\n                !!}\n                </th>\n            </tr>\n        </thead>\n    </table>\n\n    <!-- MODAL CRUD -->\n    {!! $HTML::modalOpen('crud_mudar_aqui', 'Adicionar') !!}\n        {!! $HTML::formOpen('form_mudar_aqui', $acao) !!}  \n            " + html + "\n        {!! $HTML::formClose() !!}\n    {!! $HTML::modalClose(true, $HTML::modalBotoesSalvar('mudar_aqui')) !!}\n    @endsection\n\n    @section('bibliotecascript')\n        @include('bibliotecas.js.scripts.modalCrud')\n    @endsection\n\n    @section('script')\n\n    @endsection";
-    };
-    Laravel.prototype.setInputs = function (inputs) {
+    Validator.prototype.setInputs = function (inputs) {
         this.inputs = inputs;
     };
-    Laravel.prototype.getValidator = function () {
+    Validator.prototype.getValidator = function () {
         this.rules = "\t'" + this.name + "' => '" + this.isRequired() + this.getDataType() + this.getMaxlength() + "',\n";
         this.attributes = "\t'" + this.name + "' => '" + this.labelName + "',\n";
     };
-    Laravel.prototype.getDataType = function () {
+    Validator.prototype.getDataType = function () {
         switch (this.dataType) {
             case 'number':
                 return '|numeric';
@@ -51,7 +49,7 @@ var Laravel = /** @class */ (function () {
                 return '';
         }
     };
-    Laravel.prototype.getMaxlength = function () {
+    Validator.prototype.getMaxlength = function () {
         if (this.size > 0) {
             if (this.dataType === 'number') {
                 return '|digits_between:1,' + this.size;
@@ -60,7 +58,7 @@ var Laravel = /** @class */ (function () {
         }
         return '';
     };
-    Laravel.prototype.getLaravel = function () {
+    Validator.prototype.laravel = function () {
         var _this = this;
         var attr = '';
         var rules = '';
@@ -79,29 +77,31 @@ var Laravel = /** @class */ (function () {
             };
         }, {});
     };
-    Laravel.prototype.isRequired = function () {
+    Validator.prototype.isRequired = function () {
         return this.nullable ? 'required' : 'nullable';
     };
-    Laravel.prototype.getMessages = function () {
+    Validator.prototype.getMessages = function () {
         return this.messages;
     };
-    Laravel = __decorate([
+    Validator = __decorate([
         Injectable({
             providedIn: 'root'
         }),
         __metadata("design:paramtypes", [])
-    ], Laravel);
-    return Laravel;
+    ], Validator);
+    return Validator;
 }());
-export { Laravel };
+export { Validator };
 var Bootstrap = /** @class */ (function () {
     function Bootstrap(renderHtmlService) {
         this.renderHtmlService = renderHtmlService;
+        this.tableName = "i_table_mudar_aqui";
+        this.code = '';
     }
-    Bootstrap.prototype.bootstrap = function () {
+    Bootstrap.prototype.init = function () {
         var _this = this;
         this.inputs = [];
-        return this.pages.map(function (page, pageNumber) {
+        this.code = this.pages.map(function (page, pageNumber) {
             return "\n            <section class=\"page-" + (pageNumber + 1) + "\">\n                " + page.rows.map(function (row) {
                 var grid = row.grid.split(' ');
                 return "\n                    <div class=\"row\">\n                        " + row.columns.map(function (column, j) {
@@ -109,12 +109,39 @@ var Bootstrap = /** @class */ (function () {
                         if (content.html.category === 'form') {
                             _this.inputs.push(content);
                         }
+                        content.html['grid'] = grid[j];
                         _this.renderHtmlService.setParams(content);
                         return _this.renderHtmlService.get().code;
                     }) + "\n                            </div>";
                 }).join('') + "  \n                    </div>";
             }).join('') + "\n            </section>";
         }).join('');
+    };
+    Bootstrap.prototype.html = function () {
+        return this.code;
+    };
+    Bootstrap.prototype.table = function () {
+        var th = this.inputs.map(function (item) {
+            return "\n<th>" + item.html.label + "</th>";
+        }, '').join('');
+        return "\n        <table class=\"table table-striped\" id=\"" + this.tableName + "\">\n            <thead>\n                <tr>\n                " + th + "\n                <th class=\"td_justo no-sort text-right\">\n                {!! $HTML::iconeCriar(\n                    Auth::user()->can('admin.financeirodescontos.create'), \n                    '#', \n                    true, \n                    route('admin.financeirodescontos.store'))\n                !!}\n                </th>                \n                </tr>\n            </thead>\n        </table>\n        ";
+    };
+    Bootstrap.prototype.script = function () {
+        var script = this.inputs.map(function (item) {
+            return {
+                data: item.table.columnName,
+                name: item.table.columnName
+            };
+        }, []);
+        script.push({
+            'data': 'action',
+            'name': 'name' /*,
+            'className' : 'td_justo',
+            'orderable' : false,
+            'searchable' : false*/
+        });
+        console.log(script);
+        return "\n<script>\n    /*---------------------Datatables--------------------------------*/\n    var table = $('#" + this.tableName + "').DataTable({\n        stateSave: true,\n        processing: true,\n        serverSide: true,\n        cache: true,\n        columns: " + JSON.stringify(script, null, '\t') + "\n    });\n    /*---------------------/Datatables-------------------------------*/\n</script>        \n        ";
     };
     Bootstrap.prototype.getInputs = function () {
         return this.inputs;
@@ -132,25 +159,24 @@ var Bootstrap = /** @class */ (function () {
 }());
 export { Bootstrap };
 var FormBuilderComponent = /** @class */ (function () {
-    function FormBuilderComponent(b, l) {
+    function FormBuilderComponent(b, validator) {
         this.b = b;
-        this.l = l;
+        this.validator = validator;
     }
     FormBuilderComponent.prototype.ngOnInit = function () {
     };
     Object.defineProperty(FormBuilderComponent.prototype, "bootstrap", {
         get: function () {
             this.b.setPages(this.pages);
-            return this.l.wrapHtml(this.b.bootstrap());
-            //return this.b.bootstrap();
+            return this.b;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormBuilderComponent.prototype, "laravel", {
         get: function () {
-            this.l.setInputs(this.b.getInputs());
-            return this.l.getLaravel();
+            this.validator.setInputs(this.b.getInputs());
+            return this.validator.laravel();
         },
         enumerable: true,
         configurable: true
@@ -179,7 +205,7 @@ var FormBuilderComponent = /** @class */ (function () {
             changeDetection: ChangeDetectionStrategy.OnPush,
         }),
         __metadata("design:paramtypes", [Bootstrap,
-            Laravel])
+            Validator])
     ], FormBuilderComponent);
     return FormBuilderComponent;
 }());

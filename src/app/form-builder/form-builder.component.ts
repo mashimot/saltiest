@@ -1,41 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, Injectable } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
-
-interface Html {
-    category?: string;
-    tag: string;
-    label?: string;
-    src?: string;
-    data?: string;
-    elements?: Array<{ text: string, value: string }>;
-}
-
-interface Table {
-    columnName?: string;
-    isPrimaryKey?: boolean;
-    type?: string;
-    nullable?: boolean;
-    size?: string;
-}
-
-interface Content {
-    html?: Html;
-    table?: Table; //optional
-}
-
-interface Column {
-    contents?: Array<Content>
-}
-
-interface Row {
-    grid?: string;
-    columns?: Array<Column>
-}
-
-interface Page {
-    name: string;
-    rows?: Array<Row>;
-}
+import { Page } from "../shared/models/page.model";
+import { Content } from "../shared/models/content.model";
 
 @Injectable({
     providedIn: 'root'
@@ -156,7 +122,7 @@ export class Bootstrap {
     constructor(private renderHtmlService: RenderHtmlService) {
     }
 
-    init() {
+    init2() {
         this.inputs = [];
         this.code   = this.pages.map((page, pageNumber) => {
             return `
@@ -183,7 +149,34 @@ export class Bootstrap {
             </section>`
         }).join('');
     }
-    
+
+    init() {
+        this.inputs = [];
+        this.code   = this.pages.map((page, pageNumber) => {
+            return `
+            <section class="page-${pageNumber + 1}">
+                ${page.rows.map(row => {
+                    let grid = row.grid.split(' ');
+                    return `
+                    <div class="row">
+                        ${row.columns.map((column, j) => {
+                            return `
+                                ${column.contents.map(content => {
+                                    if (content.html.category === 'form') {
+                                        this.inputs.push(content);
+                                    }
+                                    content.html['grid'] = grid[j];
+                                    this.renderHtmlService.setParams(content);
+                                    return this.renderHtmlService.get().code;
+                                })}
+                            `
+                        }).join('')}  
+                    </div>`
+                }).join('')}
+            </section>`
+        }).join('');
+    }
+
     html(){
         return this.code;
     }
@@ -218,16 +211,12 @@ export class Bootstrap {
                 name: item.table.columnName
             };
         }, []);
+
         script.push({
             'data': 'action',
-            'name': 'name',
-            'className' : 'td_justo',
-            'orderable' : false,
-            'searchable' : false            
+            'name': 'name'     
         });
 
-
-        console.log(script);
         return `
 <script>
     /*---------------------Datatables--------------------------------*/

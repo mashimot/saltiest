@@ -3,29 +3,6 @@ import { FormContentConfigService } from './../../services/form-content-config.s
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 
-interface Html {
-    category?: string;
-    tag: string;
-    label?: string;
-    src?: string;
-    data?: string;
-    elements?: Array<{ text: string, value: string }>;
-}
-
-interface Table {
-    columnName?: string;
-    isPrimaryKey?: boolean;
-    type?: string;
-    nullable?: boolean;
-    size?: string;
-}
-
-interface Content {
-    html?: Html;
-    table?: Table; //optional
-}
-
-
 @Component({
     selector: 'app-form-config',
     templateUrl: './form-config.component.html',

@@ -1,39 +1,5 @@
 import { Injectable } from '@angular/core';
-interface Html {
-    category: string;
-    tag: string;
-    label?: string;
-    src?: string;
-    data?: string;
-    elements?: Array<{ text: string, value: string }>;
-}
-
-interface Table {
-    columnName?: string;
-    isPrimaryKey?: boolean;
-    type: string;
-    nullable: boolean;
-    size: string;
-}
-
-interface Content {
-    html: Html;
-    table?: Table; //optional
-}
-
-interface Column {
-    contents: Array<Content>
-}
-
-interface Row {
-    grid: string;
-    columns: Array<Column>
-}
-
-interface Page {
-    name: string;
-    rows: Array<Row>;
-}
+import { Page } from "./../shared/models/page.model";
 
 @Injectable()
 export class BootstrapGridSystemService {
