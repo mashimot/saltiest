@@ -58,6 +58,8 @@ export class FormConfigComponent implements OnInit {
                     }),
                     table: this.fb.group({
                         'columnName': [data.table.columnName],
+                        'type': [data.table.type],
+                        'size': [data.table.size],
                         'nullable': [data.table.nullable, [
                             //Validators.required
                         ]]
