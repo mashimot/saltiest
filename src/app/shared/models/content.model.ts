@@ -1,7 +1,7 @@
-import {Html} from "./html.model";
-import {Table} from "./table.model";
+import { IHtml } from "./html.model";
+import { ITable } from "./table.model";
 
-export class Content {
-    html?: Html;
-    table?: Table; //optional
+export interface Content {
+    html?: IHtml;
+    table?: ITable; //optional
 }

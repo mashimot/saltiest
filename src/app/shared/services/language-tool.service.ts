@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { map, filter, catchError, mergeMap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import { Http } from '@angular/http';

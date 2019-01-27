@@ -22,20 +22,14 @@ export class CreateTableToJsonService {
     html: Html;
     table: Table;
 
-    constructor() {
-        this.html = new Html
-        this.table = new Table;
 
-        this.table.nullable = false;
-        this.table.isPrimaryKey = false;
+    constructor() {
+        this.html = new Html();
+        this.table = new Table();
         this._data = [];
         this._errors = [];
         this._dataBase = new DatabaseService().get()['ORACLE'];
         this._customLabel = this.getCustomLabelName();
-    }
-
-    getValBtwParenthesis() {
-
     }
 
     getDataTypeAndSize(str) {
@@ -208,6 +202,7 @@ export class CreateTableToJsonService {
             }
             i++;
         }
+        console.log(this._data)
     }
 
     customLabelName() {

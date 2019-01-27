@@ -8,21 +8,22 @@ import { Page } from './../shared/models/page.model';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  pages: Array<Page>;
-  config: {
-    previewMode: boolean
-  }
+	pages: Array<Page>;
+	config: {
+		previewMode: boolean
+	}
 
-  constructor(
-    private formConfigService: FormConfigService
-  ) { }
+  	constructor(
+		private formConfigService: FormConfigService
+	) {
+    this.pages = [];
+   }
 
   ngOnInit() {
     this.config = {
-      previewMode: true
+      	previewMode: true
     };
     this.formConfigService.setConfig(this.config);
-
     this.pages = [
       {
         "rows": [
@@ -60,7 +61,6 @@ export class HomeComponent implements OnInit {
                       "text": "A tool for lazy Developers.",
                       "class": "text-center"
                     },
-                    "table": {}
                   }
                 ]
               }
@@ -77,7 +77,6 @@ export class HomeComponent implements OnInit {
                       "category": "html",
                       "data": "<h1 class=\"p-3 mb-3 bg-danger text-white text-center\">A simple drag & drop Bootstrap Form Builder </h1>"
                     },
-                    "table": {}
                   }
                 ]
               }
@@ -94,7 +93,6 @@ export class HomeComponent implements OnInit {
                       "category": "html",
                       "src": "http://i.imgur.com/AVqsATi.gif"
                     },
-                    "table": {}
                   }
                 ]
               },
@@ -104,9 +102,8 @@ export class HomeComponent implements OnInit {
                     "html": {
                       "tag": "html",
                       "category": "html",
-                      "data": "<p class=\"f3\">This project was made with Angular 1.7.2.</p>\n<p>It's been in development since December 2017 and is <strong>currently being developed.</strong></p>"
+                      "data": "<p class=\"f3\">This project was made with Angular 6.1.2.</p>\n<p>It's been in development since December 2017 and is <strong>currently being developed.</strong></p>"
                     },
-                    "table": {}
                   }
                 ]
               }
@@ -125,7 +122,6 @@ export class HomeComponent implements OnInit {
                       "text": "Features",
                       "class": "text-center"
                     },
-                    "table": {}
                   }
                 ]
               },
@@ -145,7 +141,6 @@ export class HomeComponent implements OnInit {
                       "category": "html",
                       "data": "<a href=\"http://wiki.languagetool.org/public-http-api\" target=\"_blank\">API RESTful - Language Tool (LanguageTool Style and Grammar Checker)</a> http://wiki.languagetool.org/public-http-api"
                     },
-                    "table": {}
                   }
                 ]
               }

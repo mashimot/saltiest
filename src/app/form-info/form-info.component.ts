@@ -13,17 +13,17 @@ export class FormInfoComponent implements OnInit {
 	tags: Array<string>;
 
 	constructor(private databaseService: DatabaseService,
-		private htmLElementService: HtmlElementService
+		private htmlElementService: HtmlElementService
 	) { }
 
 	ngOnInit() {
 		this.database = this.databaseService.getType();
 		console.log(this.database);
 		console.log(this.databaseService.get()['ORACLE']);
-		this.tags = this.htmLElementService.getTags();
+		this.tags = this.htmlElementService.getTags();
     }
 
     public buscaDominio() {
-        alert("implementação");
+        alert("implementaï¿½ï¿½o");
     }
 }
