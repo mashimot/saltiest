@@ -9,10 +9,10 @@
                     <small class="content-handle" [ngStyle]="{ 'cursor': 'move' }">
                         <i class="fa fa-arrows-alt content-handle"></i> move
                     </small>
-                    <span (click)="sendDataToModal(content)" class="badge btn-outline-primary">
+                    <span (click)="sendDataToModal(content)" [ngStyle]="{ 'cursor': 'pointer' }" class="badge btn-outline-primary">
                         <i class="fa fa-edit"></i> edit
                     </span>
-                    <span (click)="copyHtml(content)" class="badge btn-outline-primary">
+                    <span (click)="copyHtml(content)" [ngStyle]="{ 'cursor': 'pointer' }" class="badge btn-outline-primary">
                         <i class="fa fa-edit"></i> copy html
                     </span>                    
                 </div>
