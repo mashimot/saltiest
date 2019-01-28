@@ -1,5 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, Injectable } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
+import { HomeService } from "../shared/services/home.service";
+
 import { Page } from "../shared/models/page.model";
 import { Content } from "../shared/models/content.model";
 
@@ -122,34 +124,6 @@ export class Bootstrap {
     constructor(private renderHtmlService: RenderHtmlService) {
     }
 
-    init2() {
-        this.inputs = [];
-        this.code   = this.pages.map((page, pageNumber) => {
-            return `
-            <section class="page-${pageNumber + 1}">
-                ${page.rows.map(row => {
-                    let grid = row.grid.split(' ');
-                    return `
-                    <div class="row">
-                        ${row.columns.map((column, j) => {
-                            return `
-                            <div class="col-md-${grid[j]}">
-                                ${column.contents.map(content => {
-                                    if (content.html.category === 'form') {
-                                        this.inputs.push(content);
-                                    }
-                                    content.html['grid'] = grid[j];
-                                    this.renderHtmlService.setParams(content);
-                                    return this.renderHtmlService.get().code;
-                                })}
-                            </div>`
-                        }).join('')}  
-                    </div>`
-                }).join('')}
-            </section>`
-        }).join('');
-    }
-
     init() {
         this.inputs = [];
         this.code   = this.pages.map((page, pageNumber) => {
@@ -253,11 +227,13 @@ export class FormBuilderComponent implements OnInit {
 
     constructor(
         private b: Bootstrap,
-        private validator: Validator
+        private validator: Validator,
+		private homeService: HomeService
     ) {
     }
 
     ngOnInit() {
+        this.pages = this.homeService.get();
     }
 
     get bootstrap() {

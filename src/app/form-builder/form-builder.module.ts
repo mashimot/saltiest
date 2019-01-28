@@ -23,19 +23,13 @@ import { RenderContentModule } from '../form-pages/render-content/render-content
         CommonModule,
         FormsModule,
         DragulaModule,
+        RenderContentModule,
         FormPagesModule,
         FormConfigModule,
-        FormInfoModule,
-        RenderContentModule
+        FormInfoModule
     ],
     exports: [
-        FormBuilderRoutingModule,
-        CommonModule,
-        FormsModule,
-        DragulaModule,
-        CreateTableToJsonComponent,
-        FormMenuComponent,
-        FormBuilderComponent
+        DragulaModule
     ],
     declarations: [
         CreateTableToJsonComponent,

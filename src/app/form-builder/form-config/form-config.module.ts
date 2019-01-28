@@ -12,30 +12,30 @@ import { RenderContentModule } from '../../form-pages/render-content/render-cont
 import { ConfigTitleComponent } from '../config/config-title/config-title.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    DragulaModule,
-    FormsModule,
-    RenderContentModule,
-    ReactiveFormsModule
-  ],
-  exports: [
-    FormConfigComponent,
-    ConfigChoicesComponent,
-    ConfigGeneralComponent,
-    ConfigHtmlEditorComponent,
-    ConfigImgComponent,
-    ConfigTableBuilderComponent,
-    ConfigTitleComponent
-  ],
-  declarations: [
-    FormConfigComponent,
-    ConfigChoicesComponent,
-    ConfigGeneralComponent,
-    ConfigHtmlEditorComponent,
-    ConfigImgComponent,
-    ConfigTableBuilderComponent,
-    ConfigTitleComponent
-  ]
+	imports: [
+		CommonModule,
+		DragulaModule,
+		FormsModule,
+		RenderContentModule,
+		ReactiveFormsModule
+	],
+	exports: [
+		FormConfigComponent,
+		ConfigChoicesComponent,
+		ConfigGeneralComponent,
+		ConfigHtmlEditorComponent,
+		ConfigImgComponent,
+		ConfigTableBuilderComponent,
+		ConfigTitleComponent
+	],
+	declarations: [
+		FormConfigComponent,
+		ConfigChoicesComponent,
+		ConfigGeneralComponent,
+		ConfigHtmlEditorComponent,
+		ConfigImgComponent,
+		ConfigTableBuilderComponent,
+		ConfigTitleComponent
+	]
 })
 export class FormConfigModule { }
