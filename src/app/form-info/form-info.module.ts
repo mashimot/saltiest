@@ -5,16 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { SpellCheckerComponent } from '../spell-checker/spell-checker.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule
-  ],
-  exports: [
-    FormInfoComponent
-  ],
-  declarations: [
-    FormInfoComponent,
-    SpellCheckerComponent
-  ]
+	imports: [
+		CommonModule,
+		FormsModule
+	],
+	exports: [
+		FormInfoComponent
+	],
+	declarations: [
+		FormInfoComponent,
+		SpellCheckerComponent
+	]
 })
 export class FormInfoModule { }

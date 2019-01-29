@@ -7,7 +7,7 @@ import { RenderHtmlService } from '../services/render-html.service';
 @Component({
     selector: 'app-form-pages',
     templateUrl: './form-pages.component.html',
-    styleUrls: ['./form-pages.component.css']
+    styleUrls: ['./form-pages.component.css']   
 })
 export class FormPagesComponent implements OnChanges {
     @Input() pages;
@@ -42,12 +42,8 @@ export class FormPagesComponent implements OnChanges {
         });
         dragulaService.createGroup('columns', {
             accepts: function(el, target, source, sibling) {
-
                     let currRowIndex    = el.getAttribute('data-current-row-index');                
-                    //let sRowIndex       = el.getAttribute('data-current-row-index');
-    
                     let currPageIndex    = el.getAttribute('data-current-page-index');
-                    //let sPageIndex       = target.getAttribute('data-current-page-index');
                     let currentClass = 'page-' + currPageIndex + '_row-' + currRowIndex;
                     return target.classList.contains(currentClass);
             },            
@@ -146,15 +142,13 @@ export class FormPagesComponent implements OnChanges {
                 }
             })
         );
-
-        this.subs.add(dragulaService.dropModel("contents")
-            .subscribe(({ sourceModel, targetModel, item }) => {
+        this.subs.add(this.dragulaService.dropModel("contents")
+            .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 if (item.table && item.html) {
                     if (
-                        typeof item.table.columnName === 'undefined' &&
-                        (typeof item.html.category !== 'undefined' && item.html.category === 'form')
+                        typeof item.table.columnName === 'undefined' && item.html.category === 'form'
                     ) {
-                        item.table.columnName = 'name_' + new Date().getUTCMilliseconds();
+                        item.table.columnName = 'name__' + new Date().getUTCMilliseconds();
                     }
                 }
             })
@@ -170,7 +164,6 @@ export class FormPagesComponent implements OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        console.log(changes);
     }
 
     ngOnDestroy() {

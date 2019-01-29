@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CreateTableToJsonService } from '../services/create-table-to-json.service';
 import { BootstrapGridSystemService } from '../services/bootstrap-grid-system.service'
-import { DatabaseService } from '../shared/services/database.service';
+import { DatabaseEngine } from '../shared/services/database-engine.service';
 
 @Component({
 	selector: 'app-create-table-to-json',
@@ -20,22 +20,23 @@ export class CreateTableToJsonComponent implements OnInit {
 	string: string;
 
 
-	constructor(private db: DatabaseService) {
+	constructor() {
 		this.gridModel = '4 4 4';
 		this.errors = [];
 		this.database = [];
 	}
 
 	ngOnInit() {
-		this.database = this.db.getDBName();
-		this.string = `
-supplier_id number(10) NOT NULL  ,
-supplier_name varchar2(50) NOT NULL,
-address varchar2(50),
-city varchar2(50),
-state varchar2(25),
-dat_now date,
-zip_code varchar2(10)`.trim();
+		this.database = DatabaseEngine.getDatabaseEngines();
+		this.string = [
+			'supplier_id number(10) NOT NULL',
+			'supplier_name varchar2(50) NOT NULL',
+			'address varchar2(50)',
+			'city varchar2(50)',
+			'state varchar2(25)',
+			'dat_now date',
+			'zip_code varchar2(10)'
+		].join(",\n");
 	}
 
 	public onSubmit() {

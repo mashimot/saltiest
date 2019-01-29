@@ -7,6 +7,7 @@
     <app-form-menu (isNewFile)="isNewFile($event)" (isNewPage)="isNewPage($event)" class="col-md-3"></app-form-menu>
     <app-form-pages [(pages)]="pages" class="col-md-9"></app-form-pages>
 </div>
+<app-form-info [(pages)]="pages"></app-form-info>
 <textarea class="form-control" rows="40">
 @extends('Admin.layouts.app_index')
 

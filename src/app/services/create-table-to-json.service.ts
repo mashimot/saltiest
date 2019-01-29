@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DatabaseService } from './../shared/services/database.service';
+import { DatabaseEngine } from '../shared/services/database-engine.service';
 import { Content } from "./../shared/models/content.model";
 import { Html } from "./../shared/models/html.model";
 import { Table } from "./../shared/models/table.model";
@@ -18,7 +18,9 @@ export class CreateTableToJsonService {
     _dataBase: {
         [key: string]: string
     };
-    _customLabel: {};
+    _customLabel: {
+        [key: string]: string
+    };
     html: Html;
     table: Table;
 
@@ -28,7 +30,7 @@ export class CreateTableToJsonService {
         this.table = new Table();
         this._data = [];
         this._errors = [];
-        this._dataBase = new DatabaseService().get()['ORACLE'];
+        this._dataBase = DatabaseEngine.get('ORACLE');
         this._customLabel = this.getCustomLabelName();
     }
 
@@ -69,6 +71,7 @@ export class CreateTableToJsonService {
         }
 
         let database = this._dataBase[dataType.toUpperCase()];
+        console.log(database);
         if (typeof database !== 'undefined' && dataType !== '') {
             inputType = database;
         } else {
