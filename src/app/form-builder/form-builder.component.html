@@ -1,13 +1,27 @@
 <div class="row">
-    <app-create-table-to-json (pageChange)="getPages($event)"
-                              class="col-md-12"></app-create-table-to-json>
+    <app-create-table-to-json (pageChange)="getPages($event)" class="col-md-12"></app-create-table-to-json>
+</div>
+<ul class="nav nav-tabs nav-pills">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#home" (click)="tabNumber = 1;">Salt</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#menu1" (click)="tabNumber = 2;">Salty Suite</a>
+    </li>
+</ul>
+<div class="tab-content">
+    <div *ngIf="tabNumber == 1">
+        <div class="row">
+            <app-form-menu (isNewFile)="isNewFile($event)" (isNewPage)="isNewPage($event)" class="col-md-3"></app-form-menu>
+            <app-form-pages [(pages)]="pages" class="col-md-9"></app-form-pages>
+        </div>
+    </div>
+    <div *ngIf="tabNumber == 2">
+        <app-form-info [pages]="pages" class="col-md-12"></app-form-info>
+    </div>
 </div>
 <app-form-config></app-form-config>
-<div class="row">
-    <app-form-menu (isNewFile)="isNewFile($event)" (isNewPage)="isNewPage($event)" class="col-md-3"></app-form-menu>
-    <app-form-pages [(pages)]="pages" class="col-md-9"></app-form-pages>
-</div>
-<app-form-info [(pages)]="pages"></app-form-info>
+
 <textarea class="form-control" rows="40">
 @extends('Admin.layouts.app_index')
 

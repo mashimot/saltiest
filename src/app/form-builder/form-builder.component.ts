@@ -126,7 +126,7 @@ export class Bootstrap {
 
     init() {
         this.inputs = [];
-        this.code   = this.pages.map((page, pageNumber) => {
+        /*this.code   = this.pages.map((page, pageNumber) => {
             return `
             <section class="page-${pageNumber + 1}">
                 ${page.rows.map(row => {
@@ -148,7 +148,30 @@ export class Bootstrap {
                     </div>`
                 }).join('')}
             </section>`
-        }).join('');
+        }).join('');*/
+        var htmlPages = [];
+        this.pages.forEach((page, pageNumber) => {
+            htmlPages.push(`<section class="page-${pageNumber + 1}">`);
+               page.rows.forEach(row => {
+                    let grid = row.grid.split(' ');
+                    htmlPages.push(`<div class="row">`);
+                        row.columns.map((column, j) => {
+                            htmlPages.push(`<div class="col-md-${grid[j]}">`);
+                            column.contents.map(content => {
+                                if (content.html.category === 'form') {
+                                    this.inputs.push(content);
+                                }
+                                content.html['grid'] = grid[j];
+                                this.renderHtmlService.setParams(content);
+                                htmlPages.push(this.renderHtmlService.get().html);
+                            });
+                            htmlPages.push(`</div>`);
+                        });
+                    htmlPages.push(`</div>`);
+                });
+            htmlPages.push(`</section>`);
+        });
+        this.code = htmlPages.join("");
     }
 
     html(){
@@ -224,6 +247,8 @@ export class Bootstrap {
 export class FormBuilderComponent implements OnInit {
     pages: Array<Page>;
     inputs: Array<Content>;
+    tabNumber: number;
+    tabMVC: number; 
 
     constructor(
         private b: Bootstrap,
@@ -233,6 +258,8 @@ export class FormBuilderComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.tabNumber = 1;
+        this.tabMVC = 1;
         this.pages = this.homeService.get();
     }
 

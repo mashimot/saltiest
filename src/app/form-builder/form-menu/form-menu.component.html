@@ -7,7 +7,10 @@
                 <i [ngClass]="{ 'fa-eye': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-3x"></i>
             Preview {{ previewMode? 'Mode' : '' }}
         </button>
-        <button class="btn btn-primary btn-block btn-sm" (click)="newFile()">New File</button>
+        <button class="btn btn-primary btn-block btn-sm" (click)="newFile()">
+            <i class="fa fa-tasks" aria-hidden="true"></i>
+          New Task
+        </button>
         <div [dragula]="'pages'" [(dragulaModel)]="pageModel" class="menu-page-sortable">
           <span (click)="newPage()" class="badge badge-primary col-md-12 page-handle">
             <i class="fa fa-file"></i> New Page

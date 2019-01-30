@@ -2,7 +2,6 @@
     <div *ngFor="let page of pages; let pageIndex = index;" class="px-2 py-2">
         <span>Page {{ pageIndex + 1 }}</span>
         <hr />
-        {{ pageIndex + rowIndex + columnIndex + contentIndex }}
         <div *ngFor="let row of page.rows; let rowIndex = index;">
             <section *ngFor="let column of row.columns; let columnIndex = index;">
                 <div *ngFor="let d of column.contents; let contentIndex = index;">
