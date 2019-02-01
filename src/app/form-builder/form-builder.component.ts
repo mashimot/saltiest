@@ -4,6 +4,9 @@ import { HomeService } from "../shared/services/home.service";
 
 import { Page } from "../shared/models/page.model";
 import { Content } from "../shared/models/content.model";
+import { Html, IHtml } from "../shared/models/html.model";
+import { Table, ITable } from "../shared/models/table.model";
+
 
 @Injectable({
     providedIn: 'root'
@@ -14,42 +17,17 @@ export class Validator {
     rules: string;
     attributes: string;
     messages: string;
-
-    name?: string;
-    nullable?: boolean;
-    labelName: string;
-    inputType: string;
-    fields?: any[];
-    htmlData?: string;
-    imgSrc?: string;
-    headingType?: string;
-    text?: string;
-    elements?: any[];
-    size?: number;
-    dataType?: string;
+    
+    html: IHtml;
+    table: ITable;
 
     constructor() { 
         this.inputs = [];
     }
 
     setParams(d) {
-        if (d) {
-            if (d.table) {
-                this.name = typeof d.table.columnName === 'undefined' ? '' : d.table.columnName;
-                this.nullable = typeof d.table.nullable === 'undefined' ? '' : d.table.nullable;
-                this.size = typeof d.table.size === 'undefined' ? '' : d.table.size;
-                this.dataType = typeof d.table.type === 'undefined' ? '' : d.table.type;
-            }
-            if (d.html) {
-                this.labelName = typeof d.html.label === 'undefined' ? '' : d.html.label;
-                this.htmlData = typeof d.html.data === 'undefined' ? '' : d.html.data;
-                this.imgSrc = typeof d.html.src === 'undefined' ? '' : d.html.src;
-                this.inputType = typeof d.html.tag === 'undefined' ? '' : d.html.tag;
-                this.text = typeof d.html.text === 'undefined' ? '' : d.html.text;
-                this.fields = typeof d.html.fields === 'undefined' ? [] : d.html.fields;
-                this.elements = typeof d.html.elements === 'undefined' ? [] : d.html.elements;
-            }
-        }
+        this.html = new Html(d.html);
+        this.table = new Table(d.table);
     }
 
     setInputs(inputs) {
@@ -57,29 +35,38 @@ export class Validator {
     }
 
     getValidator() {
-        this.rules = `\t'${this.name}' => '${this.isRequired()}${this.getDataType()}${this.getMaxlength()}',\n`;
-        this.attributes = `\t'${this.name}' => '${this.labelName}',\n`;
+        var rules = [];
+        rules.push(
+            this.isRequired(),
+            this.getDataType(),
+            this.getMaxlength()
+        );
+        var rules = rules.filter(function (el) {
+            return el != "" && el != null;
+        });
+        this.rules = `\t'${this.table.columnName}' => ${JSON.stringify(rules)},\n`;
+        this.attributes = `\t'${this.table.columnName}' => '${this.html.label}',\n`;        
     }
 
     getDataType(): string {
-        switch (this.dataType) {
+        switch (this.table.type) {
             case 'number':
-                return '|numeric';
+                return 'numeric';
             case 'date':
-                return '|date_format:"d/m/Y"';
+                return 'date_format:"d/m/Y"';
             default:
-                return '';
+                return null;
         }
     }
 
     getMaxlength(): string {
-        if (this.size > 0) {             
-            if (this.dataType === 'number') {
-                return '|digits_between:1,' + this.size;
+        if (this.table.size > 0) {             
+            if (this.table.type === 'number') {
+                return 'digits_between:1,' + this.table.size;
             }
-            return '|max:' + this.size;
+            return 'max:' + this.table.size;
         }
-        return '';
+        return null;
     }
 
     laravel() {
@@ -104,7 +91,7 @@ export class Validator {
     }
 
     isRequired(): string {
-        return this.nullable ? 'required' : 'nullable';
+        return this.table.nullable ? 'required' : 'nullable';
     }
 
     getMessages(): string {
@@ -124,7 +111,7 @@ export class Bootstrap {
     constructor(private renderHtmlService: RenderHtmlService) {
     }
 
-    init() {
+    init(): void {
         this.inputs = [];
         /*this.code   = this.pages.map((page, pageNumber) => {
             return `
@@ -150,35 +137,52 @@ export class Bootstrap {
             </section>`
         }).join('');*/
         var htmlPages = [];
+        var t = "\n\t";
+
         this.pages.forEach((page, pageNumber) => {
-            htmlPages.push(`<section class="page-${pageNumber + 1}">`);
-               page.rows.forEach(row => {
+            htmlPages.push(`\n<section class="page-${pageNumber + 1}">`);
+                var tabNum = 1;
+                t = this.tabSpace(tabNum);
+                page.rows.forEach(row => {
                     let grid = row.grid.split(' ');
-                    htmlPages.push(`<div class="row">`);
-                        row.columns.map((column, j) => {
-                            htmlPages.push(`<div class="col-md-${grid[j]}">`);
-                            column.contents.map(content => {
+                    htmlPages.push(`${t}<div class="row">`);
+                    tabNum++;
+                    t = this.tabSpace(tabNum);
+                        row.columns.forEach((column, j) => {
+                            //htmlPages.push(`${t}<div class="col-md-${grid[j]}">`);
+                            column.contents.forEach(content => {
                                 if (content.html.category === 'form') {
                                     this.inputs.push(content);
                                 }
                                 content.html['grid'] = grid[j];
                                 this.renderHtmlService.setParams(content);
-                                htmlPages.push(this.renderHtmlService.get().html);
+                                htmlPages.push(t + this.renderHtmlService.get().code);
                             });
-                            htmlPages.push(`</div>`);
+                            //htmlPages.push(`${t}</div>`);
                         });
-                    htmlPages.push(`</div>`);
+                    tabNum--;
+                    t = this.tabSpace(tabNum);
+                    htmlPages.push(`${t}</div>`);
                 });
             htmlPages.push(`</section>`);
         });
-        this.code = htmlPages.join("");
+        this.code = htmlPages.join("\n");
     }
 
-    html(){
+    private tabSpace(tabNum : number) : string{
+        var tab = "\t";
+        var newTab = "";
+        for(var i = 0; i < tabNum; i++){
+            newTab += tab;
+        }
+        return newTab;
+    }
+
+    html(): string{
         return this.code;
     }
 
-    table(){
+    table(): string{
         let th = this.inputs.map((item) => { 
             return `\n<th>${item.html.label}</th>`;
         }, '').join('');

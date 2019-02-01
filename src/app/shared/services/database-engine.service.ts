@@ -21,11 +21,11 @@ export class DatabaseEngine {
 			VARCHAR2: 'textarea',
 			VARCHAR: 'textarea',
 			NVARCHAR2: 'textarea',
-			INTEGER: 'text',
+			INTEGER: 'number',
 			/*CLOB : true,
 			NCLOB : true,*/
-			LONG: 'text',
-			NUMBER: 'textarea',
+			LONG: 'number',
+			NUMBER: 'number',
 			DATE: 'date',
 			INTERVAL: 'text',
 			TIMESTAMP: 'date'
