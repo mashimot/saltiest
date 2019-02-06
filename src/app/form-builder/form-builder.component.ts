@@ -60,9 +60,22 @@ export class Validator {
     }
 
     getMaxlength(): string {
-        if (this.table.size > 0) {             
-            if (this.table.type === 'number') {
-                return 'digits_between:1,' + this.table.size;
+        if (parseInt(this.table.size) > 0) {             
+            if (this.table.type == 'number') {
+                if(this.table.size.indexOf('.') !== -1){
+                    var sizeArr = this.table.size.split('.');
+                    var b = '.';
+                    var position = parseInt(sizeArr[0]) - parseInt(sizeArr[1]);
+                    var endBetween = '';
+                    for(var i = 0; i < parseInt(this.table.size); i++){
+                        endBetween += '9';
+                    }
+                    var output = [endBetween.slice(0, position), b, endBetween.slice(position)].join('');
+
+        
+                    return `between:0,${output}`;
+                }  
+                return `digits_between:1,${this.table.size}`;
             }
             return 'max:' + this.table.size;
         }

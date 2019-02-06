@@ -35,7 +35,8 @@ export class CreateTableToJsonComponent implements OnInit {
 			'city varchar2(50)',
 			'state varchar2(25)',
 			'dat_now date',
-			'zip_code varchar2(10)'
+			'zip_code varchar2(10)',
+			'price NUMBER(12,2)'
 		].join(",\n");
 	}
 

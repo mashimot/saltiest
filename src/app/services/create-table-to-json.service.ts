@@ -81,7 +81,7 @@ export class CreateTableToJsonService {
         }
         this.table.type = dataType;
         this.html.tag = inputType;
-        this.table.size = parseInt(size);
+        this.table.size = size;
     }
     validateSyntax(stringArr) {
         let value = '';
@@ -158,10 +158,11 @@ export class CreateTableToJsonService {
         this._index = 2;
     }
     convert() {
-        let newStringArr = this._string.trim().replace(/,/g, "\n");
-        let split = newStringArr.split("\n").reduce((previous, currentValue) => {
+        let newString = this._string.trim().replace(/\((.+)\)/g, function(string, first){
+            return "(" +  first.replace(/,/g, '.') + ")";
+        }).replace(/,/g, "\n");
+        let split = newString.split("\n").reduce((previous, currentValue) => {
             if (previous && currentValue !== '') {
-                console.log(currentValue);  
                 previous.push(currentValue);
             }
             return previous;
@@ -228,7 +229,7 @@ export class CreateTableToJsonService {
 
         if (this.html.tag === 'text' || this.html.tag === 'textarea') {
             //this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
-            this.html.tag = (this.table.size <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
+            this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
         }
     }
     getData() {

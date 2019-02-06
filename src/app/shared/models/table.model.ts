@@ -3,14 +3,14 @@ export interface ITable {
     isPrimaryKey?: boolean;
     type?: string;
     nullable?: boolean;
-    size?: number; 
+    size?: string; 
 }
 export class Table {
     columnName: string = '';
     isPrimaryKey: boolean = false;
     type: string = '';
     nullable: boolean = false;
-    size?: number; 
+    size?: string = ''; 
 
     constructor(table: ITable = {}){
         for (let key in table)
