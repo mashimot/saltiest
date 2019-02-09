@@ -57,17 +57,14 @@ export class CreateTableToJsonService {
         }
 
         if (hasValBtwParen !== null) {
-              let n = hasValBtwParen[1];
-              /*if (!this.isFloat(n)) {
-                  this._errors.push({
-                      message: `\`${this.table.columnName}\`: ${n} is not a number!`
-                  });
-              } else if (!this.isInt(n)) {
-                  this._errors.push({
-                      message: `\`${this.table.columnName}\`: ${n} is not a number!`
-                  });
-              }*/
-              size = n;
+            let n = hasValBtwParen[1];
+            let re = /^([0-9]+(\.[0-9]+)?)$/;
+            if (!re.test(n)) {
+                this._errors.push({
+                    message: `\`${this.table.columnName}\`: ${n} is not a number!`
+                });
+            } 
+            size = n;
         }
 
         let database = this._dataBase[dataType.toUpperCase()];
@@ -206,7 +203,7 @@ export class CreateTableToJsonService {
             }
             i++;
         }
-        console.log(this._data)
+        //console.log(this._data)
     }
 
     customLabelName() {
@@ -278,27 +275,5 @@ export class CreateTableToJsonService {
         if (this._errors.length > 0)
             return true;
         return false;
-    }
-
-    isInt(val): boolean {
-        let intRegex = /^-?\d+$/;
-        if (!intRegex.test(val))
-            return false;
-
-        let intVal = parseInt(val, 10);
-        return parseFloat(val) == intVal && !isNaN(intVal);
-    }
-
-    isFloat(val): boolean {
-        if (val.indexOf('.') !== -1 || val.indexOf(',') !== -1) {
-            let floatRegex = /^-?\d+(?:[.,]\d*?)?$/;
-            if (!floatRegex.test(val))
-              return false;
-
-            val = parseFloat(val);
-            if (isNaN(val))
-              return false;
-        }
-        return true;
     }
 }
