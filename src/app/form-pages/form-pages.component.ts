@@ -10,25 +10,29 @@ import { BootstrapForm } from '../services/render-html.service';
     templateUrl: './form-pages.component.html',
     styleUrls: ['./form-pages.component.css']   
 })
-export class FormPagesComponent implements OnChanges {
+export class FormPagesComponent implements OnInit {
     @Input() pages;
     @Output() pagesChange = new EventEmitter();
     config: {
         previewMode: boolean
     };
     subs = new Subscription();
+    private dropModelPageUpdated = false;
 
     constructor(
         private formConfigService: FormConfigService,
         private dragulaService: DragulaService
     ) {
-
         dragulaService.createGroup('pages', {
+            revertOnSpill: true,
+            removeOnSpill: false,
             copy: (el, source) => {
                 return source.className === 'menu-page-sortable';
             },
             copyItem: (el) => {
-                return JSON.parse(JSON.stringify(el));
+                return el;
+                //console.log(el);
+                //return JSON.parse(JSON.stringify(el));
             },
             accepts: (el, target, source, sibling) => {
                 // To avoid dragging from right to left container
@@ -57,7 +61,7 @@ export class FormPagesComponent implements OnChanges {
             }
         });
 
-        this.subs.add(this.dragulaService.dropModel("columns")
+        this.subs.add(dragulaService.dropModel("columns")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 let currRowIndex    = el.getAttribute('data-current-row-index');
                 let pageIndex       = el.getAttribute('data-current-page-index');
@@ -129,7 +133,7 @@ export class FormPagesComponent implements OnChanges {
             }
         });
 
-        this.subs.add(this.dragulaService.cloned("contents")
+        this.subs.add(dragulaService.cloned("contents")
             .subscribe(({ name, clone, original, cloneType }) => {
                 if (original.classList.contains('menu-content-sortable')) {
                     let currentDataAttr = JSON.parse(clone.getAttribute('data-content'));
@@ -143,7 +147,7 @@ export class FormPagesComponent implements OnChanges {
                 }
             })
         );
-        this.subs.add(this.dragulaService.dropModel("contents")
+        this.subs.add(dragulaService.dropModel("contents")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 if (item.table && item.html) {
                     if (
@@ -162,10 +166,20 @@ export class FormPagesComponent implements OnChanges {
         this.formConfigService.getConfig().subscribe(
             (data) => { this.config = data; }
         );
-        this.pagesChange.emit(this.pages);
     }
 
-    ngOnChanges(changes: SimpleChanges) {
+    ngAfterViewInit() {
+        this.subs.add(this.dragulaService.drop("pages")
+            .subscribe((value) => {
+                this.dropModelPageUpdated = true;
+            })
+        );
+    }
+
+    ngDoCheck() {    
+        if (this.dropModelPageUpdated) { // this excutes if this.dropModelUpdated is true only
+            this.pagesChange.emit(this.pages);
+        }
     }
 
     ngOnDestroy() {

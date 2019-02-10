@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, Injectable } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
 import { HomeService } from "../shared/services/home.service";
+import { DragulaService } from 'ng2-dragula';
 
 import { Page } from "../shared/models/page.model";
 import { Content } from "../shared/models/content.model";
@@ -121,7 +122,9 @@ export class Bootstrap {
     inputs: Array<Content>;
     code: string = '';
 
-    constructor(private renderHtmlService: RenderHtmlService) {
+    constructor(
+        private renderHtmlService: RenderHtmlService
+    ) {
     }
 
     init(): void {

@@ -1,4 +1,4 @@
-<div [dragula]='"contents"'
+<div dragula="contents"
      [(dragulaModel)]="column.contents"
      [ngStyle]="{ 'min-height': '20px' }">
     <div *ngFor="let content of column.contents; let contentIndex = index"

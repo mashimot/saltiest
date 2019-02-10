@@ -11,7 +11,7 @@ import { RenderContentModule } from './render-content/render-content.module';
 @NgModule({
 	imports: [
 		CommonModule,
-		DragulaModule,
+		DragulaModule.forRoot(),
 		RenderContentModule
 	],
 	exports: [
