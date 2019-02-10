@@ -2,7 +2,8 @@ import { Component, OnInit, OnChanges, Input, Output, EventEmitter,  SimpleChang
 import { FormConfigService } from './../services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
-import { RenderHtmlService } from '../services/render-html.service';
+//import { RenderHtmlService } from '../services/render-html.service';
+import { BootstrapForm } from '../services/render-html.service';
 
 @Component({
     selector: 'app-form-pages',
@@ -131,13 +132,13 @@ export class FormPagesComponent implements OnChanges {
         this.subs.add(this.dragulaService.cloned("contents")
             .subscribe(({ name, clone, original, cloneType }) => {
                 if (original.classList.contains('menu-content-sortable')) {
-                    let r = new RenderHtmlService();
                     let currentDataAttr = JSON.parse(clone.getAttribute('data-content'));
-                    r.setParams(currentDataAttr);
+                    let r = new BootstrapForm(currentDataAttr);
+                    //r.setParams(currentDataAttr);
                     clone.classList.remove('badge', 'bg-dark', 'col-md-6', 'bg-primary', 'text-white');
                     clone.innerHTML = '';
                     clone.insertAdjacentHTML('afterbegin',
-                        '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get().html + '</div>'
+                        '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get() + '</div>'
                     );
                 }
             })
@@ -149,6 +150,7 @@ export class FormPagesComponent implements OnChanges {
                         typeof item.table.columnName === 'undefined' && item.html.category === 'form'
                     ) {
                         item.table.columnName = 'name__' + new Date().getUTCMilliseconds();
+                        item.table.size = '';
                     }
                 }
             })

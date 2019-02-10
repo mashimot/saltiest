@@ -44,7 +44,7 @@ export class CreateTableToJsonService {
             dataType = secondMatch.replace(hasValBtwParen[0], '');
         } else {
             //(2) probably the next element -thirdMatch- must have(or not) the size of the columnName (it must be an integer or float)
-            if (str.length > 3) { //has more than 2 elements
+            if (str.length > 2) { //has more than 2 elements
                 let thirdMatch = str[2];
                 if (thirdMatch.charAt(0) === '(') {
                     hasValBtwParen = thirdMatch.match(RegexValBtwParen); //get value between parentheses
