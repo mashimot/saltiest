@@ -85,6 +85,7 @@
                             <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableSize.invalid }"
                             [(ngModel)]="d.table.size"
                             [ngModelOptions]="{ standalone: true }"
+                            pattern="^[0-9]+(.[0-9])?$"
                             name="table-size-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
                             #tableSize="ngModel"                            
                             >

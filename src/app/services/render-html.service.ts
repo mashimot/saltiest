@@ -110,7 +110,7 @@ export class CustomForm{
             "text": 
             [`{!! $HTML::inputTexto(${this.html.grid}, '${this.table.columnName}', ${parseInt(this.table.size) > 0? `${this.table.size}` : `''`}, '${this.html.label}', ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.columnName}') !!}`],
             "number": 
-            [`{!! $HTML::inputNumero(${this.html.grid}, '${this.table.size.indexOf('.') != -1? `decimal`: `inteiro` }', '${this.table.columnName}', ${parseInt(this.table.size) > 0? `${this.table.size}` : `''`}, '${this.html.label}', ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.columnName}') !!}`],
+            [`{!! $HTML::inputNumero(${this.html.grid}, '${this.table.size? (this.table.size.indexOf('.') != -1? `decimal`: `inteiro`) : '' }', '${this.table.columnName}', ${parseInt(this.table.size) > 0? `${this.table.size}` : `''`}, '${this.html.label}', ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.columnName}') !!}`],
             "date": 
             [`{!! $HTML::inputData(${this.html.grid}, '${this.table.columnName}', '${this.html.label}', ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.columnName}') !!}`]
         }
