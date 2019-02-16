@@ -27,7 +27,7 @@ export class CreateTableToJsonService {
         [key:string]: RegExp
     } = {
         onlyNumbers: /^([0-9]+(\.[0-9]+)?)$/,
-        valueBtwParentheses: /\(([^)]+)\)/,
+        valueBtwParentheses: /\((.*)\)/,
         stringRestriction: /^[A-Za-z][A-Za-z0-9_\-\,\.()\n ]*$/
     };
 
