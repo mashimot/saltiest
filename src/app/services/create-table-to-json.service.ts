@@ -26,8 +26,9 @@ export class CreateTableToJsonService {
     regex: {
         [key:string]: RegExp
     } = {
-        onlyNumbers: /^([0-9]+(\.[0-9]+)?)$/,
+        onlyNumeric: /^([0-9]+(\.[0-9]+)?)$/,
         valueBtwParentheses: /\((.*)\)/,
+        valueBtwParenthesesGlobal: /\((.+)\)/g,
         stringRestriction: /^[A-Za-z][A-Za-z0-9_\-\,\.()\n ]*$/
     };
 
@@ -42,34 +43,35 @@ export class CreateTableToJsonService {
  
     getDataTypeAndSize(str: Array<string>) {
         let secondMatch = str[1];
-        let dataType, inputType, size = '';
-        let hasValBtwParen = secondMatch.match(this.regex.valueBtwParentheses);
-
-        if (hasValBtwParen !== null) {
-            dataType = secondMatch.replace(hasValBtwParen[0], '');
+        let inputType, size = '';
+        let dataType = secondMatch;
+        let matchValBtwParen = secondMatch.match(this.regex.valueBtwParentheses);
+        let hasValueBtwParen = false;
+        
+        if (matchValBtwParen !== null) {
+            hasValueBtwParen = true;
+            dataType = secondMatch.replace(matchValBtwParen[0], '');
         } else {
             //(2) probably the next element -thirdMatch- must have(or not) the size of the columnName (it must be an integer or float)
             if (str.length > 2) { //has more than 2 elements
                 let thirdMatch = str[2];
-                if (thirdMatch.charAt(0) === '(') {
-                    hasValBtwParen = thirdMatch.match(this.regex.valueBtwParentheses); //get value between parentheses
-                    if (hasValBtwParen !== null) // it goes to the next index if parentheses doesn't exists
-                        this._index = 3;
-                }
+                matchValBtwParen = thirdMatch.match(this.regex.valueBtwParentheses); //get value between parentheses
+                if (matchValBtwParen !== null){ // it goes to the next index if parentheses doesn't exists
+                    hasValueBtwParen = true;
+                    this._index = 3;
+                } 
             }
-            //if doesn't contains, the second element of array will be the type
-            dataType = secondMatch;
         }
 
-        if (hasValBtwParen !== null) {
-            let n = hasValBtwParen[1];
-            let regex = new RegExp(this.regex.onlyNumbers);
-            if (!regex.test(n)) {
+        if (hasValueBtwParen) {
+            let numeric = matchValBtwParen[1];
+            let regex = new RegExp(this.regex.onlyNumeric);
+            if (!regex.test(numeric)) {
                 this._errors.push({
-                    message: `\`${this.table.columnName}\`: ${n} is not a number!`
+                    message: `\`${this.table.columnName}\`: ${numeric} is not a number!`
                 });
             } 
-            size = n;
+            size = numeric;
         }
 
         let database = this._dataBase[dataType.toUpperCase()];
@@ -166,7 +168,7 @@ export class CreateTableToJsonService {
                 message: 'Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )'
             });
         }
-        let newString = this._string.trim().replace(/\((.+)\)/g, function(string, first){
+        let newString = this._string.trim().replace(this.regex.valueBtwParenthesesGlobal, function(string, first){
             return "(" +  first.replace(/,/g, '.') + ")";
         }).replace(/,/g, "\n");
         let split = newString.split("\n").reduce((previous, currentValue) => {
