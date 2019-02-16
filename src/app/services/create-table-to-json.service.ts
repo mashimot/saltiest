@@ -23,7 +23,13 @@ export class CreateTableToJsonService {
     };
     html: Html;
     table: Table;
-
+    regex: {
+        [key:string]: RegExp
+    } = {
+        onlyNumbers: /^([0-9]+(\.[0-9]+)?)$/,
+        valueBtwParentheses: /\(([^)]+)\)/,
+        stringRestriction: /^[A-Za-z][A-Za-z0-9_\-\,\.()\n ]*$/
+    };
 
     constructor() {
         this.html = new Html();
@@ -33,12 +39,11 @@ export class CreateTableToJsonService {
         this._dataBase = DatabaseEngine.get('ORACLE');
         this._customLabel = this.getCustomLabelName();
     }
-
-    getDataTypeAndSize(str) {
-        let RegexValBtwParen = '\\((.*)\\)';
+ 
+    getDataTypeAndSize(str: Array<string>) {
         let secondMatch = str[1];
         let dataType, inputType, size = '';
-        let hasValBtwParen = secondMatch.match(RegexValBtwParen);
+        let hasValBtwParen = secondMatch.match(this.regex.valueBtwParentheses);
 
         if (hasValBtwParen !== null) {
             dataType = secondMatch.replace(hasValBtwParen[0], '');
@@ -47,7 +52,7 @@ export class CreateTableToJsonService {
             if (str.length > 2) { //has more than 2 elements
                 let thirdMatch = str[2];
                 if (thirdMatch.charAt(0) === '(') {
-                    hasValBtwParen = thirdMatch.match(RegexValBtwParen); //get value between parentheses
+                    hasValBtwParen = thirdMatch.match(this.regex.valueBtwParentheses); //get value between parentheses
                     if (hasValBtwParen !== null) // it goes to the next index if parentheses doesn't exists
                         this._index = 3;
                 }
@@ -58,8 +63,8 @@ export class CreateTableToJsonService {
 
         if (hasValBtwParen !== null) {
             let n = hasValBtwParen[1];
-            let re = /^([0-9]+(\.[0-9]+)?)$/;
-            if (!re.test(n)) {
+            let regex = new RegExp(this.regex.onlyNumbers);
+            if (!regex.test(n)) {
                 this._errors.push({
                     message: `\`${this.table.columnName}\`: ${n} is not a number!`
                 });
@@ -73,14 +78,14 @@ export class CreateTableToJsonService {
             inputType = database;
         } else {
             this._errors.push({
-                message: `\`${dataType}\` does not exists! ${this.table.columnName}`
+                message: `You have an error in your SQL syntax; check the manual for the right syntax to use near '${this.table.columnName}'`
             });
         }
         this.table.type = dataType;
         this.html.tag = inputType;
         this.table.size = size;
     }
-    validateSyntax(stringArr) {
+    validateSyntax(stringArr: Array<string>): void {
         let value = '';
         let allowed = {
             'not': {
@@ -154,7 +159,13 @@ export class CreateTableToJsonService {
         this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
         this._index = 2;
     }
-    convert() {
+    convert(): void {
+        let regex = new RegExp(this.regex.stringRestriction);
+        if(!regex.test(this._string)){
+            this._errors.push({
+                message: 'Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )'
+            });
+        }
         let newString = this._string.trim().replace(/\((.+)\)/g, function(string, first){
             return "(" +  first.replace(/,/g, '.') + ")";
         }).replace(/,/g, "\n");
@@ -232,10 +243,10 @@ export class CreateTableToJsonService {
     getData() {
         return this._data;
     }
-    setString(string) {
-        this._string = string;
+    setString(_string: string) {
+        this._string = _string;
     }
-    getString() {
+    getString(): string {
         return this._string;
     }
     getError() {
@@ -272,8 +283,6 @@ export class CreateTableToJsonService {
     }
 
     hasError(): boolean {
-        if (this._errors.length > 0)
-            return true;
-        return false;
+        return this._errors.length > 0? true : false;
     }
 }
