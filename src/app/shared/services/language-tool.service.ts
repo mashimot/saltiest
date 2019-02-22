@@ -21,7 +21,7 @@ export class LanguageToolService {
                 text: text
             }
         }).pipe(
-            map((res: Response) => {
+            map((res) => {
                 return res.json();
             })
         );

@@ -9,7 +9,7 @@ import { Table } from "./../shared/models/table.model";
 })
 export class CreateTableToJsonService {
     _isTextareaWhenSizeEquals: number = 1000;
-    _index: number = 2;
+    _wordIndex: number = 2;
     _string: string;
     _data: Array<Content>;
     _errors: Array<{
@@ -27,9 +27,12 @@ export class CreateTableToJsonService {
         [key:string]: RegExp
     } = {
         onlyNumeric: /^([0-9]+(\.[0-9]+)?)$/,
-        valueBtwParentheses: /\((.*)\)/,
-        valueBtwParenthesesGlobal: /\((.+)\)/g,
-        stringRestriction: /^[A-Za-z][A-Za-z0-9_\-\,\.()\n ]*$/
+        onlyDecimal: /^([0-9]*([\,\.]+)([0-9]+)?)$/g,
+        //valueBtwParentheses: /\((.*)\)/,
+        //valueBtwParenthesesGlobal: /\((.+)\)/g,
+        valueBtwParentheses: /\(([^)]*)\)/,
+        valueBtwParenthesesGlobal: /\(([^)]*)\)/g,
+        stringRestriction: /^[\s\w+\_\-\,\.()]*$/
     };
 
     constructor() {
@@ -47,7 +50,7 @@ export class CreateTableToJsonService {
         let dataType = secondMatch;
         let matchValBtwParen = secondMatch.match(this.regex.valueBtwParentheses);
         let hasValueBtwParen = false;
-        
+       
         if (matchValBtwParen !== null) {
             hasValueBtwParen = true;
             dataType = secondMatch.replace(matchValBtwParen[0], '');
@@ -58,8 +61,8 @@ export class CreateTableToJsonService {
                 matchValBtwParen = thirdMatch.match(this.regex.valueBtwParentheses); //get value between parentheses
                 if (matchValBtwParen !== null){ // it goes to the next index if parentheses doesn't exists
                     hasValueBtwParen = true;
-                    this._index = 3;
-                } 
+                    this._wordIndex = 3;
+                }
             }
         }
 
@@ -70,12 +73,12 @@ export class CreateTableToJsonService {
                 this._errors.push({
                     message: `\`${this.table.columnName}\`: ${numeric} is not a number!`
                 });
-            } 
+            }
             size = numeric;
         }
 
         let database = this._dataBase[dataType.toUpperCase()];
-        console.log(database);
+        //console.log(database);
         if (typeof database !== 'undefined' && dataType !== '') {
             inputType = database;
         } else {
@@ -87,7 +90,7 @@ export class CreateTableToJsonService {
         this.html.tag = inputType;
         this.table.size = size;
     }
-    validateSyntax(stringArr: Array<string>): void {
+    validateSyntax(words: Array<string>): void {
         let value = '';
         let allowed = {
             'not': {
@@ -110,15 +113,15 @@ export class CreateTableToJsonService {
                 previous: ['primary'],
                 correct: 'primary key'
             },
-          'unique': {
-                next: [],
-                previous: [],
-                correct: 'unique'
-          },
+            'unique': {
+                    next: [],
+                    previous: [],
+                    correct: 'unique'
+            },
         };
         //'not null|null'
-        for (let i = this._index; i < stringArr.length; i++) {
-            let currentWord = stringArr[i].replace(/,/g, "");
+        for (let i = this._wordIndex; i < words.length; i++) {
+            let currentWord = words[i].replace(/,/g, "");
             let hasError = false;
             let nextValue = '';
             let prevValue = '';
@@ -128,30 +131,30 @@ export class CreateTableToJsonService {
                 });
             } else {
                 let index = i + 1;
-                if (i === stringArr.length - 1) {
-                    index = stringArr.length - 1;
+                if (i === words.length - 1) {
+                    index = words.length - 1;
                 }
-                let nextString = stringArr[index];
-                let prevString = stringArr[i - 1];
+                let nextString = words[index];
+                let prevString = words[i - 1];
 
-              if (allowed[currentWord].next.length > 0) {
-                  if (nextString.indexOf(allowed[currentWord].next[0]) !== -1) {
+                if (allowed[currentWord].next.length > 0) {
+                    if (nextString.indexOf(allowed[currentWord].next[0]) !== -1) {
                     } else {
                     nextValue = allowed[currentWord].next[0];
                         hasError = true;
                     }
                 }
-              if (allowed[currentWord].previous.length > 0) {
-                  if (prevString.indexOf(allowed[currentWord].previous[0]) !== -1) {
+                if (allowed[currentWord].previous.length > 0) {
+                    if (prevString.indexOf(allowed[currentWord].previous[0]) !== -1) {
                     } else {
                     prevValue = allowed[currentWord].previous[0];
                         hasError = true;
                     }
                 }
-              value += `${prevValue} ${currentWord} ${nextValue}`;
+                value += `${prevValue} ${currentWord} ${nextValue}`;
                 if (hasError && value !== '') {
                     this._errors.push({
-                      message: `error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this.table.columnName} `
+                        message: `error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this.table.columnName} `
                     });
                 }
             }
@@ -159,7 +162,7 @@ export class CreateTableToJsonService {
         value = value.replace(/\s\s+/g, ' ').trim();
         this.table.nullable = (value.indexOf("not null") !== -1) ? true : false;
         this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
-        this._index = 2;
+        this._wordIndex = 2;
     }
     convert(): void {
         let regex = new RegExp(this.regex.stringRestriction);
@@ -168,34 +171,41 @@ export class CreateTableToJsonService {
                 message: 'Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )'
             });
         }
-        let newString = this._string.trim().replace(this.regex.valueBtwParenthesesGlobal, function(string, first){
-            return "(" +  first.replace(/,/g, '.') + ")";
-        }).replace(/,/g, "\n");
-        let split = newString.split("\n").reduce((previous, currentValue) => {
+
+        let split = this._string.replace(this.regex.valueBtwParenthesesGlobal, (string, first) => {
+            let regex = new RegExp(this.regex.onlyDecimal);
+            if(regex.test(first)){
+                return "(" +  first.replace(/,/g, '.') + ")";
+            }
+            return string;
+        })
+        .split(",")
+        .reduce((previous, currentValue) => {
             if (previous && currentValue !== '') {
                 previous.push(currentValue);
             }
             return previous;
         }, []);
-
+        console.log(split);
         let i = 0;
         while (i < split.length && this._errors.length <= 0) {
-            let currentString = split[i].toLowerCase()/*.replace(/(\r\n\t|\n|\r\t)/gm, "")*/.replace(/\s+/g, " ").trim();
-            let stringArr = currentString.split(' ');
-            if (stringArr.length <= 1) {
+            let currentWord = split[i].toLowerCase().replace(/\s+/g, " ").trim();
+            let eachWords = currentWord.split(' ');
+
+            if (eachWords.length <= 1) {
                 this._errors.push({
                     message: `Incompleted`
                 });
             } else {
-                this.table.columnName = stringArr[0]; // columnName
+                this.table.columnName = eachWords[0]; // column name
 
-                if (this.table.columnName === 'create' && stringArr[1] === 'table') {
+                if (this.table.columnName === 'create' && eachWords[1] === 'table') {
                     //this._data.name = stringArr[2];
                 } else {
-                    //the firstMatch  (stringArr[0]) will be always the columnName
-                    //the secondMatch (stringArr[1]) will be always the data_type
-                    this.getDataTypeAndSize(stringArr);
-                    this.validateSyntax(stringArr);
+                    //the firstMatch  (stringArr[0]) will be always the column name
+                    //the secondMatch (stringArr[1]) will be always the column data type
+                    this.getDataTypeAndSize(eachWords);
+                    this.validateSyntax(eachWords);
                     this.customInput();
                     this.customLabelName();
                     this._data.push({
@@ -233,6 +243,7 @@ export class CreateTableToJsonService {
             this.html.label = splitColumnName.join(' ').trim();;
         }
     }
+   
     customInput() {
         if (this.table.columnName.indexOf('ind_') !== -1)
             this.html.tag = 'select';

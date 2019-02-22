@@ -28,6 +28,8 @@ export class FormConfigComponent implements OnInit {
     ngOnInit() {
         this.options = {
             size: 'lg',
+            backdrop : 'static',
+            keyboard : false,
             centered: true
         };
         this.formContentConfig.getContent().subscribe(
