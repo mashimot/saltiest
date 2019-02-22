@@ -1,62 +1,63 @@
-<div class="card">
-  <div class="card-header">
-    <div class="row">
-      <div class="col-md-6">
-        <button type="button" ng-click="newColumn()" class="btn btn-outline-primary btn-block btn-sm">
-          <i class="fa fa-columns" aria-hidden="true"></i> New Column
-        </button>
-      </div>
-      <div class="col-md-6">
-        <button type="button" ng-click="newLine()" class="btn btn-outline-primary btn-block btn-sm">
-          <i class="fa fa-bars"></i> New Line
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="card-body">
-    <pre>{{ content.html.fields | json }}</pre>
+	<div class="card">
+	<div class="card-header">
+		<div class="row">
+		<div class="col-md-6">
+			<button type="button" ng-click="newColumn()" class="btn btn-outline-primary btn-block btn-sm">
+			<i class="fa fa-columns" aria-hidden="true"></i> New Column
+			</button>
+		</div>
+		<div class="col-md-6">
+			<button type="button" ng-click="newLine()" class="btn btn-outline-primary btn-block btn-sm">
+			<i class="fa fa-bars"></i> New Line
+			</button>
+		</div>
+		</div>
+	</div>
+	<div class="card-body">
+		<pre>{{ fields.value | json }}</pre>
 
-    <div *ngIf="content.html.fields.length > 0">
-      <div ng-show="hasDuplicateName" class="alert alert-danger">
-        <strong ng-bind="duplicatedName" class="text-dark"></strong> already exists! The name must be unique.
-      </div>
-      <table class="table table-condensed table-bordered" *ngIf="content.html.fields.length > 0">
-        <thead class="thead-light" ui-sortable>
-          <tr>
-            <th *ngFor="let f of fields; let fieldIndex = index;">
-              {{ fieldIndex }}
-              <div class="input-group input-group-sm">
-                <input type="text"
-                       ng-change="verifyDuplicates($index, hadouken)"
-                       (blur)="newField(fieldIndex, f, hadouken)"
-                       [(ngModel)]="hadouken"
-                       [value]="f"
-                       class="form-control form-control-sm" />
-                <div class="input-group-append">
-                  <span class="input-group-text text-danger" ng-click="deleteColumn(key)">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                  </span>
-                </div>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody ui-sortable>
-          <tr *ngFor="let field of content.html.fields; let fieldIndex = index;">
-            <td *ngFor="let f of fields">
-              <input type="text" class="form-control form-control-sm" [(ngModel)]="field[f]">
-            </td>
-            <td>
-              <button type="button" class="btn btn-outline-danger btn-sm" ng-click="deleteLine(fieldIndex)">
-                <i class="fa fa-trash" aria-hidden="true"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <h6 class="alert alert-danger" *ngIf="content.html.fields.length <= 0">
-      <i class="fa fa-exclamation-triangle"></i> Empty Table
-    </h6>
-  </div>
-</div>
+		<div *ngIf="fields.value.length > 0">
+			<div ng-show="hasDuplicateName" class="alert alert-danger">
+				<strong ng-bind="duplicatedName" class="text-dark"></strong> already exists! The name must be unique.
+			</div>
+			<table class="table table-condensed table-bordered" *ngIf="fields.value.length > 0">
+				<thead class="thead-light" ui-sortable>
+				<tr>
+					<th *ngFor="let f of keyFields; let fieldIndex = index;">
+					{{ f }}
+					<div class="input-group input-group-sm">
+						<input type="text"
+							(ngModelChange)="verifyDuplicates(f, hadouken)"
+							(blur)="newField(fieldIndex, f, hadouken)"
+							[(ngModel)]="hadouken"
+							[value]="f"
+							class="form-control form-control-sm" />
+						<div class="input-group-append">
+						<span class="input-group-text text-danger" ng-click="deleteColumn(key)">
+							<i class="fa fa-trash" aria-hidden="true"></i>
+						</span>
+						</div>
+					</div>
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+					{{ keyFields | json }}
+					<tr *ngFor="let field of fields.value; let fieldIndex = index;">
+						<td *ngFor="let f of keyFields">
+							<input type="text" class="form-control" [(ngModel)]="field[f] ">
+						</td>
+						<td>
+							<button type="button" class="btn btn-outline-danger btn-sm" ng-click="deleteLine(fieldIndex)">
+								<i class="fa fa-trash" aria-hidden="true"></i>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<h6 class="alert alert-danger" *ngIf="fields.value.length <= 0">
+		<i class="fa fa-exclamation-triangle"></i> Empty Table
+		</h6>
+	</div>
+	</div>

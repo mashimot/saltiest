@@ -23,7 +23,7 @@ export class BootstrapForm{
             "h6": [`<h6>${this.html.text}</h6>`],
             "table": 
             [`<table class="table">`,
-                `${this.html.fields.map((field, key) => (`<tr>${Object.keys(this.html.fields[0]).map((f, k) => `<td>${field[f]}</td>`).join('')}</tr>`)).join('')}`,
+                `${this.html.fields? this.html.fields.map((field, key) => (`<tr>${Object.keys(this.html.fields[0]).map((f, k) => `<td>${field[f]}</td>`).join('')}</tr>`)).join('') : []}`,
             `</table>`],
             "image": [`<img src="${this.html.src}" class="img-fluid">`],
             "textarea": 
@@ -90,7 +90,7 @@ export class CustomForm{
             "h6": [`<h6>${this.html.text}</h6>`],
             "table": 
             [`<table class="table">`,
-                `${this.html.fields.map((field, key) => (`<tr>${Object.keys(this.html.fields[0]).map((f, k) => `<td>${field[f]}</td>`).join('')}</tr>`)).join('')}`,
+                `${this.html.fields? this.html.fields.map((field, key) => (`<tr>${Object.keys(this.html.fields[0]).map((f, k) => `<td>${field[f]}</td>`).join('')}</tr>`)).join('') : []}`,
             `</table>`],
             "image": [`<img src="${this.html.src}" class="img-fluid">`],
             "textarea": 
