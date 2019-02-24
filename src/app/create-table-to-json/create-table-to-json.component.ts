@@ -12,7 +12,7 @@ export class CreateTableToJsonComponent implements OnInit {
 	@Output() pageChange = new EventEmitter();
 	gridModel: string;
 	database: Array<string>;
-	errors: Array<{ message?: string }>;
+	errors: Array<string>;
 	primaryKeys: any[];
 	options = {
 		database: <string> 'oracle'
