@@ -70,19 +70,24 @@ export class CreateTableToJsonService {
         )
         `;
         var regexCreateTableSyntax =
-        /*`\\s*CREATE\\s+TABLE(?:\\s+IF\\s+NOT\\s+EXISTS)?\\s+(\\w+)
-        [(]`+*/
-            `^(\\s*
+        `\\s*CREATE\\s+TABLE(?:\\s+IF\\s+NOT\\s+EXISTS)?\\s+(\\w+)
+        \\s*[(]
+            (\\s*
                 (
                     ${info}${comma}\\s*
                 )*
                 (
                     ${info}\\s*
                 )
-            )$`
-        /*`[)]
-        `*/.toLowerCase().replace(/\s+/g, '').trim();
+            )
+        \\s*
+        [)]\\s*[;]
+        `.toLowerCase().replace(/\s+/g, '').trim();
         this.regex.createTableSyntax = new RegExp(regexCreateTableSyntax, "g");
+
+        console.log(this.regex.createTableSyntax);
+
+
     }
  
     getDataTypeAndSize(str: Array<string>) {
@@ -200,8 +205,8 @@ export class CreateTableToJsonService {
     }
     convert(): void {
         let regex = new RegExp(this.regex.createTableSyntax);
-        this._string = this._string.toLowerCase();
-        
+        this._string = this._string.replace(/\s/g, " ").toLowerCase();
+
         if(!regex.test(this._string)){
             this._errors.push(
                 `Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )`,
@@ -209,7 +214,10 @@ export class CreateTableToJsonService {
             );
         }
 
-        let split = this._string.replace(this.regex.valueBtwParenthesesGlobal, (string, first) => {
+        //gambiarra! Arrumar uma forma melhor de fazer isso:
+        let split = this._string.replace(/[^\(]*(\(.*\))[^\)]*/, '$1')
+        .replace(/^\((.+)\)$/, '$1')
+        .replace(this.regex.valueBtwParenthesesGlobal, (string, first) => {
             let regex = new RegExp(this.regex.onlyNumeric, "g");
             if(regex.test(first)){
                 return "(" +  first.replace(/,/g, '.') + ")";
@@ -222,7 +230,7 @@ export class CreateTableToJsonService {
                 previous.push(currentValue);
             }
             return previous;
-        }, []);
+        }, []);    
 
         let i = 0;
         while (i < split.length/* && this._errors.length <= 0*/) {
