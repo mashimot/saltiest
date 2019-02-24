@@ -24,7 +24,9 @@
                                         <app-config-title [parentFormGroup]="formConfig"
                                                         *ngIf="r.componentName === 'app-config-title'"></app-config-title>
                                         <app-config-html-editor [parentFormGroup]="formConfig"
-                                                                *ngIf="r.componentName === 'app-config-html-editor'"></app-config-html-editor>
+                                                            *ngIf="r.componentName === 'app-config-html-editor'"></app-config-html-editor>
+                                        <app-config-table-builder [parentFormGroup]="formConfig"
+                                                                *ngIf="r.componentName === 'app-config-table-builder'"></app-config-table-builder>                                                                
                                     </div>
                                     <!--<button type="submit" class="btn btn-outline-primary btn-sm" [disabled]="!formConfig.valid">Submit </button>-->
                                 </div>

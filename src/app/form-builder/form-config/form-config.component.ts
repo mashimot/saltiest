@@ -43,6 +43,9 @@ export class FormConfigComponent implements OnInit {
                         'elements': this.fb.array([], [
                             //Validators.required
                         ]),
+                        'fields': [data.html.fields, [
+                            //Validators.required
+                        ]],
                         'label': [data.html.label, [
                             //Validators.required,
                             //Validators.minLength(10)
