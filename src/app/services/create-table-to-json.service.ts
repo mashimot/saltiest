@@ -25,8 +25,8 @@ export class CreateTableToJsonService {
     regex: {
         [key:string]: RegExp
     } = {
-        onlyNumeric: /^(([0-9]+(\,[0-9]+)?)(\.[0-9]+)?)$/,
         createTableSyntax: /(d+)/g,
+        onlyNumeric: /^(([0-9]+(\,[0-9]+)?)(\.[0-9]+)?)$/,
         valueBtwParentheses: /\(([^)]*)\)/,
         valueBtwParenthesesGlobal: /\(([^)]*)\)/g,
         stringRestriction: /^[\s\w+\_\-\,\.()]*$/
@@ -199,7 +199,7 @@ export class CreateTableToJsonService {
         this._wordIndex = 2;
     }
     convert(): void {
-        let regex = new RegExp(this.regex.createTable);
+        let regex = new RegExp(this.regex.createTableSyntax);
         this._string = this._string.toLowerCase();
         
         if(!regex.test(this._string)){
