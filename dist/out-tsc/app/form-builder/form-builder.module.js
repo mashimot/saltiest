@@ -28,19 +28,13 @@ var FormBuilderModule = /** @class */ (function () {
                 CommonModule,
                 FormsModule,
                 DragulaModule,
+                RenderContentModule,
                 FormPagesModule,
                 FormConfigModule,
-                FormInfoModule,
-                RenderContentModule
+                FormInfoModule
             ],
             exports: [
-                FormBuilderRoutingModule,
-                CommonModule,
-                FormsModule,
-                DragulaModule,
-                CreateTableToJsonComponent,
-                FormMenuComponent,
-                FormBuilderComponent
+                DragulaModule
             ],
             declarations: [
                 CreateTableToJsonComponent,

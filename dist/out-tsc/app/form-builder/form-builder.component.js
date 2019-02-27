@@ -9,54 +9,58 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, ChangeDetectionStrategy, Injectable } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
+import { HomeService } from "../shared/services/home.service";
+import { Html } from "../shared/models/html.model";
+import { Table } from "../shared/models/table.model";
 var Validator = /** @class */ (function () {
     function Validator() {
         this.inputs = [];
     }
     Validator.prototype.setParams = function (d) {
-        if (d) {
-            if (d.table) {
-                this.name = typeof d.table.columnName === 'undefined' ? '' : d.table.columnName;
-                this.nullable = typeof d.table.nullable === 'undefined' ? '' : d.table.nullable;
-                this.size = typeof d.table.size === 'undefined' ? '' : d.table.size;
-                this.dataType = typeof d.table.type === 'undefined' ? '' : d.table.type;
-            }
-            if (d.html) {
-                this.labelName = typeof d.html.label === 'undefined' ? '' : d.html.label;
-                this.htmlData = typeof d.html.data === 'undefined' ? '' : d.html.data;
-                this.imgSrc = typeof d.html.src === 'undefined' ? '' : d.html.src;
-                this.inputType = typeof d.html.tag === 'undefined' ? '' : d.html.tag;
-                this.text = typeof d.html.text === 'undefined' ? '' : d.html.text;
-                this.fields = typeof d.html.fields === 'undefined' ? [] : d.html.fields;
-                this.elements = typeof d.html.elements === 'undefined' ? [] : d.html.elements;
-            }
-        }
+        this.html = new Html(d.html);
+        this.table = new Table(d.table);
     };
     Validator.prototype.setInputs = function (inputs) {
         this.inputs = inputs;
     };
     Validator.prototype.getValidator = function () {
-        this.rules = "\t'" + this.name + "' => '" + this.isRequired() + this.getDataType() + this.getMaxlength() + "',\n";
-        this.attributes = "\t'" + this.name + "' => '" + this.labelName + "',\n";
+        var rules = [];
+        rules.push(this.isRequired(), this.getDataType(), this.getMaxlength());
+        var rules = rules.filter(function (el) {
+            return el != "" && el != null;
+        });
+        this.rules = "\t'" + this.table.columnName + "' => " + JSON.stringify(rules) + ",\n";
+        this.attributes = "\t'" + this.table.columnName + "' => '" + this.html.label + "',\n";
     };
     Validator.prototype.getDataType = function () {
-        switch (this.dataType) {
+        switch (this.table.type) {
             case 'number':
-                return '|numeric';
+                return 'numeric';
             case 'date':
-                return '|date_format:"d/m/Y"';
+                return 'date_format:"d/m/Y"';
             default:
-                return '';
+                return null;
         }
     };
     Validator.prototype.getMaxlength = function () {
-        if (this.size > 0) {
-            if (this.dataType === 'number') {
-                return '|digits_between:1,' + this.size;
+        if (parseInt(this.table.size) > 0) {
+            if (this.table.type == 'number') {
+                if (this.table.size.indexOf('.') !== -1) {
+                    var sizeArr = this.table.size.split('.');
+                    var b = '.';
+                    var position = parseInt(sizeArr[0]) - parseInt(sizeArr[1]);
+                    var endBetween = '';
+                    for (var i = 0; i < parseInt(this.table.size); i++) {
+                        endBetween += '9';
+                    }
+                    var output = [endBetween.slice(0, position), b, endBetween.slice(position)].join('');
+                    return "between:0," + output;
+                }
+                return "digits_between:1," + this.table.size;
             }
-            return '|max:' + this.size;
+            return 'max:' + this.table.size;
         }
-        return '';
+        return null;
     };
     Validator.prototype.laravel = function () {
         var _this = this;
@@ -78,7 +82,7 @@ var Validator = /** @class */ (function () {
         }, {});
     };
     Validator.prototype.isRequired = function () {
-        return this.nullable ? 'required' : 'nullable';
+        return this.table.nullable ? 'required' : 'nullable';
     };
     Validator.prototype.getMessages = function () {
         return this.messages;
@@ -101,21 +105,67 @@ var Bootstrap = /** @class */ (function () {
     Bootstrap.prototype.init = function () {
         var _this = this;
         this.inputs = [];
-        this.code = this.pages.map(function (page, pageNumber) {
-            return "\n            <section class=\"page-" + (pageNumber + 1) + "\">\n                " + page.rows.map(function (row) {
+        /*this.code   = this.pages.map((page, pageNumber) => {
+            return `
+            <section class="page-${pageNumber + 1}">
+                ${page.rows.map(row => {
+                    let grid = row.grid.split(' ');
+                    return `
+                    <div class="row">
+                        ${row.columns.map((column, j) => {
+                            return `
+                                ${column.contents.map(content => {
+                                    if (content.html.category === 'form') {
+                                        this.inputs.push(content);
+                                    }
+                                    content.html['grid'] = grid[j];
+                                    this.renderHtmlService.setParams(content);
+                                    return this.renderHtmlService.get().code;
+                                })}
+                            `
+                        }).join('')}
+                    </div>`
+                }).join('')}
+            </section>`
+        }).join('');*/
+        var htmlPages = [];
+        var t = "\n\t";
+        this.pages.forEach(function (page, pageNumber) {
+            htmlPages.push("\n<section class=\"page-" + (pageNumber + 1) + "\">");
+            var tabNum = 1;
+            t = _this.tabSpace(tabNum);
+            page.rows.forEach(function (row) {
                 var grid = row.grid.split(' ');
-                return "\n                    <div class=\"row\">\n                        " + row.columns.map(function (column, j) {
-                    return "\n                            <div class=\"col-md-" + grid[j] + "\">\n                                " + column.contents.map(function (content) {
+                htmlPages.push(t + "<div class=\"row\">");
+                tabNum++;
+                t = _this.tabSpace(tabNum);
+                row.columns.forEach(function (column, j) {
+                    //htmlPages.push(`${t}<div class="col-md-${grid[j]}">`);
+                    column.contents.forEach(function (content) {
                         if (content.html.category === 'form') {
                             _this.inputs.push(content);
                         }
                         content.html['grid'] = grid[j];
                         _this.renderHtmlService.setParams(content);
-                        return _this.renderHtmlService.get().code;
-                    }) + "\n                            </div>";
-                }).join('') + "  \n                    </div>";
-            }).join('') + "\n            </section>";
-        }).join('');
+                        htmlPages.push(t + _this.renderHtmlService.get().code);
+                    });
+                    //htmlPages.push(`${t}</div>`);
+                });
+                tabNum--;
+                t = _this.tabSpace(tabNum);
+                htmlPages.push(t + "</div>");
+            });
+            htmlPages.push("</section>");
+        });
+        this.code = htmlPages.join("\n");
+    };
+    Bootstrap.prototype.tabSpace = function (tabNum) {
+        var tab = "\t";
+        var newTab = "";
+        for (var i = 0; i < tabNum; i++) {
+            newTab += tab;
+        }
+        return newTab;
     };
     Bootstrap.prototype.html = function () {
         return this.code;
@@ -135,12 +185,8 @@ var Bootstrap = /** @class */ (function () {
         }, []);
         script.push({
             'data': 'action',
-            'name': 'name' /*,
-            'className' : 'td_justo',
-            'orderable' : false,
-            'searchable' : false*/
+            'name': 'name'
         });
-        console.log(script);
         return "\n<script>\n    /*---------------------Datatables--------------------------------*/\n    var table = $('#" + this.tableName + "').DataTable({\n        stateSave: true,\n        processing: true,\n        serverSide: true,\n        cache: true,\n        columns: " + JSON.stringify(script, null, '\t') + "\n    });\n    /*---------------------/Datatables-------------------------------*/\n</script>        \n        ";
     };
     Bootstrap.prototype.getInputs = function () {
@@ -159,11 +205,15 @@ var Bootstrap = /** @class */ (function () {
 }());
 export { Bootstrap };
 var FormBuilderComponent = /** @class */ (function () {
-    function FormBuilderComponent(b, validator) {
+    function FormBuilderComponent(b, validator, homeService) {
         this.b = b;
         this.validator = validator;
+        this.homeService = homeService;
     }
     FormBuilderComponent.prototype.ngOnInit = function () {
+        this.tabNumber = 1;
+        this.tabMVC = 1;
+        this.pages = this.homeService.get();
     };
     Object.defineProperty(FormBuilderComponent.prototype, "bootstrap", {
         get: function () {
@@ -205,7 +255,8 @@ var FormBuilderComponent = /** @class */ (function () {
             changeDetection: ChangeDetectionStrategy.OnPush,
         }),
         __metadata("design:paramtypes", [Bootstrap,
-            Validator])
+            Validator,
+            HomeService])
     ], FormBuilderComponent);
     return FormBuilderComponent;
 }());

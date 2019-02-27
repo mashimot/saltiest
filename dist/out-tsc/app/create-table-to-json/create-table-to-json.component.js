@@ -10,10 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CreateTableToJsonService } from '../services/create-table-to-json.service';
 import { BootstrapGridSystemService } from '../services/bootstrap-grid-system.service';
-import { DatabaseService } from '../shared/services/database.service';
+import { DatabaseEngine } from '../shared/services/database-engine.service';
 var CreateTableToJsonComponent = /** @class */ (function () {
-    function CreateTableToJsonComponent(db) {
-        this.db = db;
+    function CreateTableToJsonComponent() {
         this.pageChange = new EventEmitter();
         this.options = {
             database: 'oracle'
@@ -23,8 +22,18 @@ var CreateTableToJsonComponent = /** @class */ (function () {
         this.database = [];
     }
     CreateTableToJsonComponent.prototype.ngOnInit = function () {
-        this.database = this.db.getDBName();
-        this.string = "\nsupplier_id number(10) NOT NULL  ,\nsupplier_name varchar2(50) NOT NULL,\naddress varchar2(50),\ncity varchar2(50),\nstate varchar2(25),\ndat_now date,\nzip_code varchar2(10)".trim();
+        this.database = DatabaseEngine.getDatabaseEngines();
+        this.string = [
+            'create table random_table_1 (',
+            'supplier_id number(10)  not null,',
+            'supplier_name varchar2(50) not null,',
+            'address varchar2(50),',
+            'city varchar2(50),',
+            'state varchar2(25),',
+            'dat_now date,',
+            'zip_code varchar2(10),price number(12,2)',
+            ');'
+        ].join("\n");
     };
     CreateTableToJsonComponent.prototype.onSubmit = function () {
     };
@@ -51,7 +60,7 @@ var CreateTableToJsonComponent = /** @class */ (function () {
             templateUrl: './create-table-to-json.component.html',
             styleUrls: ['./create-table-to-json.component.css']
         }),
-        __metadata("design:paramtypes", [DatabaseService])
+        __metadata("design:paramtypes", [])
     ], CreateTableToJsonComponent);
     return CreateTableToJsonComponent;
 }());

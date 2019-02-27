@@ -13,7 +13,6 @@ import { Table, ITable } from "../shared/models/table.model";
     providedIn: 'root'
 })
 export class Validator {
-
     inputs: any[];
     rules: string;
     attributes: string;
@@ -87,21 +86,29 @@ export class Validator {
         let attr = '';
         let rules = '';
         let fillable = '';
-        return this.inputs.reduce(
+        let primaryKey = [];
+
+        var hue = this.inputs.reduce(
             (prev, curr) => {
-                this.setParams(curr);
+                this.setParams(curr)
                 this.getValidator();
+                
+                if(curr.table.isPrimaryKey){
+                    primaryKey.push(`"${curr.table.columnName}"`);
+                }
+
                 fillable += `"${curr.table.columnName}",\n`;
                 return {
                     rules: rules += this.rules,
                     attributes: attr += this.attributes,
                     fillable: `[${fillable}]`,
                     th: `<th>${curr.html.labelName}</th>`,
-                    primaryKey: '',
+                    primaryKey: primaryKey,
                     table: ''
                 };
             }
         , {});
+        return hue;
     }
 
     isRequired(): string {
@@ -129,29 +136,6 @@ export class Bootstrap {
 
     init(): void {
         this.inputs = [];
-        /*this.code   = this.pages.map((page, pageNumber) => {
-            return `
-            <section class="page-${pageNumber + 1}">
-                ${page.rows.map(row => {
-                    let grid = row.grid.split(' ');
-                    return `
-                    <div class="row">
-                        ${row.columns.map((column, j) => {
-                            return `
-                                ${column.contents.map(content => {
-                                    if (content.html.category === 'form') {
-                                        this.inputs.push(content);
-                                    }
-                                    content.html['grid'] = grid[j];
-                                    this.renderHtmlService.setParams(content);
-                                    return this.renderHtmlService.get().code;
-                                })}
-                            `
-                        }).join('')}  
-                    </div>`
-                }).join('')}
-            </section>`
-        }).join('');*/
         var htmlPages = [];
         var t = "\n\t";
 
@@ -267,6 +251,7 @@ export class Bootstrap {
 export class FormBuilderComponent implements OnInit {
     pages: Array<Page>;
     inputs: Array<Content>;
+    tableName: string = '';
     tabNumber: number;
     tabMVC: number; 
 
@@ -298,6 +283,11 @@ export class FormBuilderComponent implements OnInit {
             this.pages = [];
         }
     }
+    
+    public removeDoubleQuotes(word){
+        return word.replace(/"/g, "");
+    }
+
 
     public isNewPage(newPage: boolean): void {
         if (newPage) {

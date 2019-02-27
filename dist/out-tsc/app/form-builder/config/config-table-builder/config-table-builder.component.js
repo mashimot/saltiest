@@ -11,12 +11,16 @@ import { Component, Input } from '@angular/core';
 var ConfigTableBuilderComponent = /** @class */ (function () {
     function ConfigTableBuilderComponent() {
     }
+    ConfigTableBuilderComponent.prototype.verifyDuplicates = function (index, text) {
+        if (typeof text !== 'undefined') {
+            var str = JSON.stringify(this.fields.value);
+            str.replace(text + ":", index + ":");
+            //this.fields.value = JSON.parse(str);
+        }
+    };
     ConfigTableBuilderComponent.prototype.newField = function (index, key, newKey) {
-        //console.log(key);
-        console.log(newKey);
         if (typeof newKey !== 'undefined' && newKey.trim() !== '') {
-            var fields = this.content.html.fields;
-            console.log(fields);
+            var fields = this.fields.value;
             if (fields.length > 0) {
                 for (var i = 0; i < fields.length; i++) {
                     var field = fields[i];
@@ -26,26 +30,44 @@ var ConfigTableBuilderComponent = /** @class */ (function () {
                 var keysArr = Object.keys(fields[0]);
                 var lastItem = keysArr[keysArr.length - 1];
                 keysArr.splice(index, 0, lastItem);
-                this.content.html.fields = JSON.parse(JSON.stringify(fields, keysArr));
-                this.fields = this.getKeyFields();
+                this.fields.value = JSON.parse(JSON.stringify(fields, keysArr));
+                //this.fields = this.getKeyFields();
             }
         }
     };
     ConfigTableBuilderComponent.prototype.ngOnInit = function () {
-        this.fields = this.getKeyFields();
+        this.keyFields = this.getKeyFields();
     };
     ConfigTableBuilderComponent.prototype.ngOnChanges = function () {
     };
     ConfigTableBuilderComponent.prototype.getKeyFields = function () {
-        if (this.content.html.fields.length > 0) {
-            return Object.keys(this.content.html.fields[0]);
+        if (this.fields.value.length > 0) {
+            return Object.keys(this.fields.value[0]);
         }
         return [];
     };
+    Object.defineProperty(ConfigTableBuilderComponent.prototype, "html", {
+        get: function () {
+            return this.parentFormGroup.controls.html;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ConfigTableBuilderComponent.prototype, "fields", {
+        get: function () {
+            return this.html.get('fields');
+        },
+        enumerable: true,
+        configurable: true
+    });
     __decorate([
         Input(),
         __metadata("design:type", Object)
     ], ConfigTableBuilderComponent.prototype, "content", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], ConfigTableBuilderComponent.prototype, "parentFormGroup", void 0);
     ConfigTableBuilderComponent = __decorate([
         Component({
             selector: 'app-config-table-builder',

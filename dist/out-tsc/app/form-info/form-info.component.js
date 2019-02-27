@@ -7,35 +7,38 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Input } from '@angular/core';
-import { DatabaseService } from '../shared/services/database.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DatabaseEngine } from '../shared/services/database-engine.service';
 import { HtmlElementService } from '../shared/services/html-element.service';
 var FormInfoComponent = /** @class */ (function () {
-    function FormInfoComponent(databaseService, htmLElementService) {
-        this.databaseService = databaseService;
-        this.htmLElementService = htmLElementService;
+    function FormInfoComponent(htmlElementService) {
+        this.htmlElementService = htmlElementService;
+        this.pagesChange = new EventEmitter();
     }
     FormInfoComponent.prototype.ngOnInit = function () {
-        this.database = this.databaseService.getType();
-        console.log(this.database);
-        console.log(this.databaseService.get()['ORACLE']);
-        this.tags = this.htmLElementService.getTags();
+        this.database = Object.keys(DatabaseEngine.get()).map(function (item) {
+            return item.toUpperCase();
+        });
+        this.tags = this.htmlElementService.getTags();
     };
     FormInfoComponent.prototype.buscaDominio = function () {
-        alert("implementa��o");
+        alert("implementação");
     };
     __decorate([
         Input(),
         __metadata("design:type", Object)
     ], FormInfoComponent.prototype, "pages", void 0);
+    __decorate([
+        Output(),
+        __metadata("design:type", Object)
+    ], FormInfoComponent.prototype, "pagesChange", void 0);
     FormInfoComponent = __decorate([
         Component({
             selector: 'app-form-info',
             templateUrl: './form-info.component.html',
-            styleUrls: ['./form-info.component.css']
+            styleUrls: ['./form-info.component.css'],
         }),
-        __metadata("design:paramtypes", [DatabaseService,
-            HtmlElementService])
+        __metadata("design:paramtypes", [HtmlElementService])
     ], FormInfoComponent);
     return FormInfoComponent;
 }());

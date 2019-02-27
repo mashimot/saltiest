@@ -11,7 +11,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormConfigService } from './../services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
-import { RenderHtmlService } from '../services/render-html.service';
+//import { RenderHtmlService } from '../services/render-html.service';
+import { BootstrapForm } from '../services/render-html.service';
 var FormPagesComponent = /** @class */ (function () {
     function FormPagesComponent(formConfigService, dragulaService) {
         var _this = this;
@@ -19,12 +20,17 @@ var FormPagesComponent = /** @class */ (function () {
         this.dragulaService = dragulaService;
         this.pagesChange = new EventEmitter();
         this.subs = new Subscription();
+        this.dropModelPageUpdated = false;
         dragulaService.createGroup('pages', {
+            revertOnSpill: true,
+            removeOnSpill: false,
             copy: function (el, source) {
                 return source.className === 'menu-page-sortable';
             },
             copyItem: function (el) {
-                return JSON.parse(JSON.stringify(el));
+                return el;
+                //console.log(el);
+                //return JSON.parse(JSON.stringify(el));
             },
             accepts: function (el, target, source, sibling) {
                 // To avoid dragging from right to left container
@@ -40,9 +46,7 @@ var FormPagesComponent = /** @class */ (function () {
         dragulaService.createGroup('columns', {
             accepts: function (el, target, source, sibling) {
                 var currRowIndex = el.getAttribute('data-current-row-index');
-                //let sRowIndex       = el.getAttribute('data-current-row-index');
                 var currPageIndex = el.getAttribute('data-current-page-index');
-                //let sPageIndex       = target.getAttribute('data-current-page-index');
                 var currentClass = 'page-' + currPageIndex + '_row-' + currRowIndex;
                 return target.classList.contains(currentClass);
             },
@@ -54,7 +58,7 @@ var FormPagesComponent = /** @class */ (function () {
                 return false;
             }
         });
-        this.subs.add(this.dragulaService.dropModel("columns")
+        this.subs.add(dragulaService.dropModel("columns")
             .subscribe(function (_a) {
             var name = _a.name, el = _a.el, target = _a.target, source = _a.source, item = _a.item, sourceModel = _a.sourceModel, targetModel = _a.targetModel, sourceIndex = _a.sourceIndex, targetIndex = _a.targetIndex;
             var currRowIndex = el.getAttribute('data-current-row-index');
@@ -122,25 +126,25 @@ var FormPagesComponent = /** @class */ (function () {
                 return false;
             }
         });
-        this.subs.add(this.dragulaService.cloned("contents")
+        this.subs.add(dragulaService.cloned("contents")
             .subscribe(function (_a) {
             var name = _a.name, clone = _a.clone, original = _a.original, cloneType = _a.cloneType;
             if (original.classList.contains('menu-content-sortable')) {
-                var r = new RenderHtmlService();
                 var currentDataAttr = JSON.parse(clone.getAttribute('data-content'));
-                r.setParams(currentDataAttr);
+                var r = new BootstrapForm(currentDataAttr);
+                //r.setParams(currentDataAttr);
                 clone.classList.remove('badge', 'bg-dark', 'col-md-6', 'bg-primary', 'text-white');
                 clone.innerHTML = '';
-                clone.insertAdjacentHTML('afterbegin', '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get().html + '</div>');
+                clone.insertAdjacentHTML('afterbegin', '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get() + '</div>');
             }
         }));
         this.subs.add(dragulaService.dropModel("contents")
             .subscribe(function (_a) {
-            var sourceModel = _a.sourceModel, targetModel = _a.targetModel, item = _a.item;
+            var name = _a.name, el = _a.el, target = _a.target, source = _a.source, item = _a.item, sourceModel = _a.sourceModel, targetModel = _a.targetModel, sourceIndex = _a.sourceIndex, targetIndex = _a.targetIndex;
             if (item.table && item.html) {
-                if (typeof item.table.columnName === 'undefined' &&
-                    (typeof item.html.category !== 'undefined' && item.html.category === 'form')) {
-                    item.table.columnName = 'name_' + new Date().getUTCMilliseconds();
+                if (typeof item.table.columnName === 'undefined' && item.html.category === 'form') {
+                    item.table.columnName = 'name__' + new Date().getUTCMilliseconds();
+                    item.table.size = '';
                 }
             }
         }));
@@ -149,10 +153,18 @@ var FormPagesComponent = /** @class */ (function () {
         var _this = this;
         this.pages = this.pages ? this.pages.length > 0 ? this.pages : [] : [];
         this.formConfigService.getConfig().subscribe(function (data) { _this.config = data; });
-        this.pagesChange.emit(this.pages);
     };
-    FormPagesComponent.prototype.ngOnChanges = function (changes) {
-        console.log(changes);
+    FormPagesComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        this.subs.add(this.dragulaService.drop("pages")
+            .subscribe(function (value) {
+            _this.dropModelPageUpdated = true;
+        }));
+    };
+    FormPagesComponent.prototype.ngDoCheck = function () {
+        if (this.dropModelPageUpdated) {
+            this.pagesChange.emit(this.pages);
+        }
     };
     FormPagesComponent.prototype.ngOnDestroy = function () {
         this.dragulaService.destroy('pages');

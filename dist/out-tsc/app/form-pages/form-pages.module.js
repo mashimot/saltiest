@@ -19,11 +19,10 @@ var FormPagesModule = /** @class */ (function () {
         NgModule({
             imports: [
                 CommonModule,
-                DragulaModule,
+                DragulaModule.forRoot(),
                 RenderContentModule
             ],
             exports: [
-                CommonModule,
                 FormPagesComponent,
                 FormRowsComponent,
                 FormColumnsComponent,

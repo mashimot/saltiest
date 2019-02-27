@@ -7,7 +7,18 @@
                 <div *ngFor="let d of column.contents; let contentIndex = index;">
                     <section *ngIf="d.html?.category === 'form'" class="row">
                         <div class="col-md-1">
-                        
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" 
+                                    [checked]="d.table.isPrimaryKey" 
+                                    [(ngModel)]="d.table.isPrimaryKey"
+                                    [ngModelOptions]="{ standalone: true }"
+                                    #isPrimaryKey="ngModel"                                    
+                                    class="form-check-input" 
+                                    id="is-primary-{{ pageIndex + rowIndex + columnIndex + contentIndex }}">
+                                    <label class="form-check-label" for="is-primary-{{ pageIndex + rowIndex + columnIndex + contentIndex }}">Primary Key?</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-2">
                             <div class="input-group">
@@ -28,7 +39,7 @@
                                     </div>
                                 </div>
                                 <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableColumnName.invalid }" 
-                                name="table-column-name-{{ pageIndex + rowIndex + columnIndex + contentIndex }}"                                 
+                                name="table-column-name-{{ pageIndex + rowIndex + columnIndex + contentIndex }}"
                                 [(ngModel)]="d.table.columnName" 
                                 [ngModelOptions]="{ standalone: true }"
                                 #tableColumnName="ngModel"

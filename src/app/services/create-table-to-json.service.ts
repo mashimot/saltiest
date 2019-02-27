@@ -21,15 +21,16 @@ export class CreateTableToJsonService {
     };
     html: Html;
     table: Table;
+    tableName: string;
     allowedDataTypes: Array<string> = ['null', 'not null', 'primary key', 'unique'];
     regex: {
-        [key:string]: RegExp
+        [key:string]: string
     } = {
-        createTableSyntax: /(d+)/g,
-        onlyNumeric: /^(([0-9]+(\,[0-9]+)?)(\.[0-9]+)?)$/,
-        valueBtwParentheses: /\(([^)]*)\)/,
-        valueBtwParenthesesGlobal: /\(([^)]*)\)/g,
-        stringRestriction: /^[\s\w+\_\-\,\.()]*$/
+        createTableSyntax: '',
+        createTable: `\\s*create\\s+table(?:\\s+if\\s+not\\s+exists)?\\s+(\\w+)\\s+`,
+        onlyNumeric: `(([0-9]+(\\,[0-9]+)?)(\\.[0-9]+)?)`,
+        valueBtwParentheses: `\\(([^)]*)\\)`,
+        stringRestriction: `^[\\s\\w+\\_\\-\\,\\.()]*$`,
     };
 
 
@@ -40,37 +41,43 @@ export class CreateTableToJsonService {
         this._errors = [];
         this._dataBase = DatabaseEngine.get('ORACLE');
         this._customLabel = this.getCustomLabelName();
-        this.createTableSyntax();
+        this.regex.createTableSyntax = this.createTableSyntax();
     }
 
-    createTableSyntax(): void {
+    /*CREATE TABLE test_table (
+        -- define columns (name / type / default value / column constraint
+        id             DECIMAL                           PRIMARY KEY,
+        part_number    CHAR(10)          DEFAULT 'n/a'   NOT NULL,
+        part_name      VARCHAR(500),
+        state          DECIMAL           DEFAULT -1,
+    );*/
+    createTableSyntax(): string {
         var dbKeys = Object.keys(this._dataBase).join("|");
-        var onlyNumeric = '([0-9]+(\\,[0-9]+)?)(\\.[0-9]+)?';
         var comma = '(,)';
         var allowedDataTypes = this.allowedDataTypes.map((item)=>{
             var newItem = item.toUpperCase().replace(/\s+/g, '\\s+');
             return `(?:${newItem}?)?`;
         }).join("");
 
-        var info = `
+        let info = `
         (\\s*
-            (\\w+)\\s+
+            (\\w+)\\s*
             (
-                (${dbKeys})(\\s+)?
+                (${dbKeys})(\\s*)?
                 (?:
-                    ([(]${onlyNumeric}[)])
+                    ([(]${this.regex.onlyNumeric}[)])
                 )?
             ) 
             (?:
                 \\s+${allowedDataTypes}
             )?
             (?:
-                \\s+(PRIMARY\\s+KEY)?(UNIQUE)?
+                \\s*(PRIMARY\\s+KEY)?\\s*
             )?
         )
         `;
-        var regexCreateTableSyntax =
-        `\\s*CREATE\\s+TABLE(?:\\s+IF\\s+NOT\\s+EXISTS)?\\s+(\\w+)
+        let regexCreateTableSyntax = `
+        ${this.regex.createTable}
         \\s*[(]
             (\\s*
                 (
@@ -80,21 +87,17 @@ export class CreateTableToJsonService {
                     ${info}\\s*
                 )
             )
-        \\s*
-        [)]\\s*[;]
+        \\s*[)]\\s*([;])
         `.toLowerCase().replace(/\s+/g, '').trim();
-        this.regex.createTableSyntax = new RegExp(regexCreateTableSyntax, "g");
 
-        console.log(this.regex.createTableSyntax);
-
-
+        return regexCreateTableSyntax;
     }
  
     getDataTypeAndSize(str: Array<string>) {
         let secondMatch = str[1];
         let inputType, size = '';
         let dataType = secondMatch;
-        let matchValBtwParen = secondMatch.match(this.regex.valueBtwParentheses);
+        let matchValBtwParen = secondMatch.match(new RegExp(this.regex.valueBtwParentheses));
         let hasValueBtwParen = false;
        
         if (matchValBtwParen !== null) {
@@ -104,7 +107,7 @@ export class CreateTableToJsonService {
             //(2) probably the next element -thirdMatch- must have(or not) the size of the columnName (it must be an integer or float)
             if (str.length > 2) { //has more than 2 elements
                 let thirdMatch = str[2];
-                matchValBtwParen = thirdMatch.match(this.regex.valueBtwParentheses); //get value between parentheses
+                matchValBtwParen = thirdMatch.match(new RegExp(this.regex.valueBtwParentheses)); //get value between parentheses
                 if (matchValBtwParen !== null){ // it goes to the next index if parentheses doesn't exists
                     hasValueBtwParen = true;
                     this._wordIndex = 3;
@@ -114,16 +117,14 @@ export class CreateTableToJsonService {
 
         if (hasValueBtwParen) {
             let numeric = matchValBtwParen[1];
-            console.log(numeric);
-            let regex = new RegExp(this.regex.onlyNumeric);
-            if (!regex.test(numeric)) {
+            let onlyNumericRegex = new RegExp(`^${this.regex.onlyNumeric}$`);
+            if (!onlyNumericRegex.test(numeric)) {
                 this._errors.push(`\`${this.table.columnName}\`: ${numeric} is not a number!`);
             }
             size = numeric;
         }
 
         let database = this._dataBase[dataType.toUpperCase()];
-        //console.log(database);
         if (typeof database !== 'undefined' && dataType !== '') {
             inputType = database;
         } else {
@@ -133,6 +134,7 @@ export class CreateTableToJsonService {
         this.html.tag = inputType;
         this.table.size = size;
     }
+
     validateSyntax(words: Array<string>): void {
         let value = '';
         let allowed = {
@@ -203,6 +205,7 @@ export class CreateTableToJsonService {
         this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
         this._wordIndex = 2;
     }
+
     convert(): void {
         let regex = new RegExp(this.regex.createTableSyntax);
         this._string = this._string.replace(/\s/g, " ").toLowerCase();
@@ -214,62 +217,64 @@ export class CreateTableToJsonService {
             );
         }
 
-        //gambiarra! Arrumar uma forma melhor de fazer isso:
-        let split = this._string.replace(/[^\(]*(\(.*\))[^\)]*/, '$1')
-        .replace(/^\((.+)\)$/, '$1')
-        .replace(this.regex.valueBtwParenthesesGlobal, (string, first) => {
-            let regex = new RegExp(this.regex.onlyNumeric, "g");
-            if(regex.test(first)){
-                return "(" +  first.replace(/,/g, '.') + ")";
-            }
-            return string;
-        })
-        .split(",")
-        .reduce((previous, currentValue) => {
-            if (previous && currentValue !== '') {
-                previous.push(currentValue);
-            }
-            return previous;
-        }, []);    
-
+        var createTable = (new RegExp(`${this.regex.createTable}([^\\(]*(\\(.*\\))[^\\)])`)).exec(this._string);
+        let defineColumns = [];
+        if(createTable){
+            this.tableName  = createTable[1];
+            defineColumns   = createTable[3].replace(/^\((.+)\)$/, '$1')
+            .replace(new RegExp(this.regex.valueBtwParentheses, "g"), (string, first) => {
+                let regex = new RegExp(this.regex.onlyNumeric, 'g');
+                if(regex.test(first)){
+                    return "(" +  first.replace(/,/g, '.') + ")";
+                }
+                return string;
+            })
+            .split(",")
+            .reduce((previous, currentValue) => {
+                if (previous && currentValue !== '') {
+                    previous.push(
+                        currentValue.replace(/\s+/g, " ")
+                            .trim()
+                                .toLowerCase()
+                    );
+                }
+                return previous;
+            }, []);
+        }
+        console.log(defineColumns);
         let i = 0;
-        while (i < split.length/* && this._errors.length <= 0*/) {
-            let currentWord = split[i].toLowerCase().replace(/\s+/g, " ").trim();
-            let eachWords = currentWord.split(' ');
+        while (i < defineColumns.length/* && this._errors.length <= 0*/) {
+            let currentDefineColumn = defineColumns[i];
+            let eachWords = currentDefineColumn.split(' '); //break the define columns into words
 
             if (eachWords.length <= 1) {
                 //this._errors.push(`Incompleted`);
             } else {
                 this.table.columnName = eachWords[0]; // column name
-
-                if (this.table.columnName === 'create' && eachWords[1] === 'table') {
-                    //this._data.name = stringArr[2];
-                } else {
-                    //the firstMatch  (stringArr[0]) will be always the column name
-                    //the secondMatch (stringArr[1]) will be always the column data type
-                    this.getDataTypeAndSize(eachWords);
-                    this.validateSyntax(eachWords);
-                    this.customInput();
-                    this.customLabelName();
-                    this._data.push({
-                        html: {
-                            category: 'form',
-                            tag: this.html.tag,
-                            label: this.html.label
-                        },
-                        table: {
-                            isPrimaryKey: this.table.isPrimaryKey,
-                            columnName: this.table.columnName,
-                            type: this.table.type,
-                            nullable: this.table.nullable,
-                            size: this.table.size
-                        }
-                    });
-                }
+                //the firstMatch  (stringArr[0]) will be always the column name
+                //the secondMatch (stringArr[1]) will be always the column data type
+                this.getDataTypeAndSize(eachWords);
+                this.validateSyntax(eachWords);
+                this.customInput();
+                this.customLabelName();
+                this._data.push({
+                    html: {
+                        category: 'form',
+                        tag: this.html.tag,
+                        label: this.html.label
+                    },
+                    table: {
+                        isPrimaryKey: this.table.isPrimaryKey,
+                        columnName: this.table.columnName,
+                        type: this.table.type,
+                        nullable: this.table.nullable,
+                        size: this.table.size
+                    }
+                });
             }
             i++;
         }
-        //console.log(this._data)
+        console.log(this._data)
     }
 
     customLabelName() {
@@ -296,20 +301,29 @@ export class CreateTableToJsonService {
             this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
         }
     }
+
+    getTableName(){
+        return this.tableName;
+    }
+
     getData() {
         return this._data;
     }
+
     setString(_string: string) {
         this._string = _string;
     }
+
     getString(): string {
         return this._string;
     }
+
     getError() {
         return this._errors.filter((item, pos) => {
             return this._errors.indexOf(item) == pos;
         });
     }
+
     getCustomLabelName() {
         return {
             'dat': 'Data',

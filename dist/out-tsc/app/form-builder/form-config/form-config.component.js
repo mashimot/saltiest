@@ -21,6 +21,8 @@ var FormConfigComponent = /** @class */ (function () {
         var _this = this;
         this.options = {
             size: 'lg',
+            backdrop: 'static',
+            keyboard: false,
             centered: true
         };
         this.formContentConfig.getContent().subscribe(function (data) {
@@ -31,6 +33,7 @@ var FormConfigComponent = /** @class */ (function () {
                     'tag': [data.html.tag],
                     'category': [data.html.category],
                     'elements': _this.fb.array([], []),
+                    'fields': [data.html.fields, []],
                     'label': [data.html.label, []],
                     'src': [data.html.src, []],
                     'text': [data.html.text, []],
@@ -38,6 +41,8 @@ var FormConfigComponent = /** @class */ (function () {
                 }),
                 table: _this.fb.group({
                     'columnName': [data.table.columnName],
+                    'type': [data.table.type],
+                    'size': [data.table.size],
                     'nullable': [data.table.nullable, []]
                 })
             });

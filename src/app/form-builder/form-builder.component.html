@@ -1,5 +1,8 @@
 <div class="row">
-    <app-create-table-to-json (pageChange)="getPages($event)" class="col-md-12"></app-create-table-to-json>
+    <app-create-table-to-json 
+    (pageChange)="getPages($event)" 
+    [(tableName)]="tableName"
+    class="col-md-12"></app-create-table-to-json>
 </div>
 <ul class="nav nav-tabs nav-pills">
     <li class="nav-item">
@@ -89,10 +92,10 @@
 
 <textarea class="form-control" rows="40">
 class AlgumaClasse extends ModelAuditable {
-  protected $table      = '{{ laravel.table }}';
-  protected $primaryKey = '{{ laravel.primaryKey }}';
+  protected $table      = '{{ tableName }}';
+  protected $primaryKey = {{ laravel.primaryKey? (laravel.primaryKey.length > 1? "[" +  laravel.primaryKey + "]": laravel.primaryKey[0]) : [] }};
   public $incrementing  = true; 
-  public $sequence      = 'sga_{{ laravel.primaryKey }}_seq';  
+  public $sequence      = 'sga_{{ laravel.primaryKey? removeDoubleQuotes(laravel.primaryKey[0]) : '' }}_seq';  
   
   protected $fillable = {{ laravel.fillable }};
 
