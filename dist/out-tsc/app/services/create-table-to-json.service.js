@@ -18,11 +18,9 @@ var CreateTableToJsonService = /** @class */ (function () {
         this.allowedDataTypes = ['null', 'not null', 'primary key', 'unique'];
         this.regex = {
             createTableSyntax: '',
-            createTable: "\\s*CREATE\\s+TABLE(?:\\s+IF\\s+NOT\\s+EXISTS)?\\s+(\\w+)",
-            //onlyNumeric2: /^(([0-9]+(\,[0-9]+)?)(\.[0-9]+)?)$/,
-            onlyNumeric: "[0-9]+(\\,[0-9]+)?(\\.[0-9]+)?",
+            createTable: "\\s*create\\s+table(?:\\s+if\\s+not\\s+exists)?\\s+(\\w+)\\s*",
+            onlyNumeric: "(([0-9]+(\\,[0-9]+)?)(\\.[0-9]+)?)",
             valueBtwParentheses: "\\(([^)]*)\\)",
-            valueBtwParenthesesGlobal: "\\(([^)]*)\\)",
             stringRestriction: "^[\\s\\w+\\_\\-\\,\\.()]*$",
         };
         this.html = new Html();
@@ -47,15 +45,15 @@ var CreateTableToJsonService = /** @class */ (function () {
             var newItem = item.toUpperCase().replace(/\s+/g, '\\s+');
             return "(?:" + newItem + "?)?";
         }).join("");
-        var info = "\n        (\\s*\n            (\\w+)\\s+\n            (\n                (" + dbKeys + ")(\\s+)?\n                (?:\n                    ([(]" + this.regex.onlyNumeric + "[)])\n                )?\n            ) \n            (?:\n                \\s+" + allowedDataTypes + "\n            )?\n            (?:\n                \\s+(PRIMARY\\s+KEY)?\n            )?\n        )\n        ";
-        var regexCreateTableSyntax = ("\n        " + this.regex.createTable + "\n        \\s*[(]\n            (\\s*\n                (\n                    " + info + comma + "\\s*\n                )*\n                (\n                    " + info + "\\s*\n                )\n            )\n        \\s*[)]\\s*[;]\n        ").toLowerCase().replace(/\s+/g, '').trim();
+        var info = "\n        (\\s*\n            (\\w+)\\s*\n            (\n                (" + dbKeys + ")(\\s*)?\n                (?:\n                    ([(]" + this.regex.onlyNumeric + "[)])\n                )?\n            ) \n            (?:\n                \\s+" + allowedDataTypes + "\n            )?\n            (?:\n                \\s*(PRIMARY\\s+KEY)?\\s*\n            )?\n        )\n        ";
+        var regexCreateTableSyntax = ("\n        " + this.regex.createTable + "\n        \\s*[(]\n            (\\s*\n                (\n                    " + info + comma + "\\s*\n                )*\n                (\n                    " + info + "\\s*\n                )\n            )\n        \\s*[)]\\s*([;])\n        ").toLowerCase().replace(/\s+/g, '').trim();
         return regexCreateTableSyntax;
     };
     CreateTableToJsonService.prototype.getDataTypeAndSize = function (str) {
         var secondMatch = str[1];
         var inputType, size = '';
         var dataType = secondMatch;
-        var matchValBtwParen = secondMatch.match(this.regex.valueBtwParentheses);
+        var matchValBtwParen = secondMatch.match(new RegExp(this.regex.valueBtwParentheses));
         var hasValueBtwParen = false;
         if (matchValBtwParen !== null) {
             hasValueBtwParen = true;
@@ -65,7 +63,7 @@ var CreateTableToJsonService = /** @class */ (function () {
             //(2) probably the next element -thirdMatch- must have(or not) the size of the columnName (it must be an integer or float)
             if (str.length > 2) {
                 var thirdMatch = str[2];
-                matchValBtwParen = thirdMatch.match(this.regex.valueBtwParentheses); //get value between parentheses
+                matchValBtwParen = thirdMatch.match(new RegExp(this.regex.valueBtwParentheses)); //get value between parentheses
                 if (matchValBtwParen !== null) {
                     hasValueBtwParen = true;
                     this._wordIndex = 3;
@@ -74,14 +72,13 @@ var CreateTableToJsonService = /** @class */ (function () {
         }
         if (hasValueBtwParen) {
             var numeric = matchValBtwParen[1];
-            var onlyNumericRegex = new RegExp(this.regex.onlyNumeric);
+            var onlyNumericRegex = new RegExp("^" + this.regex.onlyNumeric + "$");
             if (!onlyNumericRegex.test(numeric)) {
                 this._errors.push("`" + this.table.columnName + "`: " + numeric + " is not a number!");
             }
             size = numeric;
         }
         var database = this._dataBase[dataType.toUpperCase()];
-        //console.log(database);
         if (typeof database !== 'undefined' && dataType !== '') {
             inputType = database;
         }
@@ -171,30 +168,29 @@ var CreateTableToJsonService = /** @class */ (function () {
         if (!regex.test(this._string)) {
             this._errors.push("Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )", "You have an error in your SQL syntax:");
         }
-        var createTable = (/\s*create\s+table(?:\s+if\s+not\s+not)?\s+(\w+)\s+([^\(]*(\(.*\))[^\)])/g).exec(this._string);
+        var createTable = (new RegExp(this.regex.createTable + "([^\\(]*(\\(.*\\))[^\\)])")).exec(this._string);
         var defineColumns = [];
         if (createTable) {
-            console.log(createTable[3]);
-            defineColumns = //this._string.replace(/[^\(]*(\(.*\))[^\)]*/, '$1')
-                createTable[3].replace(/^\((.+)\)$/, '$1')
-                    .replace(this.regex.valueBtwParenthesesGlobal, function (string, first) {
-                    var regex = new RegExp(_this.regex.onlyNumeric, 'g');
-                    if (regex.test(first)) {
-                        return "(" + first.replace(/,/g, '.') + ")";
-                    }
-                    return string;
-                })
-                    .split(",")
-                    .reduce(function (previous, currentValue) {
-                    if (previous && currentValue !== '') {
-                        previous.push(currentValue.replace(/\s+/g, " ")
-                            .trim()
-                            .toLowerCase());
-                    }
-                    return previous;
-                }, []);
+            this.tableName = createTable[1];
+            defineColumns = createTable[3].replace(/^\((.+)\)$/, '$1')
+                .replace(new RegExp(this.regex.valueBtwParentheses, "g"), function (string, first) {
+                var regex = new RegExp(_this.regex.onlyNumeric, 'g');
+                if (regex.test(first)) {
+                    return "(" + first.replace(/,/g, '.') + ")";
+                }
+                return string;
+            })
+                .split(",")
+                .reduce(function (previous, currentValue) {
+                if (previous && currentValue !== '') {
+                    previous.push(currentValue.replace(/\s+/g, " ")
+                        .trim()
+                        .toLowerCase());
+                }
+                return previous;
+            }, []);
         }
-        //console.log(defineColumns)
+        console.log(defineColumns);
         var i = 0;
         while (i < defineColumns.length /* && this._errors.length <= 0*/) {
             var currentDefineColumn = defineColumns[i];
@@ -204,9 +200,6 @@ var CreateTableToJsonService = /** @class */ (function () {
             }
             else {
                 this.table.columnName = eachWords[0]; // column name
-                //if (this.table.columnName === 'create' && eachWords[1] === 'table') {
-                //this._data.name = stringArr[2];
-                //} else {
                 //the firstMatch  (stringArr[0]) will be always the column name
                 //the secondMatch (stringArr[1]) will be always the column data type
                 this.getDataTypeAndSize(eachWords);
@@ -227,11 +220,10 @@ var CreateTableToJsonService = /** @class */ (function () {
                         size: this.table.size
                     }
                 });
-                //}
             }
             i++;
         }
-        //console.log(this._data)
+        console.log(this._data);
     };
     CreateTableToJsonService.prototype.customLabelName = function () {
         var splitColumnName = this.table.columnName.split('_');
@@ -254,6 +246,9 @@ var CreateTableToJsonService = /** @class */ (function () {
             //this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
             this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals) ? 'text' : 'textarea';
         }
+    };
+    CreateTableToJsonService.prototype.getTableName = function () {
+        return this.tableName;
     };
     CreateTableToJsonService.prototype.getData = function () {
         return this._data;

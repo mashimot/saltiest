@@ -7,13 +7,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CreateTableToJsonService } from '../services/create-table-to-json.service';
 import { BootstrapGridSystemService } from '../services/bootstrap-grid-system.service';
 import { DatabaseEngine } from '../shared/services/database-engine.service';
 var CreateTableToJsonComponent = /** @class */ (function () {
     function CreateTableToJsonComponent() {
         this.pageChange = new EventEmitter();
+        this.tableNameChange = new EventEmitter();
         this.options = {
             database: 'oracle'
         };
@@ -24,8 +25,8 @@ var CreateTableToJsonComponent = /** @class */ (function () {
     CreateTableToJsonComponent.prototype.ngOnInit = function () {
         this.database = DatabaseEngine.getDatabaseEngines();
         this.string = [
-            'create table random_table_1 (',
-            'supplier_id number(10)  not null,',
+            'create table if not exists random_table_1 (',
+            'supplier_id number(10) not null primary key,',
             'supplier_name varchar2(50) not null,',
             'address varchar2(50),',
             'city varchar2(50),',
@@ -47,13 +48,22 @@ var CreateTableToJsonComponent = /** @class */ (function () {
             var bootstrapGridSystem = new BootstrapGridSystemService(data, this.gridModel);
             bootstrapGridSystem.convert();
             var pages = bootstrapGridSystem.getPage();
+            this.tableNameChange.emit(ct.getTableName());
             this.pageChange.emit(pages);
         }
     };
     __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], CreateTableToJsonComponent.prototype, "tableName", void 0);
+    __decorate([
         Output(),
         __metadata("design:type", Object)
     ], CreateTableToJsonComponent.prototype, "pageChange", void 0);
+    __decorate([
+        Output(),
+        __metadata("design:type", Object)
+    ], CreateTableToJsonComponent.prototype, "tableNameChange", void 0);
     CreateTableToJsonComponent = __decorate([
         Component({
             selector: 'app-create-table-to-json',

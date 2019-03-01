@@ -91,7 +91,7 @@
 </textarea>
 
 <textarea class="form-control" rows="40">
-class AlgumaClasse extends ModelAuditable {
+class {{ underscoreToCamelCase(tableName) }} extends ModelAuditable {
   protected $table      = '{{ tableName }}';
   protected $primaryKey = {{ laravel.primaryKey? (laravel.primaryKey.length > 1? "[" +  laravel.primaryKey + "]": laravel.primaryKey[0]) : [] }};
   public $incrementing  = true; 

@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Jsonp } from '@angular/http';
 
 @Component({
 	selector: 'app-config-table-builder',
@@ -8,37 +9,44 @@ import { Component, OnInit, Input } from '@angular/core';
 export class ConfigTableBuilderComponent implements OnInit {
 	@Input() content;
 	@Input() parentFormGroup;
-	keyFields: Array<string>;
-	hadouken: number[];
+	keyFields: Array<{
+		text: string
+	}>;
+	oldValue: string = '';
+	newValue: string = '';
 
 	constructor() {
 	}
 
-	public verifyDuplicates(index, text){
-		if (typeof text !== 'undefined'){
-			let str = JSON.stringify(this.fields.value);
-
-			str.replace(`${text}:`,`${index}:`);
-			//this.fields.value = JSON.parse(str);
-		}
+	public whileTyping(event){
+		this.newValue = event.target.value;
 	}
 
-	public newField(index, key, newKey) {
-		if (typeof newKey !== 'undefined' && newKey.trim() !== '') {
-			var fields = this.fields.value;
+	public onFocusIn(oldValue){
+		this.oldValue = oldValue;
+	}
 
-			if (fields.length > 0) {
+	public onFocusOut(fieldIndex) {
+		console.log(this.oldValue);
+		if(typeof this.newValue !== 'undefined' && this.newValue.trim() !== '' && this.oldValue !== '') {
+			if(this.fields.value.length > 0 && this.oldValue != this.newValue) {
+				var fields = this.fields.value;
+				var newFields = JSON.parse(JSON.stringify(fields).replace(new RegExp(`"${this.oldValue}":`, "g"), `"${this.newValue}":`));
+	
 				for (var i = 0; i < fields.length; i++) {
-					var field = fields[i];
-					fields[i][newKey] = field[key];
-					delete fields[i][key];
+					//cria um novo item
+					//fields[i][this.newValue] = fields[i][this.oldValue];
+					//deleta o item antigo
+					//delete fields[i][this.oldValue];
 				}
-				var keysArr = Object.keys(fields[0]);
-				var lastItem = keysArr[keysArr.length - 1];
-				keysArr.splice(index, 0, lastItem);
-
-				this.fields.value = JSON.parse(JSON.stringify(fields, keysArr));
-				//this.fields = this.getKeyFields();
+		
+				this.fields.value = newFields;
+				this.fields.updateValueAndValidity({ onlySelf: false, emitEvent: true });
+				this.keyFields = Object.keys(newFields[0]).map(item => { 
+					return { text: item }
+				});
+				this.oldValue = '';
+				this.newValue = '';
 			}
 		}
 	}
@@ -52,7 +60,10 @@ export class ConfigTableBuilderComponent implements OnInit {
 
 	public getKeyFields() {
 		if (this.fields.value.length > 0) {
-			return Object.keys(this.fields.value[0]);
+			let fieldKeys = JSON.parse(JSON.stringify(this.fields.value[0]));
+			return Object.keys(fieldKeys).map(item => {
+				return { text: item };
+			});
 		}
 		return [];
 	}

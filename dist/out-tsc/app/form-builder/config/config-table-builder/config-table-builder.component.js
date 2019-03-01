@@ -10,28 +10,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, Input } from '@angular/core';
 var ConfigTableBuilderComponent = /** @class */ (function () {
     function ConfigTableBuilderComponent() {
+        this.oldValue = '';
+        this.newValue = '';
+        this.ableToModify = false;
     }
-    ConfigTableBuilderComponent.prototype.verifyDuplicates = function (index, text) {
-        if (typeof text !== 'undefined') {
-            var str = JSON.stringify(this.fields.value);
-            str.replace(text + ":", index + ":");
-            //this.fields.value = JSON.parse(str);
-        }
+    ConfigTableBuilderComponent.prototype.whileTyping = function (event) {
+        this.newValue = event.target.value;
     };
-    ConfigTableBuilderComponent.prototype.newField = function (index, key, newKey) {
-        if (typeof newKey !== 'undefined' && newKey.trim() !== '') {
-            var fields = this.fields.value;
-            if (fields.length > 0) {
+    ConfigTableBuilderComponent.prototype.onFocus = function (oldValue) {
+        this.oldValue = oldValue;
+    };
+    ConfigTableBuilderComponent.prototype.onFocusOut = function (fieldIndex) {
+        var keyFields = this.getKeyFields();
+        if (typeof this.newValue !== 'undefined' && this.newValue.trim() !== '' && this.oldValue !== '') {
+            if (this.fields.value.length > 0 && this.oldValue != this.newValue) {
+                keyFields.splice(fieldIndex, 1);
+                keyFields.splice(fieldIndex, 0, { text: this.newValue });
+                var fields = this.fields.value;
+                var newFields = JSON.parse(JSON.stringify(fields).replace("\"" + this.oldValue + "\":", "\"" + this.newValue + ":\""));
                 for (var i = 0; i < fields.length; i++) {
-                    var field = fields[i];
-                    fields[i][newKey] = field[key];
-                    delete fields[i][key];
+                    //cria um novo item
+                    //fields[i][this.newValue] = fields[i][this.oldValue];
+                    //deleta o item antigo
+                    //delete fields[i][this.oldValue];
                 }
-                var keysArr = Object.keys(fields[0]);
-                var lastItem = keysArr[keysArr.length - 1];
-                keysArr.splice(index, 0, lastItem);
-                this.fields.value = JSON.parse(JSON.stringify(fields, keysArr));
-                //this.fields = this.getKeyFields();
+                //}
+                //console.log(joeys);
+                this.fields.value = newFields;
+                this.fields.updateValueAndValidity({ onlySelf: false, emitEvent: true });
+                this.keyFields = this.getKeyFields();
+                this.ableToModify = false;
             }
         }
     };
@@ -42,7 +50,10 @@ var ConfigTableBuilderComponent = /** @class */ (function () {
     };
     ConfigTableBuilderComponent.prototype.getKeyFields = function () {
         if (this.fields.value.length > 0) {
-            return Object.keys(this.fields.value[0]);
+            var fieldKeys = JSON.parse(JSON.stringify(this.fields.value[0]));
+            return Object.keys(fieldKeys).map(function (item) {
+                return { text: item };
+            });
         }
         return [];
     };

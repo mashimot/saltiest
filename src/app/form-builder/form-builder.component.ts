@@ -7,6 +7,7 @@ import { Page } from "../shared/models/page.model";
 import { Content } from "../shared/models/content.model";
 import { Html, IHtml } from "../shared/models/html.model";
 import { Table, ITable } from "../shared/models/table.model";
+import { stringify } from '@angular/compiler/src/util';
 
 
 @Injectable({
@@ -288,6 +289,17 @@ export class FormBuilderComponent implements OnInit {
         return word.replace(/"/g, "");
     }
 
+    public underscoreToCamelCase(string){
+        if(typeof string != 'undefined'){
+            if(string.trim() != ''){
+                let newString = string.replace(/_(\w)/g, function(m){
+                    return m.toUpperCase();
+                }).replace(/_/g, "");
+
+                return newString.charAt(0).toUpperCase() + newString.slice(1);
+            }
+        }
+    }
 
     public isNewPage(newPage: boolean): void {
         if (newPage) {

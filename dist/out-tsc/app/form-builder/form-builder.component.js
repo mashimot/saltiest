@@ -67,19 +67,24 @@ var Validator = /** @class */ (function () {
         var attr = '';
         var rules = '';
         var fillable = '';
-        return this.inputs.reduce(function (prev, curr) {
+        var primaryKey = [];
+        var hue = this.inputs.reduce(function (prev, curr) {
             _this.setParams(curr);
             _this.getValidator();
+            if (curr.table.isPrimaryKey) {
+                primaryKey.push("\"" + curr.table.columnName + "\"");
+            }
             fillable += "\"" + curr.table.columnName + "\",\n";
             return {
                 rules: rules += _this.rules,
                 attributes: attr += _this.attributes,
                 fillable: "[" + fillable + "]",
                 th: "<th>" + curr.html.labelName + "</th>",
-                primaryKey: '',
+                primaryKey: primaryKey,
                 table: ''
             };
         }, {});
+        return hue;
     };
     Validator.prototype.isRequired = function () {
         return this.table.nullable ? 'required' : 'nullable';
@@ -105,29 +110,6 @@ var Bootstrap = /** @class */ (function () {
     Bootstrap.prototype.init = function () {
         var _this = this;
         this.inputs = [];
-        /*this.code   = this.pages.map((page, pageNumber) => {
-            return `
-            <section class="page-${pageNumber + 1}">
-                ${page.rows.map(row => {
-                    let grid = row.grid.split(' ');
-                    return `
-                    <div class="row">
-                        ${row.columns.map((column, j) => {
-                            return `
-                                ${column.contents.map(content => {
-                                    if (content.html.category === 'form') {
-                                        this.inputs.push(content);
-                                    }
-                                    content.html['grid'] = grid[j];
-                                    this.renderHtmlService.setParams(content);
-                                    return this.renderHtmlService.get().code;
-                                })}
-                            `
-                        }).join('')}
-                    </div>`
-                }).join('')}
-            </section>`
-        }).join('');*/
         var htmlPages = [];
         var t = "\n\t";
         this.pages.forEach(function (page, pageNumber) {
@@ -209,6 +191,7 @@ var FormBuilderComponent = /** @class */ (function () {
         this.b = b;
         this.validator = validator;
         this.homeService = homeService;
+        this.tableName = '';
     }
     FormBuilderComponent.prototype.ngOnInit = function () {
         this.tabNumber = 1;
@@ -234,6 +217,19 @@ var FormBuilderComponent = /** @class */ (function () {
     FormBuilderComponent.prototype.isNewFile = function (newFile) {
         if (newFile) {
             this.pages = [];
+        }
+    };
+    FormBuilderComponent.prototype.removeDoubleQuotes = function (word) {
+        return word.replace(/"/g, "");
+    };
+    FormBuilderComponent.prototype.underscoreToCamelCase = function (string) {
+        if (typeof string != 'undefined') {
+            if (string.trim() != '') {
+                var newString = string.replace(/_(\w)/g, function (m) {
+                    return m.toUpperCase();
+                }).replace(/_/g, "");
+                return newString.charAt(0).toUpperCase() + newString.slice(1);
+            }
         }
     };
     FormBuilderComponent.prototype.isNewPage = function (newPage) {

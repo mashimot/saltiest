@@ -27,7 +27,7 @@ export class CreateTableToJsonService {
         [key:string]: string
     } = {
         createTableSyntax: '',
-        createTable: `\\s*create\\s+table(?:\\s+if\\s+not\\s+exists)?\\s+(\\w+)\\s+`,
+        createTable: `\\s*create\\s+table(?:\\s+if\\s+not\\s+exists)?\\s+(\\w+)\\s*`,
         onlyNumeric: `(([0-9]+(\\,[0-9]+)?)(\\.[0-9]+)?)`,
         valueBtwParentheses: `\\(([^)]*)\\)`,
         stringRestriction: `^[\\s\\w+\\_\\-\\,\\.()]*$`,

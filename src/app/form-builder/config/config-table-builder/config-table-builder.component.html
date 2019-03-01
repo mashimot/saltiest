@@ -24,28 +24,26 @@
 				<thead class="thead-light" ui-sortable>
 				<tr>
 					<th *ngFor="let f of keyFields; let fieldIndex = index;">
-					{{ f }}
-					<div class="input-group input-group-sm">
-						<input type="text"
-							(ngModelChange)="verifyDuplicates(f, hadouken)"
-							(blur)="newField(fieldIndex, f, hadouken)"
-							[(ngModel)]="hadouken"
-							[value]="f"
-							class="form-control form-control-sm" />
-						<div class="input-group-append">
-						<span class="input-group-text text-danger" ng-click="deleteColumn(key)">
-							<i class="fa fa-trash" aria-hidden="true"></i>
-						</span>
+						<div class="input-group input-group-sm">
+							<input type="text"
+								(focusin)="onFocusIn(keyFields[fieldIndex].text)"
+								(focusout)="onFocusOut(fieldIndex)"
+								(input)="whileTyping($event)"
+								[value]="keyFields[fieldIndex].text"
+								class="form-control form-control-sm" />
+							<div class="input-group-append">
+								<span class="input-group-text text-danger" ng-click="deleteColumn(key)">
+									<i class="fa fa-trash" aria-hidden="true"></i>
+								</span>
+							</div>
 						</div>
-					</div>
 					</th>
 				</tr>
 				</thead>
 				<tbody>
-					{{ keyFields | json }}
 					<tr *ngFor="let field of fields.value; let fieldIndex = index;">
 						<td *ngFor="let f of keyFields">
-							<input type="text" class="form-control" [(ngModel)]="field[f] ">
+							<input type="text" class="form-control" [(ngModel)]="field[f.text] ">
 						</td>
 						<td>
 							<button type="button" class="btn btn-outline-danger btn-sm" ng-click="deleteLine(fieldIndex)">
