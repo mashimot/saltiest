@@ -26,8 +26,7 @@ export class ConfigTableBuilderComponent implements OnInit {
 		this.oldValue = oldValue;
 	}
 
-	public onFocusOut(fieldIndex) {
-		console.log(this.oldValue);
+	public onFocusOut() {
 		if(typeof this.newValue !== 'undefined' && this.newValue.trim() !== '' && this.oldValue !== '') {
 			if(this.fields.value.length > 0 && this.oldValue != this.newValue) {
 				var fields = this.fields.value;
@@ -48,6 +47,51 @@ export class ConfigTableBuilderComponent implements OnInit {
 				this.oldValue = '';
 				this.newValue = '';
 			}
+		}
+	}
+	
+	public newColumn(fieldIndex: number){
+		if(this.keyFields.length > 0){
+			let columnName = `column ${this.keyFields.length + 1}`;
+
+			this.keyFields.splice(fieldIndex + 1, 0, { text: columnName });
+			for(let i = 0; i < this.fields.value.length; i++){
+				this.fields.value[i][columnName] = '';
+			}
+			this.fields.updateValueAndValidity({ onlySelf: false, emitEvent: true });
+		}
+	}
+
+	public newLine(fieldIndex: number){
+		if(this.fields.value.length > 0){
+			var cloned = Object.assign({}, this.fields.value[0]);
+			for (var key in cloned) {
+				if (cloned.hasOwnProperty(key)) {
+					cloned[key] = '';
+				}
+			}
+			this.fields.value.splice(fieldIndex + 1, 0, cloned);
+		}
+	}
+
+	public deleteColumn(keyName: string){
+		if(this.fields.value.length > 0){
+			this.fields.value.forEach(field => {
+				if(typeof field[keyName] != 'undefined'){
+					this.keyFields.map((item, index) => {	
+						if(item.text == keyName){
+							this.keyFields.splice(index, 1);
+						}
+					});
+					delete field[keyName];
+				}
+			});
+		}
+	}
+
+	public deleteLine(fieldIndex: number){
+		if(this.fields.value.length > 0){
+			this.fields.value.splice(fieldIndex, 1);
 		}
 	}
 

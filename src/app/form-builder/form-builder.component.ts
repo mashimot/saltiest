@@ -285,11 +285,13 @@ export class FormBuilderComponent implements OnInit {
         }
     }
     
-    public removeDoubleQuotes(word){
-        return word.replace(/"/g, "");
+    public removeDoubleQuotes(word: string){
+        if(typeof word != 'undefined')
+            return word.replace(/"/g, "");
+        return '';            
     }
 
-    public underscoreToCamelCase(string){
+    public underscoreToCamelCase(string: string){
         if(typeof string != 'undefined'){
             if(string.trim() != ''){
                 let newString = string.replace(/_(\w)/g, function(m){
@@ -299,6 +301,8 @@ export class FormBuilderComponent implements OnInit {
                 return newString.charAt(0).toUpperCase() + newString.slice(1);
             }
         }
+
+        return '';
     }
 
     public isNewPage(newPage: boolean): void {
