@@ -15,36 +15,79 @@ export class DatabaseEngine {
 	| VARCHAR2    | <textarea></textarea>
 	*/	
 	public static engines = {
-		ORACLE: {
-			CHAR: 'text',
-			NCHAR: 'text',
-			VARCHAR2: 'textarea',
-			VARCHAR: 'textarea',
-			NVARCHAR2: 'textarea',
-			INTEGER: 'number',
-			/*CLOB : true,
-			NCLOB : true,*/
-			LONG: 'number',
-			NUMBER: 'number',
-			DATE: 'date',
-			INTERVAL: 'text',
-			TIMESTAMP: 'date'
+		ORACLE:{
+			logo: 'https://www.oracle.com/webfolder/s/brand/assets/i/specimens/identity/logo/badge-color-print.gif',
+			types: {
+				CHAR: 'text',
+				NCHAR: 'text',
+				VARCHAR2: 'textarea',
+				VARCHAR: 'textarea',
+				NVARCHAR2: 'textarea',
+				INTEGER: 'number',
+				/*CLOB : true,
+				NCLOB : true,*/
+				LONG: 'number',
+				NUMBER: 'number',
+				DATE: 'date',
+				INTERVAL: 'text',
+				TIMESTAMP: 'date'
+			}
+		},
+		MYSQL: {
+			logo: 'https://www.mysql.com/common/logos/logo-mysql-170x115.png',
+			types: {
+				//integer
+				INT: 'TEXT',
+				SMALLINT: 'TEXT',
+				TINYINT: 'TEXT',
+				MEDIUMINT: 'TEXT',
+				BIGINT: 'TEXT',
+				//real
+				FLOAT: 'NUMBER',
+				DOUBLE: 'NUMBER',
+				DECIMAL: 'NUMBER',
+				//text
+				CHAR: 'TEXT',
+				VARCHAR: 'TEXT',
+				TEXT: 'TEXT',
+				MEDIUMTEXT: 'TEXT',
+				LONGTEXT: 'TEXT',
+				//binary
+				BINARY: 'TEXT',
+				//temporal
+				DATE: 'TEXT',
+				TIME: 'TEXT',
+				DATETIME: 'TEXT',
+				TIMESTAMP: 'TEXT'
+			}
 		}
 	};
 
 	public static getDatabaseEngines() {
 		return Object.keys(this.engines).map(
-			data => { return data.toLowerCase(); }
+			item => { 
+				return {
+					engine: item.toLowerCase(), 
+					logo: this.engines[item].logo
+				}
+			}
 		);
 	}
-
-   public static get(type = "ORACLE") {
+	
+	//Default is "ORACLE"
+   	public static get(dbName: string = "ORACLE") { 
 		let engineExists = Object.keys(this.engines).find((item) => {
-			return item == type;
+			return item == dbName;
 		});
 		
 		if(engineExists){
-			return this.engines[type];
+			var t = {};
+			for(let key in this.engines[dbName].types){
+				if(this.engines[dbName].types.hasOwnProperty(key)){
+					t[key] = this.engines[dbName].types[key].toLowerCase();
+				}
+			}
+			return t;
 		}
 		return {};
 	}

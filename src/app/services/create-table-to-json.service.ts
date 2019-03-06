@@ -34,12 +34,12 @@ export class CreateTableToJsonService {
     };
 
 
-    constructor() {
+    constructor(DB: string) {
         this.html = new Html();
         this.table = new Table();
         this._data = [];
         this._errors = [];
-        this._dataBase = DatabaseEngine.get('ORACLE');
+        this._dataBase = DatabaseEngine.get(DB);
         this._customLabel = this.getCustomLabelName();
         this.regex.createTableSyntax = this.createTableSyntax();
     }

@@ -6,10 +6,11 @@
                     <div class="col-md-8">
                         <section type="pills" active="active" justified="true">
                             <div index="0" heading="Create Table">
+                                <img [src]="options.logo" alt="{{ options.database }}" class="img-fluid mx-auto d-block">
                                 <textarea [(ngModel)]="string"
                                           name="string"
                                           [ngClass]="{ 'is-invalid' : errors.length > 0 }"
-                                          class="form-control form-control-sm h-100"
+                                          class="form-control form-control-sm h-100 mt-4"
                                           rows="10"></textarea>
                                 <div *ngIf="errors" class="invalid-feedback">
                                     <div *ngFor="let e of errors">
@@ -25,8 +26,8 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="form_ct_database">Database</label>
-                            <select id="form_ct_database" class="form-control" [(ngModel)]="options.database" name="database">
-                                <option *ngFor="let db of database" [value]="db">{{ db }}</option>
+                            <select id="form_ct_database" class="form-control" [(ngModel)]="options.database" (change)="joeys($event.target.value)" name="database">
+                                <option *ngFor="let db of database" [value]="db.engine">{{ db.engine }}</option>
                             </select>
                         </div>
                         <div class="form-group">

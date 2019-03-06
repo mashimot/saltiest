@@ -14,11 +14,15 @@ export class CreateTableToJsonComponent implements OnInit {
 	@Output() tableNameChange = new EventEmitter();
 	
 	gridModel: string;
-	database: Array<string>;
+	database: Array<{
+		engine: string,
+		logo: string
+	}>;
 	errors: Array<string>;
 	primaryKeys: any[];
 	options = {
-		database: <string> 'oracle'
+		database: <string> 'oracle',
+		logo: <string> ''
 	};
 	string: string;
 
@@ -30,6 +34,7 @@ export class CreateTableToJsonComponent implements OnInit {
 
 	ngOnInit() {
 		this.database = DatabaseEngine.getDatabaseEngines();
+		this.joeys(this.options.database);
 		this.string = [
 			'create table if not exists random_table_1 (',
 			'supplier_id number(10) not null primary key,',
@@ -38,7 +43,7 @@ export class CreateTableToJsonComponent implements OnInit {
 			'city varchar2(50),',
 			'state varchar2(25),',
 			'dat_now date,',
-			'zip_code varchar2(10),price number(12,2)',
+			'zip_code number(10),price number(10,2)',
 			');'
 		].join("\n");
 	}
@@ -47,8 +52,18 @@ export class CreateTableToJsonComponent implements OnInit {
 
 	}
 
+	public joeys(value){
+		for(let i = 0; i < this.database.length; i++){
+			if(this.database[i].engine == value){
+				this.options.database = value;
+				this.options.logo = this.database[i].logo;
+				break;
+			}
+		}
+	}
+
 	public createTable() {
-		let ct = new CreateTableToJsonService();
+		let ct = new CreateTableToJsonService(this.options.database.toUpperCase());
 		ct.setString(this.string);
 		ct.convert();
 		this.errors = ct.getError();
