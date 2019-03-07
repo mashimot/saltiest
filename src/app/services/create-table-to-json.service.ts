@@ -4,9 +4,7 @@ import { Content } from "./../shared/models/content.model";
 import { Html } from "./../shared/models/html.model";
 import { Table } from "./../shared/models/table.model";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class CreateTableToJsonService {
     _isTextareaWhenSizeEquals: number = 1000;
     _wordIndex: number = 2;
