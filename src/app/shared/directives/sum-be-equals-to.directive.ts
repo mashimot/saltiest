@@ -2,30 +2,43 @@ import { Directive, Input } from '@angular/core';
 import { Validator, AbstractControl, NG_VALIDATORS, ValidatorFn, ValidationErrors } from '@angular/forms';
 
 @Directive({
-  selector: '[sumBeEqualsTo]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: SumBeEqualsToDirective,
-    multi: true
-  }]
+	selector: '[sumBeEqualsTo]',
+	providers: [{
+		provide: NG_VALIDATORS,
+		useExisting: SumBeEqualsToDirective,
+		multi: true
+	}]
 })
 export class SumBeEqualsToDirective {
-  @Input() sumBeEqualsTo;
+@Input() sumBeEqualsTo;
 
-  constructor() { }
+constructor() { }
 
-  validate(control: AbstractControl): ValidationErrors | null {
-    let sum = 0;
-    if (control.value) {
-      var arrValues = control.value.trim().replace(/ +/g, ' ').split(' ');
-
-      if (arrValues.length > 0) {
-        for (var i = 0; i < arrValues.length; i++) {
-          var num = parseInt(arrValues[i]);
-          sum += num;
-        }
-      }
-      return (parseInt(this.sumBeEqualsTo) === sum) ? null : { 'isSumInvalid': true, 'sumBeEqualsTo': this.sumBeEqualsTo };
-    }
-  }
+	validate(control: AbstractControl): ValidationErrors | null {
+		if (typeof control.value != 'undefined' && control.value != null) {
+			let lines = control.value.replace(/ \t+/g, ' ').trim().split("\n");
+			
+			for(let i = 0; i < lines.length; i++){
+				let sum = 0;
+				if(lines[i].trim() != ''){
+					let currentValueArr = lines[i].trim().split(' ');
+					if (currentValueArr.length > 0) {
+						for (var j = 0; j < currentValueArr.length; j++) {
+							if(currentValueArr[j].trim() != ''){
+								let num = parseInt(currentValueArr[j]);
+								sum += num;
+							}
+						}
+						if(parseInt(this.sumBeEqualsTo) != sum){
+							return { 
+								'isSumInvalid': true, 
+								'sumBeEqualsTo': this.sumBeEqualsTo 
+							};
+						} 
+					}	
+				}
+			}
+		}
+		return null
+	}
 }

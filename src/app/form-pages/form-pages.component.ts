@@ -4,6 +4,7 @@ import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 //import { RenderHtmlService } from '../services/render-html.service';
 import { BootstrapForm } from '../services/render-html.service';
+import { race } from 'rxjs/operators';
 
 @Component({
     selector: 'app-form-pages',
@@ -78,6 +79,7 @@ export class FormPagesComponent implements OnInit {
         );
         
         dragulaService.createGroup('rowSortable', {
+            revertOnSpill: true,
             copy: (el, source) => {
                 return source.className === 'menu-row-sortable';
             },
@@ -96,22 +98,39 @@ export class FormPagesComponent implements OnInit {
             }
         });
         this.subs.add(dragulaService.dropModel("rowSortable")
-            .subscribe(({ sourceModel, targetModel, item }) => {
-                if (item.columns.length <= 0) {
-                    let textWithoutExtraWhiteSpaces = item.grid.replace(/ +/g, ' ').trim();
-                    let arrNumbers = textWithoutExtraWhiteSpaces.split(' ');
-                    let columns = [];
-                    if (arrNumbers.length > 0) {
-                        for (let i = 0; i < arrNumbers.length; i++) {
-                            columns.push({
-                                contents: []
-                            });
+            .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
+                if(typeof item.grid != 'undefined' && typeof item.columns == 'undefined'){//gambiarra, mas funciona
+                    let rows = [];
+                    let lines = item.grid.replace(/ +/g, ' ').trim().split("\n");
+                    delete item.grid;
+                    for(let i = 0; i < lines.length; i++){
+                        let line = lines[i].trim();
+                        if(line != ''){
+                            let arrNumbers = line.split(' ');
+                            if (arrNumbers.length > 0) {
+                                rows.push({
+                                    grid: line,
+                                    columns: []
+                                });
+                                for (let j = 0; j < arrNumbers.length; j++) {
+                                    rows[rows.length - 1].columns.push({
+                                        contents: []
+                                    });
+                                }
+                            }
                         }
-                        item.grid = textWithoutExtraWhiteSpaces;
-                        item.columns = columns;
                     }
-                    return item;
+                    for(var i =0 ; i < targetModel.length; i++){
+                        if(Object.keys(targetModel[i]).length <= 0){
+                            targetModel.splice(i, 1);
+                        }
+                    }
+                    const numSeparators = rows.length;
+                    for (let i = 0; i < numSeparators; i++) {
+                        targetModel.splice(targetIndex + (i), 0, rows[i]);
+                    }
                 }
+                return item;
             })
         );
         dragulaService.createGroup('contents', {
@@ -159,6 +178,7 @@ export class FormPagesComponent implements OnInit {
                 }
             })
         );
+        this.dragulaService.find('rowSortable').drake.cancel(true);
     }
 
     ngOnInit() {

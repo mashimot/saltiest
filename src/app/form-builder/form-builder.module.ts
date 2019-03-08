@@ -13,9 +13,9 @@ import { FormConfigModule } from './../form-builder/form-config/form-config.modu
 import { FormPagesModule } from './../form-pages/form-pages.module';
 import { GroupByPipe } from '../shared/pipes/group-by.pipe';
 import { FormInfoModule } from '../form-info/form-info.module';
-import { ConfigTitleComponent } from './config/config-title/config-title.component';
 import { SumBeEqualsToDirective } from '../shared/directives/sum-be-equals-to.directive';
 import { RenderContentModule } from '../form-pages/render-content/render-content.module';
+import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-case.pipe';
 
 @NgModule({
     imports: [
@@ -36,6 +36,7 @@ import { RenderContentModule } from '../form-pages/render-content/render-content
         FormMenuComponent,
         FormBuilderComponent,
         GroupByPipe,
+        SnakeCaseToCamelCasePipe,
         SumBeEqualsToDirective
     ],
     providers: []

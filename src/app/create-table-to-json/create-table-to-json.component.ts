@@ -25,8 +25,10 @@ export class CreateTableToJsonComponent implements OnInit {
 		logo: <string> ''
 	};
 	string: string;
+	tabNumber: number;
 
 	constructor() {
+		this.tabNumber = 1;
 		this.gridModel = '4 4 4';
 		this.errors = [];
 		this.database = [];
@@ -34,7 +36,7 @@ export class CreateTableToJsonComponent implements OnInit {
 
 	ngOnInit() {
 		this.database = DatabaseEngine.getDatabaseEngines();
-		this.joeys(this.options.database);
+		this.setDatabaseEngineLogo(this.options.database);
 		this.string = [
 			'create table if not exists random_table_1 (',
 			'supplier_id number(10) not null primary key,',
@@ -52,7 +54,7 @@ export class CreateTableToJsonComponent implements OnInit {
 
 	}
 
-	public joeys(value){
+	public setDatabaseEngineLogo(value){
 		for(let i = 0; i < this.database.length; i++){
 			if(this.database[i].engine == value){
 				this.options.database = value;
@@ -69,7 +71,7 @@ export class CreateTableToJsonComponent implements OnInit {
 		this.errors = ct.getError();
 		if (!ct.hasError()) {
 			let data = ct.getData();
-            let bootstrapGridSystem = new BootstrapGridSystemService(data, this.gridModel);
+            let bootstrapGridSystem = new BootstrapGridSystemService(data, `${this.gridModel}\n`);
 			bootstrapGridSystem.convert();
 			let pages = bootstrapGridSystem.getPage();
 			this.tableNameChange.emit(ct.getTableName());

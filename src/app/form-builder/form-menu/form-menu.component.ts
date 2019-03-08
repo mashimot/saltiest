@@ -12,9 +12,12 @@ export class FormMenuComponent implements OnInit {
     tools: Array<any>;
     pageModel: object; 
     grids: Array<any>;
-    bootstrap: Array<{
+    /*bootstrap: Array<{
         grid: string,
         columns: Array<any>
+    }>;*/
+    bootstrap: Array<{
+        grid: string
     }>;
     config: {
         previewMode: boolean
@@ -37,7 +40,9 @@ export class FormMenuComponent implements OnInit {
         };
         this.preview();
         this.grids = new BootstrapGridSystemService().getGrid();
-        this.bootstrap = [this.grids[0]];
+        this.bootstrap = [{
+            grid: "6 6\n2 4 4 2\n\n4 4 4\n7 5"
+        }];
         this.tools = this.htmlElementService.get();
         this.pageModel = [{
             rows: [],

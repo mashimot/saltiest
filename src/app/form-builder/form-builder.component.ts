@@ -252,15 +252,20 @@ export class Bootstrap {
 export class FormBuilderComponent implements OnInit {
     pages: Array<Page>;
     inputs: Array<Content>;
+    mvcList: Array<boolean>;
     tableName: string = '';
     tabNumber: number;
     tabMVC: number; 
-
     constructor(
         private b: Bootstrap,
         private validator: Validator,
 		private homeService: HomeService
     ) {
+        this.mvcList = [];
+        for(let i = 0; i < 3; i++){
+            this.mvcList.push(false);
+        }
+        this.mvcList[0] = true;
     }
 
     ngOnInit() {
@@ -289,20 +294,6 @@ export class FormBuilderComponent implements OnInit {
         if(typeof word != 'undefined')
             return word.replace(/"/g, "");
         return '';            
-    }
-
-    public underscoreToCamelCase(string: string){
-        if(typeof string != 'undefined'){
-            if(string.trim() != ''){
-                let newString = string.replace(/_(\w)/g, function(m){
-                    return m.toUpperCase();
-                }).replace(/_/g, "");
-
-                return newString.charAt(0).toUpperCase() + newString.slice(1);
-            }
-        }
-
-        return '';
     }
 
     public isNewPage(newPage: boolean): void {

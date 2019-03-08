@@ -4,7 +4,7 @@
     [(tableName)]="tableName"
     class="col-md-12"></app-create-table-to-json>
 </div>
-<ul class="nav nav-tabs nav-pills">
+<ul class="nav nav-tabs">
     <li class="nav-item">
         <a class="nav-link active" data-toggle="tab" href="#home" (click)="tabNumber = 1;">Salt</a>
     </li>
@@ -14,7 +14,7 @@
 </ul>
 <div class="tab-content">
     <div *ngIf="tabNumber == 1">
-        <div class="row">
+        <div class="row no-gutters">
             <app-form-menu (isNewFile)="isNewFile($event)" (isNewPage)="isNewPage($event)" class="col-md-3"></app-form-menu>
             <app-form-pages [(pages)]="pages" class="col-md-9"></app-form-pages>
         </div>
@@ -23,82 +23,101 @@
         <app-form-info [(pages)]="pages" class="col-md-12"></app-form-info>
     </div>
 </div>
+<ul class="list-group"> 
+    <li class="list-group-item" (click)="mvcList[0] = !mvcList[0]">
+    <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[0] }">
+        <span [ngStyle]="{ 'cursor': 'pointer' }">
+            <i class="fas" [ngClass]="{ 'fa-minus text-danger': mvcList[0], 'fa-plus': !mvcList[0] }"></i> View
+        </span>
+    </h3>
+    <textarea class="form-control" rows="40">
+        @extends('Admin.layouts.app_index')
+
+        @section('css')
+        @endsection
+
+        @section('breadcrumb-manual')
+        <li>Financeiro</li>
+        <li></li>
+        @endsection
+
+        @section('pagina_header')
+        @endsection
+
+        @section('pagina_conteudo')    
+            {{ bootstrap.init() }}
+
+            {{ bootstrap.table() }}
+
+            <!-- MODAL CRUD -->
+            {!! $HTML::modalOpen('crud_mudar_aqui', 'Adicionar') !!}
+                {!! $HTML::formOpen('form_mudar_aqui', $acao) !!}  
+                    {{ bootstrap.html() }}
+                {!! $HTML::formClose() !!}
+            {!! $HTML::modalClose(true, $HTML::modalBotoesSalvar('mudar_aqui')) !!}
+        @endsection   
+            
+        @section('bibliotecascript')
+            @include('bibliotecas.js.scripts.modalCrud')
+        @endsection
+
+        @section('script')    
+            {{ bootstrap.script() }}
+        @endsection
+    </textarea>
+    </li>
+    <li class="list-group-item" (click)="mvcList[1] = !mvcList[1]">
+        <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[1] }">
+            <span [ngStyle]="{ 'cursor': 'pointer' }"><i class="fas" [ngClass]="{ 'fa-minus text-danger': mvcList[1], 'fa-plus': !mvcList[1] }"></i> Validation</span>
+        </h3>
+        <textarea class="form-control" rows="40">
+            /**
+            * Determine if the user is authorized to make this request.
+            *
+            * @return bool
+            */
+            public function authorize(){
+                return true;
+            }
+        
+            public function rules(){
+                $rules = [
+                    {{ laravel.rules }}
+                ];
+                return $rules;
+            }
+        
+            /**
+            * Get the validation rules that apply to the request.
+            *
+            * @return array
+            */
+            public function attributes(){
+                $attributes = [
+                    {{ laravel.attributes }}
+                ];
+                return $attributes;
+            }
+        </textarea>
+    </li>
+    <li class="list-group-item" (click)="mvcList[2] = !mvcList[2]">
+        <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[2] }">
+            <span [ngStyle]="{ 'cursor': 'pointer' }"><i class="fas" [ngClass]="{ 'fa-minus text-danger': mvcList[2], 'fa-plus': !mvcList[2] }"></i> Model</span>
+        </h3>
+        <textarea class="form-control" rows="40">
+        class {{ tableName | snakeCaseToCamelCase }} extends ModelAuditable {
+            protected $table      = '{{ tableName }}';
+            protected $primaryKey = {{ laravel.primaryKey? (laravel.primaryKey.length > 1? "[" +  laravel.primaryKey + "]": laravel.primaryKey[0]) : [] }};
+            public $incrementing  = true; 
+            public $sequence      = 'sga_{{ laravel.primaryKey? removeDoubleQuotes(laravel.primaryKey[0]) : '' }}_seq';  
+            
+            protected $fillable = {{ laravel.fillable }};
+        
+        }
+        </textarea>
+    </li>
+</ul>
 <app-form-config></app-form-config>
 
-<textarea class="form-control" rows="40">
-@extends('Admin.layouts.app_index')
 
-@section('css')
-@endsection
-
-@section('breadcrumb-manual')
-<li>Financeiro</li>
-<li></li>
-@endsection
-
-@section('pagina_header')
-@endsection
-
-@section('pagina_conteudo')    
-    {{ bootstrap.init() }}
-
-    {{ bootstrap.table() }}
-
-    <!-- MODAL CRUD -->
-    {!! $HTML::modalOpen('crud_mudar_aqui', 'Adicionar') !!}
-        {!! $HTML::formOpen('form_mudar_aqui', $acao) !!}  
-            {{ bootstrap.html() }}
-        {!! $HTML::formClose() !!}
-    {!! $HTML::modalClose(true, $HTML::modalBotoesSalvar('mudar_aqui')) !!}
-@endsection   
- 
-@section('bibliotecascript')
-    @include('bibliotecas.js.scripts.modalCrud')
-@endsection
-
-@section('script')    
-    {{ bootstrap.script() }}
-@endsection
-</textarea>
-<textarea class="form-control" rows="40">
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(){
-        return true;
-    }
-
-    public function rules(){
-        $rules = [
-            {{ laravel.rules }}
-        ];
-        return $rules;
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function attributes(){
-        $attributes = [
-            {{ laravel.attributes }}
-        ];
-        return $attributes;
-    }
-</textarea>
-
-<textarea class="form-control" rows="40">
-class {{ underscoreToCamelCase(tableName) }} extends ModelAuditable {
-  protected $table      = '{{ tableName }}';
-  protected $primaryKey = {{ laravel.primaryKey? (laravel.primaryKey.length > 1? "[" +  laravel.primaryKey + "]": laravel.primaryKey[0]) : [] }};
-  public $incrementing  = true; 
-  public $sequence      = 'sga_{{ laravel.primaryKey? removeDoubleQuotes(laravel.primaryKey[0]) : '' }}_seq';  
-  
-  protected $fillable = {{ laravel.fillable }};
-
-}
-</textarea>
 
