@@ -16,12 +16,13 @@ constructor() { }
 
 	validate(control: AbstractControl): ValidationErrors | null {
 		if (typeof control.value != 'undefined' && control.value != null) {
-			let lines = control.value.replace(/ \t+/g, ' ').trim().split("\n");
+			let lines = control.value.trim().split("\n");
 			
 			for(let i = 0; i < lines.length; i++){
 				let sum = 0;
-				if(lines[i].trim() != ''){
-					let currentValueArr = lines[i].trim().split(' ');
+				let line = lines[i].replace(/\s+/g, ' ').trim();
+				if(line != ''){
+					let currentValueArr = line.split(' ');
 					if (currentValueArr.length > 0) {
 						for (var j = 0; j < currentValueArr.length; j++) {
 							if(currentValueArr[j].trim() != ''){

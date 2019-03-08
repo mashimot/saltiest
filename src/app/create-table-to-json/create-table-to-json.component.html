@@ -12,8 +12,8 @@
                                     <img [src]="options.logo" alt="{{ options.database }}" class="img-fluid mx-auto d-block">
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <li *ngFor="let db of database" (click)="options.database = db.engine; options.logo = db.logo;" class="dropdown-item">
-                                        <img [src]="db.logo" alt="{{ db.engine }}" class="img-fluid mx-auto d-block">
+                                    <li *ngFor="let db of database" (click)="options.database = db.engine; options.logo = db.logo;" class="dropdown-item p-3" [ngStyle]="{'cursor': 'pointer'}">
+                                        <img [src]="db.logo" alt="{{ db.engine }}" class="img-fluid" height="25%" width="25%"> 
                                     </li>
                                 </ul>    
                             </div>

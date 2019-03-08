@@ -101,10 +101,10 @@ export class FormPagesComponent implements OnInit {
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 if(typeof item.grid != 'undefined' && typeof item.columns == 'undefined'){//gambiarra, mas funciona
                     let rows = [];
-                    let lines = item.grid.replace(/ +/g, ' ').trim().split("\n");
+                    let lines = item.grid.trim().split("\n");
                     delete item.grid;
                     for(let i = 0; i < lines.length; i++){
-                        let line = lines[i].trim();
+                        let line = lines[i].replace(/\s+/g, ' ').trim();
                         if(line != ''){
                             let arrNumbers = line.split(' ');
                             if (arrNumbers.length > 0) {

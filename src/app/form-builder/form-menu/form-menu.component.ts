@@ -41,7 +41,12 @@ export class FormMenuComponent implements OnInit {
         this.preview();
         this.grids = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
-            grid: "6 6\n2 4 4 2\n\n4 4 4\n7 5"
+            grid: `6 6\n
+            2 4  \t 4 2\n
+             \t\n                  
+                     \n
+            4 \t\t4		4\n		
+            7 5`
         }];
         this.tools = this.htmlElementService.get();
         this.pageModel = [{
