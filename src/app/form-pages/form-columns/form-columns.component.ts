@@ -23,7 +23,7 @@ export class FormColumnsComponent implements OnInit {
     );
   }
 
-  colNumber(columnIndex) {
-      return this.row.grid.trim().split(' ')[columnIndex]
+  colNumber(columnIndex: number) {
+      return parseInt(this.row.grid.trim().split(' ')[columnIndex]);
   }
 }

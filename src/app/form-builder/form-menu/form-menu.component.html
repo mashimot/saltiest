@@ -30,6 +30,7 @@
 							</div>
 							<div class="input-group input-group-sm">
 								<textarea type="text"
+									(blur)="change(bIndex)"
 									[(ngModel)]="b.grid"
 									name="grid"
 									[ngClass]="{ 'is-invalid': f.controls.grid?.invalid }"
@@ -37,13 +38,13 @@
 									[ngStyle]="{ cursor: 'pointer' }"
 									sumBeEqualsTo="12"
 									minlength="2"
-									pattern="[0-9 \n\t]+"
+									pattern="^(\s*(0?[1-9]|[1-9][0-9])+\s*)+$"
 									required
 									rows="5"
 								></textarea>
 								<div *ngIf="f.controls.grid?.invalid || f.controls.grid?.touched" class="invalid-feedback">
 									<div *ngIf="f.controls.grid?.errors?.required ">* Enter with your grid.</div>
-									<div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers and space.</div>
+									<div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers (except only zero) and space.</div>
 									<div *ngIf="f.controls.grid?.errors?.minlength">* Min. Length is {{ f.controls.grid?.errors.minlength.requiredLength }}.</div>
 									<div *ngIf="f.controls.grid?.errors?.isSumInvalid">* The sum of the each line must be equals to {{ f.controls.grid.errors?.sumBeEqualsTo }}.</div>
 								</div>

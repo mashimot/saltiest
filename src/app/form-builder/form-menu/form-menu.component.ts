@@ -41,12 +41,12 @@ export class FormMenuComponent implements OnInit {
         this.preview();
         this.grids = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
-            grid: `6 6\n
-            2 4  \t 4 2\n
-             \t\n                  
-                     \n
-            4 \t\t4		4\n		
-            7 5`
+            grid: [
+                `6 6`,
+                `2 4 4 2`,
+                `4 4 4`,
+                `7 5`
+            ].join("\n")
         }];
         this.tools = this.htmlElementService.get();
         this.pageModel = [{
@@ -61,6 +61,16 @@ export class FormMenuComponent implements OnInit {
             previewMode: this.previewMode
         };
         this.formConfigService.setConfig(this.config);
+    }
+
+    public change(bIndex: number){
+        if(this.bootstrap[bIndex].grid.trim() != ''){
+            var g = this.bootstrap[bIndex].grid.replace(/[ \t\r]+/g, ' ').replace(/[\r\n]{2,}/g, "\n")
+            .split(' ').filter(x => {
+                return x.replace(/\s+/g, '').trim();
+            });
+            this.bootstrap[bIndex].grid = g.join(" ");
+        }
     }
 
     public newFile(): void {
