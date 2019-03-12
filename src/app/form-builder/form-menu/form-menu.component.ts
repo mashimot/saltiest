@@ -12,10 +12,6 @@ export class FormMenuComponent implements OnInit {
     tools: Array<any>;
     pageModel: object; 
     grids: Array<any>;
-    /*bootstrap: Array<{
-        grid: string,
-        columns: Array<any>
-    }>;*/
     bootstrap: Array<{
         grid: string
     }>;
