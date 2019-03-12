@@ -86,12 +86,14 @@ export class ConfigTableBuilderComponent implements OnInit {
 					delete field[keyName];
 				}
 			});
+			this.rebuildFieldsWhenEmpty();
 		}
 	}
 
 	public deleteLine(fieldIndex: number){
 		if(this.fields.value.length > 0){
 			this.fields.value.splice(fieldIndex, 1);
+			this.rebuildFieldsWhenEmpty();
 		}
 	}
 
@@ -99,7 +101,21 @@ export class ConfigTableBuilderComponent implements OnInit {
 		this.keyFields = this.getKeyFields();
 	}
 
-	ngOnChanges() {
+	rebuildFieldsWhenEmpty() {
+		if(this.fields.value[0] != null){
+			let keyFields = Object.keys(this.fields.value[0]);
+			if(keyFields.length <= 0){
+				this.fields.value = [{
+					"Book ID": "",
+				}];
+				this.keyFields = this.getKeyFields();
+			}
+		} else {
+			this.fields.value = [{
+				"Book ID": "",
+			}];
+			this.keyFields = this.getKeyFields();
+		}
 	}
 
 	public getKeyFields() {

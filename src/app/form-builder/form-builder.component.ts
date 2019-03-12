@@ -1,13 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, Injectable } from '@angular/core';
+import { Component, OnInit, Injectable, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
 import { HomeService } from "../shared/services/home.service";
-import { DragulaService } from 'ng2-dragula';
 
 import { Page } from "../shared/models/page.model";
 import { Content } from "../shared/models/content.model";
 import { Html, IHtml } from "../shared/models/html.model";
 import { Table, ITable } from "../shared/models/table.model";
-import { stringify } from '@angular/compiler/src/util';
 
 
 @Injectable({
@@ -184,54 +182,59 @@ export class Bootstrap {
     }
 
     table(): string{
-        let th = this.inputs.map((item) => { 
-            return `\n<th>${item.html.label}</th>`;
-        }, '').join('');
-        return `
-        <table class="table table-striped" id="${this.tableName}">
-            <thead>
-                <tr>
-                ${th}
-                <th class="td_justo no-sort text-right">
-                {!! $HTML::iconeCriar(
-                    Auth::user()->can('admin.financeirodescontos.create'), 
-                    '#', 
-                    true, 
-                    route('admin.financeirodescontos.store'))
-                !!}
-                </th>                
-                </tr>
-            </thead>
-        </table>
-        `;
+        if(typeof this.inputs != 'undefined' && this.inputs.length > 0){
+            let th = this.inputs.map((item) => { 
+                return `\n<th>${item.html.label}</th>`;
+            }, '').join('');
+            return `
+            <table class="table table-striped" id="${this.tableName}">
+                <thead>
+                    <tr>
+                    ${th}
+                    <th class="td_justo no-sort text-right">
+                    {!! $HTML::iconeCriar(
+                        Auth::user()->can('admin.financeirodescontos.create'), 
+                        '#', 
+                        true, 
+                        route('admin.financeirodescontos.store'))
+                    !!}
+                    </th>                
+                    </tr>
+                </thead>
+            </table>
+            `;            
+        }
+        return '';
     }
 
     script(){
-        var script = this.inputs.map((item) => {
-            return { 
-                data: item.table.columnName,
-                name: item.table.columnName
-            };
-        }, []);
+        if(typeof this.inputs != 'undefined' && this.inputs.length > 0){
+            var script = this.inputs.map((item) => {
+                return { 
+                    data: item.table.columnName,
+                    name: item.table.columnName
+                };
+            }, []);
 
-        script.push({
-            'data': 'action',
-            'name': 'name'     
+            script.push({
+                'data': 'action',
+                'name': 'name'     
+            });
+
+            return `
+    <script>
+        /*---------------------Datatables--------------------------------*/
+        var table = $('#${this.tableName}').DataTable({
+            stateSave: true,
+            processing: true,
+            serverSide: true,
+            cache: true,
+            columns: ${JSON.stringify(script, null, '\t')}
         });
-
-        return `
-<script>
-    /*---------------------Datatables--------------------------------*/
-    var table = $('#${this.tableName}').DataTable({
-        stateSave: true,
-        processing: true,
-        serverSide: true,
-        cache: true,
-        columns: ${JSON.stringify(script, null, '\t')}
-    });
-    /*---------------------/Datatables-------------------------------*/
-</script>        
-        `;
+        /*---------------------/Datatables-------------------------------*/
+    </script>`;
+        }
+        return '';
     }
 
     getInputs() {
@@ -255,17 +258,20 @@ export class FormBuilderComponent implements OnInit {
     mvcList: Array<boolean>;
     tableName: string = '';
     tabNumber: number;
+    isTabAlreadyOpen: boolean = false;
     tabMVC: number; 
+    count: number = 0;
+
     constructor(
-        private b: Bootstrap,
+        private bootstrap: Bootstrap,
         private validator: Validator,
-		private homeService: HomeService
+        private homeService: HomeService,
+        private cd: ChangeDetectorRef
     ) {
         this.mvcList = [];
         for(let i = 0; i < 3; i++){
             this.mvcList.push(false);
         }
-        this.mvcList[0] = true;
     }
 
     ngOnInit() {
@@ -273,14 +279,21 @@ export class FormBuilderComponent implements OnInit {
         this.tabMVC = 1;
         this.pages = this.homeService.get();
     }
+      
+    showMVC(tabNumber: number){
+        this.mvcList[tabNumber] = !this.mvcList[tabNumber];
+    }
 
-    get bootstrap() {
-        this.b.setPages(this.pages);
-        return this.b;
+    isTabMvcOpen(tabNumber: number){
+        if(this.mvcList[tabNumber]){
+            this.bootstrap.setPages(this.pages);
+            this.bootstrap.init();
+            this.validator.setInputs(this.bootstrap.getInputs());
+        }
+        return this.mvcList[tabNumber];
     }
 
     get laravel() {
-        this.validator.setInputs(this.b.getInputs());
         return this.validator.laravel();
     }
 
@@ -292,7 +305,7 @@ export class FormBuilderComponent implements OnInit {
     
     public removeDoubleQuotes(word: string){
         if(typeof word != 'undefined')
-            return word.replace(/"/g, "");
+            return word.replace(/\"/g, "");
         return '';            
     }
 

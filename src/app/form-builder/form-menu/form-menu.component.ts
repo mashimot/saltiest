@@ -63,16 +63,6 @@ export class FormMenuComponent implements OnInit {
         this.formConfigService.setConfig(this.config);
     }
 
-    public change(bIndex: number){
-        if(this.bootstrap[bIndex].grid.trim() != ''){
-            var g = this.bootstrap[bIndex].grid.replace(/[ \t\r]+/g, ' ').replace(/[\r\n]{2,}/g, "\n")
-            .split(' ').filter(x => {
-                return x.replace(/\s+/g, '').trim();
-            });
-            this.bootstrap[bIndex].grid = g.join(" ");
-        }
-    }
-
     public newFile(): void {
         this.isNewFile.emit(true);
     }

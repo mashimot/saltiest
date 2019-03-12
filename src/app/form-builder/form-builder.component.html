@@ -24,20 +24,19 @@
     </div>
 </div>
 <ul class="list-group"> 
-    <li class="list-group-item" (click)="mvcList[0] = !mvcList[0]">
-    <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[0] }">
+    <li class="list-group-item">
+    <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[0] }" (click)="showMVC(0)">
         <span [ngStyle]="{ 'cursor': 'pointer' }">
             <i class="fas" [ngClass]="{ 'fa-minus text-danger': mvcList[0], 'fa-plus': !mvcList[0] }"></i> View
         </span>
     </h3>
-    <textarea class="form-control" rows="40">
+    <textarea class="form-control" rows="40" *ngIf="isTabMvcOpen(0)">
         @extends('Admin.layouts.app_index')
 
         @section('css')
         @endsection
 
         @section('breadcrumb-manual')
-        <li>Financeiro</li>
         <li></li>
         @endsection
 
@@ -45,8 +44,6 @@
         @endsection
 
         @section('pagina_conteudo')    
-            {{ bootstrap.init() }}
-
             {{ bootstrap.table() }}
 
             <!-- MODAL CRUD -->
@@ -66,11 +63,11 @@
         @endsection
     </textarea>
     </li>
-    <li class="list-group-item" (click)="mvcList[1] = !mvcList[1]">
-        <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[1] }">
+    <li class="list-group-item">
+        <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[1] }" (click)="showMVC(1)">
             <span [ngStyle]="{ 'cursor': 'pointer' }"><i class="fas" [ngClass]="{ 'fa-minus text-danger': mvcList[1], 'fa-plus': !mvcList[1] }"></i> Validation</span>
         </h3>
-        <textarea class="form-control" rows="40">
+        <textarea class="form-control" rows="40" *ngIf="isTabMvcOpen(1)">
             /**
             * Determine if the user is authorized to make this request.
             *
@@ -100,11 +97,11 @@
             }
         </textarea>
     </li>
-    <li class="list-group-item" (click)="mvcList[2] = !mvcList[2]">
-        <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[2] }">
+    <li class="list-group-item">
+        <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[2] }" (click)="showMVC(2)">
             <span [ngStyle]="{ 'cursor': 'pointer' }"><i class="fas" [ngClass]="{ 'fa-minus text-danger': mvcList[2], 'fa-plus': !mvcList[2] }"></i> Model</span>
         </h3>
-        <textarea class="form-control" rows="40">
+        <textarea class="form-control" rows="40" *ngIf="isTabMvcOpen(2)">
         class {{ tableName | snakeCaseToCamelCase }} extends ModelAuditable {
             protected $table      = '{{ tableName }}';
             protected $primaryKey = {{ laravel.primaryKey? (laravel.primaryKey.length > 1? "[" +  laravel.primaryKey + "]": laravel.primaryKey[0]) : [] }};
@@ -112,7 +109,6 @@
             public $sequence      = 'sga_{{ laravel.primaryKey? removeDoubleQuotes(laravel.primaryKey[0]) : '' }}_seq';  
             
             protected $fillable = {{ laravel.fillable }};
-        
         }
         </textarea>
     </li>
