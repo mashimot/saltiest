@@ -7,14 +7,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, ViewChild, TemplateRef } from '@angular/core';
+import { Component, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { FormContentConfigService } from './../../services/form-content-config.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 var FormConfigComponent = /** @class */ (function () {
-    function FormConfigComponent(formContentConfig, fb, modalService) {
+    function FormConfigComponent(formContentConfig, fb, detector, modalService) {
         this.formContentConfig = formContentConfig;
         this.fb = fb;
+        this.detector = detector;
         this.modalService = modalService;
     }
     FormConfigComponent.prototype.ngOnInit = function () {
@@ -32,44 +33,69 @@ var FormConfigComponent = /** @class */ (function () {
                 html: _this.fb.group({
                     'tag': [data.html.tag],
                     'category': [data.html.category],
-                    'elements': _this.fb.array([], []),
-                    'fields': [data.html.fields, []],
-                    'label': [data.html.label, []],
-                    'src': [data.html.src, []],
-                    'text': [data.html.text, []],
-                    'data': [data.html.data, []]
+                    'elements': _this.fb.array([], [
+                    //Validators.required
+                    ]),
+                    'fields': [data.html.fields, [
+                        //Validators.required
+                        ]],
+                    'label': [data.html.label, [
+                        //Validators.required,
+                        //Validators.minLength(10)
+                        ]],
+                    'src': [data.html.src, [
+                        //Validators.required,
+                        //Validators.minLength(5)
+                        ]],
+                    'text': [data.html.text, [
+                        //Validators.required
+                        ]],
+                    'data': [data.html.data, [
+                        //Validators.required
+                        ]]
                 }),
                 table: _this.fb.group({
                     'columnName': [data.table.columnName],
                     'type': [data.table.type],
                     'size': [data.table.size],
-                    'nullable': [data.table.nullable, []]
+                    'nullable': [data.table.nullable, [
+                        //Validators.required
+                        ]]
                 })
             });
             if (data.html.elements) {
                 _this.populate(data.html.elements);
             }
-            var m = _this.modalService.open(_this.modal, _this.options);
-            m.result.then(function (result) {
-                _this.closeResult = "Closed with: " + result;
+            if (typeof data.html !== undefined) {
+                data.html = _this.formConfig.value.html;
+            }
+            if (typeof data.table !== undefined) {
+                data.table = _this.formConfig.value.table;
+            }
+            /*let m = this.modalService.open(this.modal, this.options)
+            m.result.then((result) => {
+                this.closeResult = `Closed with: ${result}`;
                 if (typeof data.html !== undefined) {
-                    data.html = _this.formConfig.value.html;
+                    data.html = this.formConfig.value.html;
                 }
                 if (typeof data.table !== undefined) {
-                    data.table = _this.formConfig.value.table;
+                    data.table = this.formConfig.value.table;
                 }
-            }, function (reason) {
+            }, (reason) => {
                 //this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            });
+            });*/
             /*this.formConfig.valueChanges.subscribe((form) => {
                 if (typeof data.html !== undefined) {
-                    this.content.html = form.html;
+                    this.data.html = form.html;
                 }
                 if (typeof data.table !== undefined) {
-                    this.content.table = form.table;
+                    this.data.table = form.table;
                 }
             });*/
         });
+    };
+    FormConfigComponent.prototype.c = function (formConfig) {
+        console.log(this.data);
     };
     FormConfigComponent.prototype.populate = function (e) {
         var _this = this;
@@ -106,6 +132,7 @@ var FormConfigComponent = /** @class */ (function () {
         }),
         __metadata("design:paramtypes", [FormContentConfigService,
             FormBuilder,
+            ChangeDetectorRef,
             NgbModal])
     ], FormConfigComponent);
     return FormConfigComponent;

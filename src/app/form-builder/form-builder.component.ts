@@ -6,6 +6,7 @@ import { Page } from "../shared/models/page.model";
 import { Content } from "../shared/models/content.model";
 import { Html, IHtml } from "../shared/models/html.model";
 import { Table, ITable } from "../shared/models/table.model";
+import { FormContentConfigService } from '../services/form-content-config.service';
 
 
 @Injectable({
@@ -265,8 +266,7 @@ export class FormBuilderComponent implements OnInit {
     constructor(
         private bootstrap: Bootstrap,
         private validator: Validator,
-        private homeService: HomeService,
-        private cd: ChangeDetectorRef
+        private homeService: HomeService
     ) {
         this.mvcList = [];
         for(let i = 0; i < 3; i++){
@@ -291,6 +291,12 @@ export class FormBuilderComponent implements OnInit {
             this.validator.setInputs(this.bootstrap.getInputs());
         }
         return this.mvcList[tabNumber];
+    }
+
+
+    joeysWorldTour(event){
+        console.log(event);
+
     }
 
     get laravel() {

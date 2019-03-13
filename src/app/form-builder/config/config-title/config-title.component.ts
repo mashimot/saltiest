@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-config-title',
@@ -8,6 +8,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class ConfigTitleComponent implements OnInit {
   //@Input() content;
   @Input() parentFormGroup;
+  @Output() parentFormGroupChange = new EventEmitter();
 
   headingTypes: Array<string>;
 

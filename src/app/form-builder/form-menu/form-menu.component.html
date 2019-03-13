@@ -21,7 +21,7 @@
 				<div *ngFor="let b of bootstrap; let bIndex = index;">
 					<form #f="ngForm">
 						<div [hidden]="f.invalid" [ngStyle]="{ cursor: 'move' }">
-							<div class="row-handle pt-1 pb-1 px-1 py-1 mx-1 mt-1 border border-primary">
+							<div class="row-handle pt-1 pb-1 px-1 py-1 mx-1 mt-1 border-bottom border-primary">
 								<i class="fa fa-arrows-alt fa-1x row-handle"></i><strong class="row-handle"> GRID</strong>
 							</div>
 						</div>
@@ -50,24 +50,33 @@
 				</div>
 			</fieldset>
 		</section>
-		<section class="px-2 py-2 pt-2 pb-2">
+		<section id="accordion" class="px-2 py-2 pt-2 pb-2">
 			<h3 class="text-center">TOOLS</h3>
-			<div *ngFor="let tool of tools | groupBy: 'html.category'; let toolCategoryIndex = index;" class="pt-1">
-				<strong class="text-center text-uppercase px-2">{{ tool.key }}</strong>
-				<div [dragula]='"contents"'
+			<div *ngFor="let tool of tools | groupBy: 'html.category'; let toolCategoryIndex = index;">
+				<div class="border-bottom border-primary p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">
+					{{ tool.key }}
+				</div>
+				<div 
+					id="collapse-{{ toolCategoryIndex }}" 
+					dragula="contents"
 					[(dragulaModel)]="tool.value"
-					class="menu-content-sortable row no-gutters">
+					class="row menu-content-sortable no-gutters collapse m-1 show"
+					[ngClass]="{ }"
+					aria-expanded="true"
+					[attr.data-parent]="'#accordion'"
+					>
 					<div *ngFor="let t of tool.value"
 						[ngStyle]="{ 'cursor': 'move' }"
-						class="col-md-6 text-white content-handle menu-content-sortable"
+						class="text-white content-handle menu-content-sortable col-md-6 "
 						[attr.data-content]="t | json"
-					>
+						>
 						<div class="pt-1 pb-1 px-1 py-1 mx-1 mt-1 border border-primary content-handle">
-							<span class="text-dark text-capitalize">{{ t.html.tag }}</span>
+							<span class="text-dark text-capitalize content-handle">{{ t.html.tag }}</span>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
+	
 	</div>
 </section>

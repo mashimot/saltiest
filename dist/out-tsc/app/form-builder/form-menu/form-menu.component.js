@@ -25,7 +25,14 @@ var FormMenuComponent = /** @class */ (function () {
         };
         this.preview();
         this.grids = new BootstrapGridSystemService().getGrid();
-        this.bootstrap = [this.grids[0]];
+        this.bootstrap = [{
+                grid: [
+                    "6 6",
+                    "2 4 4 2",
+                    "4 4 4",
+                    "7 5"
+                ].join("\n")
+            }];
         this.tools = this.htmlElementService.get();
         this.pageModel = [{
                 rows: [],

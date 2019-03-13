@@ -12,7 +12,7 @@ import { DatabaseEngine } from '../shared/services/database-engine.service';
 import { Html } from "./../shared/models/html.model";
 import { Table } from "./../shared/models/table.model";
 var CreateTableToJsonService = /** @class */ (function () {
-    function CreateTableToJsonService() {
+    function CreateTableToJsonService(DB) {
         this._isTextareaWhenSizeEquals = 1000;
         this._wordIndex = 2;
         this.allowedDataTypes = ['null', 'not null', 'primary key', 'unique'];
@@ -27,7 +27,7 @@ var CreateTableToJsonService = /** @class */ (function () {
         this.table = new Table();
         this._data = [];
         this._errors = [];
-        this._dataBase = DatabaseEngine.get('ORACLE');
+        this._dataBase = DatabaseEngine.get(DB);
         this._customLabel = this.getCustomLabelName();
         this.regex.createTableSyntax = this.createTableSyntax();
     }
@@ -61,10 +61,10 @@ var CreateTableToJsonService = /** @class */ (function () {
         }
         else {
             //(2) probably the next element -thirdMatch- must have(or not) the size of the columnName (it must be an integer or float)
-            if (str.length > 2) {
+            if (str.length > 2) { //has more than 2 elements
                 var thirdMatch = str[2];
                 matchValBtwParen = thirdMatch.match(new RegExp(this.regex.valueBtwParentheses)); //get value between parentheses
-                if (matchValBtwParen !== null) {
+                if (matchValBtwParen !== null) { // it goes to the next index if parentheses doesn't exists
                     hasValueBtwParen = true;
                     this._wordIndex = 3;
                 }
@@ -298,10 +298,8 @@ var CreateTableToJsonService = /** @class */ (function () {
         return this._errors.length > 0 ? true : false;
     };
     CreateTableToJsonService = __decorate([
-        Injectable({
-            providedIn: 'root'
-        }),
-        __metadata("design:paramtypes", [])
+        Injectable(),
+        __metadata("design:paramtypes", [String])
     ], CreateTableToJsonService);
     return CreateTableToJsonService;
 }());

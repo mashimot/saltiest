@@ -9,15 +9,28 @@ var DatabaseEngine = /** @class */ (function () {
     function DatabaseEngine() {
     }
     DatabaseEngine.getDatabaseEngines = function () {
-        return Object.keys(this.engines).map(function (data) { return data.toLowerCase(); });
+        var _this = this;
+        return Object.keys(this.engines).map(function (item) {
+            return {
+                engine: item.toLowerCase(),
+                logo: _this.engines[item].logo
+            };
+        });
     };
-    DatabaseEngine.get = function (type) {
-        if (type === void 0) { type = "ORACLE"; }
+    //Default is "ORACLE"
+    DatabaseEngine.get = function (dbName) {
+        if (dbName === void 0) { dbName = "ORACLE"; }
         var engineExists = Object.keys(this.engines).find(function (item) {
-            return item == type;
+            return item == dbName;
         });
         if (engineExists) {
-            return this.engines[type];
+            var t = {};
+            for (var key in this.engines[dbName].types) {
+                if (this.engines[dbName].types.hasOwnProperty(key)) {
+                    t[key] = this.engines[dbName].types[key].toLowerCase();
+                }
+            }
+            return t;
         }
         return {};
     };
@@ -33,19 +46,50 @@ var DatabaseEngine = /** @class */ (function () {
     */
     DatabaseEngine.engines = {
         ORACLE: {
-            CHAR: 'text',
-            NCHAR: 'text',
-            VARCHAR2: 'textarea',
-            VARCHAR: 'textarea',
-            NVARCHAR2: 'textarea',
-            INTEGER: 'number',
-            /*CLOB : true,
-            NCLOB : true,*/
-            LONG: 'number',
-            NUMBER: 'number',
-            DATE: 'date',
-            INTERVAL: 'text',
-            TIMESTAMP: 'date'
+            logo: 'https://www.oracle.com/webfolder/s/brand/assets/i/specimens/identity/logo/badge-color-print.gif',
+            types: {
+                CHAR: 'text',
+                NCHAR: 'text',
+                VARCHAR2: 'textarea',
+                VARCHAR: 'textarea',
+                NVARCHAR2: 'textarea',
+                INTEGER: 'number',
+                /*CLOB : true,
+                NCLOB : true,*/
+                LONG: 'number',
+                NUMBER: 'number',
+                DATE: 'date',
+                INTERVAL: 'text',
+                TIMESTAMP: 'date'
+            }
+        },
+        MYSQL: {
+            logo: 'https://www.mysql.com/common/logos/logo-mysql-170x115.png',
+            types: {
+                //integer
+                INT: 'TEXT',
+                SMALLINT: 'TEXT',
+                TINYINT: 'TEXT',
+                MEDIUMINT: 'TEXT',
+                BIGINT: 'TEXT',
+                //real
+                FLOAT: 'NUMBER',
+                DOUBLE: 'NUMBER',
+                DECIMAL: 'NUMBER',
+                //text
+                CHAR: 'TEXT',
+                VARCHAR: 'TEXT',
+                TEXT: 'TEXT',
+                MEDIUMTEXT: 'TEXT',
+                LONGTEXT: 'TEXT',
+                //binary
+                BINARY: 'TEXT',
+                //temporal
+                DATE: 'TEXT',
+                TIME: 'TEXT',
+                DATETIME: 'TEXT',
+                TIMESTAMP: 'TEXT'
+            }
         }
     };
     DatabaseEngine = __decorate([

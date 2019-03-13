@@ -12,41 +12,96 @@ var ConfigTableBuilderComponent = /** @class */ (function () {
     function ConfigTableBuilderComponent() {
         this.oldValue = '';
         this.newValue = '';
-        this.ableToModify = false;
     }
     ConfigTableBuilderComponent.prototype.whileTyping = function (event) {
         this.newValue = event.target.value;
     };
-    ConfigTableBuilderComponent.prototype.onFocus = function (oldValue) {
+    ConfigTableBuilderComponent.prototype.onFocusIn = function (oldValue) {
         this.oldValue = oldValue;
     };
-    ConfigTableBuilderComponent.prototype.onFocusOut = function (fieldIndex) {
-        var keyFields = this.getKeyFields();
+    ConfigTableBuilderComponent.prototype.onFocusOut = function () {
         if (typeof this.newValue !== 'undefined' && this.newValue.trim() !== '' && this.oldValue !== '') {
             if (this.fields.value.length > 0 && this.oldValue != this.newValue) {
-                keyFields.splice(fieldIndex, 1);
-                keyFields.splice(fieldIndex, 0, { text: this.newValue });
                 var fields = this.fields.value;
-                var newFields = JSON.parse(JSON.stringify(fields).replace("\"" + this.oldValue + "\":", "\"" + this.newValue + ":\""));
+                var newFields = JSON.parse(JSON.stringify(fields).replace(new RegExp("\"" + this.oldValue + "\":", "g"), "\"" + this.newValue + "\":"));
                 for (var i = 0; i < fields.length; i++) {
                     //cria um novo item
                     //fields[i][this.newValue] = fields[i][this.oldValue];
                     //deleta o item antigo
                     //delete fields[i][this.oldValue];
                 }
-                //}
-                //console.log(joeys);
                 this.fields.value = newFields;
                 this.fields.updateValueAndValidity({ onlySelf: false, emitEvent: true });
-                this.keyFields = this.getKeyFields();
-                this.ableToModify = false;
+                this.keyFields = Object.keys(newFields[0]).map(function (item) {
+                    return { text: item };
+                });
+                this.oldValue = '';
+                this.newValue = '';
             }
+        }
+    };
+    ConfigTableBuilderComponent.prototype.newColumn = function (fieldIndex) {
+        if (this.keyFields.length > 0) {
+            var columnName = "column " + (this.keyFields.length + 1);
+            this.keyFields.splice(fieldIndex + 1, 0, { text: columnName });
+            for (var i = 0; i < this.fields.value.length; i++) {
+                this.fields.value[i][columnName] = '';
+            }
+            this.fields.updateValueAndValidity({ onlySelf: false, emitEvent: true });
+        }
+    };
+    ConfigTableBuilderComponent.prototype.newLine = function (fieldIndex) {
+        if (this.fields.value.length > 0) {
+            var cloned = Object.assign({}, this.fields.value[0]);
+            for (var key in cloned) {
+                if (cloned.hasOwnProperty(key)) {
+                    cloned[key] = '';
+                }
+            }
+            this.fields.value.splice(fieldIndex + 1, 0, cloned);
+        }
+    };
+    ConfigTableBuilderComponent.prototype.deleteColumn = function (keyName) {
+        var _this = this;
+        if (this.fields.value.length > 0) {
+            this.fields.value.forEach(function (field) {
+                if (typeof field[keyName] != 'undefined') {
+                    _this.keyFields.map(function (item, index) {
+                        if (item.text == keyName) {
+                            _this.keyFields.splice(index, 1);
+                        }
+                    });
+                    delete field[keyName];
+                }
+            });
+            this.rebuildFieldsWhenEmpty();
+        }
+    };
+    ConfigTableBuilderComponent.prototype.deleteLine = function (fieldIndex) {
+        if (this.fields.value.length > 0) {
+            this.fields.value.splice(fieldIndex, 1);
+            this.rebuildFieldsWhenEmpty();
         }
     };
     ConfigTableBuilderComponent.prototype.ngOnInit = function () {
         this.keyFields = this.getKeyFields();
     };
-    ConfigTableBuilderComponent.prototype.ngOnChanges = function () {
+    ConfigTableBuilderComponent.prototype.rebuildFieldsWhenEmpty = function () {
+        if (this.fields.value[0] != null) {
+            var keyFields = Object.keys(this.fields.value[0]);
+            if (keyFields.length <= 0) {
+                this.fields.value = [{
+                        "Book ID": "",
+                    }];
+                this.keyFields = this.getKeyFields();
+            }
+        }
+        else {
+            this.fields.value = [{
+                    "Book ID": "",
+                }];
+            this.keyFields = this.getKeyFields();
+        }
     };
     ConfigTableBuilderComponent.prototype.getKeyFields = function () {
         if (this.fields.value.length > 0) {

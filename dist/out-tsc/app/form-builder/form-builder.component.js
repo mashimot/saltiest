@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, ChangeDetectionStrategy, Injectable } from '@angular/core';
+import { Component, Injectable, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
 import { HomeService } from "../shared/services/home.service";
 import { Html } from "../shared/models/html.model";
@@ -153,23 +153,29 @@ var Bootstrap = /** @class */ (function () {
         return this.code;
     };
     Bootstrap.prototype.table = function () {
-        var th = this.inputs.map(function (item) {
-            return "\n<th>" + item.html.label + "</th>";
-        }, '').join('');
-        return "\n        <table class=\"table table-striped\" id=\"" + this.tableName + "\">\n            <thead>\n                <tr>\n                " + th + "\n                <th class=\"td_justo no-sort text-right\">\n                {!! $HTML::iconeCriar(\n                    Auth::user()->can('admin.financeirodescontos.create'), \n                    '#', \n                    true, \n                    route('admin.financeirodescontos.store'))\n                !!}\n                </th>                \n                </tr>\n            </thead>\n        </table>\n        ";
+        if (typeof this.inputs != 'undefined' && this.inputs.length > 0) {
+            var th = this.inputs.map(function (item) {
+                return "\n<th>" + item.html.label + "</th>";
+            }, '').join('');
+            return "\n            <table class=\"table table-striped\" id=\"" + this.tableName + "\">\n                <thead>\n                    <tr>\n                    " + th + "\n                    <th class=\"td_justo no-sort text-right\">\n                    {!! $HTML::iconeCriar(\n                        Auth::user()->can('admin.financeirodescontos.create'), \n                        '#', \n                        true, \n                        route('admin.financeirodescontos.store'))\n                    !!}\n                    </th>                \n                    </tr>\n                </thead>\n            </table>\n            ";
+        }
+        return '';
     };
     Bootstrap.prototype.script = function () {
-        var script = this.inputs.map(function (item) {
-            return {
-                data: item.table.columnName,
-                name: item.table.columnName
-            };
-        }, []);
-        script.push({
-            'data': 'action',
-            'name': 'name'
-        });
-        return "\n<script>\n    /*---------------------Datatables--------------------------------*/\n    var table = $('#" + this.tableName + "').DataTable({\n        stateSave: true,\n        processing: true,\n        serverSide: true,\n        cache: true,\n        columns: " + JSON.stringify(script, null, '\t') + "\n    });\n    /*---------------------/Datatables-------------------------------*/\n</script>        \n        ";
+        if (typeof this.inputs != 'undefined' && this.inputs.length > 0) {
+            var script = this.inputs.map(function (item) {
+                return {
+                    data: item.table.columnName,
+                    name: item.table.columnName
+                };
+            }, []);
+            script.push({
+                'data': 'action',
+                'name': 'name'
+            });
+            return "\n    <script>\n        /*---------------------Datatables--------------------------------*/\n        var table = $('#" + this.tableName + "').DataTable({\n            stateSave: true,\n            processing: true,\n            serverSide: true,\n            cache: true,\n            columns: " + JSON.stringify(script, null, '\t') + "\n        });\n        /*---------------------/Datatables-------------------------------*/\n    </script>";
+        }
+        return '';
     };
     Bootstrap.prototype.getInputs = function () {
         return this.inputs;
@@ -187,28 +193,37 @@ var Bootstrap = /** @class */ (function () {
 }());
 export { Bootstrap };
 var FormBuilderComponent = /** @class */ (function () {
-    function FormBuilderComponent(b, validator, homeService) {
-        this.b = b;
+    function FormBuilderComponent(bootstrap, validator, homeService, cd) {
+        this.bootstrap = bootstrap;
         this.validator = validator;
         this.homeService = homeService;
+        this.cd = cd;
         this.tableName = '';
+        this.isTabAlreadyOpen = false;
+        this.count = 0;
+        this.mvcList = [];
+        for (var i = 0; i < 3; i++) {
+            this.mvcList.push(false);
+        }
     }
     FormBuilderComponent.prototype.ngOnInit = function () {
         this.tabNumber = 1;
         this.tabMVC = 1;
         this.pages = this.homeService.get();
     };
-    Object.defineProperty(FormBuilderComponent.prototype, "bootstrap", {
-        get: function () {
-            this.b.setPages(this.pages);
-            return this.b;
-        },
-        enumerable: true,
-        configurable: true
-    });
+    FormBuilderComponent.prototype.showMVC = function (tabNumber) {
+        this.mvcList[tabNumber] = !this.mvcList[tabNumber];
+    };
+    FormBuilderComponent.prototype.isTabMvcOpen = function (tabNumber) {
+        if (this.mvcList[tabNumber]) {
+            this.bootstrap.setPages(this.pages);
+            this.bootstrap.init();
+            this.validator.setInputs(this.bootstrap.getInputs());
+        }
+        return this.mvcList[tabNumber];
+    };
     Object.defineProperty(FormBuilderComponent.prototype, "laravel", {
         get: function () {
-            this.validator.setInputs(this.b.getInputs());
             return this.validator.laravel();
         },
         enumerable: true,
@@ -220,17 +235,9 @@ var FormBuilderComponent = /** @class */ (function () {
         }
     };
     FormBuilderComponent.prototype.removeDoubleQuotes = function (word) {
-        return word.replace(/"/g, "");
-    };
-    FormBuilderComponent.prototype.underscoreToCamelCase = function (string) {
-        if (typeof string != 'undefined') {
-            if (string.trim() != '') {
-                var newString = string.replace(/_(\w)/g, function (m) {
-                    return m.toUpperCase();
-                }).replace(/_/g, "");
-                return newString.charAt(0).toUpperCase() + newString.slice(1);
-            }
-        }
+        if (typeof word != 'undefined')
+            return word.replace(/\"/g, "");
+        return '';
     };
     FormBuilderComponent.prototype.isNewPage = function (newPage) {
         if (newPage) {
@@ -252,7 +259,8 @@ var FormBuilderComponent = /** @class */ (function () {
         }),
         __metadata("design:paramtypes", [Bootstrap,
             Validator,
-            HomeService])
+            HomeService,
+            ChangeDetectorRef])
     ], FormBuilderComponent);
     return FormBuilderComponent;
 }());

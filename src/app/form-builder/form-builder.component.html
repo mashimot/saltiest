@@ -15,8 +15,12 @@
 <div class="tab-content">
     <div *ngIf="tabNumber == 1">
         <div class="row no-gutters">
-            <app-form-menu (isNewFile)="isNewFile($event)" (isNewPage)="isNewPage($event)" class="col-md-3"></app-form-menu>
+            <app-form-menu 
+            (isNewFile)="isNewFile($event)" 
+            (isNewPage)="isNewPage($event)" 
+            class="col-md-3"></app-form-menu>
             <app-form-pages [(pages)]="pages" class="col-md-9"></app-form-pages>
+            <app-form-config></app-form-config>
         </div>
     </div>
     <div *ngIf="tabNumber == 2">
@@ -113,7 +117,7 @@
         </textarea>
     </li>
 </ul>
-<app-form-config></app-form-config>
+
 
 
 

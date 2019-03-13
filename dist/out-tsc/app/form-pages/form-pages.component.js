@@ -72,6 +72,7 @@ var FormPagesComponent = /** @class */ (function () {
             }
         }));
         dragulaService.createGroup('rowSortable', {
+            revertOnSpill: true,
             copy: function (el, source) {
                 return source.className === 'menu-row-sortable';
             },
@@ -91,22 +92,39 @@ var FormPagesComponent = /** @class */ (function () {
         });
         this.subs.add(dragulaService.dropModel("rowSortable")
             .subscribe(function (_a) {
-            var sourceModel = _a.sourceModel, targetModel = _a.targetModel, item = _a.item;
-            if (item.columns.length <= 0) {
-                var textWithoutExtraWhiteSpaces = item.grid.replace(/ +/g, ' ').trim();
-                var arrNumbers = textWithoutExtraWhiteSpaces.split(' ');
-                var columns = [];
-                if (arrNumbers.length > 0) {
-                    for (var i = 0; i < arrNumbers.length; i++) {
-                        columns.push({
-                            contents: []
-                        });
+            var name = _a.name, el = _a.el, target = _a.target, source = _a.source, item = _a.item, sourceModel = _a.sourceModel, targetModel = _a.targetModel, sourceIndex = _a.sourceIndex, targetIndex = _a.targetIndex;
+            if (typeof item.grid != 'undefined' && typeof item.columns == 'undefined') { //gambiarra, mas funciona
+                var rows = [];
+                var lines = item.grid.trim().split("\n");
+                delete item.grid;
+                for (var i_1 = 0; i_1 < lines.length; i_1++) {
+                    var line = lines[i_1].replace(/\s+/g, ' ').trim();
+                    if (line != '') {
+                        var arrNumbers = line.split(' ');
+                        if (arrNumbers.length > 0) {
+                            rows.push({
+                                grid: line,
+                                columns: []
+                            });
+                            for (var j = 0; j < arrNumbers.length; j++) {
+                                rows[rows.length - 1].columns.push({
+                                    contents: []
+                                });
+                            }
+                        }
                     }
-                    item.grid = textWithoutExtraWhiteSpaces;
-                    item.columns = columns;
                 }
-                return item;
+                for (var i = 0; i < targetModel.length; i++) {
+                    if (Object.keys(targetModel[i]).length <= 0) {
+                        targetModel.splice(i, 1);
+                    }
+                }
+                var numSeparators = rows.length;
+                for (var i_2 = 0; i_2 < numSeparators; i_2++) {
+                    targetModel.splice(targetIndex + (i_2), 0, rows[i_2]);
+                }
             }
+            return item;
         }));
         dragulaService.createGroup('contents', {
             copy: function (el, source) {
@@ -148,6 +166,7 @@ var FormPagesComponent = /** @class */ (function () {
                 }
             }
         }));
+        this.dragulaService.find('rowSortable').drake.cancel(true);
     }
     FormPagesComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -162,7 +181,7 @@ var FormPagesComponent = /** @class */ (function () {
         }));
     };
     FormPagesComponent.prototype.ngDoCheck = function () {
-        if (this.dropModelPageUpdated) {
+        if (this.dropModelPageUpdated) { // this excutes if this.dropModelUpdated is true only
             this.pagesChange.emit(this.pages);
         }
     };

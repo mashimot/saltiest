@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, Output, ViewChild, TemplateRef, EventEmitter } from '@angular/core';
 import { FormContentConfigService } from './../../services/form-content-config.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
@@ -14,6 +14,8 @@ export class FormConfigComponent implements OnInit {
     closeResult: string;
     options: NgbModalOptions;
     formConfig: FormGroup;
+    @Output() isClickedChange = new EventEmitter();
+
     render: {
         [key: string]: {
             tabs: Array<string>
@@ -87,14 +89,14 @@ export class FormConfigComponent implements OnInit {
                 });
      
                 /*this.formConfig.valueChanges.subscribe((form) => {
+                    this.isClickedChange.emit('true');
                     if (typeof data.html !== undefined) {
-                        this.content.html = form.html;
+                        data.html = form.html;
                     }
                     if (typeof data.table !== undefined) {
-                        this.content.table = form.table;
+                        data.table = form.table;
                     }
                 });*/
-              
             }
         );
     }

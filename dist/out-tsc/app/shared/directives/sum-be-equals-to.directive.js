@@ -14,18 +14,33 @@ var SumBeEqualsToDirective = /** @class */ (function () {
     }
     SumBeEqualsToDirective_1 = SumBeEqualsToDirective;
     SumBeEqualsToDirective.prototype.validate = function (control) {
-        var sum = 0;
-        if (control.value) {
-            var arrValues = control.value.trim().replace(/ +/g, ' ').split(' ');
-            if (arrValues.length > 0) {
-                for (var i = 0; i < arrValues.length; i++) {
-                    var num = parseInt(arrValues[i]);
-                    sum += num;
+        if (typeof control.value != 'undefined' && control.value != null) {
+            var lines = control.value.trim().split("\n");
+            for (var i = 0; i < lines.length; i++) {
+                var sum = 0;
+                var line = lines[i].replace(/\s+/g, ' ').trim();
+                if (line != '') {
+                    var currentValueArr = line.split(' ');
+                    if (currentValueArr.length > 0) {
+                        for (var j = 0; j < currentValueArr.length; j++) {
+                            if (currentValueArr[j].trim() != '') {
+                                var num = parseInt(currentValueArr[j]);
+                                sum += num;
+                            }
+                        }
+                        if (parseInt(this.sumBeEqualsTo) != sum) {
+                            return {
+                                'isSumInvalid': true,
+                                'sumBeEqualsTo': this.sumBeEqualsTo
+                            };
+                        }
+                    }
                 }
             }
-            return (parseInt(this.sumBeEqualsTo) === sum) ? null : { 'isSumInvalid': true, 'sumBeEqualsTo': this.sumBeEqualsTo };
         }
+        return null;
     };
+    var SumBeEqualsToDirective_1;
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -42,7 +57,6 @@ var SumBeEqualsToDirective = /** @class */ (function () {
         __metadata("design:paramtypes", [])
     ], SumBeEqualsToDirective);
     return SumBeEqualsToDirective;
-    var SumBeEqualsToDirective_1;
 }());
 export { SumBeEqualsToDirective };
 //# sourceMappingURL=sum-be-equals-to.directive.js.map

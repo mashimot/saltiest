@@ -7,9 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 var ConfigTitleComponent = /** @class */ (function () {
     function ConfigTitleComponent() {
+        this.parentFormGroupChange = new EventEmitter();
     }
     ConfigTitleComponent.prototype.ngOnInit = function () {
         this.headingTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
@@ -32,6 +33,10 @@ var ConfigTitleComponent = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], ConfigTitleComponent.prototype, "parentFormGroup", void 0);
+    __decorate([
+        Output(),
+        __metadata("design:type", Object)
+    ], ConfigTitleComponent.prototype, "parentFormGroupChange", void 0);
     ConfigTitleComponent = __decorate([
         Component({
             selector: 'app-config-title',

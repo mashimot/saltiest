@@ -18,6 +18,7 @@ import { GroupByPipe } from '../shared/pipes/group-by.pipe';
 import { FormInfoModule } from '../form-info/form-info.module';
 import { SumBeEqualsToDirective } from '../shared/directives/sum-be-equals-to.directive';
 import { RenderContentModule } from '../form-pages/render-content/render-content.module';
+import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-case.pipe';
 var FormBuilderModule = /** @class */ (function () {
     function FormBuilderModule() {
     }
@@ -41,6 +42,7 @@ var FormBuilderModule = /** @class */ (function () {
                 FormMenuComponent,
                 FormBuilderComponent,
                 GroupByPipe,
+                SnakeCaseToCamelCasePipe,
                 SumBeEqualsToDirective
             ],
             providers: []

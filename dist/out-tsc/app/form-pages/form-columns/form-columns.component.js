@@ -18,7 +18,7 @@ var FormColumnsComponent = /** @class */ (function () {
         this.formConfigService.getConfig().subscribe(function (data) { _this.config = data; });
     };
     FormColumnsComponent.prototype.colNumber = function (columnIndex) {
-        return this.row.grid.trim().split(' ')[columnIndex];
+        return parseInt(this.row.grid.trim().split(' ')[columnIndex]);
     };
     __decorate([
         Input(),
