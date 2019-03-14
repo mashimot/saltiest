@@ -15,26 +15,16 @@ export class FormMenuComponent implements OnInit {
     bootstrap: Array<{
         grid: string
     }>;
-    config: {
-        previewMode: boolean
-    };
-    previewMode: boolean;
 
     @Output() isNewFile = new EventEmitter();
     @Output() isNewPage = new EventEmitter();
 
     constructor(
-      private formConfigService: FormConfigService,
       private htmlElementService: HtmlElementService
     ) {
       }
 
     ngOnInit() {
-        this.previewMode = true;
-        this.config = {
-            previewMode: this.previewMode
-        };
-        this.preview();
         this.grids = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
             grid: [
@@ -49,14 +39,6 @@ export class FormMenuComponent implements OnInit {
             rows: [],
             name: "Salt - A tool for Lazy Developer"
         }];
-    }
-
-    public preview(): void {
-        this.previewMode = !this.previewMode;
-        this.config = {
-            previewMode: this.previewMode
-        };
-        this.formConfigService.setConfig(this.config);
     }
 
     public newFile(): void {

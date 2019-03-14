@@ -7,6 +7,7 @@ import { Content } from "../shared/models/content.model";
 import { Html, IHtml } from "../shared/models/html.model";
 import { Table, ITable } from "../shared/models/table.model";
 import { FormContentConfigService } from '../services/form-content-config.service';
+import { FormConfigService } from '../services/form-config.service';
 
 
 @Injectable({
@@ -262,8 +263,13 @@ export class FormBuilderComponent implements OnInit {
     isTabAlreadyOpen: boolean = false;
     tabMVC: number; 
     count: number = 0;
+    previewMode: boolean = false;
+    config: {
+        previewMode: boolean
+    };
 
     constructor(
+        private formConfigService: FormConfigService,
         private bootstrap: Bootstrap,
         private validator: Validator,
         private homeService: HomeService
@@ -278,8 +284,19 @@ export class FormBuilderComponent implements OnInit {
         this.tabNumber = 1;
         this.tabMVC = 1;
         this.pages = this.homeService.get();
+        this.config = {
+            previewMode: this.previewMode
+        };
     }
       
+    public preview(): void {
+        this.previewMode = !this.previewMode;
+        this.config = {
+            previewMode: this.previewMode
+        };
+        this.formConfigService.setConfig(this.config);
+    }
+
     showMVC(tabNumber: number){
         this.mvcList[tabNumber] = !this.mvcList[tabNumber];
     }
@@ -291,12 +308,6 @@ export class FormBuilderComponent implements OnInit {
             this.validator.setInputs(this.bootstrap.getInputs());
         }
         return this.mvcList[tabNumber];
-    }
-
-
-    joeysWorldTour(event){
-        console.log(event);
-
     }
 
     get laravel() {

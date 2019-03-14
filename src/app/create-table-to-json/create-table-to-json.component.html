@@ -1,58 +1,46 @@
 
 <form class="card" #f="ngForm" (ngSubmit)="onSubmit()">
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-7">
-                <section>
-                    <div class="row">
-                        <div class="offset-md-3 col-md-6 offset-md-3">
-                            <div class="dropdown">
-                                <h5 class="text-center text-bold">Select a Database Engine</h5>
-                                <a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img [src]="options.logo" alt="{{ options.database }}" class="img-fluid mx-auto d-block">
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <li *ngFor="let db of database" (click)="options.database = db.engine; options.logo = db.logo;" class="dropdown-item p-3" [ngStyle]="{'cursor': 'pointer'}">
-                                        <img [src]="db.logo" alt="{{ db.engine }}" class="img-fluid" height="25%" width="25%"> 
-                                    </li>
-                                </ul>    
-                            </div>
-                        </div>
-                    </div>
-                    <textarea [(ngModel)]="string"
-                        name="string"
-                        [ngClass]="{ 'is-invalid' : errors.length > 0 }"
-                        class="form-control form-control-sm h-100 mt-4"
-                        rows="10"
-                    ></textarea>
-                    <div *ngIf="errors" class="invalid-feedback">
-                        <div *ngFor="let e of errors">
-                            {{ e }}
-                        </div>
-                    </div>
-                </section>
+        <div class="dropdown">
+            <h6 class="text-center text-bold">Select a Database Engine</h6>
+            <a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img [src]="options.logo" alt="{{ options.database }}" class="img-fluid mx-auto d-block">
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <li *ngFor="let db of database" (click)="options.database = db.engine; options.logo = db.logo;" class="dropdown-item p-3" [ngStyle]="{'cursor': 'pointer'}">
+                    <img [src]="db.logo" alt="{{ db.engine }}" class="img-fluid" height="25%" width="25%"> 
+                </li>
+            </ul>    
+        </div>
+        <textarea [(ngModel)]="string"
+            name="string"
+            [ngClass]="{ 'is-invalid' : errors.length > 0 }"
+            class="form-control form-control-sm h-20 mt-4"
+            rows="10"
+        ></textarea>
+        <div *ngIf="errors" class="invalid-feedback">
+            <div *ngFor="let e of errors">
+                {{ e }}
             </div>
-            <div class="col-md-5">
-                <div class="form-group">
-                    <label for="form_ct_grid">Bootstrap Grid</label>
-                    <input type="text"
-                        id="form_ct_grid"
-                        [(ngModel)]="gridModel"
-                        name="grid"
-                        [ngClass]="{ 'is-invalid': f.controls.grid?.invalid }"
-                        class="form-control form-control-sm"
-                        [ngStyle]="{ cursor: 'pointer' }"
-                        sumBeEqualsTo="12"
-                        minlength="2"
-                        pattern="[0-9 \n\t]+"
-                        required>
-                    <div *ngIf="f.controls.grid?.invalid || f.controls.grid?.touched" class="invalid-feedback">
-                        <div *ngIf="f.controls.grid?.errors?.required ">* Enter with your grid.</div>
-                        <div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers and space.</div>
-                        <div *ngIf="f.controls.grid?.errors?.minlength">* Min. Length is {{ f.controls.grid?.errors.minlength.requiredLength }}.</div>
-                        <div *ngIf="f.controls.grid?.errors?.isSumInvalid">* The sum must be equals to {{ f.controls.grid.errors?.sumBeEqualsTo }}.</div>
-                    </div>
-                </div>
+        </div>
+        <div class="form-group">
+            <label for="form_ct_grid">Bootstrap Grid</label>
+            <input type="text"
+                id="form_ct_grid"
+                [(ngModel)]="gridModel"
+                name="grid"
+                [ngClass]="{ 'is-invalid': f.controls.grid?.invalid }"
+                class="form-control form-control-sm"
+                [ngStyle]="{ cursor: 'pointer' }"
+                sumBeEqualsTo="12"
+                minlength="2"
+                pattern="[0-9 \n\t]+"
+                required>
+            <div *ngIf="f.controls.grid?.invalid || f.controls.grid?.touched" class="invalid-feedback">
+                <div *ngIf="f.controls.grid?.errors?.required ">* Enter with your grid.</div>
+                <div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers and space.</div>
+                <div *ngIf="f.controls.grid?.errors?.minlength">* Min. Length is {{ f.controls.grid?.errors.minlength.requiredLength }}.</div>
+                <div *ngIf="f.controls.grid?.errors?.isSumInvalid">* The sum must be equals to {{ f.controls.grid.errors?.sumBeEqualsTo }}.</div>
             </div>
         </div>
     </div>
