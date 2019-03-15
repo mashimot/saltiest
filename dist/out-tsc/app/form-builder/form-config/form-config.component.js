@@ -7,16 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, Output, ViewChild, TemplateRef, EventEmitter } from '@angular/core';
 import { FormContentConfigService } from './../../services/form-content-config.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 var FormConfigComponent = /** @class */ (function () {
-    function FormConfigComponent(formContentConfig, fb, detector, modalService) {
+    function FormConfigComponent(formContentConfig, fb, modalService) {
         this.formContentConfig = formContentConfig;
         this.fb = fb;
-        this.detector = detector;
         this.modalService = modalService;
+        this.isClickedChange = new EventEmitter();
     }
     FormConfigComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -66,36 +66,28 @@ var FormConfigComponent = /** @class */ (function () {
             if (data.html.elements) {
                 _this.populate(data.html.elements);
             }
-            if (typeof data.html !== undefined) {
-                data.html = _this.formConfig.value.html;
-            }
-            if (typeof data.table !== undefined) {
-                data.table = _this.formConfig.value.table;
-            }
-            /*let m = this.modalService.open(this.modal, this.options)
-            m.result.then((result) => {
-                this.closeResult = `Closed with: ${result}`;
+            var m = _this.modalService.open(_this.modal, _this.options);
+            m.result.then(function (result) {
+                _this.closeResult = "Closed with: " + result;
                 if (typeof data.html !== undefined) {
-                    data.html = this.formConfig.value.html;
+                    data.html = _this.formConfig.value.html;
                 }
                 if (typeof data.table !== undefined) {
-                    data.table = this.formConfig.value.table;
+                    data.table = _this.formConfig.value.table;
                 }
-            }, (reason) => {
+            }, function (reason) {
                 //this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            });*/
+            });
             /*this.formConfig.valueChanges.subscribe((form) => {
+                this.isClickedChange.emit('true');
                 if (typeof data.html !== undefined) {
-                    this.data.html = form.html;
+                    data.html = form.html;
                 }
                 if (typeof data.table !== undefined) {
-                    this.data.table = form.table;
+                    data.table = form.table;
                 }
             });*/
         });
-    };
-    FormConfigComponent.prototype.c = function (formConfig) {
-        console.log(this.data);
     };
     FormConfigComponent.prototype.populate = function (e) {
         var _this = this;
@@ -124,6 +116,10 @@ var FormConfigComponent = /** @class */ (function () {
         ViewChild('modal'),
         __metadata("design:type", TemplateRef)
     ], FormConfigComponent.prototype, "modal", void 0);
+    __decorate([
+        Output(),
+        __metadata("design:type", Object)
+    ], FormConfigComponent.prototype, "isClickedChange", void 0);
     FormConfigComponent = __decorate([
         Component({
             selector: 'app-form-config',
@@ -132,7 +128,6 @@ var FormConfigComponent = /** @class */ (function () {
         }),
         __metadata("design:paramtypes", [FormContentConfigService,
             FormBuilder,
-            ChangeDetectorRef,
             NgbModal])
     ], FormConfigComponent);
     return FormConfigComponent;

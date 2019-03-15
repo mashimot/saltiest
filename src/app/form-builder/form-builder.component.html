@@ -11,12 +11,6 @@
 </ul>
 <div class="tab-content">
     <div *ngIf="tabNumber == 1">
-        <div class="sticky-top scrollable">
-            <button (click)="preview()" class="btn btn-sm btn-block border border-primary" [ngClass]="{ 'btn-success': previewMode, 'btn-danger': !previewMode }" >
-                <i [ngClass]="{ 'fa-eye': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-2x"></i>
-                Preview {{ previewMode? 'Mode' : '' }}
-            </button>
-        </div>
         <div class="row no-gutters">
             <div class="col-md-3" [hidden]="config?.previewMode">
                 <div class="sticky-top">
@@ -26,7 +20,15 @@
                     ></app-form-menu>
                 </div>
             </div>
-            <app-form-pages [(pages)]="pages" [ngClass]="{ 'col-md-12': config?.previewMode, 'col-md-9': !config?.previewMode }"></app-form-pages>
+            <div [ngClass]="{ 'col-md-12': config?.previewMode, 'col-md-9': !config?.previewMode }">
+                <div class="sticky-top">
+                    <button (click)="preview()" class="btn btn-sm btn-block" [ngClass]="{ 'btn-success': previewMode, 'btn-danger': !previewMode }" >
+                        <i [ngClass]="{ 'fa-eye': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-2x"></i>
+                        Preview {{ previewMode? 'Mode' : '' }}
+                    </button>
+                </div>
+                <app-form-pages [(pages)]="pages"></app-form-pages>
+            </div>            
             <app-form-config></app-form-config>
         </div>
     </div>
@@ -35,94 +37,214 @@
     </div>
 </div>
 <ul class="list-group"> 
+    <li class="list-group-item row" >
+        <div class="row">
+            <h3 
+                *ngFor="let list of mvcList; let listIndex = index;"
+                class="col-md-3" 
+                [ngClass]="{ 'text-danger': list.isOpen }" 
+                (click)="list.isOpen = !list.isOpen"
+            >
+                <div [ngStyle]="{ 'cursor': 'pointer' }" class="text-uppercase">
+                    <i class="fas" [ngClass]="{ 'fa-minus text-danger': list.isOpen, 'fa-plus': !list.isOpen }"></i> 
+                    {{ list.name }}
+                </div>
+            </h3>
+        </div>
+    </li>
     <li class="list-group-item">
-    <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[0] }" (click)="showMVC(0)">
-        <span [ngStyle]="{ 'cursor': 'pointer' }">
-            <i class="fas" [ngClass]="{ 'fa-minus text-danger': mvcList[0], 'fa-plus': !mvcList[0] }"></i> View
-        </span>
-    </h3>
-    <textarea class="form-control" rows="40" *ngIf="isTabMvcOpen(0)">
-        @extends('Admin.layouts.app_index')
+        <div *ngIf="isTabMvcOpen(0)">
+            <h1>MODEL</h1>
+            <textarea class="form-control" rows="40" >
+            class {{ tableName | snakeCaseToCamelCase }} extends ModelAuditable {
+                protected $table      = '{{ tableName }}';
+                protected $primaryKey = {{ laravel.primaryKey? (laravel.primaryKey.length > 1? "[" +  laravel.primaryKey + "]": laravel.primaryKey[0]) : [] }};
+                public $incrementing  = true; 
+                public $sequence      = 'sga_{{ laravel.primaryKey? removeDoubleQuotes(laravel.primaryKey[0]) : '' }}_seq';  
+                
+                protected $fillable = {{ laravel.fillable }};
+            }
+            </textarea>            
+        </div>
+        <div *ngIf="isTabMvcOpen(1)">
+            <h1>VIEW</h1>
+            <textarea class="form-control" rows="40">
+                @extends('Admin.layouts.app_index')
 
-        @section('css')
-        @endsection
+                @section('css')
+                @endsection
 
-        @section('breadcrumb-manual')
-        <li></li>
-        @endsection
+                @section('breadcrumb-manual')
+                <li></li>
+                @endsection
 
-        @section('pagina_header')
-        @endsection
+                @section('pagina_header')
+                @endsection
 
-        @section('pagina_conteudo')    
-            {{ bootstrap.table() }}
+                @section('pagina_conteudo')    
+                    {{ bootstrap.table() }}
 
-            <!-- MODAL CRUD -->
-            {!! $HTML::modalOpen('crud_mudar_aqui', 'Adicionar') !!}
-                {!! $HTML::formOpen('form_mudar_aqui', $acao) !!}  
-                    {{ bootstrap.html() }}
-                {!! $HTML::formClose() !!}
-            {!! $HTML::modalClose(true, $HTML::modalBotoesSalvar('mudar_aqui')) !!}
-        @endsection   
+                    <!-- MODAL CRUD -->
+                    {!! $HTML::modalOpen('mudar_aqui', 'Adicionar') !!}
+                        {!! $HTML::formOpen('form_mudar_aqui', $acao) !!}  
+                            {{ bootstrap.html() }}
+                        {!! $HTML::formClose() !!}
+                    {!! $HTML::modalClose(true, $HTML::modalBotoesSalvar('mudar_aqui')) !!}
+                @endsection   
+                    
+                @section('bibliotecascript')
+                    @include('bibliotecas.js.scripts.modalCrud')
+                @endsection
+
+                @section('script')    
+                    {{ bootstrap.script() }}
+                @endsection
+            </textarea>
+        </div>
+        <div *ngIf="isTabMvcOpen(2)">
+            <h1>CONTROLLER</h1>
+            <textarea class="form-control" rows="40">
+            <?php
+
+            namespace App\Http\Controllers;
             
-        @section('bibliotecascript')
-            @include('bibliotecas.js.scripts.modalCrud')
-        @endsection
-
-        @section('script')    
-            {{ bootstrap.script() }}
-        @endsection
-    </textarea>
-    </li>
-    <li class="list-group-item">
-        <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[1] }" (click)="showMVC(1)">
-            <span [ngStyle]="{ 'cursor': 'pointer' }"><i class="fas" [ngClass]="{ 'fa-minus text-danger': mvcList[1], 'fa-plus': !mvcList[1] }"></i> Validation</span>
-        </h3>
-        <textarea class="form-control" rows="40" *ngIf="isTabMvcOpen(1)">
-            /**
-            * Determine if the user is authorized to make this request.
-            *
-            * @return bool
-            */
-            public function authorize(){
-                return true;
-            }
-        
-            public function rules(){
-                $rules = [
-                    {{ laravel.rules }}
-                ];
-                return $rules;
-            }
-        
-            /**
-            * Get the validation rules that apply to the request.
-            *
-            * @return array
-            */
-            public function attributes(){
-                $attributes = [
-                    {{ laravel.attributes }}
-                ];
-                return $attributes;
-            }
-        </textarea>
-    </li>
-    <li class="list-group-item">
-        <h3 class="text-uppercase" [ngClass]="{ 'text-danger': mvcList[2] }" (click)="showMVC(2)">
-            <span [ngStyle]="{ 'cursor': 'pointer' }"><i class="fas" [ngClass]="{ 'fa-minus text-danger': mvcList[2], 'fa-plus': !mvcList[2] }"></i> Model</span>
-        </h3>
-        <textarea class="form-control" rows="40" *ngIf="isTabMvcOpen(2)">
-        class {{ tableName | snakeCaseToCamelCase }} extends ModelAuditable {
-            protected $table      = '{{ tableName }}';
-            protected $primaryKey = {{ laravel.primaryKey? (laravel.primaryKey.length > 1? "[" +  laravel.primaryKey + "]": laravel.primaryKey[0]) : [] }};
-            public $incrementing  = true; 
-            public $sequence      = 'sga_{{ laravel.primaryKey? removeDoubleQuotes(laravel.primaryKey[0]) : '' }}_seq';  
+            use Illuminate\Http\Request;
             
-            protected $fillable = {{ laravel.fillable }};
-        }
-        </textarea>
-    </li>
+            class {{ tableName | snakeCaseToCamelCase }}Controller extends Controller
+            {
+                /**
+                * Display a listing of the resource.
+                *
+                * @return \Illuminate\Http\Response
+                */
+                public function index()
+                {
+                    //
+                    $r = {{ tableName | snakeCaseToCamelCase }}::all();
+
+                    return view('shares.index', compact('r'));
+                }
+            
+                /**
+                * Show the form for creating a new resource.
+                *
+                * @return \Illuminate\Http\Response
+                */
+                public function create()
+                {
+                    //
+                    return view('mudar_aqui.create');
+                }
+            
+                /**
+                * Store a newly created resource in storage.
+                *
+                * @param  \Illuminate\Http\Request  $request
+                * @return \Illuminate\Http\Response
+                */
+                public function store(Request $request)
+                {
+                    //
+                    $r = {{ tableName | snakeCaseToCamelCase }}::create({{ laravel.request }});
+
+
+                    return redirect('/path_mudar_aqui')->with('success', 'Stock has been added');
+                }
+            
+                /**
+                * Display the specified resource.
+                *
+                * @param  int  $id
+                * @return \Illuminate\Http\Response
+                */
+                public function show($id)
+                {
+                    //
+                    $r = {{ tableName | snakeCaseToCamelCase }}::find($id);
+
+                    return view('mudar_aqui.show', compact('r'));
+                }
+            
+                /**
+                * Show the form for editing the specified resource.
+                *
+                * @param  int  $id
+                * @return \Illuminate\Http\Response
+                */
+                public function edit($id)
+                {
+                    //
+                    $r = {{ tableName | snakeCaseToCamelCase }}::find($id);
+
+                    return view('mudar_aqui.edit', compact('r'));
+                }
+            
+                /**
+                * Update the specified resource in storage.
+                *
+                * @param  \Illuminate\Http\Request  $request
+                * @param  int  $id
+                * @return \Illuminate\Http\Response
+                */
+                public function update(Request $request, $id)
+                {
+                    //
+                    
+
+                    $r = {{ tableName | snakeCaseToCamelCase }}::find($id)
+                    $r->update({{ laravel.request }});
+                }
+            
+                /**
+                * Remove the specified resource from storage.
+                *
+                * @param  int  $id
+                * @return \Illuminate\Http\Response
+                */
+                public function destroy($id)
+                {
+                    //
+                    $r = {{ tableName | snakeCaseToCamelCase }}::find($id);
+                    $r->delete();
+            
+                    return redirect('/shares')->with('success', 'Stock has been deleted Successfully');
+                }
+            }
+            </textarea>
+        </div>
+        <div  *ngIf="isTabMvcOpen(3)">
+            <h1>VALIDATION</h1>
+            <textarea class="form-control" rows="40">
+                /**
+                * Determine if the user is authorized to make this request.
+                *
+                * @return bool
+                */
+                public function authorize(){
+                    return true;
+                }
+            
+                public function rules(){
+                    $rules = [
+                        {{ laravel.rules }}
+                    ];
+                    return $rules;
+                }
+            
+                /**
+                * Get the validation rules that apply to the request.
+                *
+                * @return array
+                */
+                public function attributes(){
+                    $attributes = [
+                        {{ laravel.attributes }}
+                    ];
+                    return $attributes;
+                }
+            </textarea>
+        </div>
+    </li>    
 </ul>
 
 

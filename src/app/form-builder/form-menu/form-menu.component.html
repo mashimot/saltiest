@@ -1,12 +1,12 @@
 
 <div class="card bg-white">
 	<section class="p-2">
-		<button class="btn btn-primary btn-block btn-sm" (click)="newFile()">
+		<button class="btn btn-dark btn-block btn-sm" (click)="newFile()">
 			<i class="fa fa-tasks" aria-hidden="true"></i>
 			New Task
 		</button>
 		<div dragula="pages" [(dragulaModel)]="pageModel" class="menu-page-sortable">
-			<div (click)="newPage()" class="p-1 bg-primary text-white text-center page-handle">
+			<div (click)="newPage()" class="p-1 bg-dark text-white text-center page-handle">
 				<i class="fa fa-file"></i> New Page
 			</div>
 		</div>
@@ -17,7 +17,7 @@
 			<div *ngFor="let b of bootstrap; let bIndex = index;">
 				<form #f="ngForm">
 					<div [hidden]="f.invalid" [ngStyle]="{ cursor: 'move' }">
-						<div class="row-handle p-1 mx-1 mt-1 border-bottom border-primary">
+						<div class="row-handle p-1 mx-1 mt-1 border-bottom border-dark">
 							<i class="fa fa-arrows-alt fa-1x row-handle"></i><strong class="row-handle"> GRID</strong>
 						</div>
 					</div>
@@ -49,7 +49,7 @@
 	<section id="accordion" class="p-2">
 		<h3 class="text-center">TOOLS</h3>
 		<div *ngFor="let tool of tools | groupBy: 'html.category'; let toolCategoryIndex = index;">
-			<div class="border-bottom border-primary p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">
+			<div class="border-bottom border-dark p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">
 				{{ tool.key }}
 			</div>
 			<div 
@@ -66,7 +66,7 @@
 					class="text-white content-handle menu-content-sortable col-md-6 "
 					[attr.data-content]="t | json"
 					>
-					<div class="p-1 mx-1 mt-1 border border-primary content-handle">
+					<div class="p-1 mx-1 mt-1 border border-dark content-handle">
 						<span class="text-dark text-capitalize content-handle">{{ t.html.tag }}</span>
 					</div>
 				</div>

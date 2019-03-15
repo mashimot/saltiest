@@ -7,11 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Injectable, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
 import { HomeService } from "../shared/services/home.service";
 import { Html } from "../shared/models/html.model";
 import { Table } from "../shared/models/table.model";
+import { FormConfigService } from '../services/form-config.service';
 var Validator = /** @class */ (function () {
     function Validator() {
         this.inputs = [];
@@ -66,7 +67,9 @@ var Validator = /** @class */ (function () {
         var _this = this;
         var attr = '';
         var rules = '';
-        var fillable = '';
+        var request = '';
+        var update = '';
+        var fillable = [];
         var primaryKey = [];
         var hue = this.inputs.reduce(function (prev, curr) {
             _this.setParams(curr);
@@ -74,11 +77,13 @@ var Validator = /** @class */ (function () {
             if (curr.table.isPrimaryKey) {
                 primaryKey.push("\"" + curr.table.columnName + "\"");
             }
-            fillable += "\"" + curr.table.columnName + "\",\n";
+            fillable.push(curr.table.columnName);
+            request += "\"" + curr.table.columnName + "\" => $request->input('" + curr.table.columnName + "'),\n";
             return {
                 rules: rules += _this.rules,
                 attributes: attr += _this.attributes,
-                fillable: "[" + fillable + "]",
+                fillable: JSON.stringify(fillable, null, "\t"),
+                request: "[" + request + "]",
                 th: "<th>" + curr.html.labelName + "</th>",
                 primaryKey: primaryKey,
                 table: ''
@@ -173,7 +178,7 @@ var Bootstrap = /** @class */ (function () {
                 'data': 'action',
                 'name': 'name'
             });
-            return "\n    <script>\n        /*---------------------Datatables--------------------------------*/\n        var table = $('#" + this.tableName + "').DataTable({\n            stateSave: true,\n            processing: true,\n            serverSide: true,\n            cache: true,\n            columns: " + JSON.stringify(script, null, '\t') + "\n        });\n        /*---------------------/Datatables-------------------------------*/\n    </script>";
+            return "\n    <script>\n        /*---------------------Datatables--------------------------------*/\n        var table = $('#" + this.tableName + "').DataTable({\n            stateSave: true,\n            processing: true,\n            serverSide: true,\n            cache: true,\n            ajax: \"\",\n            columns: " + JSON.stringify(script, null, '\t') + "\n        });        \n        /*---------------------/Datatables-------------------------------*/\n        /*---------------------CRUD IN MODAL-------------------------*/\n        modalCrudConstruct('modal_mudar_aqui','form_mudar_aqui');\n        /*---------------------/Create Edit Show-------------------------*/\n    \n        /*---------------------Validation-----------------------------------*/\n        $(document).on('click', '#i_btn_salvar_modal_mudar_aqui',function(){\n            validationForm('#form_mudar_aqui');\n        });\n        /*---------------------/Validation-------------------------*/            \n    </script>";
         }
         return '';
     };
@@ -193,34 +198,51 @@ var Bootstrap = /** @class */ (function () {
 }());
 export { Bootstrap };
 var FormBuilderComponent = /** @class */ (function () {
-    function FormBuilderComponent(bootstrap, validator, homeService, cd) {
+    function FormBuilderComponent(formConfigService, bootstrap, validator, homeService) {
+        this.formConfigService = formConfigService;
         this.bootstrap = bootstrap;
         this.validator = validator;
         this.homeService = homeService;
-        this.cd = cd;
         this.tableName = '';
         this.isTabAlreadyOpen = false;
         this.count = 0;
-        this.mvcList = [];
-        for (var i = 0; i < 3; i++) {
-            this.mvcList.push(false);
-        }
+        this.previewMode = false;
+        this.mvcList = [{
+                isOpen: false,
+                name: 'Model'
+            }, {
+                isOpen: false,
+                name: 'View'
+            }, {
+                isOpen: false,
+                name: 'Controller'
+            }, {
+                isOpen: false,
+                name: 'Validation'
+            }];
     }
     FormBuilderComponent.prototype.ngOnInit = function () {
         this.tabNumber = 1;
         this.tabMVC = 1;
         this.pages = this.homeService.get();
+        this.config = {
+            previewMode: this.previewMode
+        };
     };
-    FormBuilderComponent.prototype.showMVC = function (tabNumber) {
-        this.mvcList[tabNumber] = !this.mvcList[tabNumber];
+    FormBuilderComponent.prototype.preview = function () {
+        this.previewMode = !this.previewMode;
+        this.config = {
+            previewMode: this.previewMode
+        };
+        this.formConfigService.setConfig(this.config);
     };
     FormBuilderComponent.prototype.isTabMvcOpen = function (tabNumber) {
-        if (this.mvcList[tabNumber]) {
+        if (this.mvcList[tabNumber].isOpen) {
             this.bootstrap.setPages(this.pages);
             this.bootstrap.init();
             this.validator.setInputs(this.bootstrap.getInputs());
         }
-        return this.mvcList[tabNumber];
+        return this.mvcList[tabNumber].isOpen;
     };
     Object.defineProperty(FormBuilderComponent.prototype, "laravel", {
         get: function () {
@@ -257,10 +279,10 @@ var FormBuilderComponent = /** @class */ (function () {
             styleUrls: ['./form-builder.component.css'],
             changeDetection: ChangeDetectionStrategy.OnPush,
         }),
-        __metadata("design:paramtypes", [Bootstrap,
+        __metadata("design:paramtypes", [FormConfigService,
+            Bootstrap,
             Validator,
-            HomeService,
-            ChangeDetectorRef])
+            HomeService])
     ], FormBuilderComponent);
     return FormBuilderComponent;
 }());

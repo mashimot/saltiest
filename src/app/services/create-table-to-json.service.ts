@@ -63,7 +63,7 @@ export class CreateTableToJsonService {
             (
                 (${dbKeys})(\\s*)?
                 (?:
-                    ([(]${this.regex.onlyNumeric}[)])
+                    ([\\(]${this.regex.onlyNumeric}[\\)])
                 )?
             ) 
             (?:
@@ -76,7 +76,7 @@ export class CreateTableToJsonService {
         `;
         let regexCreateTableSyntax = `
         ${this.regex.createTable}
-        \\s*[(]
+        \\s*\\(
             (\\s*
                 (
                     ${info}${comma}\\s*
@@ -85,8 +85,7 @@ export class CreateTableToJsonService {
                     ${info}\\s*
                 )
             )
-        \\s*[)]\\s*([;])
-        `.toLowerCase().replace(/\s+/g, '').trim();
+        \\s*\\);`.toLowerCase().replace(/\s+/g, '').trim();
 
         return regexCreateTableSyntax;
     }
@@ -205,17 +204,18 @@ export class CreateTableToJsonService {
     }
 
     convert(): void {
-        let regex = new RegExp(this.regex.createTableSyntax);
-        this._string = this._string.replace(/\s/g, " ").toLowerCase();
+        
+        let regex = new RegExp(this.regex.createTableSyntax, "g");
+        this._string = this._string.toLowerCase();
 
         if(!regex.test(this._string)){
             this._errors.push(
                 `Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )`,
                 `You have an error in your SQL syntax:`
             );
-        }
+        } 
 
-        var createTable = (new RegExp(`${this.regex.createTable}([^\\(]*(\\(.*\\))[^\\)])`)).exec(this._string);
+        let createTable = (new RegExp(`${this.regex.createTable}([^\\(]*(\\(.*\\))[^\\)])`)).exec(this._string);
         let defineColumns = [];
         if(createTable){
             this.tableName  = createTable[1];
@@ -239,9 +239,8 @@ export class CreateTableToJsonService {
                 return previous;
             }, []);
         }
-        console.log(defineColumns);
         let i = 0;
-        while (i < defineColumns.length/* && this._errors.length <= 0*/) {
+        while (i < defineColumns.length && this._errors.length <= 0) {
             let currentDefineColumn = defineColumns[i];
             let eachWords = currentDefineColumn.split(' '); //break the define columns into words
 
@@ -272,7 +271,6 @@ export class CreateTableToJsonService {
             }
             i++;
         }
-        console.log(this._data)
     }
 
     customLabelName() {

@@ -86,7 +86,9 @@ export class Validator {
     laravel() {
         let attr = '';
         let rules = '';
-        let fillable = '';
+        let request = '';
+        let update = '';
+        let fillable = [];
         let primaryKey = [];
 
         var hue = this.inputs.reduce(
@@ -98,11 +100,13 @@ export class Validator {
                     primaryKey.push(`"${curr.table.columnName}"`);
                 }
 
-                fillable += `"${curr.table.columnName}",\n`;
+                fillable.push(curr.table.columnName);
+                request += `"${curr.table.columnName}" => $request->input('${curr.table.columnName}'),\n`;
                 return {
                     rules: rules += this.rules,
                     attributes: attr += this.attributes,
-                    fillable: `[${fillable}]`,
+                    fillable: JSON.stringify(fillable, null, "\t"),
+                    request: `[${request}]`,
                     th: `<th>${curr.html.labelName}</th>`,
                     primaryKey: primaryKey,
                     table: ''
@@ -231,9 +235,19 @@ export class Bootstrap {
             processing: true,
             serverSide: true,
             cache: true,
+            ajax: "",
             columns: ${JSON.stringify(script, null, '\t')}
-        });
+        });        
         /*---------------------/Datatables-------------------------------*/
+        /*---------------------CRUD IN MODAL-------------------------*/
+        modalCrudConstruct('modal_mudar_aqui','form_mudar_aqui');
+        /*---------------------/Create Edit Show-------------------------*/
+    
+        /*---------------------Validation-----------------------------------*/
+        $(document).on('click', '#i_btn_salvar_modal_mudar_aqui',function(){
+            validationForm('#form_mudar_aqui');
+        });
+        /*---------------------/Validation-------------------------*/            
     </script>`;
         }
         return '';
@@ -248,6 +262,11 @@ export class Bootstrap {
     }
 }
 
+export interface MVC {
+    isOpen: boolean;
+    name: string;
+}
+
 @Component({
     selector: 'app-form-builder',
     templateUrl: './form-builder.component.html',
@@ -257,7 +276,7 @@ export class Bootstrap {
 export class FormBuilderComponent implements OnInit {
     pages: Array<Page>;
     inputs: Array<Content>;
-    mvcList: Array<boolean>;
+    mvcList: Array<MVC>;
     tableName: string = '';
     tabNumber: number;
     isTabAlreadyOpen: boolean = false;
@@ -274,10 +293,19 @@ export class FormBuilderComponent implements OnInit {
         private validator: Validator,
         private homeService: HomeService
     ) {
-        this.mvcList = [];
-        for(let i = 0; i < 3; i++){
-            this.mvcList.push(false);
-        }
+        this.mvcList = [{
+            isOpen: false,
+            name: 'Model'
+        },{
+            isOpen: false,
+            name: 'View'
+        },{
+            isOpen: false,
+            name: 'Controller'
+        },{
+            isOpen: false,
+            name: 'Validation'
+        }];
     }
 
     ngOnInit() {
@@ -297,17 +325,13 @@ export class FormBuilderComponent implements OnInit {
         this.formConfigService.setConfig(this.config);
     }
 
-    showMVC(tabNumber: number){
-        this.mvcList[tabNumber] = !this.mvcList[tabNumber];
-    }
-
     isTabMvcOpen(tabNumber: number){
-        if(this.mvcList[tabNumber]){
+        if(this.mvcList[tabNumber].isOpen){
             this.bootstrap.setPages(this.pages);
             this.bootstrap.init();
             this.validator.setInputs(this.bootstrap.getInputs());
         }
-        return this.mvcList[tabNumber];
+        return this.mvcList[tabNumber].isOpen;
     }
 
     get laravel() {

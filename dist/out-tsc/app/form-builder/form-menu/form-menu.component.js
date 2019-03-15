@@ -8,22 +8,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Output, EventEmitter } from '@angular/core';
-import { FormConfigService } from './../../services/form-config.service';
 import { HtmlElementService } from '../../shared/services/html-element.service';
 import { BootstrapGridSystemService } from '../../services/bootstrap-grid-system.service';
 var FormMenuComponent = /** @class */ (function () {
-    function FormMenuComponent(formConfigService, htmlElementService) {
-        this.formConfigService = formConfigService;
+    function FormMenuComponent(htmlElementService) {
         this.htmlElementService = htmlElementService;
         this.isNewFile = new EventEmitter();
         this.isNewPage = new EventEmitter();
     }
     FormMenuComponent.prototype.ngOnInit = function () {
-        this.previewMode = true;
-        this.config = {
-            previewMode: this.previewMode
-        };
-        this.preview();
         this.grids = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
                 grid: [
@@ -38,13 +31,6 @@ var FormMenuComponent = /** @class */ (function () {
                 rows: [],
                 name: "Salt - A tool for Lazy Developer"
             }];
-    };
-    FormMenuComponent.prototype.preview = function () {
-        this.previewMode = !this.previewMode;
-        this.config = {
-            previewMode: this.previewMode
-        };
-        this.formConfigService.setConfig(this.config);
     };
     FormMenuComponent.prototype.newFile = function () {
         this.isNewFile.emit(true);
@@ -66,8 +52,7 @@ var FormMenuComponent = /** @class */ (function () {
             templateUrl: './form-menu.component.html',
             styleUrls: ['./form-menu.component.css']
         }),
-        __metadata("design:paramtypes", [FormConfigService,
-            HtmlElementService])
+        __metadata("design:paramtypes", [HtmlElementService])
     ], FormMenuComponent);
     return FormMenuComponent;
 }());
