@@ -196,6 +196,11 @@ export class FormPagesComponent implements OnInit {
         );
     }
 
+    trackByFn(index, item){
+        console.log(index);
+        return index;
+    }
+    
     ngDoCheck() {    
         if (this.dropModelPageUpdated) { // this excutes if this.dropModelUpdated is true only
             this.pagesChange.emit(this.pages);

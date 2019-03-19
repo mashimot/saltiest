@@ -4,7 +4,7 @@
 	[(dragulaModel)]="row.columns"
 	class="row page-{{ pageIndex }}_row-{{ rowIndex }}"
 >
-	<div *ngFor="let column of row.columns; let columnIndex = index"
+	<div *ngFor="let column of row.columns; let columnIndex = index; trackBy: trackByFn"
 		class="col-md-{{ colNumber(columnIndex) }}"
 		[attr.data-current-page-index]="pageIndex"
 		[attr.data-current-row-index]="rowIndex"

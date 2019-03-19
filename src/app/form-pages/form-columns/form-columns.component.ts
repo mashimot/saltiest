@@ -22,7 +22,11 @@ export class FormColumnsComponent implements OnInit {
       (data) => { this.config = data; }
     );
   }
-
+ 
+  trackByFn(index, item){
+      return index;
+  }
+ 
   colNumber(columnIndex: number) {
       return parseInt(this.row.grid.trim().split(' ')[columnIndex]);
   }

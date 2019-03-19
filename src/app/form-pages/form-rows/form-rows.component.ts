@@ -22,5 +22,8 @@ export class FormRowsComponent implements OnInit {
             (data) => { this.config = data; }
         );
     }
-
+    
+    trackByFn(index, item) {
+        return index; 
+    }
 }

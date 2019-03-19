@@ -108,4 +108,12 @@ export class FormContentConfigService {
         //Fica "observando" por atualizações nos dados
         return this.newFormConfigSubject.asObservable();
     }
+
+    mustRender(render: boolean){
+        this.newFormConfigSubject.next(render);
+    }
+
+    getMustRender(){
+        return this.newFormConfigSubject.asObservable();
+    }
 }

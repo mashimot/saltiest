@@ -1,15 +1,15 @@
 <div class="px-3 py-3 bg-danger text-white" *ngIf="page.rows.length <= 0">
-  Place Bootstrap grid columns here
+	Place Bootstrap grid columns here
 </div>
 <div
 	dragula="rowSortable"
 	[(dragulaModel)]="page.rows"
-    [ngStyle]="{ 'min-height': '20px' }"
-    class="row-sortable"
+	[ngStyle]="{ 'min-height': '20px' }"
+	class="row-sortable"
 >
-<div *ngFor="let row of page.rows; let rowIndex = index;">
-    <div class="row" [hidden]="config?.previewMode">
-      	<div class="col-md-12 row-handle" [ngStyle]="{ cursor: 'move' }">
+<div *ngFor="let row of page.rows; let rowIndex = index; trackBy: trackByFn">
+	<div class="row" [hidden]="config?.previewMode">
+		<div class="col-md-12 row-handle" [ngStyle]="{ cursor: 'move' }">
 			<div class="float-left">
 				<small class="row-handle">row {{ rowIndex + 1 }}</small>
 			</div>
@@ -17,10 +17,10 @@
 				<small (click)="page.rows.splice(rowIndex, 1);" class="badge btn-outline-danger" [ngStyle]="{ cursor: 'pointer' }">
 					<i class="fas fa-window-close"></i> row {{ rowIndex + 1 }}
 				</small>
-        	</div>
-      	</div>
-    </div>
-    <div class="border-bottom border-secondary" [hidden]="config?.previewMode"></div>
-    	<app-form-columns [row]="row" [pageIndex]="pageIndex" [rowIndex]="rowIndex"></app-form-columns>
-  	</div>
+			</div>
+		</div>
+	</div>
+	<div class="border-bottom border-secondary" [hidden]="config?.previewMode"></div>
+		<app-form-columns [row]="row" [pageIndex]="pageIndex" [rowIndex]="rowIndex"></app-form-columns>
+	</div>
 </div>

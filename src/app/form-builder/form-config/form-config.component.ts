@@ -1,7 +1,7 @@
-import { Component, OnInit, Output, ViewChild, TemplateRef, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, ViewChild, TemplateRef, EventEmitter } from '@angular/core';
 import { FormContentConfigService } from './../../services/form-content-config.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalOptions, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-form-config',
@@ -10,10 +10,10 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 })
 export class FormConfigComponent implements OnInit {
     @ViewChild('modal') modal: TemplateRef<any>;
-
-    closeResult: string;
     options: NgbModalOptions;
     formConfig: FormGroup;
+    @Input() content;
+    @Output() emitData = new EventEmitter();
     @Output() isClickedChange = new EventEmitter();
 
     render: {
@@ -24,81 +24,54 @@ export class FormConfigComponent implements OnInit {
     constructor(
         private formContentConfig: FormContentConfigService,
         private fb: FormBuilder,
-        private modalService: NgbModal
+        private modalService: NgbModal,
+        private activeModal: NgbActiveModal
     ) { }
 
     ngOnInit() {
-        this.options = {
-            size: 'lg',
-            backdrop : 'static',
-            keyboard : false,
-            centered: true
-        };
-        this.formContentConfig.getContent().subscribe(
-            (data) => {
-                const tag = data.html.tag;
-                this.render = this.formContentConfig.render()[tag];
-                this.formConfig = this.fb.group({
-                    html: this.fb.group({
-                        'tag': [data.html.tag],
-                        'category': [data.html.category],
-                        'elements': this.fb.array([], [
-                            //Validators.required
-                        ]),
-                        'fields': [data.html.fields, [
-                            //Validators.required
-                        ]],
-                        'label': [data.html.label, [
-                            //Validators.required,
-                            //Validators.minLength(10)
-                        ]],
-                        'src': [data.html.src, [
-                            //Validators.required,
-                            //Validators.minLength(5)
-                        ]],
-                        'text': [data.html.text, [
-                            //Validators.required
-                        ]],
-                        'data': [data.html.data, [
-                            //Validators.required
-                        ]]
-                    }),
-                    table: this.fb.group({
-                        'columnName': [data.table.columnName],
-                        'type': [data.table.type],
-                        'size': [data.table.size],
-                        'nullable': [data.table.nullable, [
-                            //Validators.required
-                        ]]
-                    })
-                });
-                if (data.html.elements) {
-                    this.populate(data.html.elements);
-                }
-                let m = this.modalService.open(this.modal, this.options)
-                m.result.then((result) => {
-                    this.closeResult = `Closed with: ${result}`;
-                    if (typeof data.html !== undefined) {
-                        data.html = this.formConfig.value.html;
-                    }
-                    if (typeof data.table !== undefined) {
-                        data.table = this.formConfig.value.table;
-                    }
-                }, (reason) => {
-                    //this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                });
-     
-                /*this.formConfig.valueChanges.subscribe((form) => {
-                    this.isClickedChange.emit('true');
-                    if (typeof data.html !== undefined) {
-                        data.html = form.html;
-                    }
-                    if (typeof data.table !== undefined) {
-                        data.table = form.table;
-                    }
-                });*/
-            }
-        );
+        const tag = this.content.html.tag;
+        this.render = this.formContentConfig.render()[tag];
+        this.formConfig = this.fb.group({
+            html: this.fb.group({
+                'tag': [this.content.html.tag],
+                'category': [this.content.html.category],
+                'elements': this.fb.array([], [
+                    //Validators.required
+                ]),
+                'fields': [this.content.html.fields, [
+                    //Validators.required
+                ]],
+                'label': [this.content.html.label, [
+                    //Validators.required,
+                    //Validators.minLength(10)
+                ]],
+                'src': [this.content.html.src, [
+                    //Validators.required,
+                    //Validators.minLength(5)
+                ]],
+                'text': [this.content.html.text, [
+                    //Validators.required
+                ]],
+                'data': [this.content.html.data, [
+                    //Validators.required
+                ]]
+            }),
+            table: this.fb.group({
+                'columnName': [this.content.table.columnName],
+                'type': [this.content.table.type],
+                'size': [this.content.table.size],
+                'nullable': [this.content.table.nullable, [
+                    //Validators.required
+                ]]
+            })
+        });
+        if (this.content.html.elements) {
+            this.populate(this.content.html.elements);
+        }
+    }
+
+    register(){
+        this.emitData.emit(this.formConfig.value);
     }
 
     populate(e) {

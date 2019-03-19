@@ -1,44 +1,47 @@
 <!-- MODAL -->
-<ng-template #modal let-c="close" let-d="dismiss">
-        <form *ngIf="formConfig" [formGroup]="formConfig" (ngSubmit)="c('Save')">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">{{ title }}</h4>
-                    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <app-render-content [content]="formConfig.value"></app-render-content>
-                                    <div *ngFor="let r of render.components">
-                                        <app-config-general [parentFormGroup]="formConfig"
-                                                            *ngIf="r.componentName === 'app-config-general'"></app-config-general>
-                                        <app-config-img [parentFormGroup]="formConfig"
-                                                        *ngIf="r.componentName === 'app-config-img'"></app-config-img>
-                                        <app-config-choices [parentFormGroup]="formConfig"
-                                                            *ngIf="r.componentName === 'app-config-choices'"></app-config-choices>
-                                        <app-config-title [parentFormGroup]="formConfig"
-                                                        *ngIf="r.componentName === 'app-config-title'"></app-config-title>
-                                        <app-config-html-editor [parentFormGroup]="formConfig"
-                                                            *ngIf="r.componentName === 'app-config-html-editor'"></app-config-html-editor>
-                                        <app-config-table-builder [parentFormGroup]="formConfig"
-                                                                *ngIf="r.componentName === 'app-config-table-builder'"></app-config-table-builder>                                                                
-                                    </div>
-                                </div>
-                            </div>
+<form *ngIf="formConfig" [formGroup]="formConfig">
+    <div class="modal-header">
+        <h4 class="modal-title">Hi there!</h4>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <app-render-content [content]="formConfig.value"></app-render-content>
+                        <div *ngFor="let r of render.components">
+                            <app-config-general [parentFormGroup]="formConfig"
+                                                *ngIf="r.componentName === 'app-config-general'"></app-config-general>
+                            <app-config-img [parentFormGroup]="formConfig"
+                                            *ngIf="r.componentName === 'app-config-img'"></app-config-img>
+                            <app-config-choices [parentFormGroup]="formConfig"
+                                                *ngIf="r.componentName === 'app-config-choices'"></app-config-choices>
+                            <app-config-title [parentFormGroup]="formConfig"
+                                            *ngIf="r.componentName === 'app-config-title'"></app-config-title>
+                            <app-config-html-editor [parentFormGroup]="formConfig"
+                                                *ngIf="r.componentName === 'app-config-html-editor'"></app-config-html-editor>
+                            <app-config-table-builder [parentFormGroup]="formConfig"
+                                                    *ngIf="r.componentName === 'app-config-table-builder'"></app-config-table-builder>                                                                
                         </div>
                     </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-success btn-sm" [ngClass]="{'btn-outline-danger': !formConfig.valid }" [disabled]="!formConfig.valid">Save </button>
+                </div>
             </div>
         </div>
-    </form>
-</ng-template>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+        <button type="button"
+        (click)="register()"
+        class="btn btn-outline-success btn-sm" 
+        [ngClass]="{'btn-outline-danger': !formConfig.valid }" 
+        [disabled]="!formConfig.valid">Save </button>
+    </div>
+</form>
+
+
 
 <!---->
 <!-- WITHOUT MODAL 
