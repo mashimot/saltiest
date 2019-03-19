@@ -40,13 +40,13 @@ var CreateTableToJsonService = /** @class */ (function () {
     );*/
     CreateTableToJsonService.prototype.createTableSyntax = function () {
         var dbKeys = Object.keys(this._dataBase).join("|");
-        var comma = '(,)';
+        var comma = '';
         var allowedDataTypes = this.allowedDataTypes.map(function (item) {
             var newItem = item.toUpperCase().replace(/\s+/g, '\\s+');
             return "(?:" + newItem + "?)?";
         }).join("");
-        var info = "\n        (\\s*\n            (\\w+)\\s*\n            (\n                (" + dbKeys + ")(\\s*)?\n                (?:\n                    ([\\(]" + this.regex.onlyNumeric + "[\\)])\n                )?\n            ) \n            (?:\n                \\s+" + allowedDataTypes + "\n            )?\n            (?:\n                \\s*(PRIMARY\\s+KEY)?\\s*\n            )?\n        )\n        ";
-        var regexCreateTableSyntax = ("\n        " + this.regex.createTable + "\n        \\s*\\(\n            (\\s*\n                (\n                    " + info + comma + "\\s*\n                )*\n                (\n                    " + info + "\\s*\n                )\n            )\n        \\s*\\);").toLowerCase().replace(/\s+/g, '').trim();
+        var info = "\n        (\n            (\\w+)\\s*\n            (?:\n                (" + dbKeys + ")(\\s*)?\n                (\n                    ([(]" + this.regex.onlyNumeric + "[)])\n                )?\n            ) \n            (?:\n                \\s+" + allowedDataTypes + "\n            )?\n            (\n                \\s*(PRIMARY\\s+KEY)?\\s*\n            )?\n        )\n        ";
+        var regexCreateTableSyntax = ("\n        " + this.regex.createTable + "\n        [(]\n            (\\s*\n                (\n                    \\s*" + info + "[,]\n                )*\n                (\n                    \\s*" + info + "\n                )\n            )\n        \\s*[)]\\s*([;])\n        ").toLowerCase().replace(/\s+/g, '').trim();
         return regexCreateTableSyntax;
     };
     CreateTableToJsonService.prototype.getDataTypeAndSize = function (str) {
@@ -164,7 +164,9 @@ var CreateTableToJsonService = /** @class */ (function () {
     CreateTableToJsonService.prototype.convert = function () {
         var _this = this;
         var regex = new RegExp(this.regex.createTableSyntax);
-        this._string = this._string.toLowerCase();
+        this._string = this._string.replace(/\s+/g, " ").toLowerCase();
+        console.log(this.regex.createTableSyntax);
+        console.log(this._string);
         if (!regex.test(this._string)) {
             this._errors.push("Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )", "You have an error in your SQL syntax:");
         }
@@ -190,8 +192,9 @@ var CreateTableToJsonService = /** @class */ (function () {
                 return previous;
             }, []);
         }
+        console.log(defineColumns);
         var i = 0;
-        while (i < defineColumns.length && this._errors.length <= 0) {
+        while (i < defineColumns.length /* && this._errors.length <= 0*/) {
             var currentDefineColumn = defineColumns[i];
             var eachWords = currentDefineColumn.split(' '); //break the define columns into words
             if (eachWords.length <= 1) {
@@ -222,6 +225,7 @@ var CreateTableToJsonService = /** @class */ (function () {
             }
             i++;
         }
+        console.log(this._data);
     };
     CreateTableToJsonService.prototype.customLabelName = function () {
         var splitColumnName = this.table.columnName.split('_');

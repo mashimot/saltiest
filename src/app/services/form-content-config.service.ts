@@ -98,22 +98,4 @@ export class FormContentConfigService {
             }
         };
     };
-
-    setContent(content) {
-        //Armazena o parametro que foi enviado
-        this.newFormConfigSubject.next(content);
-    }
-
-    getContent() {
-        //Fica "observando" por atualizações nos dados
-        return this.newFormConfigSubject.asObservable();
-    }
-
-    mustRender(render: boolean){
-        this.newFormConfigSubject.next(render);
-    }
-
-    getMustRender(){
-        return this.newFormConfigSubject.asObservable();
-    }
 }

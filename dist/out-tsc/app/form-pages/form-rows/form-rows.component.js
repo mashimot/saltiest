@@ -17,6 +17,9 @@ var FormRowsComponent = /** @class */ (function () {
         var _this = this;
         this.formConfigService.getConfig().subscribe(function (data) { _this.config = data; });
     };
+    FormRowsComponent.prototype.trackByFn = function (index, item) {
+        return index;
+    };
     __decorate([
         Input(),
         __metadata("design:type", Object)

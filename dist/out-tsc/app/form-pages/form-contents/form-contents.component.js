@@ -7,20 +7,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectorRef } from '@angular/core';
 import { FormContentConfigService } from '../../services/form-content-config.service';
 import { FormConfigService } from './../../services/form-config.service';
 import { RenderHtmlService } from '../../services/render-html.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
 var FormContentsComponent = /** @class */ (function () {
-    function FormContentsComponent(formContentConfigService, formConfigService, renderHtmlService) {
-        this.formContentConfigService = formContentConfigService;
+    function FormContentsComponent(formConfigService, renderHtmlService, modalService, formContentConfig, cd) {
         this.formConfigService = formConfigService;
         this.renderHtmlService = renderHtmlService;
+        this.modalService = modalService;
+        this.formContentConfig = formContentConfig;
+        this.cd = cd;
+        this.options = {
+            size: 'lg',
+            backdrop: 'static',
+            keyboard: false,
+            centered: true
+        };
     }
     FormContentsComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.showOptions = false;
         this.formConfigService.getConfig().subscribe(function (data) { return _this.config = data; });
+    };
+    FormContentsComponent.prototype.trackByFn = function (index, item) {
+        return index;
     };
     FormContentsComponent.prototype.copyHtml = function (content) {
         this.renderHtmlService.setParams(content);
@@ -50,8 +63,14 @@ var FormContentsComponent = /** @class */ (function () {
             }
         }
     };
-    FormContentsComponent.prototype.sendDataToModal = function (content) {
-        this.formContentConfigService.setContent(content);
+    FormContentsComponent.prototype.sendDataToModal = function (contents, index) {
+        var _this = this;
+        var m = this.modalService.open(FormConfigComponent, this.options);
+        m.componentInstance.content = contents[index];
+        m.componentInstance.emitData.subscribe(function ($e) {
+            contents[index] = $e;
+            _this.cd.markForCheck();
+        });
     };
     FormContentsComponent.prototype.deleteContent = function (contentIndex) {
         this.column.contents.splice(contentIndex, 1);
@@ -64,11 +83,13 @@ var FormContentsComponent = /** @class */ (function () {
         Component({
             selector: 'app-form-contents',
             templateUrl: './form-contents.component.html',
-            styleUrls: ['./form-contents.component.css']
+            styleUrls: ['./form-contents.component.css'],
         }),
-        __metadata("design:paramtypes", [FormContentConfigService,
-            FormConfigService,
-            RenderHtmlService])
+        __metadata("design:paramtypes", [FormConfigService,
+            RenderHtmlService,
+            NgbModal,
+            FormContentConfigService,
+            ChangeDetectorRef])
     ], FormContentsComponent);
     return FormContentsComponent;
 }());

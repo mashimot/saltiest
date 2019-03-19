@@ -1,28 +1,21 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
-import { FormContentConfigService } from '../../services/form-content-config.service';
+import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormConfigService } from './../../services/form-config.service';
 import { RenderHtmlService } from '../../services/render-html.service';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
-import { FormBuilder, FormGroup } from '@angular/forms';
 
 
 @Component({
     selector: 'app-form-contents',
     templateUrl: './form-contents.component.html',
     styleUrls: ['./form-contents.component.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormContentsComponent implements OnInit {
     showOptions: boolean;
     config: {
         previewMode: boolean
     };
-    render: {
-        [key: string]: {
-            tabs: Array<string>
-        }
-    };
-    formConfig: FormGroup;
     options: any = {
         size: 'lg',
         backdrop : 'static',
@@ -33,19 +26,18 @@ export class FormContentsComponent implements OnInit {
     @Input() column;
 
     constructor(
-        private formContentConfigService: FormContentConfigService,
         private formConfigService: FormConfigService,
         private renderHtmlService: RenderHtmlService,
         private modalService: NgbModal,
-        private formContentConfig: FormContentConfigService,
         private cd: ChangeDetectorRef
     ) {}
 
     ngOnInit() {
         this.showOptions = false;
-        this.formConfigService.getConfig().subscribe(
-            (data) => this.config = data
-        );
+        this.formConfigService.getConfig().subscribe(data => { 
+			this.config = data; 
+			this.cd.markForCheck();
+		});
     }
 
     trackByFn(index, item){
@@ -80,22 +72,15 @@ export class FormContentsComponent implements OnInit {
     }
 
     sendDataToModal(contents, index): void{
-        this.formContentConfig.mustRender(false);
         let m = this.modalService.open(FormConfigComponent, this.options);
         m.componentInstance.content = contents[index];
         m.componentInstance.emitData.subscribe(($e) => {
             contents[index] = $e;
-            this.formContentConfig.mustRender(true);
             this.cd.markForCheck();
         });
     }
 
-    sendDataToModalBk(content): void {
-        this.formContentConfigService.setContent(content);
-    }
-
-    deleteContent(contentIndex) : void {
+    deleteContent(contentIndex): void {
         this.column.contents.splice(contentIndex, 1);
     }
-
 }

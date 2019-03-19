@@ -1,15 +1,14 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter,  SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormConfigService } from './../services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
-//import { RenderHtmlService } from '../services/render-html.service';
 import { BootstrapForm } from '../services/render-html.service';
-import { race } from 'rxjs/operators';
 
 @Component({
     selector: 'app-form-pages',
     templateUrl: './form-pages.component.html',
-    styleUrls: ['./form-pages.component.css']   
+    styleUrls: ['./form-pages.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormPagesComponent implements OnInit {
     @Input() pages;
@@ -33,7 +32,6 @@ export class FormPagesComponent implements OnInit {
             copyItem: (el) => {
                 return el;
                 //console.log(el);
-                //return JSON.parse(JSON.stringify(el));
             },
             accepts: (el, target, source, sibling) => {
                 // To avoid dragging from right to left container
@@ -184,20 +182,21 @@ export class FormPagesComponent implements OnInit {
     ngOnInit() {
         this.pages = this.pages ? this.pages.length > 0 ? this.pages : [] : [];
         this.formConfigService.getConfig().subscribe(
-            (data) => { this.config = data; }
+            (data) => { 
+                this.config = {...data};
+            }
         );
     }
 
     ngAfterViewInit() {
         this.subs.add(this.dragulaService.drop("pages")
-            .subscribe((value) => {
+            .subscribe(() => {
                 this.dropModelPageUpdated = true;
             })
         );
     }
 
     trackByFn(index, item){
-        console.log(index);
         return index;
     }
     

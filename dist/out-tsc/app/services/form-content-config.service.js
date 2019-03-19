@@ -95,14 +95,6 @@ var FormContentConfigService = /** @class */ (function () {
         };
     };
     ;
-    FormContentConfigService.prototype.setContent = function (content) {
-        //Armazena o parametro que foi enviado
-        this.newFormConfigSubject.next(content);
-    };
-    FormContentConfigService.prototype.getContent = function () {
-        //Fica "observando" por atualizações nos dados
-        return this.newFormConfigSubject.asObservable();
-    };
     FormContentConfigService = __decorate([
         Injectable({
             providedIn: 'root'

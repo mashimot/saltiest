@@ -7,7 +7,7 @@
 	[ngStyle]="{ 'min-height': '20px' }"
 	class="row-sortable"
 >
-<div *ngFor="let row of page.rows; let rowIndex = index; trackBy: trackByFn">
+<div *ngFor="let row of page.rows; let rowIndex = index;">
 	<div class="row" [hidden]="config?.previewMode">
 		<div class="col-md-12 row-handle" [ngStyle]="{ cursor: 'move' }">
 			<div class="float-left">

@@ -72,6 +72,7 @@ export class FormConfigComponent implements OnInit {
 
     register(){
         this.emitData.emit(this.formConfig.value);
+        this.activeModal.close();
     }
 
     populate(e) {

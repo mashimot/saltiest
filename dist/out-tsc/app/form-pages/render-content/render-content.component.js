@@ -7,13 +7,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RenderHtmlService } from './../../services/render-html.service';
 var RenderContentComponent = /** @class */ (function () {
     function RenderContentComponent(sanitizer, renderHtml) {
         this.sanitizer = sanitizer;
         this.renderHtml = renderHtml;
+        this.mustRender = true;
         this.content = {
             html: {},
             table: {}
@@ -23,6 +24,7 @@ var RenderContentComponent = /** @class */ (function () {
     };
     RenderContentComponent.prototype.render = function () {
         if (typeof this.content !== 'undefined') {
+            console.log('render');
             this.renderHtml.setParams(this.content);
             var html = this.renderHtml.get().html;
             //console.log(html);
@@ -38,7 +40,8 @@ var RenderContentComponent = /** @class */ (function () {
         Component({
             selector: 'app-render-content',
             templateUrl: './render-content.component.html',
-            styleUrls: ['./render-content.component.css']
+            styleUrls: ['./render-content.component.css'],
+            changeDetection: ChangeDetectionStrategy.OnPush
         }),
         __metadata("design:paramtypes", [DomSanitizer,
             RenderHtmlService])

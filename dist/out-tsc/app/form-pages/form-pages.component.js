@@ -180,6 +180,10 @@ var FormPagesComponent = /** @class */ (function () {
             _this.dropModelPageUpdated = true;
         }));
     };
+    FormPagesComponent.prototype.trackByFn = function (index, item) {
+        console.log(index);
+        return index;
+    };
     FormPagesComponent.prototype.ngDoCheck = function () {
         if (this.dropModelPageUpdated) { // this excutes if this.dropModelUpdated is true only
             this.pagesChange.emit(this.pages);

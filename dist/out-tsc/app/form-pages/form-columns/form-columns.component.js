@@ -17,6 +17,9 @@ var FormColumnsComponent = /** @class */ (function () {
         var _this = this;
         this.formConfigService.getConfig().subscribe(function (data) { _this.config = data; });
     };
+    FormColumnsComponent.prototype.trackByFn = function (index, item) {
+        return index;
+    };
     FormColumnsComponent.prototype.colNumber = function (columnIndex) {
         return parseInt(this.row.grid.trim().split(' ')[columnIndex]);
     };

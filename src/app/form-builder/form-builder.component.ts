@@ -284,7 +284,7 @@ export class FormBuilderComponent implements OnInit {
     count: number = 0;
     previewMode: boolean = false;
     config: {
-        previewMode: boolean
+        previewMode: boolean 
     };
 
     constructor(
@@ -352,15 +352,20 @@ export class FormBuilderComponent implements OnInit {
 
     public isNewPage(newPage: boolean): void {
         if (newPage) {
-            this.pages.push({
+            this.pages = [...this.pages, {
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []
-            });
+            }];
+            /*this.pages.push({
+                name: 'Page ' + (this.pages.length + 1),
+                rows: []
+            });*/
         }
     }
 
     public getPages(pages): void {
-        this.pages.push(pages);
+        this.pages = [...this.pages, pages];
+        //this.pages.push(pages);
     }
 }
 
