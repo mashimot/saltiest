@@ -2,8 +2,7 @@
 <form class="card" #f="ngForm" (ngSubmit)="onSubmit()">
     <div class="card-body">
         <div class="row">
-            <div class="offset-md-3"></div>
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="dropdown">
                     <h6 class="text-center text-bold">Select a Database Engine</h6>
                     <a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -11,13 +10,12 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <li *ngFor="let db of database" (click)="options.database = db.engine; options.logo = db.logo;" class="dropdown-item p-3" [ngStyle]="{'cursor': 'pointer'}">
-                            <img [src]="db.logo" alt="{{ db.engine }}" class="img-fluid" height="25%" width="25%"> 
+                            <img [src]="db.logo" alt="{{ db.engine }}" class="img-fluid"> 
                         </li>
                     </ul>    
                 </div>
             </div>
         </div>
-
         <textarea [(ngModel)]="string"
             name="string"
             [ngClass]="{ 'is-invalid' : errors.length > 0 }"
@@ -51,6 +49,8 @@
         </div>
     </div>
     <div class="card-footer">
-        <button class="btn btn-dark btn-block" (click)="createTable()">Generate</button>
+        <button class="btn btn-dark btn-block" 
+        (click)="createTable()" 
+        [disabled]="f.controls.grid?.invalid">Generate</button>
     </div>
 </form>

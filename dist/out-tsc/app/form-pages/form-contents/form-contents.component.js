@@ -7,18 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Input, ChangeDetectorRef } from '@angular/core';
-import { FormContentConfigService } from '../../services/form-content-config.service';
+import { Component, Input, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormConfigService } from './../../services/form-config.service';
 import { RenderHtmlService } from '../../services/render-html.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
 var FormContentsComponent = /** @class */ (function () {
-    function FormContentsComponent(formConfigService, renderHtmlService, modalService, formContentConfig, cd) {
+    function FormContentsComponent(formConfigService, renderHtmlService, modalService, cd) {
         this.formConfigService = formConfigService;
         this.renderHtmlService = renderHtmlService;
         this.modalService = modalService;
-        this.formContentConfig = formContentConfig;
         this.cd = cd;
         this.options = {
             size: 'lg',
@@ -30,7 +28,10 @@ var FormContentsComponent = /** @class */ (function () {
     FormContentsComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.showOptions = false;
-        this.formConfigService.getConfig().subscribe(function (data) { return _this.config = data; });
+        this.formConfigService.getConfig().subscribe(function (data) {
+            _this.config = data;
+            _this.cd.markForCheck();
+        });
     };
     FormContentsComponent.prototype.trackByFn = function (index, item) {
         return index;
@@ -84,11 +85,11 @@ var FormContentsComponent = /** @class */ (function () {
             selector: 'app-form-contents',
             templateUrl: './form-contents.component.html',
             styleUrls: ['./form-contents.component.css'],
+            changeDetection: ChangeDetectionStrategy.OnPush
         }),
         __metadata("design:paramtypes", [FormConfigService,
             RenderHtmlService,
             NgbModal,
-            FormContentConfigService,
             ChangeDetectorRef])
     ], FormContentsComponent);
     return FormContentsComponent;

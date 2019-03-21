@@ -263,14 +263,19 @@ var FormBuilderComponent = /** @class */ (function () {
     };
     FormBuilderComponent.prototype.isNewPage = function (newPage) {
         if (newPage) {
-            this.pages.push({
+            this.pages = this.pages.concat([{
+                    name: 'Page ' + (this.pages.length + 1),
+                    rows: []
+                }]);
+            /*this.pages.push({
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []
-            });
+            });*/
         }
     };
     FormBuilderComponent.prototype.getPages = function (pages) {
-        this.pages.push(pages);
+        this.pages = this.pages.concat([pages]);
+        //this.pages.push(pages);
     };
     FormBuilderComponent = __decorate([
         Component({

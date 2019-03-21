@@ -1,6 +1,3 @@
-<app-create-table-to-json 
-(pageChange)="getPages($event)" 
-[(tableName)]="tableName"></app-create-table-to-json>
 <ul class="nav nav-tabs">
     <li class="nav-item">
         <a class="nav-link active" data-toggle="tab" href="#home" (click)="tabNumber = 1;"><h3>Salty</h3></a>
@@ -13,7 +10,10 @@
     <div *ngIf="tabNumber == 1">
         <div class="row no-gutters">
             <div class="col-md-3" [hidden]="config?.previewMode">
-                <div class="sticky-top">
+                <div class="sticky-top scrollbar-near-moon thin square">
+                    <app-create-table-to-json 
+                    (pageChange)="getPages($event)" 
+                    [(tableName)]="tableName"></app-create-table-to-json>
                     <app-form-menu 
                     (isNewFile)="isNewFile($event)" 
                     (isNewPage)="isNewPage($event)"
@@ -35,8 +35,9 @@
         <app-form-info [(pages)]="pages" class="col-md-12"></app-form-info>
     </div>
 </div>
+
 <ul class="list-group"> 
-    <li class="list-group-item row" >
+    <li class="list-group-item" >
         <div class="row">
             <h3 
                 *ngFor="let list of mvcList; let listIndex = index;"
@@ -245,7 +246,3 @@
         </div>
     </li>    
 </ul>
-
-
-
-

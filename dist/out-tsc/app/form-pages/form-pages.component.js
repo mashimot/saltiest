@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,17 +18,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormConfigService } from './../services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
-//import { RenderHtmlService } from '../services/render-html.service';
 import { BootstrapForm } from '../services/render-html.service';
 var FormPagesComponent = /** @class */ (function () {
-    function FormPagesComponent(formConfigService, dragulaService) {
+    function FormPagesComponent(formConfigService, dragulaService, cd) {
         var _this = this;
         this.formConfigService = formConfigService;
         this.dragulaService = dragulaService;
+        this.cd = cd;
         this.pagesChange = new EventEmitter();
         this.subs = new Subscription();
         this.dropModelPageUpdated = false;
@@ -30,7 +41,6 @@ var FormPagesComponent = /** @class */ (function () {
             copyItem: function (el) {
                 return el;
                 //console.log(el);
-                //return JSON.parse(JSON.stringify(el));
             },
             accepts: function (el, target, source, sibling) {
                 // To avoid dragging from right to left container
@@ -80,8 +90,13 @@ var FormPagesComponent = /** @class */ (function () {
                 return JSON.parse(JSON.stringify(el));
             },
             accepts: function (el, target, source, sibling) {
+                this.cd.detach();
                 // To avoid draggin from right to left container
-                return target.className !== 'menu-row-sortable';
+                if (target.className !== 'menu-row-sortable') {
+                    this.cd.reattach();
+                    return true;
+                }
+                return false;
             },
             moves: function (el, container, handle) {
                 if (handle.classList) {
@@ -171,17 +186,20 @@ var FormPagesComponent = /** @class */ (function () {
     FormPagesComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.pages = this.pages ? this.pages.length > 0 ? this.pages : [] : [];
-        this.formConfigService.getConfig().subscribe(function (data) { _this.config = data; });
+        this.formConfigService.getConfig().subscribe(function (data) {
+            _this.config = __assign({}, data);
+        });
+    };
+    FormPagesComponent.prototype.ngOnChanges = function () {
     };
     FormPagesComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         this.subs.add(this.dragulaService.drop("pages")
-            .subscribe(function (value) {
+            .subscribe(function () {
             _this.dropModelPageUpdated = true;
         }));
     };
     FormPagesComponent.prototype.trackByFn = function (index, item) {
-        console.log(index);
         return index;
     };
     FormPagesComponent.prototype.ngDoCheck = function () {
@@ -210,10 +228,12 @@ var FormPagesComponent = /** @class */ (function () {
         Component({
             selector: 'app-form-pages',
             templateUrl: './form-pages.component.html',
-            styleUrls: ['./form-pages.component.css']
+            styleUrls: ['./form-pages.component.css'],
+            changeDetection: ChangeDetectionStrategy.OnPush
         }),
         __metadata("design:paramtypes", [FormConfigService,
-            DragulaService])
+            DragulaService,
+            ChangeDetectorRef])
     ], FormPagesComponent);
     return FormPagesComponent;
 }());

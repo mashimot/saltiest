@@ -1,76 +1,78 @@
 
 <div class="card bg-white">
-	<section class="p-2">
-		<button class="btn btn-dark btn-block btn-sm" (click)="newFile()">
-			<i class="fa fa-tasks" aria-hidden="true"></i>
-			New Task
-		</button>
-		<div dragula="pages" [(dragulaModel)]="pageModel" class="menu-page-sortable">
-			<div (click)="newPage()" class="p-1 bg-dark text-white text-center page-handle">
-				<i class="fa fa-file"></i> New Page
+	<div class="card-body">
+		<section id="page-menu" class="pt-2">
+			<button class="btn btn-dark btn-block btn-sm" (click)="newFile()">
+				<i class="fa fa-tasks" aria-hidden="true"></i>
+				New Task
+			</button>
+			<div dragula="pages" [(dragulaModel)]="pageModel" class="menu-page-sortable">
+				<div (click)="newPage()" class="p-1 bg-dark text-white text-center page-handle">
+					<i class="fa fa-file"></i> New Page
+				</div>
 			</div>
-		</div>
-	</section>
-	<section class="p-2">
-		<h3 class="text-center">Grid System</h3>
-		<fieldset name="bootstrap_container" dragula="rowSortable" [(dragulaModel)]="bootstrap" class="menu-row-sortable">
-			<div *ngFor="let b of bootstrap; let bIndex = index;">
-				<form #f="ngForm">
-					<div [hidden]="f.invalid" [ngStyle]="{ cursor: 'move' }">
-						<div class="row-handle p-1 mx-1 mt-1 border-bottom border-dark">
-							<i class="fa fa-arrows-alt fa-1x row-handle"></i><strong class="row-handle"> GRID</strong>
+		</section>
+		<section id="grid-menu" class="pt-2">
+			<h3 class="text-center">Grid System</h3>
+			<fieldset name="bootstrap_container" dragula="rowSortable" [(dragulaModel)]="bootstrap" class="menu-row-sortable">
+				<div *ngFor="let b of bootstrap; let bIndex = index;">
+					<form #f="ngForm">
+						<div [hidden]="f.invalid" [ngStyle]="{ cursor: 'move' }">
+							<div class="row-handle p-1 mx-1 mt-1 border-bottom border-dark">
+								<i class="fa fa-arrows-alt fa-1x row-handle"></i><strong class="row-handle"> GRID</strong>
+							</div>
 						</div>
-					</div>
-					<div class="input-group input-group-sm">
-						<textarea type="text"
-							(blur)="change(bIndex)"
-							[(ngModel)]="b.grid"
-							name="grid"
-							[ngClass]="{ 'is-invalid': f.controls.grid?.invalid }"
-							class="form-control form-control-sm"
-							[ngStyle]="{ cursor: 'pointer' }"
-							sumBeEqualsTo="12"
-							minlength="2"
-							pattern="^(\s*(0?[1-9]|[1-9][0-9])+\s*)+$"
-							required
-							rows="5"
-						></textarea>
-						<div *ngIf="f.controls.grid?.invalid || f.controls.grid?.touched" class="invalid-feedback">
-							<div *ngIf="f.controls.grid?.errors?.required ">* Enter with your grid.</div>
-							<div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers (except only zero) and space.</div>
-							<div *ngIf="f.controls.grid?.errors?.minlength">* Min. Length is {{ f.controls.grid?.errors.minlength.requiredLength }}.</div>
-							<div *ngIf="f.controls.grid?.errors?.isSumInvalid">* The sum of the each line must be equals to {{ f.controls.grid.errors?.sumBeEqualsTo }}.</div>
+						<div class="input-group input-group-sm">
+							<textarea type="text"
+								(blur)="change(bIndex)"
+								[(ngModel)]="b.grid"
+								name="grid"
+								[ngClass]="{ 'is-invalid': f.controls.grid?.invalid }"
+								class="form-control form-control-sm"
+								[ngStyle]="{ cursor: 'pointer' }"
+								sumBeEqualsTo="12"
+								minlength="2"
+								pattern="^(\s*(0?[1-9]|[1-9][0-9])+\s*)+$"
+								required
+								rows="5"
+							></textarea>
+							<div *ngIf="f.controls.grid?.invalid || f.controls.grid?.touched" class="invalid-feedback">
+								<div *ngIf="f.controls.grid?.errors?.required ">* Enter with your grid.</div>
+								<div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers (except only zero) and space.</div>
+								<div *ngIf="f.controls.grid?.errors?.minlength">* Min. Length is {{ f.controls.grid?.errors.minlength.requiredLength }}.</div>
+								<div *ngIf="f.controls.grid?.errors?.isSumInvalid">* The sum of the each line must be equals to {{ f.controls.grid.errors?.sumBeEqualsTo }}.</div>
+							</div>
 						</div>
-					</div>
-				</form>
-			</div>
-		</fieldset>
-	</section>
-	<section id="accordion" class="p-2">
-		<h3 class="text-center">TOOLS</h3>
-		<div *ngFor="let tool of tools | groupBy: 'html.category'; let toolCategoryIndex = index;">
-			<div class="border-bottom border-dark p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">
-				{{ tool.key }}
-			</div>
-			<div 
-				id="collapse-{{ toolCategoryIndex }}" 
-				dragula="contents"
-				[(dragulaModel)]="tool.value"
-				class="row menu-content-sortable no-gutters collapse m-1 show"
-				[ngClass]="{ }"
-				aria-expanded="true"
-				[attr.data-parent]="'#accordion'"
-				>
-				<div *ngFor="let t of tool.value"
-					[ngStyle]="{ 'cursor': 'move' }"
-					class="text-white content-handle menu-content-sortable col-md-6 "
-					[attr.data-content]="t | json"
+					</form>
+				</div>
+			</fieldset>
+		</section>
+		<section id="tool-menu" class="pt-2">
+			<h3 class="text-center">TOOLS</h3>
+			<div *ngFor="let tool of tools | groupBy: 'html.category'; let toolCategoryIndex = index;">
+				<div class="border-bottom border-dark p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">
+					{{ tool.key }}
+				</div>
+				<div 
+					id="collapse-{{ toolCategoryIndex }}" 
+					dragula="contents"
+					[(dragulaModel)]="tool.value"
+					class="row menu-content-sortable no-gutters collapse m-1 show"
+					[ngClass]="{ }"
+					aria-expanded="true"
+					[attr.data-parent]="'#accordion'"
 					>
-					<div class="p-1 mx-1 mt-1 border border-dark content-handle">
-						<span class="text-dark text-capitalize content-handle">{{ t.html.tag }}</span>
+					<div *ngFor="let t of tool.value"
+						[ngStyle]="{ 'cursor': 'move' }"
+						class="text-white content-handle menu-content-sortable col-md-6 "
+						[attr.data-content]="t | json"
+						>
+						<div class="p-1 mx-1 mt-1 border border-dark content-handle">
+							<span class="text-dark text-capitalize content-handle">{{ t.html.tag }}</span>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</section>
+		</section>
+	</div>
 </div>

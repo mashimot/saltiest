@@ -69,6 +69,7 @@ export class CreateTableToJsonComponent implements OnInit {
 		ct.setString(this.string);
 		ct.convert();
 		this.errors = ct.getError();
+		console.log(ct.hasError());
 		if (!ct.hasError()) {
 			let data = ct.getData();
             let bootstrapGridSystem = new BootstrapGridSystemService(data, `${this.gridModel}\n`);

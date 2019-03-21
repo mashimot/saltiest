@@ -7,15 +7,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormConfigService } from './../../services/form-config.service';
 var FormRowsComponent = /** @class */ (function () {
-    function FormRowsComponent(formConfigService) {
+    function FormRowsComponent(formConfigService, cd) {
         this.formConfigService = formConfigService;
+        this.cd = cd;
     }
     FormRowsComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.formConfigService.getConfig().subscribe(function (data) { _this.config = data; });
+        this.formConfigService.getConfig().subscribe(function (data) {
+            _this.config = data;
+            _this.cd.markForCheck();
+        });
     };
     FormRowsComponent.prototype.trackByFn = function (index, item) {
         return index;
@@ -32,9 +36,11 @@ var FormRowsComponent = /** @class */ (function () {
         Component({
             selector: 'app-form-rows',
             templateUrl: './form-rows.component.html',
-            styleUrls: ['./form-rows.component.css']
+            styleUrls: ['./form-rows.component.css'],
+            changeDetection: ChangeDetectionStrategy.OnPush
         }),
-        __metadata("design:paramtypes", [FormConfigService])
+        __metadata("design:paramtypes", [FormConfigService,
+            ChangeDetectorRef])
     ], FormRowsComponent);
     return FormRowsComponent;
 }());

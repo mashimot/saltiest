@@ -51,7 +51,6 @@ export class CreateTableToJsonService {
     );*/
     createTableSyntax(): string {
         var dbKeys = Object.keys(this._dataBase).join("|");
-        var comma = '';
         var allowedDataTypes = this.allowedDataTypes.map((item)=>{
             var newItem = item.toUpperCase().replace(/\s+/g, '\\s+');
             return `(?:${newItem}?)?`;
@@ -207,7 +206,6 @@ export class CreateTableToJsonService {
     convert(): void {
         let regex = new RegExp(this.regex.createTableSyntax);
         this._string = this._string.replace(/\s+/g, " ").toLowerCase();
-        console.log(this.regex.createTableSyntax);
         console.log(this._string);
         if(!regex.test(this._string)){
             this._errors.push(
@@ -240,7 +238,7 @@ export class CreateTableToJsonService {
                 return previous;
             }, []);
         }
-        console.log(defineColumns);
+        
         let i = 0;
         while (i < defineColumns.length/* && this._errors.length <= 0*/) {
             let currentDefineColumn = defineColumns[i];
@@ -273,7 +271,7 @@ export class CreateTableToJsonService {
             }
             i++;
         }
-        console.log(this._data)
+        //console.log(this._data)
     }
 
     customLabelName() {

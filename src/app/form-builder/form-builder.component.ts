@@ -271,7 +271,7 @@ export interface MVC {
     selector: 'app-form-builder',
     templateUrl: './form-builder.component.html',
     styleUrls: ['./form-builder.component.css'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormBuilderComponent implements OnInit {
     pages: Array<Page>;

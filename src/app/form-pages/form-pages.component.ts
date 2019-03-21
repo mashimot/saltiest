@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormConfigService } from './../services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
@@ -21,7 +21,8 @@ export class FormPagesComponent implements OnInit {
 
     constructor(
         private formConfigService: FormConfigService,
-        private dragulaService: DragulaService
+        private dragulaService: DragulaService,
+        private cd: ChangeDetectorRef
     ) {
         dragulaService.createGroup('pages', {
             revertOnSpill: true,
@@ -75,7 +76,6 @@ export class FormPagesComponent implements OnInit {
                 }   
             })
         );
-        
         dragulaService.createGroup('rowSortable', {
             revertOnSpill: true,
             copy: (el, source) => {
@@ -86,7 +86,10 @@ export class FormPagesComponent implements OnInit {
             },
             accepts: function(el, target, source, sibling) {
                 // To avoid draggin from right to left container
-                return target.className !== 'menu-row-sortable';
+                if(target.className !== 'menu-row-sortable'){
+                    return true;
+                }
+                return false;
             },
             moves: (el, container, handle) => {
                 if (handle.classList) {
@@ -186,6 +189,9 @@ export class FormPagesComponent implements OnInit {
                 this.config = {...data};
             }
         );
+    }
+    
+    ngOnChanges(){
     }
 
     ngAfterViewInit() {
