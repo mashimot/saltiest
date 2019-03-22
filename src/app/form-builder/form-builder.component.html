@@ -1,16 +1,9 @@
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#home" (click)="tabNumber = 1;"><h3>Salty</h3></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#menu1" (click)="tabNumber = 2;"><h3>Salty Suite</h3></a>
-    </li>
-</ul>
+
 <div class="tab-content">
-    <div *ngIf="tabNumber == 1">
+    <div>
         <div class="row no-gutters">
-            <div class="col-md-3" [hidden]="config?.previewMode">
-                <div class="sticky-top scrollbar-near-moon thin square">
+            <div class="col-md-3" [hidden]="config?.previewMode" *ngIf="tabNumber == 1">            
+                <div class="sticky-top scrollbar-near-moon thin square">                     
                     <app-create-table-to-json 
                     (pageChange)="getPages($event)" 
                     [(tableName)]="tableName"></app-create-table-to-json>
@@ -22,17 +15,30 @@
             </div>
             <div [ngClass]="{ 'col-md-12': config?.previewMode, 'col-md-9': !config?.previewMode }">
                 <div class="sticky-top">
-                    <button (click)="preview()" class="btn btn-sm btn-block" [ngClass]="{ 'btn-success': previewMode, 'btn-danger': !previewMode }" >
-                        <i [ngClass]="{ 'fa-eye': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-2x"></i>
-                        Preview {{ previewMode? 'Mode' : '' }}
+                    <button (click)="tabNumber = 1; preview();"  
+                    class="btn btn-lg bg-white text-dark" 
+                    [ngStyle]="{ 'opacity': tabNumber == 2? 0.4 : 1 }"
+                    [ngClass]="{ 'btn-outline-primary animated infinite heartBeat': tabNumber == 1 && !previewMode }">
+                        Salty
+                    </button>
+                    <button (click)="preview();" 
+                    class="btn btn-outline-dark btn-lg bg-white" 
+                    [ngStyle]="{ 'opacity': tabNumber == 2? 0.4 : 1 }"
+                    [ngClass]="{ 'text-success animated infinite heartBeat': previewMode, 'text-danger': !previewMode }" 
+                    *ngIf="tabNumber == 1">
+                        <i [ngClass]="{ 'fa-eye': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-1x"></i>
+                    </button>       
+                    <button (click)="tabNumber = 2; previewMode = false; preview();" 
+                    class="btn btn-lg bg-white text-black" 
+                    [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }"
+                    [ngClass]="{ 'btn-outline-primary animated infinite heartBeat': tabNumber == 2 }">
+                        Salty Suite
                     </button>
                 </div>
-                <app-form-pages [(pages)]="pages"></app-form-pages>
+                <app-form-pages [(pages)]="pages" *ngIf="tabNumber == 1"></app-form-pages>
+                <app-form-info [(pages)]="pages" *ngIf="tabNumber == 2"></app-form-info>
             </div>            
         </div>
-    </div>
-    <div *ngIf="tabNumber == 2">
-        <app-form-info [(pages)]="pages" class="col-md-12"></app-form-info>
     </div>
 </div>
 
