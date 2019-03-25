@@ -13,27 +13,34 @@
                     ></app-form-menu>
                 </div>
             </div>
-            <div [ngClass]="{ 'col-md-12': config?.previewMode, 'col-md-9': !config?.previewMode }">
+            <div [ngClass]="{ 'col-md-12': config?.previewMode || tabNumber == 2, 'col-md-9': !config?.previewMode }">
                 <div class="sticky-top">
-                    <button (click)="tabNumber = 1; preview();"  
-                    class="btn btn-lg bg-white text-dark" 
-                    [ngStyle]="{ 'opacity': tabNumber == 2? 0.4 : 1 }"
-                    [ngClass]="{ 'btn-outline-primary animated infinite heartBeat': tabNumber == 1 && !previewMode }">
-                        Salty
-                    </button>
-                    <button (click)="preview();" 
-                    class="btn btn-outline-dark btn-lg bg-white" 
-                    [ngStyle]="{ 'opacity': tabNumber == 2? 0.4 : 1 }"
-                    [ngClass]="{ 'text-success animated infinite heartBeat': previewMode, 'text-danger': !previewMode }" 
-                    *ngIf="tabNumber == 1">
-                        <i [ngClass]="{ 'fa-eye': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-1x"></i>
-                    </button>       
-                    <button (click)="tabNumber = 2; previewMode = false; preview();" 
-                    class="btn btn-lg bg-white text-black" 
-                    [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }"
-                    [ngClass]="{ 'btn-outline-primary animated infinite heartBeat': tabNumber == 2 }">
-                        Salty Suite
-                    </button>
+                    <div class="btn-group d-flex" role="group">
+                        <button (click)="tabNumber = 1; previewMode = false; preview();"
+                        class="btn btn-lg w-100" 
+                        [ngClass]="{ 
+                            'btn-primary animated infinite heartBeat': tabNumber == 1 && !previewMode, 
+                            'btn-outline-dark': tabNumber == 2 && previewMode 
+                        }"
+                        [ngStyle]="{ 'opacity': tabNumber == 2 || previewMode? 0.4 : 1, 'z-index': 9 }">
+                            <i class="fas fa-edit"></i> Form
+                        </button>
+                        <button (click)="this.previewMode = !this.previewMode; preview(); tabNumber = 1;" 
+                        class="btn btn-lg w-100" 
+                        [ngStyle]="{ 'opacity': tabNumber == 2 || !config?.previewMode? 0.4 : 1 }"
+                        [ngClass]="{ 
+                            'btn-success animated infinite heartBeat': previewMode,
+                            'btn-outline-danger': !previewMode
+                        }">
+                            <i [ngClass]="{ 'fa-eye': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-1x"></i>
+                        </button>
+                        <button (click)="tabNumber = 2; previewMode = false; preview();" 
+                        class="btn btn-lg w-100" 
+                        [ngClass]="{ 'btn-primary animated infinite heartBeat': tabNumber == 2, 'btn-outline-dark': tabNumber == 1 }"
+                        [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }">
+                            <i class="fas fa-edit"></i> Faster entry
+                        </button>
+                    </div>
                 </div>
                 <app-form-pages [(pages)]="pages" *ngIf="tabNumber == 1"></app-form-pages>
                 <app-form-info [(pages)]="pages" *ngIf="tabNumber == 2"></app-form-info>
