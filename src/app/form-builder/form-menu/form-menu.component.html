@@ -48,7 +48,7 @@
 			</fieldset>
 		</section>
 		<section id="tool-menu" class="pt-2">
-			<h3 class="text-center">TOOLS</h3>
+			<h3 class="text-center">Tools</h3>
 			<div *ngFor="let tool of tools | groupBy: 'html.category'; let toolCategoryIndex = index;">
 				<div class="border-bottom border-dark p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">
 					{{ tool.key }}
