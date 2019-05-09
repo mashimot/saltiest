@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-config-html-editor',
@@ -6,14 +7,24 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./config-html-editor.component.css']
 })
 export class ConfigHtmlEditorComponent implements OnInit {
-  @Input() parentFormGroup;
+	@Input() parentFormGroup: FormGroup;
+	@Input() content;
 
-  constructor() { }
+	constructor() { }
 
-  ngOnInit() {
-  }
+	ngOnInit() {
+		this.data.setValidators([
+			Validators.required
+		]);
+		this.html.patchValue({
+			'data': this.content.html.data
+		});
+	}
 
-  get data() {
-    return this.parentFormGroup.get('html.data');
-  }
+	get html(){
+		return this.parentFormGroup.controls.html;
+	}
+	get data() {
+		return this.html.get('data');
+	}
 }

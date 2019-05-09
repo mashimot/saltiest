@@ -8,14 +8,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Input } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 var ConfigGeneralComponent = /** @class */ (function () {
-    function ConfigGeneralComponent() {
+    function ConfigGeneralComponent(fb) {
+        this.fb = fb;
     }
     ConfigGeneralComponent.prototype.ngOnInit = function () {
+        this.html.get('label').setValidators([
+            Validators.required
+        ]);
+        this.html.patchValue({
+            'label': this.content.html.label,
+        });
+        this.table.get('nullable').setValidators([
+            Validators.required
+        ]);
+        this.table.patchValue({
+            'nullable': this.content.table.nullable,
+        });
     };
     Object.defineProperty(ConfigGeneralComponent.prototype, "html", {
         get: function () {
-            return this.parentFormGroup.controls.html;
+            return this.parentFormGroup.get('html');
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ConfigGeneralComponent.prototype, "table", {
+        get: function () {
+            return this.parentFormGroup.get('table');
         },
         enumerable: true,
         configurable: true
@@ -38,13 +59,17 @@ var ConfigGeneralComponent = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], ConfigGeneralComponent.prototype, "parentFormGroup", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], ConfigGeneralComponent.prototype, "content", void 0);
     ConfigGeneralComponent = __decorate([
         Component({
             selector: 'app-config-general',
             templateUrl: './config-general.component.html',
             styleUrls: ['./config-general.component.css']
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [FormBuilder])
     ], ConfigGeneralComponent);
     return ConfigGeneralComponent;
 }());

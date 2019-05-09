@@ -13,12 +13,24 @@ import { FormsModule } from '@angular/forms';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MenuComponent } from './menu/menu.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { FormBuilderModule } from './form-builder/form-builder.module';
+import { ConfigChoicesModule } from './config-choices/config-choices.module';
 import { HomeModule } from './home/home.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HighlightModule } from 'ngx-highlightjs';
+import { ProjectsModule } from './projects/projects.module';
+import { CoreModule } from './core/core.module';
+import { NgxUiLoaderModule, NgxUiLoaderHttpModule, POSITION, SPINNER, PB_DIRECTION } from 'ngx-ui-loader';
+var ngxUiLoaderConfig = {
+    bgsColor: 'red',
+    bgsPosition: POSITION.bottomCenter,
+    bgsSize: 40,
+    bgsType: SPINNER.rectangleBounce,
+    fgsType: SPINNER.rectangleBounce,
+    pbDirection: PB_DIRECTION.leftToRight,
+    pbThickness: 5,
+};
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -26,21 +38,25 @@ var AppModule = /** @class */ (function () {
         NgModule({
             declarations: [
                 AppComponent,
-                MenuComponent,
                 PageNotFoundComponent
             ],
             imports: [
                 BrowserModule,
                 RouterModule,
                 FormsModule,
+                ConfigChoicesModule,
                 FormBuilderModule,
+                ProjectsModule,
+                CoreModule,
                 HomeModule,
                 DragulaModule,
                 AppRoutingModule,
                 HttpModule,
                 HttpClientModule,
                 NgbModule,
-                HighlightModule.forRoot()
+                HighlightModule.forRoot(),
+                NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
+                NgxUiLoaderHttpModule
             ],
             providers: [DragulaService],
             bootstrap: [AppComponent]

@@ -12,6 +12,9 @@ export class FormColumnsComponent implements OnInit {
 	@Input() pageIndex;
 	@Input() rowIndex;
 
+	@Input() pageId;
+	@Input() rowId;
+
 	config: {
 		previewMode: boolean
 	};

@@ -39,6 +39,14 @@ var FormColumnsComponent = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], FormColumnsComponent.prototype, "rowIndex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FormColumnsComponent.prototype, "pageId", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FormColumnsComponent.prototype, "rowId", void 0);
     FormColumnsComponent = __decorate([
         Component({
             selector: 'app-form-columns',

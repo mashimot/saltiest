@@ -8,11 +8,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Input } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
 var ConfigImgComponent = /** @class */ (function () {
     function ConfigImgComponent() {
     }
     ConfigImgComponent.prototype.ngOnInit = function () {
+        this.tag.setValidators([
+            Validators.required
+        ]);
+        this.html.patchValue({
+            'tag': this.content.html.tag
+        });
+        this.src.setValidators([
+            Validators.required
+        ]);
+        this.html.patchValue({
+            'src': this.content.html.src
+        });
     };
+    Object.defineProperty(ConfigImgComponent.prototype, "tag", {
+        get: function () {
+            return this.html.get('tag');
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ConfigImgComponent.prototype, "src", {
         get: function () {
             return this.html.get('src');
@@ -29,8 +49,12 @@ var ConfigImgComponent = /** @class */ (function () {
     });
     __decorate([
         Input(),
-        __metadata("design:type", Object)
+        __metadata("design:type", FormGroup)
     ], ConfigImgComponent.prototype, "parentFormGroup", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], ConfigImgComponent.prototype, "content", void 0);
     ConfigImgComponent = __decorate([
         Component({
             selector: 'app-config-img',

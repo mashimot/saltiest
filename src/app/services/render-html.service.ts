@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Html } from "./../shared/models/html.model";
-import { Table } from "./../shared/models/table.model";
+import { Html, Table } from "./../core/model";
 
 export class BootstrapForm{
     table: Table;
@@ -36,18 +35,18 @@ export class BootstrapForm{
                 `<label for="i_${this.table.columnName}">${this.html.label}</label>`,
                 `<select class="form-control" name="${this.table.columnName}" id="i_${this.table.columnName}" ${this.table.nullable ? `` : `required`}>`,
                     `<option value="">Selecione</option>`,
-                    `${this.html.elements.map(element => `<option value="${element.value}">${element.text}</option>`).join('')}`,
+                    `${this.html.choices.map(element => `<option value="${element.value}">${element.text}</option>`).join('')}`,
                 `</select>`,
             `</div>`],
             "checkbox":
             [`<div class="form-group" id="div_${this.table.columnName}">`,
                 `<label for="i_${this.table.columnName}">${this.html.label}</label>`,
-                `${this.html.elements.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.table.columnName}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+                `${this.html.choices.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.table.columnName}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "radio": 
             [`<div class="form-group" id="div_${this.table.columnName}">`,
                 `<label for="i_${this.table.columnName}">${this.html.label}</label>`,
-                `${this.html.elements.map(element => `<div class="radio"><label><input type="radio" name="${this.table.columnName}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+                `${this.html.choices.map(element => `<div class="radio"><label><input type="radio" name="${this.table.columnName}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "text": 
             [`<div class="form-group" id="div_${this.table.columnName}">`,
@@ -100,12 +99,12 @@ export class CustomForm{
             "checkbox":
             [`<div class="form-group" id="div_${this.table.columnName}">`,
                 `<label for="i_${this.table.columnName}">${this.html.label}</label>`,
-                `${this.html.elements.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.table.columnName}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+                `${this.html.choices.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.table.columnName}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "radio": 
             [`<div class="form-group" id="div_${this.table.columnName}">`,
                 `<label for="i_${this.table.columnName}">${this.html.label}</label>`,
-                `${this.html.elements.map(element => `<div class="radio"><label><input type="radio" name="${this.table.columnName}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+                `${this.html.choices.map(element => `<div class="radio"><label><input type="radio" name="${this.table.columnName}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "text": 
             [`{!! $HTML::inputTexto(${this.html.grid}, '${this.table.columnName}', ${parseInt(this.table.size) > 0? `${this.table.size}` : `''`}, '${this.html.label}', ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.columnName}') !!}`],

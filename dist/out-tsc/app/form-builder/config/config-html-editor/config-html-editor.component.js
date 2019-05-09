@@ -8,22 +8,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Input } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
 var ConfigHtmlEditorComponent = /** @class */ (function () {
     function ConfigHtmlEditorComponent() {
     }
     ConfigHtmlEditorComponent.prototype.ngOnInit = function () {
+        this.data.setValidators([
+            Validators.required
+        ]);
+        this.html.patchValue({
+            'data': this.content.html.data
+        });
     };
+    Object.defineProperty(ConfigHtmlEditorComponent.prototype, "html", {
+        get: function () {
+            return this.parentFormGroup.controls.html;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ConfigHtmlEditorComponent.prototype, "data", {
         get: function () {
-            return this.parentFormGroup.get('html.data');
+            return this.html.get('data');
         },
         enumerable: true,
         configurable: true
     });
     __decorate([
         Input(),
-        __metadata("design:type", Object)
+        __metadata("design:type", FormGroup)
     ], ConfigHtmlEditorComponent.prototype, "parentFormGroup", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], ConfigHtmlEditorComponent.prototype, "content", void 0);
     ConfigHtmlEditorComponent = __decorate([
         Component({
             selector: 'app-config-html-editor',

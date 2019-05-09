@@ -3,6 +3,7 @@ import { FormConfigService } from './../../services/form-config.service';
 import { RenderHtmlService } from '../../services/render-html.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
+import { ContentService } from '../../shared/services/content.service';
 
 
 @Component({
@@ -24,12 +25,21 @@ export class FormContentsComponent implements OnInit {
     };
 
     @Input() column;
+	@Input() pageIndex;
+    @Input() rowIndex;
+    @Input() columnIndex;
+
+	@Input() pageId;
+    @Input() rowId;
+    @Input() columnId;
+
 
     constructor(
         private formConfigService: FormConfigService,
         private renderHtmlService: RenderHtmlService,
         private modalService: NgbModal,
-        private cd: ChangeDetectorRef
+        private cd: ChangeDetectorRef,
+        private contentService: ContentService
     ) {}
 
     ngOnInit() {
@@ -73,14 +83,33 @@ export class FormContentsComponent implements OnInit {
 
     sendDataToModal(contents, index): void{
         let m = this.modalService.open(FormConfigComponent, this.options);
+        m.componentInstance.content_id = contents[index].id;
         m.componentInstance.content = contents[index];
-        m.componentInstance.emitData.subscribe(($e) => {
+        m.componentInstance.emitData.subscribe($e => {
             contents[index] = $e;
             this.cd.markForCheck();
+            /*this.contentService.updateContent($e).subscribe(result => {
+                console.log(result);
+                if(result.success){
+                    contents[index] = result.data;
+                    this.cd.markForCheck();
+                }
+            });*/
         });
     }
 
     deleteContent(contentIndex): void {
+        /*this.contentService.deleteContent(content.id)
+        .subscribe(result =>{
+            if(result.success){
+                this.column.contents.forEach((cV, index) => {
+                    if(cV.id == content.id){
+                        this.column.contents.splice(index, 1);
+                    }
+                });
+                this.cd.markForCheck();
+            }
+        });*/
         this.column.contents.splice(contentIndex, 1);
     }
 }

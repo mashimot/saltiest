@@ -1,32 +1,31 @@
 <div class="card">
-  <form class="card-body">
-    <div class="form-group" [formGroup]="parentFormGroup.controls.table">
-      <label>
-        <div class="checkbox-inline">
-          <input type="checkbox"
-                 formControlName="nullable"
-                 style="display: none;" checked>
-          Required?
-          <div [ngSwitch]="nullable.value" >
-            <span *ngSwitchCase="true"><i class="far fa-check-square"></i> Yes</span>
-            <span *ngSwitchCase="false"><i class="far fa-square"></i> No</span>
-            <span *ngSwitchDefault><i class="far fa-square"></i> No</span>
-          </div>
-        </div>
-      </label>
-    </div>
-
-    <div class="form-group" [formGroup]="parentFormGroup.controls.html">
-      <label>Description:</label>
-      <input type="text"
-              formControlName="label"
-              class="form-control"
-              [ngClass]="{ 'is-invalid': label.invalid }"
-      />
-      <div *ngIf="label.invalid || label.touched" class="invalid-feedback">
-        <div *ngIf="label.errors?.required">You did not enter a field</div>
-        <div *ngIf="label.errors?.minlength">Your field is too short</div>
-      </div>
-    </div>
-  </form>
+	<div class="card-body">
+		<div class="form-group" [formGroup]="parentFormGroup.controls.table">
+			<label>
+				<div class="checkbox-inline">
+					<input type="checkbox"
+						formControlName="nullable"
+						style="display: none;" checked>
+					Required?
+					<div [ngSwitch]="nullable.value">
+						<span *ngSwitchCase="true"><i class="far fa-check-square"></i> Yes</span>
+						<span *ngSwitchCase="false"><i class="far fa-square"></i> No</span>
+						<span *ngSwitchDefault><i class="far fa-square"></i> No</span>
+					</div>
+				</div>
+			</label>
+		</div>
+		<div class="form-group" [formGroup]="parentFormGroup.controls.html">
+			<label>Description:</label>
+			<input type="text"
+				formControlName="label"
+				class="form-control"
+				[ngClass]="{ 'is-invalid': label.invalid }"
+			/>
+			<div *ngIf="label.invalid || label.touched" class="invalid-feedback">
+				<div *ngIf="label.errors?.required">You did not enter a field</div>
+				<div *ngIf="label.errors?.minlength">Your field is too short</div>
+			</div>
+		</div>
+	</div>
 </div>

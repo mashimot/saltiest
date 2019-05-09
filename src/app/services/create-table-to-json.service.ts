@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DatabaseEngine } from '../shared/services/database-engine.service';
-import { Content } from "./../shared/models/content.model";
-import { Html } from "./../shared/models/html.model";
-import { Table } from "./../shared/models/table.model";
+import { Content, Html, Table } from "./../core/model";
 
 @Injectable()
 export class CreateTableToJsonService {

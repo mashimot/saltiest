@@ -12,12 +12,14 @@ import { FormConfigService } from './../../services/form-config.service';
 import { RenderHtmlService } from '../../services/render-html.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
+import { ContentService } from '../../shared/services/content.service';
 var FormContentsComponent = /** @class */ (function () {
-    function FormContentsComponent(formConfigService, renderHtmlService, modalService, cd) {
+    function FormContentsComponent(formConfigService, renderHtmlService, modalService, cd, contentService) {
         this.formConfigService = formConfigService;
         this.renderHtmlService = renderHtmlService;
         this.modalService = modalService;
         this.cd = cd;
+        this.contentService = contentService;
         this.options = {
             size: 'lg',
             backdrop: 'static',
@@ -67,19 +69,62 @@ var FormContentsComponent = /** @class */ (function () {
     FormContentsComponent.prototype.sendDataToModal = function (contents, index) {
         var _this = this;
         var m = this.modalService.open(FormConfigComponent, this.options);
+        m.componentInstance.content_id = contents[index].id;
         m.componentInstance.content = contents[index];
         m.componentInstance.emitData.subscribe(function ($e) {
             contents[index] = $e;
             _this.cd.markForCheck();
+            /*this.contentService.updateContent($e).subscribe(result => {
+                console.log(result);
+                if(result.success){
+                    contents[index] = result.data;
+                    this.cd.markForCheck();
+                }
+            });*/
         });
     };
     FormContentsComponent.prototype.deleteContent = function (contentIndex) {
+        /*this.contentService.deleteContent(content.id)
+        .subscribe(result =>{
+            if(result.success){
+                this.column.contents.forEach((cV, index) => {
+                    if(cV.id == content.id){
+                        this.column.contents.splice(index, 1);
+                    }
+                });
+                this.cd.markForCheck();
+            }
+        });*/
         this.column.contents.splice(contentIndex, 1);
     };
     __decorate([
         Input(),
         __metadata("design:type", Object)
     ], FormContentsComponent.prototype, "column", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FormContentsComponent.prototype, "pageIndex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FormContentsComponent.prototype, "rowIndex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FormContentsComponent.prototype, "columnIndex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FormContentsComponent.prototype, "pageId", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FormContentsComponent.prototype, "rowId", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FormContentsComponent.prototype, "columnId", void 0);
     FormContentsComponent = __decorate([
         Component({
             selector: 'app-form-contents',
@@ -90,7 +135,8 @@ var FormContentsComponent = /** @class */ (function () {
         __metadata("design:paramtypes", [FormConfigService,
             RenderHtmlService,
             NgbModal,
-            ChangeDetectorRef])
+            ChangeDetectorRef,
+            ContentService])
     ], FormContentsComponent);
     return FormContentsComponent;
 }());

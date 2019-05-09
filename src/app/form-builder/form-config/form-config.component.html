@@ -1,5 +1,5 @@
 <!-- MODAL -->
-<form *ngIf="formConfig" [formGroup]="formConfig" (ngSubmit)="register()">
+<form *ngIf="configForm" [formGroup]="configForm" (ngSubmit)="register()">
     <div class="modal-header">
         <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
@@ -8,24 +8,29 @@
     <div class="modal-body">
         <div class="card">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <app-render-content [content]="formConfig.value"></app-render-content>
-                        <div *ngFor="let r of render.components">
-                            <app-config-general [parentFormGroup]="formConfig"
-                                                *ngIf="r.componentName === 'app-config-general'"></app-config-general>
-                            <app-config-img [parentFormGroup]="formConfig"
-                                            *ngIf="r.componentName === 'app-config-img'"></app-config-img>
-                            <app-config-choices [parentFormGroup]="formConfig"
-                                                *ngIf="r.componentName === 'app-config-choices'"></app-config-choices>
-                            <app-config-title [parentFormGroup]="formConfig"
-                                            *ngIf="r.componentName === 'app-config-title'"></app-config-title>
-                            <app-config-html-editor [parentFormGroup]="formConfig"
-                                                *ngIf="r.componentName === 'app-config-html-editor'"></app-config-html-editor>
-                            <app-config-table-builder [parentFormGroup]="formConfig"
-                                                    *ngIf="r.componentName === 'app-config-table-builder'"></app-config-table-builder>                                                                
-                        </div>
-                    </div>
+                <app-render-content [content]="configForm.value"></app-render-content>
+                <div *ngFor="let r of render.components">
+                    <app-config-general 
+                        [parentFormGroup]="configForm"
+                        [content]="content"
+                        *ngIf="r.componentName === 'app-config-general'"></app-config-general>
+                    <app-config-img 
+                        [parentFormGroup]="configForm"
+                        [content]="content"
+                        *ngIf="r.componentName === 'app-config-img'"></app-config-img>
+                    <app-config-title
+                        [parentFormGroup]="configForm"
+                        [content]="content"
+                        *ngIf="r.componentName === 'app-config-title'"></app-config-title>
+                    <app-config-html-editor
+                        [parentFormGroup]="configForm"
+                        [content]="content"
+                        *ngIf="r.componentName === 'app-config-html-editor'"></app-config-html-editor>
+                    <app-config-choice-form
+                        [parentFormGroup]="configForm"
+                        [content]="content"
+                        *ngIf="r.componentName === 'app-config-choices'"></app-config-choice-form>
+                    <hr>
                 </div>
             </div>
         </div>
@@ -36,7 +41,6 @@
         (click)="activeModal.close('Close click')">Close</button>
         <button type="submit"
         class="btn btn-outline-success" 
-        [ngClass]="{'btn-outline-danger': !formConfig.valid }" 
-        [disabled]="!formConfig.valid">Save </button>
+        >Save </button>
     </div>
 </form>

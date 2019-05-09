@@ -7,12 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
 import { HomeService } from "../shared/services/home.service";
-import { Html } from "../shared/models/html.model";
-import { Table } from "../shared/models/table.model";
+import { Html } from "../core/model/html.model";
+import { Table } from "../core/model/table.model";
 import { FormConfigService } from '../services/form-config.service';
+import { PageService } from '../shared/services/page.service';
+import { ActivatedRoute } from '@angular/router';
+import { ProjectService } from '../shared/services/project.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 var Validator = /** @class */ (function () {
     function Validator() {
         this.inputs = [];
@@ -198,14 +202,17 @@ var Bootstrap = /** @class */ (function () {
 }());
 export { Bootstrap };
 var FormBuilderComponent = /** @class */ (function () {
-    function FormBuilderComponent(formConfigService, bootstrap, validator, homeService) {
+    function FormBuilderComponent(formConfigService, bootstrap, validator, projectService, homeService, pageService, route, ngxLoader) {
         this.formConfigService = formConfigService;
         this.bootstrap = bootstrap;
         this.validator = validator;
+        this.projectService = projectService;
         this.homeService = homeService;
+        this.pageService = pageService;
+        this.route = route;
+        this.ngxLoader = ngxLoader;
         this.tableName = '';
         this.isTabAlreadyOpen = false;
-        this.count = 0;
         this.previewMode = false;
         this.mvcList = [{
                 isOpen: false,
@@ -222,15 +229,50 @@ var FormBuilderComponent = /** @class */ (function () {
             }];
     }
     FormBuilderComponent.prototype.ngOnInit = function () {
-        this.tabNumber = 1;
+        var _this = this;
+        this.pages = [];
+        //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
+        //this.pages = this.homeService.getHomeStatic();
+        this.route.params.subscribe(function (r) {
+            _this.project_id = r.projectId;
+        });
         this.tabMVC = 1;
-        this.pages = this.homeService.get();
+        this.tabNumber = 1;
+        this.previewMode = false;
+        this.preview();
         this.config = {
             previewMode: this.previewMode
         };
+        this.loadFormBuilder();
+    };
+    FormBuilderComponent.prototype.loadFormBuilder = function () {
+        this.ngxLoader.start();
+        //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
+        this.pages = this.homeService.getHomeStatic();
+        this.ngxLoader.stop();
+        /*this.pageService.getPageByProjectId(this.project_id)
+        .subscribe(result => {
+            if(result.success){
+                this.pages = result.data;
+            }
+            this.ngxLoader.stop();
+        });*/
+    };
+    FormBuilderComponent.prototype.ngAfterViewInit = function () {
+    };
+    FormBuilderComponent.prototype.save = function () {
+        /*this.pageService.createPage({
+            project_id: this.project_id,
+            pages: this.pages
+        })
+        .subscribe(result => {
+            if(result.success){
+                this.loadFormBuilder();
+            }
+        });*/
     };
     FormBuilderComponent.prototype.preview = function () {
-        this.previewMode = !this.previewMode;
+        //this.previewMode = !this.previewMode;
         this.config = {
             previewMode: this.previewMode
         };
@@ -251,22 +293,27 @@ var FormBuilderComponent = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    FormBuilderComponent.prototype.isNewFile = function (newFile) {
-        if (newFile) {
-            this.pages = [];
-        }
-    };
     FormBuilderComponent.prototype.removeDoubleQuotes = function (word) {
         if (typeof word != 'undefined')
             return word.replace(/\"/g, "");
         return '';
     };
     FormBuilderComponent.prototype.isNewPage = function (newPage) {
+        var _this = this;
         if (newPage) {
-            this.pages = this.pages.concat([{
-                    name: 'Page ' + (this.pages.length + 1),
-                    rows: []
-                }]);
+            this.pageService.createPage({
+                project_id: this.project_id,
+                name: "Page " + this.pages.length
+            })
+                .subscribe(function (result) {
+                if (result.success) {
+                    _this.pages = result.data;
+                }
+            });
+            /*this.pages = [...this.pages, {
+                name: 'Page ' + (this.pages.length + 1),
+                rows: []
+            }];*/
             /*this.pages.push({
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []
@@ -282,12 +329,15 @@ var FormBuilderComponent = /** @class */ (function () {
             selector: 'app-form-builder',
             templateUrl: './form-builder.component.html',
             styleUrls: ['./form-builder.component.css'],
-            changeDetection: ChangeDetectionStrategy.OnPush,
         }),
         __metadata("design:paramtypes", [FormConfigService,
             Bootstrap,
             Validator,
-            HomeService])
+            ProjectService,
+            HomeService,
+            PageService,
+            ActivatedRoute,
+            NgxUiLoaderService])
     ], FormBuilderComponent);
     return FormBuilderComponent;
 }());

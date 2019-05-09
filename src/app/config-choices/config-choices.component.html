@@ -1,0 +1,59 @@
+<div >
+	<div class="border-bottom border-dark p-1 text-uppercase" 
+	[ngStyle]="{ cursor: 'pointer' }">
+		<span class="text-right">
+			
+			Option Group
+			<!--a 
+				[routerLink]="['/config-choices', 'create']"
+			
+				<small><i class="far fa-plus-square"></i> create</small>
+			</a-->
+			<button 
+			(click)="edit()"
+			class="btn btn-link"
+			>
+				<small><i class="fas fa-plus-square"></i> create </small>
+			</button>
+		</span>
+	</div>
+	<div class="border border-dark p-1 mt-1 dropdown">
+		<h6 class="text-center text-bold">Select an Option Type</h6>
+		<a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm btn-block">
+			<h2 class="text-uppercase"><i class="{{ toolType.icon }}"></i> {{ toolType.type }}</h2>
+		</a>
+		<ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+			<li *ngFor="let toolType of toolTypes" 
+			class="dropdown-item p-3" 
+			(click)="setToolType(toolType)"
+			[ngStyle]="{'cursor': 'pointer'}">
+				<h2 class="text-uppercase"><i class="{{ toolType.icon }}"></i> {{ toolType.type }}</h2>
+			</li>
+		</ul>    
+	</div>	
+	<div 
+		dragula="contents"
+		[(dragulaModel)]="groups"
+		class="menu-content-sortable no-gutters collapse m-1 show"
+		aria-expanded="true"
+	>
+		<div *ngFor="let content of groups; let contentIndex = index;"
+			class="content-handle menu-content-sortable option-type-sortable"
+			[attr.data-content]="content | json"
+			[attr.data-option-type]="toolType.value"
+		>
+			<!--a [routerLink]="['/config-choices', content.html.content_choice_id ,'edit']"-->
+			<button 
+			class="btn btn-link"
+			(click)="edit(contentIndex)">
+				<small><i class="fas fa-pen-square"></i> edit </small>
+			</button>
+			<ul class="text-dark text-capitalize content-handle" [ngStyle]="{ 'cursor': 'move' }">
+				<li *ngFor="let choice of content.html.choices" class=" content-handle">
+					<small class="content-handle">{{ choice.text }}</small>
+				</li>
+			</ul>
+			<div class=" border border-bottom"></div>
+		</div>
+	</div>
+</div>

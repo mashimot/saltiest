@@ -2,15 +2,11 @@
 <div class="card bg-white">
 	<div class="card-body">
 		<section id="page-menu" class="pt-2">
-			<button class="btn btn-dark btn-block btn-sm" (click)="newFile()">
-				<i class="fa fa-tasks" aria-hidden="true"></i>
-				New Task
-			</button>
-			<div dragula="pages" [(dragulaModel)]="pageModel" class="menu-page-sortable">
-				<div (click)="newPage()" class="p-1 bg-dark text-white text-center page-handle">
+			<!--div dragula="pages" [(dragulaModel)]="pageModel" class="menu-page-sortable"-->
+				<button (click)="newPage()" class="btn btn-dark btn-block btn-sm">
 					<i class="fa fa-file"></i> New Page
-				</div>
-			</div>
+				</button>
+			<!--/div-->
 		</section>
 		<section id="grid-menu" class="pt-2">
 			<h3 class="text-center">Grid System</h3>
@@ -73,6 +69,7 @@
 					</div>
 				</div>
 			</div>
+			<app-config-choices></app-config-choices>
 		</section>
 	</div>
 </div>

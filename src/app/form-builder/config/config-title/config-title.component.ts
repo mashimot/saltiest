@@ -1,28 +1,35 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-config-title',
-  templateUrl: './config-title.component.html',
-  styleUrls: ['./config-title.component.css']
+	selector: 'app-config-title',
+	templateUrl: './config-title.component.html',
+	styleUrls: ['./config-title.component.css']
 })
 export class ConfigTitleComponent implements OnInit {
-  //@Input() content;
-  @Input() parentFormGroup;
-  @Output() parentFormGroupChange = new EventEmitter();
+	@Input() content;
+	@Input() parentFormGroup: FormGroup;
 
-  headingTypes: Array<string>;
+	headingTypes: Array<string>;
 
-  constructor() { }
+	constructor() { }
 
-  ngOnInit() {
-    this.headingTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
-  }
+	ngOnInit() {
+		this.headingTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
-  get html() {
-    return this.parentFormGroup.controls.html;
-  }
+		this.text.setValidators([
+			Validators.required
+		]);
+		this.html.patchValue({
+			'text': this.content.html.text
+		});
+	}
 
-  get text() {
-    return this.html.get('text');
-  }
+	get html() {
+		return this.parentFormGroup.controls.html;
+	}
+
+	get text() {
+		return this.html.get('text');
+	}
 }

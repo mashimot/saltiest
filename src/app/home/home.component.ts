@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormConfigService } from './../services/form-config.service';
 import { HomeService } from './../shared/services/home.service';
-import { Page } from './../shared/models/page.model';
+import { Page } from './../core/model';
+import { PageService } from '../shared/services/page.service';
 
 @Component({
 selector: 'app-home',
@@ -16,7 +17,8 @@ export class HomeComponent implements OnInit {
 
 	constructor(
 		private formConfigService: FormConfigService,
-		private homeService: HomeService
+		private homeService: HomeService,
+		private pageService: PageService
 		) {
 		this.pages = [];
 	}
@@ -26,6 +28,12 @@ export class HomeComponent implements OnInit {
 			previewMode: true
 		};
 		this.formConfigService.setConfig(this.config);
-		this.pages = this.homeService.get();
+		this.pageService.getPageByProjectId(14)
+		.subscribe(result => { 
+			console.log(result);
+			if(result.success){
+				this.pages = result.data;
+			}
+		});		
 	}
 }

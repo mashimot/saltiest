@@ -8,8 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
-import { Html } from "./../shared/models/html.model";
-import { Table } from "./../shared/models/table.model";
+import { Html, Table } from "./../core/model";
 var BootstrapForm = /** @class */ (function () {
     function BootstrapForm(d) {
         this.html = new Html(d.html);
@@ -38,16 +37,16 @@ var BootstrapForm = /** @class */ (function () {
                 "<label for=\"i_" + this.table.columnName + "\">" + this.html.label + "</label>",
                 "<select class=\"form-control\" name=\"" + this.table.columnName + "\" id=\"i_" + this.table.columnName + "\" " + (this.table.nullable ? "" : "required") + ">",
                 "<option value=\"\">Selecione</option>",
-                "" + this.html.elements.map(function (element) { return "<option value=\"" + element.value + "\">" + element.text + "</option>"; }).join(''),
+                "" + this.html.choices.map(function (element) { return "<option value=\"" + element.value + "\">" + element.text + "</option>"; }).join(''),
                 "</select>",
                 "</div>"],
             "checkbox": ["<div class=\"form-group\" id=\"div_" + this.table.columnName + "\">",
                 "<label for=\"i_" + this.table.columnName + "\">" + this.html.label + "</label>",
-                "" + this.html.elements.map(function (element) { return "<div class=\"checkbox\"><label><input type=\"checkbox\" name=\"" + _this.table.columnName + "\" value=\"" + element.value + "\"> " + element.text + "</label></div>"; }).join(''),
+                "" + this.html.choices.map(function (element) { return "<div class=\"checkbox\"><label><input type=\"checkbox\" name=\"" + _this.table.columnName + "\" value=\"" + element.value + "\"> " + element.text + "</label></div>"; }).join(''),
                 "</div>"],
             "radio": ["<div class=\"form-group\" id=\"div_" + this.table.columnName + "\">",
                 "<label for=\"i_" + this.table.columnName + "\">" + this.html.label + "</label>",
-                "" + this.html.elements.map(function (element) { return "<div class=\"radio\"><label><input type=\"radio\" name=\"" + _this.table.columnName + "\" value=\"" + element.value + "\"> " + element.text + "</label></div>"; }).join(''),
+                "" + this.html.choices.map(function (element) { return "<div class=\"radio\"><label><input type=\"radio\" name=\"" + _this.table.columnName + "\" value=\"" + element.value + "\"> " + element.text + "</label></div>"; }).join(''),
                 "</div>"],
             "text": ["<div class=\"form-group\" id=\"div_" + this.table.columnName + "\">",
                 "<label for=\"i_" + this.table.columnName + "\">" + this.html.label + "</label>",
@@ -91,11 +90,11 @@ var CustomForm = /** @class */ (function () {
             "select": ["{!! $HTML::selectDominio(" + this.html.grid + ", '" + this.table.columnName + "', '" + this.html.label + "', " + (this.table.nullable ? "true" : "false") + ", true, true, '', '" + this.table.columnName + "' ) !!}"],
             "checkbox": ["<div class=\"form-group\" id=\"div_" + this.table.columnName + "\">",
                 "<label for=\"i_" + this.table.columnName + "\">" + this.html.label + "</label>",
-                "" + this.html.elements.map(function (element) { return "<div class=\"checkbox\"><label><input type=\"checkbox\" name=\"" + _this.table.columnName + "\" value=\"" + element.value + "\"> " + element.text + "</label></div>"; }).join(''),
+                "" + this.html.choices.map(function (element) { return "<div class=\"checkbox\"><label><input type=\"checkbox\" name=\"" + _this.table.columnName + "\" value=\"" + element.value + "\"> " + element.text + "</label></div>"; }).join(''),
                 "</div>"],
             "radio": ["<div class=\"form-group\" id=\"div_" + this.table.columnName + "\">",
                 "<label for=\"i_" + this.table.columnName + "\">" + this.html.label + "</label>",
-                "" + this.html.elements.map(function (element) { return "<div class=\"radio\"><label><input type=\"radio\" name=\"" + _this.table.columnName + "\" value=\"" + element.value + "\"> " + element.text + "</label></div>"; }).join(''),
+                "" + this.html.choices.map(function (element) { return "<div class=\"radio\"><label><input type=\"radio\" name=\"" + _this.table.columnName + "\" value=\"" + element.value + "\"> " + element.text + "</label></div>"; }).join(''),
                 "</div>"],
             "text": ["{!! $HTML::inputTexto(" + this.html.grid + ", '" + this.table.columnName + "', " + (parseInt(this.table.size) > 0 ? "" + this.table.size : "''") + ", '" + this.html.label + "', " + (this.table.nullable ? "true" : "false") + ", true, true, '', '" + this.table.columnName + "') !!}"],
             "number": ["{!! $HTML::inputNumero(" + this.html.grid + ", '" + (this.table.size ? (this.table.size.indexOf('.') != -1 ? "decimal" : "inteiro") : '') + "', '" + this.table.columnName + "', " + (parseInt(this.table.size) > 0 ? "" + this.table.size : "''") + ", '" + this.html.label + "', " + (this.table.nullable ? "true" : "false") + ", true, true, '', '" + this.table.columnName + "') !!}"],

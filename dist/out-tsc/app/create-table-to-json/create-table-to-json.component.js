@@ -55,6 +55,7 @@ var CreateTableToJsonComponent = /** @class */ (function () {
         ct.setString(this.string);
         ct.convert();
         this.errors = ct.getError();
+        console.log(ct.hasError());
         if (!ct.hasError()) {
             var data = ct.getData();
             var bootstrapGridSystem = new BootstrapGridSystemService(data, this.gridModel + "\n");

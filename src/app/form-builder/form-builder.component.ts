@@ -1,13 +1,16 @@
-import { Component, OnInit, Injectable, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
 import { RenderHtmlService } from '../services/render-html.service';
 import { HomeService } from "../shared/services/home.service";
 
-import { Page } from "../shared/models/page.model";
-import { Content } from "../shared/models/content.model";
-import { Html, IHtml } from "../shared/models/html.model";
-import { Table, ITable } from "../shared/models/table.model";
-import { FormContentConfigService } from '../services/form-content-config.service';
+import { Page } from "../core/model/page.model";
+import { Content } from "../core/model/content.model";
+import { Html, IHtml } from "../core/model/html.model";
+import { Table, ITable } from "../core/model/table.model";
 import { FormConfigService } from '../services/form-config.service';
+import { PageService } from '../shared/services/page.service';
+import { ActivatedRoute } from '@angular/router';
+import { ProjectService } from '../shared/services/project.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 
 @Injectable({
@@ -281,18 +284,24 @@ export class FormBuilderComponent implements OnInit {
     tabNumber: number;
     isTabAlreadyOpen: boolean = false;
     tabMVC: number; 
-    count: number = 0;
     previewMode: boolean = false;
     config: {
         previewMode: boolean 
     };
+    project_id: number;
 
     constructor(
         private formConfigService: FormConfigService,
         private bootstrap: Bootstrap,
         private validator: Validator,
-        private homeService: HomeService
+        private projectService: ProjectService,
+        private homeService: HomeService,
+        private pageService: PageService,
+        private route: ActivatedRoute,
+        private ngxLoader: NgxUiLoaderService
+
     ) {
+
         this.mvcList = [{
             isOpen: false,
             name: 'Model'
@@ -309,14 +318,52 @@ export class FormBuilderComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.tabNumber = 1;
+        this.pages = [];
+        //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
+        //this.pages = this.homeService.getHomeStatic();
+        this.route.params.subscribe(r => {
+            this.project_id = r.projectId;
+        });
         this.tabMVC = 1;
-        this.pages = this.homeService.get();
+        this.tabNumber = 1; 
+        this.previewMode = false; 
+        this.preview();
         this.config = {
             previewMode: this.previewMode
         };
+        this.loadFormBuilder(); 
+    }  
+
+    loadFormBuilder(){
+        this.ngxLoader.start();
+        //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
+        this.pages = this.homeService.getHomeStatic();
+        this.ngxLoader.stop();
+        /*this.pageService.getPageByProjectId(this.project_id)
+        .subscribe(result => { 
+            if(result.success){
+                this.pages = result.data;
+            }
+            this.ngxLoader.stop();
+        });*/
     }
       
+    ngAfterViewInit(){
+   
+    }
+
+    public save(){
+        /*this.pageService.createPage({ 
+            project_id: this.project_id,
+            pages: this.pages 
+        })
+        .subscribe(result => {
+            if(result.success){
+                this.loadFormBuilder();
+            }
+        });*/
+    }
+
     public preview(): void {
         //this.previewMode = !this.previewMode;
         this.config = {
@@ -338,12 +385,6 @@ export class FormBuilderComponent implements OnInit {
         return this.validator.laravel();
     }
 
-    public isNewFile(newFile: boolean): void {
-        if (newFile) {
-            this.pages = [];
-        }
-    }
-    
     public removeDoubleQuotes(word: string){
         if(typeof word != 'undefined')
             return word.replace(/\"/g, "");
@@ -352,10 +393,19 @@ export class FormBuilderComponent implements OnInit {
 
     public isNewPage(newPage: boolean): void {
         if (newPage) {
-            this.pages = [...this.pages, {
+            this.pageService.createPage({ 
+                project_id: this.project_id,
+                name: `Page ${this.pages.length}`
+            })
+            .subscribe(result => {
+                if(result.success){
+                    this.pages = result.data;
+                }
+            });            
+            /*this.pages = [...this.pages, {
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []
-            }];
+            }];*/
             /*this.pages.push({
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []

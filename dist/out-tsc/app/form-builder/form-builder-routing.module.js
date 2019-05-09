@@ -8,7 +8,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormBuilderComponent } from "./form-builder.component";
 var routes = [
-    { path: 'form-builder', component: FormBuilderComponent }
+    { path: 'form-builder/:projectId/edit', component: FormBuilderComponent }
 ];
 var FormBuilderRoutingModule = /** @class */ (function () {
     function FormBuilderRoutingModule() {
@@ -16,7 +16,7 @@ var FormBuilderRoutingModule = /** @class */ (function () {
     FormBuilderRoutingModule = __decorate([
         NgModule({
             imports: [
-                RouterModule.forRoot(routes)
+                RouterModule.forChild(routes)
             ],
             exports: [RouterModule],
             declarations: []

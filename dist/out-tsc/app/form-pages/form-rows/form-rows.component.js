@@ -9,10 +9,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormConfigService } from './../../services/form-config.service';
+import { RowService } from '../../shared/services/row.service';
 var FormRowsComponent = /** @class */ (function () {
-    function FormRowsComponent(formConfigService, cd) {
+    function FormRowsComponent(formConfigService, cd, rowService) {
         this.formConfigService = formConfigService;
         this.cd = cd;
+        this.rowService = rowService;
     }
     FormRowsComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -20,6 +22,21 @@ var FormRowsComponent = /** @class */ (function () {
             _this.config = data;
             _this.cd.markForCheck();
         });
+    };
+    FormRowsComponent.prototype.deleteRow = function (rowIndex) {
+        /*this.rowService.deleteRow(row.id).subscribe(result => {
+            if(result['success']){
+                this.page.rows.forEach((cV, index) => {
+                    if(cV.id == row.id){
+                        this.page.rows.splice(index, 1);
+                    }
+                });
+                this.cd.markForCheck();
+            }
+        });*/
+        //static remove
+        this.page.rows.splice(rowIndex, 1);
+        this.cd.markForCheck();
     };
     FormRowsComponent.prototype.trackByFn = function (index, item) {
         return index;
@@ -32,6 +49,10 @@ var FormRowsComponent = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], FormRowsComponent.prototype, "pageIndex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], FormRowsComponent.prototype, "pageId", void 0);
     FormRowsComponent = __decorate([
         Component({
             selector: 'app-form-rows',
@@ -40,7 +61,8 @@ var FormRowsComponent = /** @class */ (function () {
             changeDetection: ChangeDetectionStrategy.OnPush
         }),
         __metadata("design:paramtypes", [FormConfigService,
-            ChangeDetectorRef])
+            ChangeDetectorRef,
+            RowService])
     ], FormRowsComponent);
     return FormRowsComponent;
 }());

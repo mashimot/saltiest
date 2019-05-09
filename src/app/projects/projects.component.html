@@ -1,0 +1,27 @@
+<table class="table table-stripped table-condensed table-bordered">
+	<thead>
+		<tr>
+			<th scope="col">id</th>
+			<th scope="col">Name</th>
+			<th scope="col">Data de Criação</th>
+			<th scope="col">Última Atualização</th>
+			<th scope="col">
+				<a [routerLink]="['/projects', 'create']" class="btn btn-outline-primary btn-sm">Create</a>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let project of projects">
+			<td>{{ project.id }}</td>
+			<td>{{ project.name }}</td>
+			<td>{{ project.created_at | date: 'dd/MM/yyyy' }}</td>
+			<td>{{ project.updated_at | date: 'dd/MM/yyyy' }}</td>
+			<td>
+				<a [routerLink]="['/form-builder', project.id, 'edit']" class="btn btn-outline-dark btn-sm">Form Builder</a>
+				<a [routerLink]="['/projects', project.id, 'edit']" class="btn btn-outline-dark btn-sm">Edit</a>
+				<button (click)="askToDelete(project)" class="btn btn-outline-danger btn-sm">Delete</button>
+			</td>
+		</tr>
+	</tbody>
+</table>		
+<app-modal [message]="message" [isOpen]="showModal" (handleNo)="closeModal()" (handleYes)="deleteProject()"></app-modal>

@@ -10,13 +10,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, Output, EventEmitter } from '@angular/core';
 import { HtmlElementService } from '../../shared/services/html-element.service';
 import { BootstrapGridSystemService } from '../../services/bootstrap-grid-system.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfigChoicesComponent } from '../../config-choices/config-choices.component';
 var FormMenuComponent = /** @class */ (function () {
-    function FormMenuComponent(htmlElementService) {
+    function FormMenuComponent(htmlElementService, modalService) {
         this.htmlElementService = htmlElementService;
-        this.isNewFile = new EventEmitter();
+        this.modalService = modalService;
+        this.optionType = 1;
+        this.options = {
+            size: 'lg',
+            backdrop: 'static',
+            keyboard: false,
+            centered: true
+        };
         this.isNewPage = new EventEmitter();
     }
     FormMenuComponent.prototype.ngOnInit = function () {
+        this.tools = [];
         this.grids = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
                 grid: [
@@ -26,22 +36,28 @@ var FormMenuComponent = /** @class */ (function () {
                     "7 5"
                 ].join("\n")
             }];
-        this.tools = this.htmlElementService.get();
+        this.tools = this.htmlElementService.getStaticTools();
+        /*this.htmlElementService.getTools().subscribe(result => {
+            if(result.success){
+                this.categories = result.data.categories;
+                this.tools = result.data.tools;
+            }
+        });*/
         this.pageModel = [{
                 rows: [],
                 name: "Salt - A tool for Lazy Developer"
             }];
     };
-    FormMenuComponent.prototype.newFile = function () {
-        this.isNewFile.emit(true);
+    FormMenuComponent.prototype.createChoices = function () {
+        this.modalService.open(ConfigChoicesComponent, this.options);
+    };
+    FormMenuComponent.prototype.editChoices = function (content) {
+        var m = this.modalService.open(ConfigChoicesComponent, this.options);
+        m.componentInstance.content = content;
     };
     FormMenuComponent.prototype.newPage = function () {
         this.isNewPage.emit(true);
     };
-    __decorate([
-        Output(),
-        __metadata("design:type", Object)
-    ], FormMenuComponent.prototype, "isNewFile", void 0);
     __decorate([
         Output(),
         __metadata("design:type", Object)
@@ -52,7 +68,8 @@ var FormMenuComponent = /** @class */ (function () {
             templateUrl: './form-menu.component.html',
             styleUrls: ['./form-menu.component.css']
         }),
-        __metadata("design:paramtypes", [HtmlElementService])
+        __metadata("design:paramtypes", [HtmlElementService,
+            NgbModal])
     ], FormMenuComponent);
     return FormMenuComponent;
 }());

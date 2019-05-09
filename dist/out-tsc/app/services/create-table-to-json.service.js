@@ -9,8 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Injectable } from '@angular/core';
 import { DatabaseEngine } from '../shared/services/database-engine.service';
-import { Html } from "./../shared/models/html.model";
-import { Table } from "./../shared/models/table.model";
+import { Html, Table } from "./../core/model";
 var CreateTableToJsonService = /** @class */ (function () {
     function CreateTableToJsonService(DB) {
         this._isTextareaWhenSizeEquals = 1000;
@@ -40,7 +39,6 @@ var CreateTableToJsonService = /** @class */ (function () {
     );*/
     CreateTableToJsonService.prototype.createTableSyntax = function () {
         var dbKeys = Object.keys(this._dataBase).join("|");
-        var comma = '';
         var allowedDataTypes = this.allowedDataTypes.map(function (item) {
             var newItem = item.toUpperCase().replace(/\s+/g, '\\s+');
             return "(?:" + newItem + "?)?";
@@ -165,7 +163,6 @@ var CreateTableToJsonService = /** @class */ (function () {
         var _this = this;
         var regex = new RegExp(this.regex.createTableSyntax);
         this._string = this._string.replace(/\s+/g, " ").toLowerCase();
-        console.log(this.regex.createTableSyntax);
         console.log(this._string);
         if (!regex.test(this._string)) {
             this._errors.push("Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )", "You have an error in your SQL syntax:");
@@ -192,7 +189,6 @@ var CreateTableToJsonService = /** @class */ (function () {
                 return previous;
             }, []);
         }
-        console.log(defineColumns);
         var i = 0;
         while (i < defineColumns.length /* && this._errors.length <= 0*/) {
             var currentDefineColumn = defineColumns[i];
@@ -225,7 +221,7 @@ var CreateTableToJsonService = /** @class */ (function () {
             }
             i++;
         }
-        console.log(this._data);
+        //console.log(this._data)
     };
     CreateTableToJsonService.prototype.customLabelName = function () {
         var splitColumnName = this.table.columnName.split('_');

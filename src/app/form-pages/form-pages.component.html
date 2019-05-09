@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="border-bottom border-secondary" [hidden]="config?.previewMode"></div>
-            <app-form-rows [page]="page" [pageIndex]="pageIndex"></app-form-rows>
+            <app-form-rows [(page)]="page" [pageIndex]="pageIndex" [pageId]="page.id"></app-form-rows>
         </div>
     </div><!--/.ng-repeat-->
 </div>

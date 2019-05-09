@@ -8,10 +8,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 var HomeService = /** @class */ (function () {
-    function HomeService() {
+    function HomeService(http) {
+        this.http = http;
+        this.API_URL = 'http://127.0.0.1:8000/api';
     }
-    HomeService.prototype.get = function () {
+    HomeService.prototype.getHome = function () {
+        return this.http.get(this.API_URL + "/pages");
+    };
+    HomeService.prototype.getHomeStatic = function () {
         return [
             {
                 "rows": [
@@ -137,7 +143,7 @@ var HomeService = /** @class */ (function () {
         Injectable({
             providedIn: 'root'
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [HttpClient])
     ], HomeService);
     return HomeService;
 }());

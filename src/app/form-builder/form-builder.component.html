@@ -1,51 +1,57 @@
 
 <div class="tab-content">
-    <div>
-        <div class="row no-gutters">
-            <div class="col-md-3" [hidden]="config?.previewMode" *ngIf="tabNumber == 1">            
-                <div class="sticky-top scrollbar-near-moon thin square">                     
-                    <app-create-table-to-json 
-                    (pageChange)="getPages($event)" 
-                    [(tableName)]="tableName"></app-create-table-to-json>
-                    <app-form-menu 
-                    (isNewFile)="isNewFile($event)" 
-                    (isNewPage)="isNewPage($event)"
-                    ></app-form-menu>
+    <div class="row no-gutters">
+        <div class="col-md-3" [hidden]="config?.previewMode" *ngIf="tabNumber == 1">            
+            <div class="sticky-top scrollbar-near-moon thin square">                     
+                <app-create-table-to-json 
+                (pageChange)="getPages($event)" 
+                [(tableName)]="tableName"></app-create-table-to-json>
+                <app-form-menu 
+                (isNewPage)="isNewPage($event)"
+                ></app-form-menu>
+            </div>
+        </div>
+        <div [ngClass]="{ 'col-md-12': config?.previewMode || tabNumber == 2, 'col-md-9': !config?.previewMode }">
+            <div class="sticky-top">
+                <div class="btn-group d-flex bg-white" role="group">
+                    <!--button (click)="save();"
+                    class="btn btn-md w-100" 
+                    [ngClass]="{ 
+                        'btn-success': tabNumber == 1 && !previewMode, 
+                        'btn-outline-dark': tabNumber == 2 && previewMode 
+                    }"
+                    [ngStyle]="{ 'opacity': tabNumber == 2 && previewMode? 0.4 : 1 }">
+                        <i class="fas fa-save" [ngClass]="{ 'animated infinite heartBeat': tabNumber == 1 && !previewMode }"></i> Save
+                    </button-->
+                    <button (click)="tabNumber = 1; previewMode = false; preview();"
+                    class="btn btn-md w-100" 
+                    [ngClass]="{ 
+                        'btn-primary': tabNumber == 1 && !previewMode, 
+                        'btn-outline-dark': tabNumber == 2 && previewMode 
+                    }"
+                    [ngStyle]="{ 'opacity': tabNumber == 2 && previewMode? 0.4 : 1 }">
+                        <i class="fas fa-edit" [ngClass]="{ 'animated infinite heartBeat': tabNumber == 1 && !previewMode }"></i> Editor
+                    </button>
+                    <button (click)="this.previewMode = !this.previewMode; preview(); tabNumber = 1;" 
+                    class="btn btn-md w-100" 
+                    [ngClass]="{ 
+                        'btn-success': previewMode,
+                        'btn-outline-danger': !previewMode
+                    }"
+                    [ngStyle]="{ 'opacity': tabNumber == 2 || !config?.previewMode? 0.4 : 1 }">
+                        <i [ngClass]="{ 'fa-eye animated infinite heartBeat': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-1x"></i>
+                    </button>
+                    <button (click)="tabNumber = 2; previewMode = false; preview();" 
+                    class="btn btn-md w-100" 
+                    [ngClass]="{ 'btn-primary': tabNumber == 2, 'btn-outline-dark': tabNumber == 1 }"
+                    [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }">
+                        <i class="fas fa-edit" [ngClass]="{ 'animated infinite heartBeat': tabNumber == 2 }"></i> Faster entry
+                    </button>
                 </div>
             </div>
-            <div [ngClass]="{ 'col-md-12': config?.previewMode || tabNumber == 2, 'col-md-9': !config?.previewMode }">
-                <div class="sticky-top">
-                    <div class="btn-group d-flex bg-white" role="group">
-                        <button (click)="tabNumber = 1; previewMode = false; preview();"
-                        class="btn btn-md w-100" 
-                        [ngClass]="{ 
-                            'btn-primary': tabNumber == 1 && !previewMode, 
-                            'btn-outline-dark': tabNumber == 2 && previewMode 
-                        }"
-                        [ngStyle]="{ 'opacity': tabNumber == 2 && previewMode? 0.4 : 1 }">
-                            <i class="fas fa-edit" [ngClass]="{ 'animated infinite heartBeat': tabNumber == 1 && !previewMode }"></i> Editor
-                        </button>
-                        <button (click)="this.previewMode = !this.previewMode; preview(); tabNumber = 1;" 
-                        class="btn btn-md w-100" 
-                        [ngClass]="{ 
-                            'btn-success': previewMode,
-                            'btn-outline-danger': !previewMode
-                        }"
-                        [ngStyle]="{ 'opacity': tabNumber == 2 || !config?.previewMode? 0.4 : 1 }">
-                            <i [ngClass]="{ 'fa-eye animated infinite heartBeat': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-1x"></i>
-                        </button>
-                        <button (click)="tabNumber = 2; previewMode = false; preview();" 
-                        class="btn btn-md w-100" 
-                        [ngClass]="{ 'btn-primary': tabNumber == 2, 'btn-outline-dark': tabNumber == 1 }"
-                        [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }">
-                            <i class="fas fa-edit" [ngClass]="{ 'animated infinite heartBeat': tabNumber == 2 }"></i> Faster entry
-                        </button>
-                    </div>
-                </div>
-                <app-form-pages [(pages)]="pages" *ngIf="tabNumber == 1"></app-form-pages>
-                <app-form-info [(pages)]="pages" *ngIf="tabNumber == 2"></app-form-info>
-            </div>            
-        </div>
+            <app-form-pages [(pages)]="pages" *ngIf="tabNumber == 1"></app-form-pages>
+            <app-form-info [(pages)]="pages" *ngIf="tabNumber == 2"></app-form-info>
+        </div>            
     </div>
 </div>
 

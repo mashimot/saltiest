@@ -3,12 +3,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { FormBuilderComponent } from "./form-builder.component";
 
 const routes: Routes = [
-    { path: 'form-builder', component: FormBuilderComponent }
+    { path: 'form-builder/:projectId/edit', component: FormBuilderComponent}
 ];
 
 @NgModule({
     imports: [
-        RouterModule.forRoot(routes)
+        RouterModule.forChild(routes)
     ],
     exports: [RouterModule],
     declarations: []

@@ -3,6 +3,7 @@
     dragula="columns"
 	[(dragulaModel)]="row.columns"
 	class="row page-{{ pageIndex }}_row-{{ rowIndex }}"
+	[attr.data-current-row-id]="rowId"
 >
 	<div *ngFor="let column of row.columns; let columnIndex = index;"
 		class="col-md-{{ colNumber(columnIndex) }}"
@@ -18,7 +19,10 @@
 				</small>
 				<div class="border-bottom border-danger"></div>
 			</div>	
-			<app-form-contents [column]="column"></app-form-contents>
+			<app-form-contents [column]="column" 
+			[pageIndex]="pageIndex" [rowIndex]="rowIndex" [columnIndex]="columnIndex"
+			[pageId]="pageId" [rowId]="rowId" [columnId]="column.id"
+			></app-form-contents>
 		</div>
 	</div>
 </div>
