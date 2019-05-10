@@ -14,6 +14,7 @@ export class ConfigGeneralComponent implements OnInit {
 	constructor(private fb: FormBuilder) { }
 
 	ngOnInit() {
+		console.log(this.content.table);
 		this.html.get('label').setValidators([
 			Validators.required
 		]);
@@ -24,7 +25,7 @@ export class ConfigGeneralComponent implements OnInit {
 			Validators.required
 		]);
 		this.table.patchValue({
-			'nullable': this.content.table.nullable,
+			'nullable': this.content.table.nullable? this.content.table.nullable: false
 		});
 	}
 

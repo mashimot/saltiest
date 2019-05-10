@@ -40,6 +40,7 @@
         class="btn btn-outline-dark" 
         (click)="activeModal.close('Close click')">Close</button>
         <button type="submit"
+        [disabled]="configForm.invalid"
         class="btn btn-outline-success" 
         >Save </button>
     </div>

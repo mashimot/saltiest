@@ -86,7 +86,7 @@ export class ConfigChoicesComponent implements OnInit {
             m.componentInstance.index = data.index;
         }
         
-        console.log(this.groups.length);
+        //console.log(this.groups.length);
         m.componentInstance.emitData.subscribe($e => {
             if($e.choices.length > 0){
                 const text = $e.choices.map(item => {

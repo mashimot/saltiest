@@ -15,7 +15,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 	styleUrls: ['./config-choice-form.component.css']
 })
 export class ConfigChoiceFormComponent implements OnInit {
-
 	choiceForm: FormGroup;
 	contentChoiceItemIdToUpdate = null;
 	contentChoiceId: number = -1;
@@ -25,13 +24,14 @@ export class ConfigChoiceFormComponent implements OnInit {
     @Input() content;
     @Input() parentFormGroup;
     @Output() emitData = new EventEmitter();
+
 	constructor(
-		private fb: FormBuilder,
 		private contentService: ContentService,
 		private contentChoiceItemService: ContentChoiceItemService,
         private route: ActivatedRoute,
-        private dragulaService: DragulaService,
         private location: Location,
+		private fb: FormBuilder,
+        private dragulaService: DragulaService,
         private modal: NgbActiveModal
 	) { 
         dragulaService.createGroup('sortableElements', {
@@ -42,20 +42,22 @@ export class ConfigChoiceFormComponent implements OnInit {
     }
 
   	ngOnInit() {
+        //this.dbops = DBOperation.create;
         const choices = this.content.html.choices;
-        this.dbops = DBOperation.create;
         this.choiceForm =  this.fb.group({
-            'choices': this.fb.array([])
+            'choices': this.fb.array([], [Validators.required, Validators.minLength(1)])
         });
 
         if(typeof this.parentFormGroup != 'undefined'){
             this.choiceForm = this.parentFormGroup.get('html') as FormGroup;
         }
-        
+        this.choiceForm.setValidators(
+            [Validators.required, Validators.minLength(1)]
+        );
         for(let i = 0; i < choices.length; i++){
             let item = choices[i];
             let items = this.choiceForm.get('choices') as FormArray;
-            items.push(this.getChoice(item.text, item.value));
+            items.push(this.setChoice(item.text, item.value));
         }
 
         this.subs.add(this.dragulaService.dropModel('sortableChoices').subscribe(
@@ -197,11 +199,22 @@ export class ConfigChoiceFormComponent implements OnInit {
             }
         });
     }*/
+    
+    public choiceChanged(): void {
+        this.text = this.elementToString();        
+    }
 
-    public back(){
-        //this.content.html.choices = this.choiceForm.value;
-        //this.modal.close();        
+    public addChoice(){
+        this.choices.push(this.setChoice());
+    }
+
+    public cancel(){
+        this.modal.close();        
+    }
+
+    public save(){
         this.emitData.emit(this.choiceForm.value);
+        this.modal.close();        
     }
 
     public stringToElement(): void{
@@ -223,7 +236,7 @@ export class ConfigChoiceFormComponent implements OnInit {
   
                   this.choices.removeAt(i);
                   if (typeof this.choices.controls[i] === 'undefined') {
-                      this.choices.push(this.getChoice(text, value));
+                      this.choices.push(this.setChoice(text, value));
                   } else {
                       this.choices.controls[i].patchValue({
                           text: text,
@@ -278,7 +291,7 @@ export class ConfigChoiceFormComponent implements OnInit {
           return string;
       }
 
-    private getChoice(text: string = '', value: string = '') : FormGroup {
+    private setChoice(text: string = '', value: string = '') : FormGroup {
         return this.fb.group({
             text: [text, [
                 Validators.required,

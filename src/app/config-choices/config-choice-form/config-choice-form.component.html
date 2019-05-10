@@ -1,5 +1,19 @@
 <div class="card">
+	<div class="card-header">
+		<div class="row">
+			<div class="col-md-2">
+				<button class="btn btn-outline-primary btn-sm btn-block" type="button" (click)="addChoice()">
+					<i class="fa fa-plus" aria-hidden="true"></i>
+				</button>
+			</div>
+			<div class="col-md-10">
+			</div>
+		</div>
+	</div>	
 	<div class="card-body">
+		<div [ngClass]="{ 'alert alert-danger': choiceForm.get('choices').errors }">
+			<div *ngIf="choiceForm.get('choices').errors?.required">Please insert values</div>
+		</div>		
 		<div [formGroup]="choiceForm"
 		[ngClass]="{ 'is-invalid': choiceForm.invalid }">
 			<div dragula="sortableChoices"
@@ -13,6 +27,7 @@
 							<div class="form-group">
 								<input type="text"
 									formControlName="text"
+									(input)="choiceChanged()"
 									class="form-control form-control-sm"
 									[ngClass]="{ 'is-invalid': choice.get('text').invalid }" />
 								<div *ngIf="choice.get('text').invalid || choice.get('text').touched" class="invalid-feedback">
@@ -25,6 +40,7 @@
 							<div class="form-group">
 								<input type="text"
 									formControlName="value"
+									(input)="choiceChanged()"
 									class="form-control form-control-sm"								
 									[ngClass]="{ 'is-invalid': choice.get('value').invalid }" />
 									<div *ngIf="choice.get('value').invalid || choice.get('value').touched" class="invalid-feedback">
@@ -57,20 +73,31 @@
 						</button>
 					</div>
 				</div>
+				<div class="border border-bottom border-primary mt-3"></div>
 			</div>
 		</div>
-		<div class="form-group">
-			<label for="fast-entry">Fast Entry</label>
-			<textarea id="fast-entry"
-				[(ngModel)]="text"
-				(ngModelChange)="stringToElement()"
-				class="form-control"
-				style="resize: none; height: 210px;"></textarea>
-		</div>
-		<div class="mt-2" *ngIf="!parentFormGroup">
-			<div class="btn-group float-right">
-				<button class="btn btn-outline-primary" (click)="back()">Save</button>
+		<section class="mt-2">
+			<div class="form-group">
+				<label for="fast-entry">Fast Entry</label>
+				<textarea id="fast-entry"
+					[(ngModel)]="text"
+					(ngModelChange)="stringToElement()"
+					class="form-control"
+					style="resize: none; height: 210px;"></textarea>
 			</div>
-		</div>			
+			<div class="mt-2">		
+				<div *ngIf="!parentFormGroup">
+					<div class="btn-group float-right">
+						<button 
+						class="btn btn-outline-danger" 
+						(click)="cancel()">Cancel</button>						
+						<button 
+						class="btn btn-outline-primary" 
+						[disabled]="choiceForm.invalid"
+						(click)="save()">Save</button>
+					</div>					
+				</div>	
+			</div>
+		</section>
 	</div>
 </div>

@@ -68,20 +68,20 @@ export class FormConfigComponent implements OnInit {
             id: [this.content_id,[]],
             html: this.fb.group({
                 'tag': [this.content.html.tag,[]],
-                'content_choice_id': [this.content.html.content_choice_id,[]],
+                'content_choice_id': [this.content.html.content_choice_id ,[]],
                 'choices': this.fb.array([]),
-                'category': [this.content.html.category,[]],
-                'fields': [this.content.html.fields,[]],
-                'label': [this.content.html.label,[]],
-                'src': [this.content.html.src,[]],
-                'text': [this.content.html.text,[]],
+                'category': [this.content.html.category, []],
+                'fields': [this.content.html.fields, []],
+                'label': [this.content.html.label, []],
+                'src': [this.content.html.src, []],
+                'text': [this.content.html.text, []],
                 'data': [this.content.html.data]
             }),
             table: this.fb.group({
-                'columnName': [this.content.table.columnName,[]],
+                'columnName': [this.content.table.columnName, []],
                 'type': [this.content.table.type,[]],
                 'size': [this.content.table.size,[]],
-                'nullable': [this.content.table.nullable]
+                'nullable': [this.content.table.nullable, []]
             })
         });        
     }
