@@ -1,34 +1,11 @@
 <div class="card">
-	<div class="card-header">
-		<div class="row">
-			<div class="col-md-5">
-			<button class="btn btn-secondary btn-sm btn-block" type="button" (click)="orderBy('text')">
-				Order by Text
-				<span ng-show="sortType == 'text' && !sortReverse" class="fa fa-caret-down"></span>
-				<span ng-show="sortType == 'text' && sortReverse" class="fa fa-caret-up"></span>
-			</button>
-			</div>
-			<div class="col-md-5">
-			<button class="btn btn-secondary btn-sm btn-block" type="button" (click)="orderBy('value')">
-				Order by Value
-				<span ng-show="sortType == 'value' && !sortReverse" class="fa fa-caret-down"></span>
-				<span ng-show="sortType == 'value' && sortReverse" class="fa fa-caret-up"></span>
-			</button>
-			</div>
-			<div class="col-md-2">
-			<button class="btn btn-secondary btn-sm btn-block" type="button" (click)="addElement()">
-				<i class="fa fa-plus" aria-hidden="true"></i>
-			</button>
-			</div>
-		</div>
-	</div>
 	<div class="card-body">
 		<div [formGroup]="choiceForm"
 		[ngClass]="{ 'is-invalid': choiceForm.invalid }">
 			<div dragula="sortableChoices"
-				[(dragulaModel)]="choiceForm.get('choices').controls"
+				[(dragulaModel)]="choices.controls"
 				formArrayName="choices">
-				<div *ngFor="let choice of choiceForm.get('choices').controls; let i = index" 
+				<div *ngFor="let choice of choices.controls; let i = index" 
 					[formGroupName]="i" 
 					class="sortable-item-contents">
 					<div class="row">
