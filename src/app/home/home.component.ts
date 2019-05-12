@@ -28,12 +28,13 @@ export class HomeComponent implements OnInit {
 			previewMode: true
 		};
 		this.formConfigService.setConfig(this.config);
-		this.pageService.getPageByProjectId(14)
+		this.pages = this.homeService.getHomeStatic();
+		/*this.pageService.getPageByProjectId(14)
 		.subscribe(result => { 
 			console.log(result);
 			if(result.success){
 				this.pages = result.data;
 			}
-		});		
+		});*/
 	}
 }

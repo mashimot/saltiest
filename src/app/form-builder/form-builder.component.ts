@@ -393,7 +393,7 @@ export class FormBuilderComponent implements OnInit {
 
     public isNewPage(newPage: boolean): void {
         if (newPage) {
-            this.pageService.createPage({ 
+            /*this.pageService.createPage({ 
                 project_id: this.project_id,
                 name: `Page ${this.pages.length}`
             })
@@ -401,11 +401,11 @@ export class FormBuilderComponent implements OnInit {
                 if(result.success){
                     this.pages = result.data;
                 }
-            });            
-            /*this.pages = [...this.pages, {
+            });*/            
+            this.pages = [...this.pages, {
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []
-            }];*/
+            }];
             /*this.pages.push({
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []
