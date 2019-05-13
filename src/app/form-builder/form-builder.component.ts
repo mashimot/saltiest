@@ -335,10 +335,8 @@ export class FormBuilderComponent implements OnInit {
     }  
 
     loadFormBuilder(){
-        this.ngxLoader.start();
         //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
         this.pages = this.homeService.getHomeStatic();
-        this.ngxLoader.stop();
         /*this.pageService.getPageByProjectId(this.project_id)
         .subscribe(result => { 
             if(result.success){

@@ -15,13 +15,14 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HighlightModule } from 'ngx-highlightjs';
 import { ProjectsModule } from './projects/projects.module';
 import { CoreModule } from './core/core.module';
-import { NgxUiLoaderModule, NgxUiLoaderHttpModule, NgxUiLoaderConfig, POSITION, SPINNER, PB_DIRECTION } from  'ngx-ui-loader';
+import { NgxUiLoaderModule, NgxUiLoaderHttpModule, NgxUiLoaderConfig, POSITION, SPINNER, PB_DIRECTION, NgxUiLoaderRouterModule } from  'ngx-ui-loader';
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
-    bgsColor: 'red',
+    overlayColor: 'white',
+    fgsColor: 'black',
     bgsPosition: POSITION.bottomCenter,
-    bgsSize: 40,
+    bgsSize: 90,
     bgsType: SPINNER.rectangleBounce, // background spinner type
-    fgsType: SPINNER.rectangleBounce, // foreground spinner type
+    fgsType: SPINNER.foldingCube, // foreground spinner type
     pbDirection: PB_DIRECTION.leftToRight, // progress bar direction
     pbThickness: 3, // progress bar thickness
 };
@@ -47,7 +48,8 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
         NgbModule,
         HighlightModule.forRoot(),
         NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
-        NgxUiLoaderHttpModule
+        NgxUiLoaderHttpModule,
+        NgxUiLoaderRouterModule
     ],
     providers: [DragulaService],
     bootstrap: [AppComponent]
