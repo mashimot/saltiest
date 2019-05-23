@@ -1,9 +1,12 @@
-<div class="input-group input-group">
-	<input type="text" [(ngModel)]="text" (ngModelChange)="textOnChange()"class="form-control">
-	<div class="input-group-append">
-		<button (click)="checkSpelling()" class="btn btn-outline-info btn-sm" type="button">
-			<i class="fa fa-book" aria-hidden="true"></i>
-		</button>
+<div class="form-group">
+	<label for="text">Word</label>
+	<div class="input-group">
+		<input type="text" [(ngModel)]="text" (ngModelChange)="textOnChange()" id="text" class="form-control">
+		<div class="input-group-append">
+			<button (click)="checkSpelling()" class="btn btn-outline-info btn-sm" type="button">
+				<i class="fa fa-book" aria-hidden="true"></i>
+			</button>
+		</div>
 	</div>
 </div>
 <div *ngIf="isLoading" class="text-center">

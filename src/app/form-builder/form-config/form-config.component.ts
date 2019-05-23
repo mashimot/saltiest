@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, ViewChild, TemplateRef, EventEmitter } from '@angular/core';
-import { FormContentConfigService } from './../../services/form-content-config.service';
+import { FormContentConfigService } from './../../_services/form-content-config.service';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { NgbModal, NgbModalOptions, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContentService } from 'src/app/shared/services/content.service';
-import { Content } from '../../core/model';
+import { Content } from '../../_core/model';
 
 @Component({
     selector: 'app-form-config',

@@ -7,9 +7,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormBuilderComponent } from "./form-builder.component";
-var routes = [
-    { path: 'form-builder/:projectId/edit', component: FormBuilderComponent }
-];
+import { AuthGuard } from '../core/guards/auth.guard';
+var routes = [{
+        path: 'form-builder',
+        canActivate: [AuthGuard],
+        children: [
+            { path: '', redirectTo: '1/edit', pathMatch: 'full' },
+            { path: ':projectId/edit', component: FormBuilderComponent }
+        ]
+    }];
 var FormBuilderRoutingModule = /** @class */ (function () {
     function FormBuilderRoutingModule() {
     }

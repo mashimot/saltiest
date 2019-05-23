@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormConfigService } from './../../services/form-config.service';
+import { FormConfigService } from './../../_services/form-config.service';
 
 @Component({
 	selector: 'app-form-columns',

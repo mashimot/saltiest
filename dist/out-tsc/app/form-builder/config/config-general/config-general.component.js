@@ -14,6 +14,7 @@ var ConfigGeneralComponent = /** @class */ (function () {
         this.fb = fb;
     }
     ConfigGeneralComponent.prototype.ngOnInit = function () {
+        console.log(this.content.table);
         this.html.get('label').setValidators([
             Validators.required
         ]);
@@ -24,7 +25,7 @@ var ConfigGeneralComponent = /** @class */ (function () {
             Validators.required
         ]);
         this.table.patchValue({
-            'nullable': this.content.table.nullable,
+            'nullable': this.content.table.nullable ? this.content.table.nullable : false
         });
     };
     Object.defineProperty(ConfigGeneralComponent.prototype, "html", {

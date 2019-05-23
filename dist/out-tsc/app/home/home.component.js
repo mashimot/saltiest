@@ -19,18 +19,18 @@ var HomeComponent = /** @class */ (function () {
         this.pages = [];
     }
     HomeComponent.prototype.ngOnInit = function () {
-        var _this = this;
         this.config = {
             previewMode: true
         };
         this.formConfigService.setConfig(this.config);
-        this.pageService.getPageByProjectId(14)
-            .subscribe(function (result) {
+        this.pages = this.homeService.getHomeStatic();
+        /*this.pageService.getPageByProjectId(14)
+        .subscribe(result => {
             console.log(result);
-            if (result.success) {
-                _this.pages = result.data;
+            if(result.success){
+                this.pages = result.data;
             }
-        });
+        });*/
     };
     HomeComponent = __decorate([
         Component({

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { RenderHtmlService } from './../../services/render-html.service';
+import { RenderHtmlService } from './../../_services/render-html.service';
 
 @Component({
     selector: 'app-render-content',

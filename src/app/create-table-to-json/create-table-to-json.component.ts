@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { CreateTableToJsonService } from '../services/create-table-to-json.service';
-import { BootstrapGridSystemService } from '../services/bootstrap-grid-system.service'
+import { CreateTableToJsonService } from '../_services/create-table-to-json.service';
+import { BootstrapGridSystemService } from '../_services/bootstrap-grid-system.service'
 import { DatabaseEngine } from '../shared/services/database-engine.service';
 
 @Component({

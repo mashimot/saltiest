@@ -1,11 +1,12 @@
 <div class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" [routerLink]="['/home']" routerLinkActive="active">Home</a>
+        <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active"  *ngIf="!isUserLoggedIn">Login</a> 
+        <a class="navbar-brand" [routerLink]="['/home']" routerLinkActive="active"  *ngIf="isUserLoggedIn">Home</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav mr-auto" *ngIf="isUserLoggedIn">
                 <li class="nav-item" routerLinkActive="active">
                     <a class="nav-link" [routerLink]="['/form-builder', 1, 'edit']">Salt</a>
                 </li>
@@ -23,6 +24,11 @@
                 <li>
                     <a class="nav-link" href="https://blog.angular.io/" target="_blank">Built With Angular 6</a>
                 </li>
+                <li>
+                    <button class="btn btn-link text-danger" (click)="onLogout()" *ngIf="isUserLoggedIn">
+                        <i class="fas fa-power-off"></i> 
+                    </button>
+                </li>                
             </ul>
         </div>
     </div>

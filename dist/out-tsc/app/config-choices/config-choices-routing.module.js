@@ -8,10 +8,17 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ConfigChoicesComponent } from './config-choices.component';
 import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
+import { AuthGuard } from '../core/guards/auth.guard';
 var routes = [
-    { path: 'config-choices', component: ConfigChoicesComponent },
-    { path: 'config-choices/create', component: ConfigChoiceFormComponent },
-    { path: 'config-choices/:id/edit', component: ConfigChoiceFormComponent }
+    {
+        path: 'config-choices',
+        component: ConfigChoicesComponent,
+        canActivate: [AuthGuard],
+        children: [
+            { path: 'create', component: ConfigChoiceFormComponent },
+            { path: ':id/edit', component: ConfigChoiceFormComponent }
+        ]
+    }
 ];
 var ConfigChoicesRoutingModule = /** @class */ (function () {
     function ConfigChoicesRoutingModule() {

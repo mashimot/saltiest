@@ -1,12 +1,12 @@
 import { Component, OnInit, Injectable } from '@angular/core';
-import { RenderHtmlService } from '../services/render-html.service';
+import { RenderHtmlService } from '../_services/render-html.service';
 import { HomeService } from "../shared/services/home.service";
 
-import { Page } from "../core/model/page.model";
-import { Content } from "../core/model/content.model";
-import { Html, IHtml } from "../core/model/html.model";
-import { Table, ITable } from "../core/model/table.model";
-import { FormConfigService } from '../services/form-config.service';
+import { Page } from "../_core/model/page.model";
+import { Content } from "../_core/model/content.model";
+import { Html, IHtml } from "../_core/model/html.model";
+import { Table, ITable } from "../_core/model/table.model";
+import { FormConfigService } from '../_services/form-config.service';
 import { PageService } from '../shared/services/page.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../shared/services/project.service';

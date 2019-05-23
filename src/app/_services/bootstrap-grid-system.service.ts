@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Page } from "./../core/model";
+import { Page } from "./../_core/model";
 
 @Injectable()
 export class BootstrapGridSystemService {

@@ -7,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PageNotFoundComponent } from "./page-not-found/page-not-found.component";
-import { SpellCheckerComponent } from './spell-checker/spell-checker.component';
 var routes = [
     { path: "", redirectTo: "home", pathMatch: "full" },
-    { path: 'spell-checker', component: SpellCheckerComponent },
     { path: '**', component: PageNotFoundComponent },
 ];
 var AppRoutingModule = /** @class */ (function () {

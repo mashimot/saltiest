@@ -69,7 +69,7 @@ var FormConfigComponent = /** @class */ (function () {
                 'columnName': [this.content.table.columnName, []],
                 'type': [this.content.table.type, []],
                 'size': [this.content.table.size, []],
-                'nullable': [this.content.table.nullable]
+                'nullable': [this.content.table.nullable, []]
             })
         });
     };

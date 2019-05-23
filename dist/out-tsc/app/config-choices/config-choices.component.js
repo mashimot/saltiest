@@ -75,7 +75,7 @@ var ConfigChoicesComponent = /** @class */ (function () {
             m.componentInstance.content = this.groups[index];
             m.componentInstance.index = data.index;
         }
-        console.log(this.groups.length);
+        //console.log(this.groups.length);
         m.componentInstance.emitData.subscribe(function ($e) {
             if ($e.choices.length > 0) {
                 var text = $e.choices.map(function (item) {

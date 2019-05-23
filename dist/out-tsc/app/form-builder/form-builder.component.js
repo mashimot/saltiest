@@ -246,10 +246,8 @@ var FormBuilderComponent = /** @class */ (function () {
         this.loadFormBuilder();
     };
     FormBuilderComponent.prototype.loadFormBuilder = function () {
-        this.ngxLoader.start();
         //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
         this.pages = this.homeService.getHomeStatic();
-        this.ngxLoader.stop();
         /*this.pageService.getPageByProjectId(this.project_id)
         .subscribe(result => {
             if(result.success){
@@ -299,21 +297,20 @@ var FormBuilderComponent = /** @class */ (function () {
         return '';
     };
     FormBuilderComponent.prototype.isNewPage = function (newPage) {
-        var _this = this;
         if (newPage) {
-            this.pageService.createPage({
+            /*this.pageService.createPage({
                 project_id: this.project_id,
-                name: "Page " + this.pages.length
+                name: `Page ${this.pages.length}`
             })
-                .subscribe(function (result) {
-                if (result.success) {
-                    _this.pages = result.data;
+            .subscribe(result => {
+                if(result.success){
+                    this.pages = result.data;
                 }
-            });
-            /*this.pages = [...this.pages, {
-                name: 'Page ' + (this.pages.length + 1),
-                rows: []
-            }];*/
+            });*/
+            this.pages = this.pages.concat([{
+                    name: 'Page ' + (this.pages.length + 1),
+                    rows: []
+                }]);
             /*this.pages.push({
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []

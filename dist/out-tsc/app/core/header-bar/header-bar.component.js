@@ -8,10 +8,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component } from '@angular/core';
+import { AuthService } from '../guards/auth.service';
 var HeaderBarComponent = /** @class */ (function () {
-    function HeaderBarComponent() {
+    function HeaderBarComponent(authService) {
+        this.authService = authService;
+        this.isLoggedIn = false;
     }
     HeaderBarComponent.prototype.ngOnInit = function () {
+        this.isUserLoggedIn();
+    };
+    HeaderBarComponent.prototype.onLogout = function () {
+        this.authService.logoff();
+    };
+    HeaderBarComponent.prototype.isUserLoggedIn = function () {
+        var _this = this;
+        this.authService.isLoggedIn.subscribe(function (r) {
+            _this.isLoggedIn = r;
+        });
     };
     HeaderBarComponent = __decorate([
         Component({
@@ -19,7 +32,7 @@ var HeaderBarComponent = /** @class */ (function () {
             templateUrl: './header-bar.component.html',
             styleUrls: ['./header-bar.component.css']
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [AuthService])
     ], HeaderBarComponent);
     return HeaderBarComponent;
 }());

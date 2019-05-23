@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormConfigService } from './../services/form-config.service';
+import { FormConfigService } from './../_services/form-config.service';
 import { HomeService } from './../shared/services/home.service';
-import { Page } from './../core/model';
+import { Page } from './../_core/model';
 import { PageService } from '../shared/services/page.service';
 
 @Component({

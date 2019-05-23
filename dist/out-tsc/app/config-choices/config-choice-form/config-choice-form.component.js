@@ -9,7 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { DBOperation } from 'src/app/shared/enum';
 import { ContentService } from 'src/app/shared/services/content.service';
 import { ContentChoiceItemService } from 'src/app/shared/services/content-choice-item.service';
 import { ActivatedRoute } from '@angular/router';
@@ -18,13 +17,13 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 var ConfigChoiceFormComponent = /** @class */ (function () {
-    function ConfigChoiceFormComponent(fb, contentService, contentChoiceItemService, route, dragulaService, location, modal) {
-        this.fb = fb;
+    function ConfigChoiceFormComponent(contentService, contentChoiceItemService, route, location, fb, dragulaService, modal) {
         this.contentService = contentService;
         this.contentChoiceItemService = contentChoiceItemService;
         this.route = route;
-        this.dragulaService = dragulaService;
         this.location = location;
+        this.fb = fb;
+        this.dragulaService = dragulaService;
         this.modal = modal;
         this.contentChoiceItemIdToUpdate = null;
         this.contentChoiceId = -1;
@@ -39,18 +38,19 @@ var ConfigChoiceFormComponent = /** @class */ (function () {
     }
     ConfigChoiceFormComponent.prototype.ngOnInit = function () {
         var _this = this;
+        //this.dbops = DBOperation.create;
         var choices = this.content.html.choices;
-        this.dbops = DBOperation.create;
         this.choiceForm = this.fb.group({
-            'choices': this.fb.array([])
+            'choices': this.fb.array([], [Validators.required, Validators.minLength(1)])
         });
         if (typeof this.parentFormGroup != 'undefined') {
             this.choiceForm = this.parentFormGroup.get('html');
         }
+        this.choiceForm.setValidators([Validators.required, Validators.minLength(1)]);
         for (var i = 0; i < choices.length; i++) {
             var item = choices[i];
             var items = this.choiceForm.get('choices');
-            items.push(this.getChoice(item.text, item.value));
+            items.push(this.setChoice(item.text, item.value));
         }
         this.subs.add(this.dragulaService.dropModel('sortableChoices').subscribe(function (_a) {
             var sourceModel = _a.sourceModel, targetModel = _a.targetModel, item = _a.item;
@@ -187,10 +187,18 @@ var ConfigChoiceFormComponent = /** @class */ (function () {
             }
         });
     }*/
-    ConfigChoiceFormComponent.prototype.back = function () {
-        //this.content.html.choices = this.choiceForm.value;
-        //this.modal.close();        
+    ConfigChoiceFormComponent.prototype.choiceChanged = function () {
+        this.text = this.elementToString();
+    };
+    ConfigChoiceFormComponent.prototype.addChoice = function () {
+        this.choices.push(this.setChoice());
+    };
+    ConfigChoiceFormComponent.prototype.cancel = function () {
+        this.modal.close();
+    };
+    ConfigChoiceFormComponent.prototype.save = function () {
         this.emitData.emit(this.choiceForm.value);
+        this.modal.close();
     };
     ConfigChoiceFormComponent.prototype.stringToElement = function () {
         if (this.text.length > 0) {
@@ -209,7 +217,7 @@ var ConfigChoiceFormComponent = /** @class */ (function () {
                 var value = (typeof secondMatch !== 'undefined') ? secondMatch : '';
                 this.choices.removeAt(i);
                 if (typeof this.choices.controls[i] === 'undefined') {
-                    this.choices.push(this.getChoice(text, value));
+                    this.choices.push(this.setChoice(text, value));
                 }
                 else {
                     this.choices.controls[i].patchValue({
@@ -260,7 +268,7 @@ var ConfigChoiceFormComponent = /** @class */ (function () {
         }
         return string;
     };
-    ConfigChoiceFormComponent.prototype.getChoice = function (text, value) {
+    ConfigChoiceFormComponent.prototype.setChoice = function (text, value) {
         if (text === void 0) { text = ''; }
         if (value === void 0) { value = ''; }
         return this.fb.group({
@@ -308,12 +316,12 @@ var ConfigChoiceFormComponent = /** @class */ (function () {
             templateUrl: './config-choice-form.component.html',
             styleUrls: ['./config-choice-form.component.css']
         }),
-        __metadata("design:paramtypes", [FormBuilder,
-            ContentService,
+        __metadata("design:paramtypes", [ContentService,
             ContentChoiceItemService,
             ActivatedRoute,
-            DragulaService,
             Location,
+            FormBuilder,
+            DragulaService,
             NgbActiveModal])
     ], ConfigChoiceFormComponent);
     return ConfigChoiceFormComponent;

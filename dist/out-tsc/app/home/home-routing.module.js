@@ -7,11 +7,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HomeComponent } from './home.component';
-var routes = [
-    {
-        path: 'home', component: HomeComponent
-    }
-];
+import { AuthGuard } from '../core/guards/auth.guard';
+var routes = [{
+        path: 'home',
+        canActivate: [AuthGuard],
+        children: [{
+                path: '', component: HomeComponent
+            }]
+    }];
 var HomeRoutingModule = /** @class */ (function () {
     function HomeRoutingModule() {
     }

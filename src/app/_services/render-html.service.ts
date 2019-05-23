@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Html, Table } from "./../core/model";
+import { Html, Table } from "./../_core/model";
 
 export class BootstrapForm{
     table: Table;

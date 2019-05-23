@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef, EventEmitter } from '@angular/core';
-import { FormConfigService } from './../../services/form-config.service';
+import { FormConfigService } from './../../_services/form-config.service';
 import { RowService } from '../../shared/services/row.service';
 
 @Component({

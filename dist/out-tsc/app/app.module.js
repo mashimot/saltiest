@@ -9,7 +9,6 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,15 +20,18 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HighlightModule } from 'ngx-highlightjs';
 import { ProjectsModule } from './projects/projects.module';
 import { CoreModule } from './core/core.module';
-import { NgxUiLoaderModule, NgxUiLoaderHttpModule, POSITION, SPINNER, PB_DIRECTION } from 'ngx-ui-loader';
+import { NgxUiLoaderModule, NgxUiLoaderHttpModule, POSITION, SPINNER, PB_DIRECTION, NgxUiLoaderRouterModule } from 'ngx-ui-loader';
+import { SpellCheckerModule } from './spell-checker/spell-checker.module';
+import { LoginModule } from './login/login.module';
 var ngxUiLoaderConfig = {
-    bgsColor: 'red',
+    overlayColor: 'white',
+    fgsColor: 'black',
     bgsPosition: POSITION.bottomCenter,
-    bgsSize: 40,
+    bgsSize: 90,
     bgsType: SPINNER.rectangleBounce,
-    fgsType: SPINNER.rectangleBounce,
+    fgsType: SPINNER.foldingCube,
     pbDirection: PB_DIRECTION.leftToRight,
-    pbThickness: 5,
+    pbThickness: 3,
 };
 var AppModule = /** @class */ (function () {
     function AppModule() {
@@ -43,12 +45,14 @@ var AppModule = /** @class */ (function () {
             imports: [
                 BrowserModule,
                 RouterModule,
-                FormsModule,
+                //FormsModule,
                 ConfigChoicesModule,
                 FormBuilderModule,
                 ProjectsModule,
                 CoreModule,
                 HomeModule,
+                SpellCheckerModule,
+                LoginModule,
                 DragulaModule,
                 AppRoutingModule,
                 HttpModule,
@@ -56,7 +60,8 @@ var AppModule = /** @class */ (function () {
                 NgbModule,
                 HighlightModule.forRoot(),
                 NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
-                NgxUiLoaderHttpModule
+                NgxUiLoaderHttpModule,
+                NgxUiLoaderRouterModule
             ],
             providers: [DragulaService],
             bootstrap: [AppComponent]
