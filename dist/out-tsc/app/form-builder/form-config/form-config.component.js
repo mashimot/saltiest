@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Input, Output, ViewChild, TemplateRef, EventEmitter } from '@angular/core';
-import { FormContentConfigService } from './../../services/form-content-config.service';
+import { FormContentConfigService } from './../../_services/form-content-config.service';
 import { FormBuilder } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContentService } from 'src/app/shared/services/content.service';

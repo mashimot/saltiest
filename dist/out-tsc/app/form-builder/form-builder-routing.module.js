@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormBuilderComponent } from "./form-builder.component";
-import { AuthGuard } from '../core/guards/auth.guard';
+import { AuthGuard } from '../_core/guards/auth.guard';
 var routes = [{
         path: 'form-builder',
         canActivate: [AuthGuard],

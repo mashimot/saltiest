@@ -9,21 +9,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { AuthService } from '../core/guards/auth.service';
+import { AuthService } from '../_core/guards/auth.service';
 var LoginComponent = /** @class */ (function () {
     function LoginComponent(fb, authService) {
         this.fb = fb;
         this.authService = authService;
         this.submitted = false;
-        this.email = 'eve.holt@reqres.in';
-        this.password = 'cityslicka';
+        this.email = 'test';
+        this.password = 'test';
     }
     LoginComponent.prototype.ngOnInit = function () {
         this.loginForm = this.fb.group({
             username: [
                 this.email, [
                     Validators.required,
-                    Validators.email
                 ]
             ],
             password: [
@@ -34,8 +33,11 @@ var LoginComponent = /** @class */ (function () {
         });
     };
     LoginComponent.prototype.onSubmit = function () {
+        var _this = this;
         this.submitted = true;
-        this.authService.login(this.loginForm.value);
+        this.authService.login(this.loginForm.value).subscribe(function (result) { }, function (error) {
+            _this.error = error;
+        });
     };
     Object.defineProperty(LoginComponent.prototype, "f", {
         get: function () { return this.loginForm.controls; },

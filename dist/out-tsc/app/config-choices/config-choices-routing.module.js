@@ -8,7 +8,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ConfigChoicesComponent } from './config-choices.component';
 import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
-import { AuthGuard } from '../core/guards/auth.guard';
+import { AuthGuard } from '../_core/guards/auth.guard';
 var routes = [
     {
         path: 'config-choices',

@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component } from '@angular/core';
-import { FormConfigService } from './../services/form-config.service';
+import { FormConfigService } from './../_services/form-config.service';
 import { HomeService } from './../shared/services/home.service';
 import { PageService } from '../shared/services/page.service';
 var HomeComponent = /** @class */ (function () {

@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SpellCheckerComponent } from './spell-checker.component';
-import { AuthGuard } from '../core/guards/auth.guard';
+import { AuthGuard } from '../_core/guards/auth.guard';
 var routes = [{
         path: 'spell-checker',
         canActivate: [AuthGuard],

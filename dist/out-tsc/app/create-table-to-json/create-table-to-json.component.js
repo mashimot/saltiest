@@ -8,8 +8,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CreateTableToJsonService } from '../services/create-table-to-json.service';
-import { BootstrapGridSystemService } from '../services/bootstrap-grid-system.service';
+import { CreateTableToJsonService } from '../_services/create-table-to-json.service';
+import { BootstrapGridSystemService } from '../_services/bootstrap-grid-system.service';
 import { DatabaseEngine } from '../shared/services/database-engine.service';
 var CreateTableToJsonComponent = /** @class */ (function () {
     function CreateTableToJsonComponent() {

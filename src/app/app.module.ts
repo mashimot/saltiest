@@ -23,11 +23,15 @@ import { ErrorInterceptor } from './_helpers/error';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     overlayColor: 'white',
-    fgsColor: 'black',
-    bgsPosition: POSITION.bottomCenter,
-    bgsSize: 90,
-    bgsType: SPINNER.rectangleBounce, // background spinner type
-    fgsType: SPINNER.foldingCube, // foreground spinner type
+    fgsType: SPINNER.rotatingPlane, // foreground spinner type
+    fgsPosition: POSITION.topRight,
+    fgsColor: 'dark-blue',
+    fgsSize: 50,
+    bgsType: SPINNER.rotatingPlane, // background spinner type
+    bgsPosition: POSITION.bottomRight,
+    bgsColor: 'dark-blue',
+    bgsSize: 50,
+    bgsOpacity: 1,
     pbDirection: PB_DIRECTION.leftToRight, // progress bar direction
     pbThickness: 3, // progress bar thickness
 };

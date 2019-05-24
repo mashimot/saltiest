@@ -9,10 +9,8 @@
 		</div>
 	</div>
 </div>
-<div *ngIf="isLoading" class="text-center">
-	<i class="fa fa-cog fa-spin fa-2x"></i> Loading...
-</div>
-<div ng-if="!isLoading">
+
+<div *ngIf="this.result.matches">
 	<div id="spell-checker" class="py-3"></div>
 	<div class="row" *ngIf="result?.matches.length > 0">
 		<div *ngFor="let match of result?.matches; let mK = index;" class="form-group col-md-6 col-xs-12">

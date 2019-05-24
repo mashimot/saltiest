@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormConfigService } from './../../services/form-config.service';
+import { FormConfigService } from './../../_services/form-config.service';
 import { RowService } from '../../shared/services/row.service';
 var FormRowsComponent = /** @class */ (function () {
     function FormRowsComponent(formConfigService, cd, rowService) {

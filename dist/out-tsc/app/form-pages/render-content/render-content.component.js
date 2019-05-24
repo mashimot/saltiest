@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { RenderHtmlService } from './../../services/render-html.service';
+import { RenderHtmlService } from './../../_services/render-html.service';
 var RenderContentComponent = /** @class */ (function () {
     function RenderContentComponent(sanitizer, renderHtml) {
         this.sanitizer = sanitizer;

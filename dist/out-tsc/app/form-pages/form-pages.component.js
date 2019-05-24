@@ -19,10 +19,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormConfigService } from './../services/form-config.service';
+import { FormConfigService } from './../_services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
-import { BootstrapForm } from '../services/render-html.service';
+import { BootstrapForm } from '../_services/render-html.service';
 import { PageService } from '../shared/services/page.service';
 import { ContentService } from '../shared/services/content.service';
 import { RowService } from '../shared/services/row.service';

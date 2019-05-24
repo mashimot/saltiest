@@ -12,26 +12,28 @@ import { LanguageToolService } from '../shared/services/language-tool.service';
 var SpellCheckerComponent = /** @class */ (function () {
     function SpellCheckerComponent(languageToolService) {
         this.languageToolService = languageToolService;
+        this.text = 'hadouken';
         this.textChange = new EventEmitter();
-        this.isLoading = false;
     }
     SpellCheckerComponent.prototype.ngOnInit = function () {
+        this.checkSpelling();
     };
     SpellCheckerComponent.prototype.textOnChange = function () {
         this.textChange.emit(this.text);
     };
     SpellCheckerComponent.prototype.checkSpelling = function () {
-        var _this = this;
-        this.isLoading = true;
+        //this.isLoading = true;
         if (this.hasText()) {
             this.text = this.langTool();
-            this.languageToolService.getCorrectWord(this.text).subscribe(function (data) {
-                if (data.matches) {
-                    _this.result = data;
-                    _this.isLoading = false;
-                }
+            this.languageToolService.getCorrectWord(this.text)
+                .subscribe(function (result) {
+                console.log(result);
+                /*if (result.matches) {
+                    this.result = result;
+                    //this.isLoading = false;
+                }*/
             });
-            console.log(this.result);
+            //console.log(this.result);
         }
     };
     SpellCheckerComponent.prototype.langTool = function () {

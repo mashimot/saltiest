@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, Output, EventEmitter } from '@angular/core';
 import { HtmlElementService } from '../../shared/services/html-element.service';
-import { BootstrapGridSystemService } from '../../services/bootstrap-grid-system.service';
+import { BootstrapGridSystemService } from '../../_services/bootstrap-grid-system.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoicesComponent } from '../../config-choices/config-choices.component';
 var FormMenuComponent = /** @class */ (function () {

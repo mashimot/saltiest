@@ -8,8 +8,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Input, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { FormConfigService } from './../../services/form-config.service';
-import { RenderHtmlService } from '../../services/render-html.service';
+import { FormConfigService } from './../../_services/form-config.service';
+import { RenderHtmlService } from '../../_services/render-html.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
 import { ContentService } from '../../shared/services/content.service';

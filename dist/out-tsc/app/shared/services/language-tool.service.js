@@ -8,29 +8,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 var LanguageToolService = /** @class */ (function () {
     function LanguageToolService(http) {
         this.http = http;
         this.apiUrl = 'https://languagetool.org/api/v2/check';
         this.language = 'pt-br';
+        this.API_URL = 'http://127.0.0.1:8000/api';
     }
     LanguageToolService.prototype.getCorrectWord = function (text, language) {
-        return this.http.get(this.apiUrl, {
+        /*return this.http.get(this.apiUrl, {
             params: {
                 language: language ? language : this.language,
                 text: text
             }
-        }).pipe(map(function (res) {
-            return res.json();
-        }));
+        });/*.pipe(
+            map((res) => {
+                return res.json();
+            })
+        );*/
+        return this.http.get(this.API_URL + "/pages");
     };
     LanguageToolService = __decorate([
         Injectable({
             providedIn: 'root'
         }),
-        __metadata("design:paramtypes", [Http])
+        __metadata("design:paramtypes", [HttpClient])
     ], LanguageToolService);
     return LanguageToolService;
 }());

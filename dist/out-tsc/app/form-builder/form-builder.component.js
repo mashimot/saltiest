@@ -8,11 +8,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Injectable } from '@angular/core';
-import { RenderHtmlService } from '../services/render-html.service';
+import { RenderHtmlService } from '../_services/render-html.service';
 import { HomeService } from "../shared/services/home.service";
-import { Html } from "../core/model/html.model";
-import { Table } from "../core/model/table.model";
-import { FormConfigService } from '../services/form-config.service';
+import { Html } from "../_core/model/html.model";
+import { Table } from "../_core/model/table.model";
+import { FormConfigService } from '../_services/form-config.service';
 import { PageService } from '../shared/services/page.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../shared/services/project.service';
