@@ -137,7 +137,7 @@ export class RenderHtmlService {
     get() {
         return {
             html: this.bootstrapForm.get(),
-            code: this.customForm.get()
+            code: this.bootstrapForm.get()
         }
     }
 }

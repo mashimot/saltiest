@@ -157,7 +157,7 @@ export class Bootstrap {
                     tabNum++;
                     t = this.tabSpace(tabNum);
                         row.columns.forEach((column, j) => {
-                            //htmlPages.push(`${t}<div class="col-md-${grid[j]}">`);
+                            htmlPages.push(`${t}<div class="col-md-${grid[j]}">`);
                             column.contents.forEach(content => {
                                 if (content.html.category === 'form') {
                                     this.inputs.push(content);
@@ -166,7 +166,7 @@ export class Bootstrap {
                                 this.renderHtmlService.setParams(content);
                                 htmlPages.push(t + this.renderHtmlService.get().code);
                             });
-                            //htmlPages.push(`${t}</div>`);
+                            htmlPages.push(`${t}</div>`);
                         });
                     tabNum--;
                     t = this.tabSpace(tabNum);

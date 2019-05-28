@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
 	password: string = 'test';
 	error: string;
 
+	
 	constructor(
 		private fb: FormBuilder,
 		private authService: AuthService
@@ -37,12 +38,15 @@ export class LoginComponent implements OnInit {
 
 	onSubmit(){
 		this.submitted = true;
-		this.authService.login(this.loginForm.value).subscribe(
-			result => {},
-			error => {
-				this.error = error;
-			}
-		);
+		this.authService.login(this.loginForm.value)
+		.subscribe((user) => {
+            if (user && user.token) {
+                // store user details and jwt token in local storage to keep user logged in between page refreshes
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                //this.router.navigate(['/home']);
+            }
+            return user;
+        })
 	}
 
 	get f() { return this.loginForm.controls; }

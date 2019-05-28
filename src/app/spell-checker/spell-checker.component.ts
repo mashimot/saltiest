@@ -24,7 +24,6 @@ export class SpellCheckerComponent implements OnInit {
         this.result = {
             matches: []
         };
-        this.checkSpelling();
     }
 
     public textOnChange(): void {

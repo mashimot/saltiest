@@ -18,7 +18,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         // wrap in delayed observable to simulate server api call
         return of(null).pipe(mergeMap(() => {
             // authenticate - public
-            if (request.url.endsWith('/users/authenticate') && request.method === 'POST') {
+            if (request.url.endsWith('/auth/login') && request.method === 'POST') {
                 const user = users.find(x => x.username === request.body.username && x.password === request.body.password);
                 if (!user) return error('Username or password is incorrect');
                 return ok({
