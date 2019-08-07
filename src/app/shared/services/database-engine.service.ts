@@ -24,8 +24,8 @@ export class DatabaseEngine {
 				VARCHAR: 'textarea',
 				NVARCHAR2: 'textarea',
 				INTEGER: 'number',
-				/*CLOB : true,
-				NCLOB : true,*/
+				CLOB: 'textarea',
+				NCLOB: 'textarea',
 				LONG: 'number',
 				NUMBER: 'number',
 				DATE: 'date',

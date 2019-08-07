@@ -18,7 +18,14 @@ export class CreateTableToJsonService {
     html: Html;
     table: Table;
     tableName: string;
-    allowedDataTypes: Array<string> = ['null', 'not null', 'primary key', 'unique'];
+    columnConstraints: Array<string> = [
+        'null', 
+        'not null', 
+        'primary key', 
+        'unique',
+        'default (?:["]{string}["]|[(]{string}[)]|[\']{string}[\']|{number})',
+        'enum [(]{list}[)]'
+    ];
     regex: {
         [key:string]: string
     } = {
@@ -27,6 +34,7 @@ export class CreateTableToJsonService {
         onlyNumeric: `(([0-9]+(\\,[0-9]+)?)(\\.[0-9]+)?)`,
         valueBtwParentheses: `\\(([^)]*)\\)`,
         stringRestriction: `^[\\s\\w+\\_\\-\\,\\.()]*$`,
+        onlyWords: `\\w+`
     };
 
 
@@ -47,44 +55,66 @@ export class CreateTableToJsonService {
         part_name      VARCHAR(500),
         state          DECIMAL           DEFAULT -1,
     );*/
-    createTableSyntax(): string {
-        var dbKeys = Object.keys(this._dataBase).join("|");
-        var allowedDataTypes = this.allowedDataTypes.map((item)=>{
-            var newItem = item.toUpperCase().replace(/\s+/g, '\\s+');
-            return `(?:${newItem}?)?`;
-        }).join("");
+    convertToRegex(columnConstraints): Array<string> {
+        return columnConstraints.map(c => {
+            return c.split(" ")
+            .filter(value => value != null)
+            .map(item => {
+                return item
+                .replace(
+                    /{string}/ig, 
+                    this.regex.onlyWords
+                )
+                .replace(
+                    /{number}/ig, 
+                    this.regex.onlyNumeric
+                );
+            })
+            .join(" ");
+        });    
+    }
 
-        let info = `
+    createTableSyntax(): string {
+        var types               = Object.keys(this._dataBase).join("|");
+        var columnNames         = `[\`]${this.regex.onlyWords}[\`]|(${this.regex.onlyWords})`;
+        var columnConstraints   = this.convertToRegex(this.columnConstraints)
+        .map(constraint => `(?:${constraint}?)?`)
+        .join("")
+        .replace(/\s+/g, '\\s+')
+
+        let row = `
         (
-            (\\w+)\\s*
             (?:
-                (${dbKeys})(\\s*)?
+                ${columnNames}
+            )\\s+
+            (?:
+                (${types})(\\s*)?
                 (
                     ([(]${this.regex.onlyNumeric}[)])
                 )?
             ) 
             (?:
-                \\s+${allowedDataTypes}
+                (\\s+${columnConstraints})*
             )?
-            (
-                \\s*(PRIMARY\\s+KEY)?\\s*
-            )?
-        )
-        `;
+        )`;
+
         let regexCreateTableSyntax = `
         ${this.regex.createTable}
         [(]
             (\\s*
                 (
-                    \\s*${info}[,]
+                    \\s*${row}[,]
                 )*
                 (
-                    \\s*${info}
+                    \\s*${row}
                 )
-            )
-        \\s*[)]\\s*([;])
-        `.toLowerCase().replace(/\s+/g, '').trim();
+            )\\s*
+        [)]\\s*([;])`
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .trim();
 
+        console.log(regexCreateTableSyntax);
         return regexCreateTableSyntax;
     }
  
@@ -128,10 +158,46 @@ export class CreateTableToJsonService {
         this.table.type = dataType;
         this.html.tag = inputType;
         this.table.size = size;
+
+        return this;
     }
 
-    validateSyntax(words: Array<string>): void {
-        let value = '';
+    getColumnName(words: Array<string>){
+        this.table.columnName = words[0].replace(/`/g, ""); // column name
+        return this;
+    }
+
+    validateSyntax(wordsArr: Array<string>): void {
+        let constraint = '';
+        
+        for (let i = this._wordIndex; i < wordsArr.length; i++) {
+            constraint += ` ${wordsArr[i]}`;
+        }
+        console.log(constraint);
+        var columnConstraints = this.convertToRegex(this.columnConstraints);
+        /*var item = `not null`;
+        const regex = new RegExp(item);
+        if(
+            !regex.test(constraint.trim())
+        ){
+            this._errors.push(
+                `error: \`${constraint.trim()}\``
+            );
+        }*/
+        console.log(columnConstraints);
+        for (let i = 0; i < columnConstraints.length; i++) {
+            var item = columnConstraints[i];
+            const regex = new RegExp(item);
+            console.log(item, ' - ', constraint.trim());
+            if(
+                item.indexOf(constraint.trim()) == -1
+            ){
+                this._errors.push(
+                    `error: \`${item}\``
+                );
+            }
+        }
+        /*let value = '';
         let allowed = {
             'not': {
                 next: ['null'],
@@ -154,9 +220,9 @@ export class CreateTableToJsonService {
                 correct: 'primary key'
             },
             'unique': {
-                    next: [],
-                    previous: [],
-                    correct: 'unique'
+                next: [],
+                previous: [],
+                correct: 'unique'
             },
         };
         //'not null|null'
@@ -166,7 +232,7 @@ export class CreateTableToJsonService {
             let nextValue = '';
             let prevValue = '';
             if (typeof allowed[currentWord] === 'undefined') {
-                this._errors.push(`Check the manual for the right syntax to use near '${this.table.columnName}'`);
+                //this._errors.push(`Check the manual for the right syntax to use near '${this.table.columnName}'`);
             } else {
                 let index = i + 1;
                 if (i === words.length - 1) {
@@ -191,29 +257,34 @@ export class CreateTableToJsonService {
                 }
                 value += `${prevValue} ${currentWord} ${nextValue}`;
                 if (hasError && value !== '') {
-                    this._errors.push(`error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this.table.columnName}`);
+                    //this._errors.push(`error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this.table.columnName}`);
                 }
             }
         }
         value = value.replace(/\s\s+/g, ' ').trim();
+        console.log(value);
         this.table.nullable = (value.indexOf("not null") !== -1) ? true : false;
-        this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
+        this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;*/
+
         this._wordIndex = 2;
     }
 
     convert(): void {
-        let regex = new RegExp(this.regex.createTableSyntax);
+        let defineColumns = [];
+        const regex = new RegExp(this.regex.createTableSyntax);
         this._string = this._string.replace(/\s+/g, " ").toLowerCase();
-        console.log(this._string);
-        if(!regex.test(this._string)){
+        const groups = regex.exec(this._string);
+        if (groups == null) {
             this._errors.push(
                 `Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )`,
                 `You have an error in your SQL syntax:`
             );
         }
 
-        var createTable = (new RegExp(`${this.regex.createTable}([^\\(]*(\\(.*\\))[^\\)])`)).exec(this._string);
-        let defineColumns = [];
+        var createTable = new RegExp(
+            `${this.regex.createTable}([^\\(]*(\\(.*\\))[^\\)])`
+        ).exec(this._string);
+        
         if(createTable){
             this.tableName  = createTable[1];
             defineColumns   = createTable[3].replace(/^\((.+)\)$/, '$1')
@@ -245,18 +316,20 @@ export class CreateTableToJsonService {
             if (eachWords.length <= 1) {
                 //this._errors.push(`Incompleted`);
             } else {
-                this.table.columnName = eachWords[0]; // column name
+                //this.table.columnName = eachWords[0].replace(/`/g, ""); // column name
                 //the firstMatch  (stringArr[0]) will be always the column name
                 //the secondMatch (stringArr[1]) will be always the column data type
-                this.getDataTypeAndSize(eachWords);
-                this.validateSyntax(eachWords);
-                this.customInput();
-                this.customLabelName();
+                this.getColumnName(eachWords)
+                .getDataTypeAndSize(eachWords)
+                //.customInput()
+                .customLabelName();
+                //this.validateSyntax(eachWords);
+                //.setData();
                 this._data.push({
                     html: {
                         category: 'form',
                         tag: this.html.tag,
-                        label: this.html.label
+                        label: this.html.label || ''
                     },
                     table: {
                         isPrimaryKey: this.table.isPrimaryKey,
@@ -269,22 +342,22 @@ export class CreateTableToJsonService {
             }
             i++;
         }
-        //console.log(this._data)
+        console.log(this._data)
     }
 
     customLabelName() {
-        let splitColumnName = this.table.columnName.split('_');
-        if (splitColumnName.length > 0) {
-            for (let i = 0; i < splitColumnName.length; i++) {
-                let currentPartialName = splitColumnName[i];
-                let value = this._customLabel[currentPartialName];
-                if (typeof value !== 'undefined')
-                    currentPartialName = value;
+        this.html.label = this.table.columnName.split('_')
+        .map(partialName => {
+            let value = this._customLabel[partialName];
+            if (typeof value !== 'undefined')
+                partialName = value;
 
-                splitColumnName[i] = currentPartialName.charAt(0).toUpperCase() + currentPartialName.substr(1);
-            }
-            this.html.label = splitColumnName.join(' ').trim();;
-        }
+            return partialName.charAt(0).toUpperCase() + partialName.substr(1);
+        })
+        .join(' ')
+        .trim();
+
+        return this;
     }
    
     customInput() {
@@ -295,6 +368,8 @@ export class CreateTableToJsonService {
             //this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
             this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
         }
+
+        return this;
     }
 
     getTableName(){
