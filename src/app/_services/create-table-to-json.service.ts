@@ -23,7 +23,8 @@ export class CreateTableToJsonService {
         'not null', 
         'primary key', 
         'unique',
-        'default (?:["]{string}["]|[(]{string}[)]|[\']{string}[\']|{number})',
+        'check',
+        'default (?:["]{string}["]|[(]{string}[)]|[\']{string}[\']|{number}|-{number})',
         'enum [(]{list}[)]'
     ];
     regex: {
@@ -167,37 +168,8 @@ export class CreateTableToJsonService {
         return this;
     }
 
-    validateSyntax(wordsArr: Array<string>): void {
-        let constraint = '';
-        
-        for (let i = this._wordIndex; i < wordsArr.length; i++) {
-            constraint += ` ${wordsArr[i]}`;
-        }
-        console.log(constraint);
-        var columnConstraints = this.convertToRegex(this.columnConstraints);
-        /*var item = `not null`;
-        const regex = new RegExp(item);
-        if(
-            !regex.test(constraint.trim())
-        ){
-            this._errors.push(
-                `error: \`${constraint.trim()}\``
-            );
-        }*/
-        console.log(columnConstraints);
-        for (let i = 0; i < columnConstraints.length; i++) {
-            var item = columnConstraints[i];
-            const regex = new RegExp(item);
-            console.log(item, ' - ', constraint.trim());
-            if(
-                item.indexOf(constraint.trim()) == -1
-            ){
-                this._errors.push(
-                    `error: \`${item}\``
-                );
-            }
-        }
-        /*let value = '';
+    validateSyntax(words: Array<string>): void {
+      let value = '';
         let allowed = {
             'not': {
                 next: ['null'],
@@ -225,15 +197,14 @@ export class CreateTableToJsonService {
                 correct: 'unique'
             },
         };
-        //'not null|null'
+
         for (let i = this._wordIndex; i < words.length; i++) {
             let currentWord = words[i].replace(/,/g, "");
             let hasError = false;
+            let isDiff = [];
             let nextValue = '';
             let prevValue = '';
-            if (typeof allowed[currentWord] === 'undefined') {
-                //this._errors.push(`Check the manual for the right syntax to use near '${this.table.columnName}'`);
-            } else {
+            if (typeof allowed[currentWord] != 'undefined') {
                 let index = i + 1;
                 if (i === words.length - 1) {
                     index = words.length - 1;
@@ -242,29 +213,32 @@ export class CreateTableToJsonService {
                 let prevString = words[i - 1];
 
                 if (allowed[currentWord].next.length > 0) {
-                    if (nextString.indexOf(allowed[currentWord].next[0]) !== -1) {
-                    } else {
-                    nextValue = allowed[currentWord].next[0];
-                        hasError = true;
+                    isDiff = allowed[currentWord].next.filter(w => {
+                        return nextString != w;
+                    });
+                    if(isDiff.length > 0){
+                        nextValue = allowed[currentWord].next.join(' ');
                     }
                 }
                 if (allowed[currentWord].previous.length > 0) {
-                    if (prevString.indexOf(allowed[currentWord].previous[0]) !== -1) {
-                    } else {
-                    prevValue = allowed[currentWord].previous[0];
-                        hasError = true;
+                    isDiff = allowed[currentWord].previous.filter(w => {
+                        return prevString != w;
+                    });
+                    if(isDiff.length > 0){
+                        prevValue = allowed[currentWord].previous.join(' ');
                     }
                 }
                 value += `${prevValue} ${currentWord} ${nextValue}`;
-                if (hasError && value !== '') {
-                    //this._errors.push(`error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this.table.columnName}`);
+
+                if(isDiff.length > 0){
+                    this._errors.push(`error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this.table.columnName}`);
                 }
             }
         }
         value = value.replace(/\s\s+/g, ' ').trim();
         console.log(value);
         this.table.nullable = (value.indexOf("not null") !== -1) ? true : false;
-        this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;*/
+        this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
 
         this._wordIndex = 2;
     }
@@ -279,6 +253,8 @@ export class CreateTableToJsonService {
                 `Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )`,
                 `You have an error in your SQL syntax:`
             );
+        } else {
+            console.log(groups);
         }
 
         var createTable = new RegExp(
@@ -323,7 +299,7 @@ export class CreateTableToJsonService {
                 .getDataTypeAndSize(eachWords)
                 //.customInput()
                 .customLabelName();
-                //this.validateSyntax(eachWords);
+                this.validateSyntax(eachWords);
                 //.setData();
                 this._data.push({
                     html: {

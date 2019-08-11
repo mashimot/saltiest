@@ -40,7 +40,7 @@ export class CreateTableToJsonComponent implements OnInit {
 		this.string = [
 			'create table if not exists random_table_1 (',
 			//'supplier_id number(10) not null primary key,',
-			'`cod_user` number(10) default (1) nost null,',
+			'`cod_user` number(10) default (1) not null,',
 			'`favorite_fruit` varchar2(10) default "avocado" not null,',
 			'supplier_name varchar2(50) not null,',
 			'address varchar2(50),',
