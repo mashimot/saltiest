@@ -20,7 +20,7 @@ var FakeBackendInterceptor = /** @class */ (function () {
         // wrap in delayed observable to simulate server api call
         return of(null).pipe(mergeMap(function () {
             // authenticate - public
-            if (request.url.endsWith('/users/authenticate') && request.method === 'POST') {
+            if (request.url.endsWith('/auth/login') && request.method === 'POST') {
                 var user = users.find(function (x) { return x.username === request.body.username && x.password === request.body.password; });
                 if (!user)
                     return error('Username or password is incorrect');

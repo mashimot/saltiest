@@ -115,7 +115,7 @@ var RenderHtmlService = /** @class */ (function () {
     RenderHtmlService.prototype.get = function () {
         return {
             html: this.bootstrapForm.get(),
-            code: this.customForm.get()
+            code: this.bootstrapForm.get()
         };
     };
     RenderHtmlService = __decorate([

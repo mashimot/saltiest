@@ -40,14 +40,15 @@ export class CreateTableToJsonComponent implements OnInit {
 		this.string = [
 			'create table if not exists random_table_1 (',
 			//'supplier_id number(10) not null primary key,',
-			'`cod_user` number(10) default (1) not null,',
-			'`favorite_fruit` varchar2(10) default "avocado" not null,',
+			//'`cod_user` number(10) default (1) not null',
+			'`cod_user` number(10) not null,',
+			'`favorite_fruit` varchar2(10) default 10 not null,',
 			'supplier_name varchar2(50) not null,',
 			'address varchar2(50),',
 			'city varchar2(50),',
 			'state varchar2(25),',
 			'dat_now date,',
-			'zip_code number(10),price number(10,2)',
+			'zip_code number(10),price number(10.2)',
 			');'
 		].join("\n");
 	}
@@ -67,13 +68,14 @@ export class CreateTableToJsonComponent implements OnInit {
 	}
 
 	public createTable() {
-		let ct = new CreateTableToJsonService(this.options.database.toUpperCase());
+		let ct = new CreateTableToJsonService();
 		ct.setString(this.string);
-		ct.convert();
+		ct.parse();
 		this.errors = ct.getError();
 		console.log(ct.hasError());
 		if (!ct.hasError()) {
 			let data = ct.getData();
+			console.log(data);
             let bootstrapGridSystem = new BootstrapGridSystemService(data, `${this.gridModel}\n`);
 			bootstrapGridSystem.convert();
 			let pages = bootstrapGridSystem.getPage();

@@ -33,10 +33,15 @@ var LoginComponent = /** @class */ (function () {
         });
     };
     LoginComponent.prototype.onSubmit = function () {
-        var _this = this;
         this.submitted = true;
-        this.authService.login(this.loginForm.value).subscribe(function (result) { }, function (error) {
-            _this.error = error;
+        this.authService.login(this.loginForm.value)
+            .subscribe(function (user) {
+            if (user && user.token) {
+                // store user details and jwt token in local storage to keep user logged in between page refreshes
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                //this.router.navigate(['/home']);
+            }
+            return user;
         });
     };
     Object.defineProperty(LoginComponent.prototype, "f", {

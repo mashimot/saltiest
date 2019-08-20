@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -16,7 +16,14 @@ var AuthService = /** @class */ (function () {
     function AuthService(http, router) {
         this.http = http;
         this.router = router;
-        console.log(localStorage.getItem('currentUser'));
+        this.httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            })
+        };
+        //private API_URL: string = 'http://localhost:8000/api';
+        this.API_URL = '';
         this.currentUserSubject = new BehaviorSubject(JSON.parse(localStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
     }
@@ -28,13 +35,17 @@ var AuthService = /** @class */ (function () {
         configurable: true
     });
     AuthService.prototype.isLogged = function () {
-        return localStorage.getItem('currentUser') != null;
+        return localStorage.getItem('currentUser') ? true : false;
     };
     AuthService.prototype.login = function (user) {
         var _this = this;
-        return this.http.post("/users/authenticate", { username: user.username, password: user.password })
+        /*return this.http.post<any>(`${this.API_URL}/auth/login`, {
+            username: user.username,
+            password: user.password
+        }, this.httpOptions)*/
+        return this.http.post(this.API_URL + "/auth/login", user, this.httpOptions)
             .pipe(map(function (user) {
-            // login successful if there's a jwt token in the response
+            console.log(user);
             if (user && user.token) {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(user));
@@ -43,10 +54,25 @@ var AuthService = /** @class */ (function () {
             }
             return user;
         }));
+        /*.pipe(map((user: User) => {
+            // login successful if there's a jwt token in the response
+            if (user && user.token) {
+                // store user details and jwt token in local storage to keep user logged in between page refreshes
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                this.currentUserSubject.next(user);
+                this.router.navigate(['/home']);
+            }
+
+            return user;
+        }));*/
+    };
+    AuthService.prototype.getUser = function () {
+        return JSON.parse(localStorage.getItem('currentUser'));
     };
     AuthService.prototype.logout = function () {
         // remove user from local storage to log user out
-        localStorage.removeItem('currentUser');
+        //localStorage.removeItem('currentUser');
+        localStorage.clear();
         this.currentUserSubject.next(null);
         this.router.navigate(['/login']);
     };

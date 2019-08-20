@@ -15,8 +15,9 @@ var JwtInterceptor = /** @class */ (function () {
     }
     JwtInterceptor.prototype.intercept = function (request, next) {
         // add authorization header with jwt token if available
-        var currentUser = this.authService.currentUserValue;
+        var currentUser = this.authService.getUser();
         if (currentUser && currentUser.token) {
+            console.log(currentUser);
             request = request.clone({
                 setHeaders: {
                     Authorization: "Bearer " + currentUser.token

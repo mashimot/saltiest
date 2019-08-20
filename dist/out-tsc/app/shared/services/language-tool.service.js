@@ -8,26 +8,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 var LanguageToolService = /** @class */ (function () {
     function LanguageToolService(http) {
         this.http = http;
         this.apiUrl = 'https://languagetool.org/api/v2/check';
         this.language = 'pt-br';
-        this.API_URL = 'http://127.0.0.1:8000/api';
+        this.httpOptions = {
+            headers: new HttpHeaders({
+                'Access-Control-Allow-Origin': '*'
+            })
+        };
     }
     LanguageToolService.prototype.getCorrectWord = function (text, language) {
-        /*return this.http.get(this.apiUrl, {
-            params: {
-                language: language ? language : this.language,
-                text: text
-            }
-        });/*.pipe(
-            map((res) => {
-                return res.json();
-            })
-        );*/
-        return this.http.get(this.API_URL + "/pages");
+        var params = new HttpParams()
+            .set('language', language ? language : this.language)
+            .set('text', text);
+        console.log(params);
+        return this.http.get(this.apiUrl, {
+            params: params,
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }),
+        });
     };
     LanguageToolService = __decorate([
         Injectable({

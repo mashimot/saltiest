@@ -8,260 +8,74 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
-import { DatabaseEngine } from '../shared/services/database-engine.service';
-import { Html, Table } from "./../_core/model";
+import * as nearley from 'nearley';
+import * as bracketexpr_grammar from './../_parser/create-table-oracle-to-json';
 var CreateTableToJsonService = /** @class */ (function () {
-    function CreateTableToJsonService(DB) {
-        this._isTextareaWhenSizeEquals = 1000;
-        this._wordIndex = 2;
-        this.allowedDataTypes = ['null', 'not null', 'primary key', 'unique'];
-        this.regex = {
-            createTableSyntax: '',
-            createTable: "\\s*create\\s+table(?:\\s+if\\s+not\\s+exists)?\\s+(\\w+)\\s*",
-            onlyNumeric: "(([0-9]+(\\,[0-9]+)?)(\\.[0-9]+)?)",
-            valueBtwParentheses: "\\(([^)]*)\\)",
-            stringRestriction: "^[\\s\\w+\\_\\-\\,\\.()]*$",
-        };
-        this.html = new Html();
-        this.table = new Table();
-        this._data = [];
+    function CreateTableToJsonService() {
         this._errors = [];
-        this._dataBase = DatabaseEngine.get(DB);
+        this._data = [];
         this._customLabel = this.getCustomLabelName();
-        this.regex.createTableSyntax = this.createTableSyntax();
     }
-    /*CREATE TABLE test_table (
-        -- define columns (name / type / default value / column constraint
-        id             DECIMAL                           PRIMARY KEY,
-        part_number    CHAR(10)          DEFAULT 'n/a'   NOT NULL,
-        part_name      VARCHAR(500),
-        state          DECIMAL           DEFAULT -1,
-    );*/
-    CreateTableToJsonService.prototype.createTableSyntax = function () {
-        var dbKeys = Object.keys(this._dataBase).join("|");
-        var allowedDataTypes = this.allowedDataTypes.map(function (item) {
-            var newItem = item.toUpperCase().replace(/\s+/g, '\\s+');
-            return "(?:" + newItem + "?)?";
-        }).join("");
-        var info = "\n        (\n            (\\w+)\\s*\n            (?:\n                (" + dbKeys + ")(\\s*)?\n                (\n                    ([(]" + this.regex.onlyNumeric + "[)])\n                )?\n            ) \n            (?:\n                \\s+" + allowedDataTypes + "\n            )?\n            (\n                \\s*(PRIMARY\\s+KEY)?\\s*\n            )?\n        )\n        ";
-        var regexCreateTableSyntax = ("\n        " + this.regex.createTable + "\n        [(]\n            (\\s*\n                (\n                    \\s*" + info + "[,]\n                )*\n                (\n                    \\s*" + info + "\n                )\n            )\n        \\s*[)]\\s*([;])\n        ").toLowerCase().replace(/\s+/g, '').trim();
-        return regexCreateTableSyntax;
-    };
-    CreateTableToJsonService.prototype.getDataTypeAndSize = function (str) {
-        var secondMatch = str[1];
-        var inputType, size = '';
-        var dataType = secondMatch;
-        var matchValBtwParen = secondMatch.match(new RegExp(this.regex.valueBtwParentheses));
-        var hasValueBtwParen = false;
-        if (matchValBtwParen !== null) {
-            hasValueBtwParen = true;
-            dataType = secondMatch.replace(matchValBtwParen[0], '');
-        }
-        else {
-            //(2) probably the next element -thirdMatch- must have(or not) the size of the columnName (it must be an integer or float)
-            if (str.length > 2) { //has more than 2 elements
-                var thirdMatch = str[2];
-                matchValBtwParen = thirdMatch.match(new RegExp(this.regex.valueBtwParentheses)); //get value between parentheses
-                if (matchValBtwParen !== null) { // it goes to the next index if parentheses doesn't exists
-                    hasValueBtwParen = true;
-                    this._wordIndex = 3;
-                }
-            }
-        }
-        if (hasValueBtwParen) {
-            var numeric = matchValBtwParen[1];
-            var onlyNumericRegex = new RegExp("^" + this.regex.onlyNumeric + "$");
-            if (!onlyNumericRegex.test(numeric)) {
-                this._errors.push("`" + this.table.columnName + "`: " + numeric + " is not a number!");
-            }
-            size = numeric;
-        }
-        var database = this._dataBase[dataType.toUpperCase()];
-        if (typeof database !== 'undefined' && dataType !== '') {
-            inputType = database;
-        }
-        else {
-            this._errors.push("Check the manual for the right syntax to use near '" + this.table.columnName + "'");
-        }
-        this.table.type = dataType;
-        this.html.tag = inputType;
-        this.table.size = size;
-    };
-    CreateTableToJsonService.prototype.validateSyntax = function (words) {
-        var value = '';
-        var allowed = {
-            'not': {
-                next: ['null'],
-                previous: [],
-                correct: 'not null'
-            },
-            'null': {
-                next: [],
-                previous: [],
-                correct: 'null'
-            },
-            'primary': {
-                next: ['key'],
-                previous: [],
-                correct: 'primary key'
-            },
-            'key': {
-                next: [],
-                previous: ['primary'],
-                correct: 'primary key'
-            },
-            'unique': {
-                next: [],
-                previous: [],
-                correct: 'unique'
-            },
-        };
-        //'not null|null'
-        for (var i = this._wordIndex; i < words.length; i++) {
-            var currentWord = words[i].replace(/,/g, "");
-            var hasError = false;
-            var nextValue = '';
-            var prevValue = '';
-            if (typeof allowed[currentWord] === 'undefined') {
-                this._errors.push("Check the manual for the right syntax to use near '" + this.table.columnName + "'");
-            }
-            else {
-                var index = i + 1;
-                if (i === words.length - 1) {
-                    index = words.length - 1;
-                }
-                var nextString = words[index];
-                var prevString = words[i - 1];
-                if (allowed[currentWord].next.length > 0) {
-                    if (nextString.indexOf(allowed[currentWord].next[0]) !== -1) {
-                    }
-                    else {
-                        nextValue = allowed[currentWord].next[0];
-                        hasError = true;
-                    }
-                }
-                if (allowed[currentWord].previous.length > 0) {
-                    if (prevString.indexOf(allowed[currentWord].previous[0]) !== -1) {
-                    }
-                    else {
-                        prevValue = allowed[currentWord].previous[0];
-                        hasError = true;
-                    }
-                }
-                value += prevValue + " " + currentWord + " " + nextValue;
-                if (hasError && value !== '') {
-                    this._errors.push("error: `" + currentWord + "` maybe `" + allowed[currentWord].correct + "` ? at line: " + this.table.columnName);
-                }
-            }
-        }
-        value = value.replace(/\s\s+/g, ' ').trim();
-        this.table.nullable = (value.indexOf("not null") !== -1) ? true : false;
-        this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
-        this._wordIndex = 2;
-    };
-    CreateTableToJsonService.prototype.convert = function () {
-        var _this = this;
-        var regex = new RegExp(this.regex.createTableSyntax);
+    CreateTableToJsonService.prototype.parse = function () {
         this._string = this._string.replace(/\s+/g, " ").toLowerCase();
-        console.log(this._string);
-        if (!regex.test(this._string)) {
-            this._errors.push("Only allowed dot (.|,|A-Z|a-z|white space|underscore|( )", "You have an error in your SQL syntax:");
-        }
-        var createTable = (new RegExp(this.regex.createTable + "([^\\(]*(\\(.*\\))[^\\)])")).exec(this._string);
-        var defineColumns = [];
-        if (createTable) {
-            this.tableName = createTable[1];
-            defineColumns = createTable[3].replace(/^\((.+)\)$/, '$1')
-                .replace(new RegExp(this.regex.valueBtwParentheses, "g"), function (string, first) {
-                var regex = new RegExp(_this.regex.onlyNumeric, 'g');
-                if (regex.test(first)) {
-                    return "(" + first.replace(/,/g, '.') + ")";
+        var parser = new nearley.Parser((bracketexpr_grammar)).feed(this._string);
+        this._rawData = parser.results[0];
+        this.convertData();
+    };
+    CreateTableToJsonService.prototype.convertData = function () {
+        var _this = this;
+        var hue = [];
+        var rawData = this._rawData
+            .filter(function (item) { return (item instanceof Array || item instanceof Object); });
+        this._table_name = rawData[0].table_name;
+        rawData[1].forEach(function (column) {
+            var columnName = column[0].name;
+            column.forEach(function (item) {
+                if (item instanceof Object) {
+                    var data_type = item.data_type;
+                    _this._data.push({
+                        html: {
+                            tag: data_type.tag,
+                            label: _this.customLabelName(columnName)
+                        },
+                        table: {
+                            columnName: columnName,
+                            type: data_type.type,
+                            size: data_type.size
+                        }
+                    });
                 }
-                return string;
-            })
-                .split(",")
-                .reduce(function (previous, currentValue) {
-                if (previous && currentValue !== '') {
-                    previous.push(currentValue.replace(/\s+/g, " ")
-                        .trim()
-                        .toLowerCase());
-                }
-                return previous;
-            }, []);
-        }
-        var i = 0;
-        while (i < defineColumns.length /* && this._errors.length <= 0*/) {
-            var currentDefineColumn = defineColumns[i];
-            var eachWords = currentDefineColumn.split(' '); //break the define columns into words
-            if (eachWords.length <= 1) {
-                //this._errors.push(`Incompleted`);
-            }
-            else {
-                this.table.columnName = eachWords[0]; // column name
-                //the firstMatch  (stringArr[0]) will be always the column name
-                //the secondMatch (stringArr[1]) will be always the column data type
-                this.getDataTypeAndSize(eachWords);
-                this.validateSyntax(eachWords);
-                this.customInput();
-                this.customLabelName();
-                this._data.push({
-                    html: {
-                        category: 'form',
-                        tag: this.html.tag,
-                        label: this.html.label
-                    },
-                    table: {
-                        isPrimaryKey: this.table.isPrimaryKey,
-                        columnName: this.table.columnName,
-                        type: this.table.type,
-                        nullable: this.table.nullable,
-                        size: this.table.size
-                    }
-                });
-            }
-            i++;
-        }
-        //console.log(this._data)
+            });
+        });
+        console.log(this._data);
     };
-    CreateTableToJsonService.prototype.customLabelName = function () {
-        var splitColumnName = this.table.columnName.split('_');
-        if (splitColumnName.length > 0) {
-            for (var i = 0; i < splitColumnName.length; i++) {
-                var currentPartialName = splitColumnName[i];
-                var value = this._customLabel[currentPartialName];
-                if (typeof value !== 'undefined')
-                    currentPartialName = value;
-                splitColumnName[i] = currentPartialName.charAt(0).toUpperCase() + currentPartialName.substr(1);
-            }
-            this.html.label = splitColumnName.join(' ').trim();
-            ;
-        }
+    CreateTableToJsonService.prototype.customLabelName = function (columnName) {
+        var _this = this;
+        return columnName
+            .split('_')
+            .map(function (partialName) {
+            var value = _this._customLabel[partialName];
+            if (typeof value !== 'undefined')
+                partialName = value;
+            return partialName.charAt(0).toUpperCase() + partialName.substr(1);
+        })
+            .join(' ')
+            .trim();
     };
-    CreateTableToJsonService.prototype.customInput = function () {
-        if (this.table.columnName.indexOf('ind_') !== -1)
-            this.html.tag = 'select';
-        if (this.html.tag === 'text' || this.html.tag === 'textarea') {
-            //this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
-            this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals) ? 'text' : 'textarea';
-        }
+    CreateTableToJsonService.prototype.hasError = function () {
+        return this._errors.length > 0 ? true : false;
     };
-    CreateTableToJsonService.prototype.getTableName = function () {
-        return this.tableName;
+    CreateTableToJsonService.prototype.getError = function () {
+        return this._errors;
+    };
+    CreateTableToJsonService.prototype.setString = function (string) {
+        this._string = string;
     };
     CreateTableToJsonService.prototype.getData = function () {
         return this._data;
     };
-    CreateTableToJsonService.prototype.setString = function (_string) {
-        this._string = _string;
-    };
-    CreateTableToJsonService.prototype.getString = function () {
-        return this._string;
-    };
-    CreateTableToJsonService.prototype.getError = function () {
-        var _this = this;
-        return this._errors.filter(function (item, pos) {
-            return _this._errors.indexOf(item) == pos;
-        });
+    CreateTableToJsonService.prototype.getRawData = function () {
+        this._rawData;
     };
     CreateTableToJsonService.prototype.getCustomLabelName = function () {
         return {
@@ -292,12 +106,11 @@ var CreateTableToJsonService = /** @class */ (function () {
             'nivel': 'Nível'
         };
     };
-    CreateTableToJsonService.prototype.hasError = function () {
-        return this._errors.length > 0 ? true : false;
-    };
     CreateTableToJsonService = __decorate([
-        Injectable(),
-        __metadata("design:paramtypes", [String])
+        Injectable({
+            providedIn: 'root'
+        }),
+        __metadata("design:paramtypes", [])
     ], CreateTableToJsonService);
     return CreateTableToJsonService;
 }());

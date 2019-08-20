@@ -29,13 +29,16 @@ var CreateTableToJsonComponent = /** @class */ (function () {
         this.setDatabaseEngineLogo(this.options.database);
         this.string = [
             'create table if not exists random_table_1 (',
-            'supplier_id number(10) not null primary key,',
+            //'supplier_id number(10) not null primary key,',
+            //'`cod_user` number(10) default (1) not null',
+            '`cod_user` number(10) not null,',
+            '`favorite_fruit` varchar2(10) default 10 not null,',
             'supplier_name varchar2(50) not null,',
             'address varchar2(50),',
             'city varchar2(50),',
             'state varchar2(25),',
             'dat_now date,',
-            'zip_code number(10),price number(10,2)',
+            'zip_code number(10),price number(10.2)',
             ');'
         ].join("\n");
     };
@@ -51,17 +54,18 @@ var CreateTableToJsonComponent = /** @class */ (function () {
         }
     };
     CreateTableToJsonComponent.prototype.createTable = function () {
-        var ct = new CreateTableToJsonService(this.options.database.toUpperCase());
+        var ct = new CreateTableToJsonService();
         ct.setString(this.string);
-        ct.convert();
-        this.errors = ct.getError();
+        ct.parse();
+        //this.errors = ct.getError();
         console.log(ct.hasError());
         if (!ct.hasError()) {
             var data = ct.getData();
+            console.log(data);
             var bootstrapGridSystem = new BootstrapGridSystemService(data, this.gridModel + "\n");
             bootstrapGridSystem.convert();
             var pages = bootstrapGridSystem.getPage();
-            this.tableNameChange.emit(ct.getTableName());
+            //this.tableNameChange.emit(ct.getTableName());
             this.pageChange.emit(pages);
         }
     };

@@ -131,7 +131,7 @@ var Bootstrap = /** @class */ (function () {
                 tabNum++;
                 t = _this.tabSpace(tabNum);
                 row.columns.forEach(function (column, j) {
-                    //htmlPages.push(`${t}<div class="col-md-${grid[j]}">`);
+                    htmlPages.push(t + "<div class=\"col-md-" + grid[j] + "\">");
                     column.contents.forEach(function (content) {
                         if (content.html.category === 'form') {
                             _this.inputs.push(content);
@@ -140,7 +140,7 @@ var Bootstrap = /** @class */ (function () {
                         _this.renderHtmlService.setParams(content);
                         htmlPages.push(t + _this.renderHtmlService.get().code);
                     });
-                    //htmlPages.push(`${t}</div>`);
+                    htmlPages.push(t + "</div>");
                 });
                 tabNum--;
                 t = _this.tabSpace(tabNum);
