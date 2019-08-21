@@ -3,10 +3,32 @@ import * as nearley from 'nearley';
 import * as bracketexpr_grammar from './../_parser/create-table-oracle-to-json';
 import { Content, Html, Table } from "./../_core/model";
 
+declare global {
+	interface String {
+		replaceAllDecimalCommaToDecimalDot(): string;
+	}
+}
+
+String.prototype.replaceAllDecimalCommaToDecimalDot = function(){
+	let regex = {
+		valueBtwParentheses: `\\(([^)]*)\\)`,
+		onlyNumeric: `(([0-9]+(\\,[0-9]+)?)(\\.[0-9]+)?)`
+	};
+
+	return this.replace(/^\((.+)\)$/, '$1')
+	.replace(new RegExp(regex.valueBtwParentheses, "g"), (currentString, first) => {
+		let r = new RegExp(regex.onlyNumeric, 'g');
+		if(r.test(first)){
+			return "(" +  first.replace(/,/g, '.') + ")";
+		}
+		return currentString;
+	});
+}
+
 @Injectable({
 	providedIn: 'root'
 })
-export class CreateTableToJsonService {
+export class CreateTableToJsonService{
 	_string: string;
 	_errors: Array<string> = [];
 	_data: Array<any> = [];
@@ -23,17 +45,17 @@ export class CreateTableToJsonService {
 	html: Html;
 	table: Table;
 	category: string = 'form';
-
+ 
 	constructor() {
 		this._customLabel = this.getCustomLabelName();
 		this._data = [];
 	}
-	
+
 	parse(): void{
 		this._string = this._string.replace(/\s+/g, " ").toLowerCase();
 		const parser = new nearley.Parser((bracketexpr_grammar));
 		try {
-			parser.feed(this._string);
+			parser.feed(this._string.replaceAllDecimalCommaToDecimalDot());
 			this._rawData = parser.results[0];
 			this.convertData();
 		} catch(error){
