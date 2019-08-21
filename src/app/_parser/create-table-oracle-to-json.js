@@ -105,14 +105,23 @@ var grammar = {
     {"name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {return null;}},
     {"name": "wschar", "symbols": [/[ \t\n\v\f]/], "postprocess": id},
     {"name": "CREATE_TABLE$subexpression$1$ebnf$1", "symbols": []},
-    {"name": "CREATE_TABLE$subexpression$1$ebnf$1$subexpression$1", "symbols": ["create_definition", "_", "comma", "_"]},
+    {"name": "CREATE_TABLE$subexpression$1$ebnf$1$subexpression$1", "symbols": ["create_definition", "_", "comma", "_"], "postprocess": id},
     {"name": "CREATE_TABLE$subexpression$1$ebnf$1", "symbols": ["CREATE_TABLE$subexpression$1$ebnf$1", "CREATE_TABLE$subexpression$1$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "CREATE_TABLE$subexpression$1", "symbols": ["create_table_statement", {"literal":"("}, "_", "CREATE_TABLE$subexpression$1$ebnf$1", "create_definition", "_", {"literal":")"}, "_", {"literal":";"}, "_"]},
-    {"name": "CREATE_TABLE", "symbols": ["CREATE_TABLE$subexpression$1"], "postprocess":  
+    {"name": "CREATE_TABLE$subexpression$1", "symbols": ["create_table_statement", {"literal":"("}, "_", "CREATE_TABLE$subexpression$1$ebnf$1", "create_definition", "_", {"literal":")"}, "_", {"literal":";"}, "_"], "postprocess":  
         (d) => { 
-        	return removeNull(d[0]); 
+        	let create_definition = [];
+        	if(d[3].length > 0){
+        		create_definition = d[3];		
+        	}
+        	create_definition.push(d[4]);
+        
+        	return {
+        		create_table_statement: d[0],
+        		create_definition: create_definition,
+        	}
         } 
         },
+    {"name": "CREATE_TABLE", "symbols": ["CREATE_TABLE$subexpression$1"], "postprocess": id},
     {"name": "create_table_statement$subexpression$1", "symbols": [/[cC]/, /[rR]/, /[eE]/, /[aA]/, /[tT]/, /[eE]/], "postprocess": function (d) {return d.join(""); }},
     {"name": "create_table_statement$subexpression$2", "symbols": [/[tT]/, /[aA]/, /[bB]/, /[lL]/, /[eE]/], "postprocess": function (d) {return d.join(""); }},
     {"name": "create_table_statement$ebnf$1$subexpression$1", "symbols": ["__", "OR_REPLACE"]},

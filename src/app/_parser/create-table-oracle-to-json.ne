@@ -14,15 +14,26 @@ CREATE_TABLE -> (
 	create_table_statement
     "(" 
     	_
-			(create_definition _ comma _):* 
+			(
+				create_definition _ comma _ {% id %}
+			):* 
 			create_definition 
         _
-	")" _ ";" _
-){% 
+	")" _ ";" _{% 
 	(d) => { 
-		return removeNull(d[0]); 
+		let create_definition = [];
+		if(d[3].length > 0){
+			create_definition = d[3];		
+		}
+		create_definition.push(d[4]);
+
+		return {
+			create_table_statement: d[0],
+			create_definition: create_definition,
+		}
 	} 
 %}
+) {% id %}
 
 create_table_statement -> _ "CREATE"i __ "TABLE"i (__ OR_REPLACE):? (__ TEMPORARY):? (__ IF_NOT_EXISTS):? __ table_name _ {%
 	(d) => {
