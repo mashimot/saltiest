@@ -81,7 +81,7 @@ export class Laravel {
             attributes = [],
             request = [];        
         
-            if(this.inputs.length > 0){
+        if(this.inputs.length > 0){
             this.inputs.forEach(curr => {
                 this.setParams(curr);
 
