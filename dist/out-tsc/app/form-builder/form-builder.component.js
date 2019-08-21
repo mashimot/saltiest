@@ -17,18 +17,18 @@ import { PageService } from '../shared/services/page.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../shared/services/project.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-var Validator = /** @class */ (function () {
-    function Validator() {
+var Laravel = /** @class */ (function () {
+    function Laravel() {
         this.inputs = [];
     }
-    Validator.prototype.setParams = function (d) {
+    Laravel.prototype.setParams = function (d) {
         this.html = new Html(d.html);
         this.table = new Table(d.table);
     };
-    Validator.prototype.setInputs = function (inputs) {
+    Laravel.prototype.setInputs = function (inputs) {
         this.inputs = inputs;
     };
-    Validator.prototype.getValidator = function () {
+    Laravel.prototype.getValidator = function () {
         var rules = [];
         rules.push(this.isRequired(), this.getDataType(), this.getMaxlength());
         var rules = rules.filter(function (el) {
@@ -37,17 +37,38 @@ var Validator = /** @class */ (function () {
         this.rules = "\t'" + this.table.columnName + "' => " + JSON.stringify(rules) + ",\n";
         this.attributes = "\t'" + this.table.columnName + "' => '" + this.html.label + "',\n";
     };
-    Validator.prototype.getDataType = function () {
-        switch (this.table.type) {
-            case 'number':
-                return 'numeric';
-            case 'date':
-                return 'date_format:"d/m/Y"';
-            default:
-                return null;
+    Laravel.prototype.getDataType = function () {
+        var basic = {
+            number: ['numeric'],
+            date: ['date_format:"d/m/Y"'],
+            text: ['string'],
+            textarea: ['string']
+        };
+        console.log(this.table.type);
+        if (typeof basic[this.table.type] != 'undefined') {
+            if (typeof this.table.size != 'undefined') {
+                basic[this.table.type].push(this.joeys());
+            }
+            console.log(basic[this.table.type]);
+            return basic[this.table.type];
         }
+        return null;
     };
-    Validator.prototype.getMaxlength = function () {
+    Laravel.prototype.joeys = function () {
+        if (this.table.size.indexOf('.') !== -1) {
+            var sizeArr = this.table.size.split('.');
+            var b = '.';
+            var position = parseInt(sizeArr[0]) - parseInt(sizeArr[1]);
+            var endBetween = '';
+            for (var i = 0; i < parseInt(this.table.size); i++) {
+                endBetween += '9';
+            }
+            var output = [endBetween.slice(0, position), b, endBetween.slice(position)].join('');
+            return "between:0," + output; //decimal
+        }
+        return "digits_between:1," + this.table.size; //integer
+    };
+    Laravel.prototype.getMaxlength = function () {
         if (parseInt(this.table.size) > 0) {
             if (this.table.type == 'number') {
                 if (this.table.size.indexOf('.') !== -1) {
@@ -59,25 +80,24 @@ var Validator = /** @class */ (function () {
                         endBetween += '9';
                     }
                     var output = [endBetween.slice(0, position), b, endBetween.slice(position)].join('');
-                    return "between:0," + output;
+                    return "between:0," + output; //decimal
                 }
-                return "digits_between:1," + this.table.size;
+                return "digits_between:1," + this.table.size; //
             }
             return 'max:' + this.table.size;
         }
         return null;
     };
-    Validator.prototype.laravel = function () {
+    Laravel.prototype.validator = function () {
         var _this = this;
         var attr = '';
         var rules = '';
         var request = '';
-        var update = '';
         var fillable = [];
         var primaryKey = [];
         var hue = this.inputs.reduce(function (prev, curr) {
             _this.setParams(curr);
-            _this.getValidator();
+            _this.getDataType();
             if (curr.table.isPrimaryKey) {
                 primaryKey.push("\"" + curr.table.columnName + "\"");
             }
@@ -93,23 +113,24 @@ var Validator = /** @class */ (function () {
                 table: ''
             };
         }, {});
+        console.log(hue);
         return hue;
     };
-    Validator.prototype.isRequired = function () {
+    Laravel.prototype.isRequired = function () {
         return this.table.nullable ? 'required' : 'nullable';
     };
-    Validator.prototype.getMessages = function () {
+    Laravel.prototype.getMessages = function () {
         return this.messages;
     };
-    Validator = __decorate([
+    Laravel = __decorate([
         Injectable({
             providedIn: 'root'
         }),
         __metadata("design:paramtypes", [])
-    ], Validator);
-    return Validator;
+    ], Laravel);
+    return Laravel;
 }());
-export { Validator };
+export { Laravel };
 var Bootstrap = /** @class */ (function () {
     function Bootstrap(renderHtmlService) {
         this.renderHtmlService = renderHtmlService;
@@ -202,10 +223,10 @@ var Bootstrap = /** @class */ (function () {
 }());
 export { Bootstrap };
 var FormBuilderComponent = /** @class */ (function () {
-    function FormBuilderComponent(formConfigService, bootstrap, validator, projectService, homeService, pageService, route, ngxLoader) {
+    function FormBuilderComponent(formConfigService, bootstrap, laravel, projectService, homeService, pageService, route, ngxLoader) {
         this.formConfigService = formConfigService;
         this.bootstrap = bootstrap;
-        this.validator = validator;
+        this.laravel = laravel;
         this.projectService = projectService;
         this.homeService = homeService;
         this.pageService = pageService;
@@ -280,13 +301,13 @@ var FormBuilderComponent = /** @class */ (function () {
         if (this.mvcList[tabNumber].isOpen) {
             this.bootstrap.setPages(this.pages);
             this.bootstrap.init();
-            this.validator.setInputs(this.bootstrap.getInputs());
+            this.laravel.setInputs(this.bootstrap.getInputs());
         }
         return this.mvcList[tabNumber].isOpen;
     };
-    Object.defineProperty(FormBuilderComponent.prototype, "laravel", {
+    Object.defineProperty(FormBuilderComponent.prototype, "validator", {
         get: function () {
-            return this.validator.laravel();
+            return this.laravel.validator();
         },
         enumerable: true,
         configurable: true
@@ -329,7 +350,7 @@ var FormBuilderComponent = /** @class */ (function () {
         }),
         __metadata("design:paramtypes", [FormConfigService,
             Bootstrap,
-            Validator,
+            Laravel,
             ProjectService,
             HomeService,
             PageService,

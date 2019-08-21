@@ -77,11 +77,11 @@
             <textarea class="form-control" rows="40" >
             class {{ tableName | snakeCaseToCamelCase }} extends ModelAuditable {
                 protected $table      = '{{ tableName }}';
-                protected $primaryKey = {{ laravel.primaryKey? (laravel.primaryKey.length > 1? "[" +  laravel.primaryKey + "]": laravel.primaryKey[0]) : [] }};
+                protected $primaryKey = {{ model.primaryKey? (model.primaryKey.length > 1? "[" +  model.primaryKey + "]": model.primaryKey[0]) : [] }};
                 public $incrementing  = true; 
-                public $sequence      = 'sga_{{ laravel.primaryKey? removeDoubleQuotes(laravel.primaryKey[0]) : '' }}_seq';  
+                public $sequence      = 'sga_{{ model.primaryKey? removeDoubleQuotes(model.primaryKey[0]) : '' }}_seq';  
                 
-                protected $fillable = {{ laravel.fillable }};
+                protected $fillable = {{ model.fillable }};
             }
             </textarea>            
         </div>
@@ -101,7 +101,7 @@
                 @endsection
 
                 @section('pagina_conteudo')    
-                    {{ bootstrap.table() }}
+                    {{ view.table }}
 
                     <!-- MODAL CRUD -->
                     {!! $HTML::modalOpen('mudar_aqui', 'Adicionar') !!}
@@ -116,7 +116,7 @@
                 @endsection
 
                 @section('script')    
-                    {{ bootstrap.script() }}
+                    {{ view.script }}
                 @endsection
             </textarea>
         </div>
@@ -164,7 +164,7 @@
                 public function store(Request $request)
                 {
                     //
-                    $r = {{ tableName | snakeCaseToCamelCase }}::create({{ laravel.request }});
+                    $r = {{ tableName | snakeCaseToCamelCase }}::create({{ controller.request }});
 
 
                     return redirect('/path_mudar_aqui')->with('success', 'Stock has been added');
@@ -211,7 +211,7 @@
                     
 
                     $r = {{ tableName | snakeCaseToCamelCase }}::find($id)
-                    $r->update({{ laravel.request }});
+                    $r->update({{ controller.request }});
                 }
             
                 /**
@@ -244,9 +244,8 @@
                 }
             
                 public function rules(){
-                    $rules = [
-                        {{ laravel.rules }}
-                    ];
+                    $rules = {{ validator.rules }};
+                   
                     return $rules;
                 }
             
@@ -257,7 +256,7 @@
                 */
                 public function attributes(){
                     $attributes = [
-                        {{ laravel.attributes }}
+                        {{ validator.attributes }}
                     ];
                     return $attributes;
                 }

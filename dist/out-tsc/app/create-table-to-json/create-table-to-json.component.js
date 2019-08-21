@@ -29,8 +29,7 @@ var CreateTableToJsonComponent = /** @class */ (function () {
         this.setDatabaseEngineLogo(this.options.database);
         this.string = [
             'create table if not exists random_table_1 (',
-            //'supplier_id number(10) not null primary key,',
-            //'`cod_user` number(10) default (1) not null',
+            'supplier_id number(10) not null primary key,',
             '`cod_user` number(10) not null,',
             '`favorite_fruit` varchar2(10) default 10 not null,',
             'supplier_name varchar2(50) not null,',
@@ -57,7 +56,7 @@ var CreateTableToJsonComponent = /** @class */ (function () {
         var ct = new CreateTableToJsonService();
         ct.setString(this.string);
         ct.parse();
-        //this.errors = ct.getError();
+        this.errors = ct.getError();
         console.log(ct.hasError());
         if (!ct.hasError()) {
             var data = ct.getData();
@@ -65,7 +64,7 @@ var CreateTableToJsonComponent = /** @class */ (function () {
             var bootstrapGridSystem = new BootstrapGridSystemService(data, this.gridModel + "\n");
             bootstrapGridSystem.convert();
             var pages = bootstrapGridSystem.getPage();
-            //this.tableNameChange.emit(ct.getTableName());
+            this.tableNameChange.emit(ct.getTableName());
             this.pageChange.emit(pages);
         }
     };

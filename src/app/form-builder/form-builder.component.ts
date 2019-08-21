@@ -16,12 +16,12 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 @Injectable({
     providedIn: 'root'
 })
-export class Validator {
+export class Laravel {
     inputs: any[];
     rules: string;
     attributes: string;
     messages: string;
-    
+    tableName: string = '';
     html: IHtml;
     table: ITable;
 
@@ -38,101 +38,167 @@ export class Validator {
         this.inputs = inputs;
     }
 
-    getValidator() {
-        var rules = [];
-        rules.push(
-            this.isRequired(),
-            this.getDataType(),
-            this.getMaxlength()
-        );
-        var rules = rules.filter(function (el) {
-            return el != "" && el != null;
-        });
-        this.rules = `\t'${this.table.columnName}' => ${JSON.stringify(rules)},\n`;
-        this.attributes = `\t'${this.table.columnName}' => '${this.html.label}',\n`;        
-    }
-
-    getDataType(): string {
-        switch (this.table.type) {
-            case 'number':
-                return 'numeric';
-            case 'date':
-                return 'date_format:"d/m/Y"';
-            default:
-                return null;
+    getRules() {
+        var basic = {
+            number: ['nullable', 'numeric'],
+            date: ['nullable', 'date_format:"d/m/Y"'],
+            text: ['nullable', 'string'],
+            textarea: ['nullable', 'string']
         }
+        var tag = this.html.tag.toLowerCase();
+        if(typeof basic[tag] != 'undefined'){
+            basic[tag][0] = this.isRequired();
+            basic[tag].push(
+                this.size()
+            );
+            var newBasic = basic[tag].filter(el => {
+                return el != "" && el != null;
+            });
+            return [`"${this.table.columnName}" => ${JSON.stringify(newBasic)}`].join(",");
+        }
+        return [`${this.table.columnName} => ${JSON.stringify(basic[tag])}`].join(",");
     }
 
-    getMaxlength(): string {
-        if (parseInt(this.table.size) > 0) {             
-            if (this.table.type == 'number') {
-                if(this.table.size.indexOf('.') !== -1){
-                    var sizeArr = this.table.size.split('.');
-                    var b = '.';
-                    var position = parseInt(sizeArr[0]) - parseInt(sizeArr[1]);
-                    var endBetween = '';
-                    for(var i = 0; i < parseInt(this.table.size); i++){
-                        endBetween += '9';
-                    }
-                    var output = [endBetween.slice(0, position), b, endBetween.slice(position)].join('');
-
-        
-                    return `between:0,${output}`;
-                }  
-                return `digits_between:1,${this.table.size}`;
+    size(){
+        if(typeof this.table.size != 'undefined'){
+            if(this.table.size != null && this.table.size != ''){
+                var size = {
+                    number: `digits_between:1,${this.table.size}`,
+                    date: 'max:' + this.table.size,
+                    text: 'max:' + this.table.size,
+                    textarea: 'max:' + this.table.size,
+                }            
+                return size[this.table.type];
             }
-            return 'max:' + this.table.size;
         }
         return null;
     }
+    
+    blanka(){
+        let fillable = [], 
+            primaryKey = [],
+            rules = [],
+            attributes = [],
+            request = [];        
+        
+            if(this.inputs.length > 0){
+            this.inputs.forEach(curr => {
+                this.setParams(curr);
 
-    laravel() {
-        let attr = '';
-        let rules = '';
-        let request = '';
-        let update = '';
-        let fillable = [];
-        let primaryKey = [];
-
-        var hue = this.inputs.reduce(
-            (prev, curr) => {
-                this.setParams(curr)
-                this.getValidator();
-                
                 if(curr.table.isPrimaryKey){
                     primaryKey.push(`"${curr.table.columnName}"`);
                 }
-
                 fillable.push(curr.table.columnName);
-                request += `"${curr.table.columnName}" => $request->input('${curr.table.columnName}'),\n`;
-                return {
-                    rules: rules += this.rules,
-                    attributes: attr += this.attributes,
-                    fillable: JSON.stringify(fillable, null, "\t"),
-                    request: `[${request}]`,
-                    th: `<th>${curr.html.labelName}</th>`,
-                    primaryKey: primaryKey,
-                    table: ''
-                };
-            }
-        , {});
-        return hue;
-    }
+                request.push(`"${curr.table.columnName}" => $request->input('${curr.table.columnName}'),\n`);
+                attributes.push(`\t'${this.table.columnName}' => '${this.html.label}'`);
+                rules.push(this.getRules());
+            });
+        }
 
+        return {
+            model: {
+                fillable: JSON.stringify(fillable, null, "\t"),
+                primaryKey: primaryKey
+            },
+            view: {
+                table: this.htmlTable(),
+                script: this.htmlScript()
+            },
+            controller: {
+                request:  `[${request}]`
+            },
+            validator: {
+                rules: `[\n${rules.join(",\n")}\n]`,
+                attributes: attributes.join(",\n")
+            }
+        }        
+    }
+    
     isRequired(): string {
         return this.table.nullable ? 'required' : 'nullable';
+    }
+
+    setTableName(tableName: string){
+        this.tableName = tableName;
     }
 
     getMessages(): string {
         return this.messages;
     }
+
+    htmlTable(): string{
+        if(this.inputs.length > 0){
+            let th = this.inputs.map((item) => { 
+                return `\n<th>${item.html.label}</th>`;
+            }, '').join('');
+            return `
+            <table class="table table-striped" id="${this.tableName}">
+                <thead>
+                    <tr>
+                    ${th}
+                    <th class="td_justo no-sort text-right">
+                    {!! $HTML::iconeCriar(
+                        Auth::user()->can('admin.financeirodescontos.create'), 
+                        '#', 
+                        true, 
+                        route('admin.financeirodescontos.store'))
+                    !!}
+                    </th>                
+                    </tr>
+                </thead>
+            </table>
+            `;            
+        }
+        return '';
+    }
+
+    htmlScript(){
+        if(this.inputs.length > 0){
+            var script = this.inputs.map((item) => {
+                return { 
+                    data: item.table.columnName,
+                    name: item.table.columnName
+                };
+            }, []);
+
+            script.push({
+                'data': 'action',
+                'name': 'name'     
+            });
+
+            return `
+            <script>
+                /*---------------------Datatables--------------------------------*/
+                var table = $('#${this.tableName}').DataTable({
+                    stateSave: true,
+                    processing: true,
+                    serverSide: true,
+                    cache: true,
+                    ajax: "",
+                    columns: ${JSON.stringify(script, null, '\t')}
+                });        
+                /*---------------------/Datatables-------------------------------*/
+                /*---------------------CRUD IN MODAL-------------------------*/
+                modalCrudConstruct('modal_mudar_aqui','form_mudar_aqui');
+                /*---------------------/Create Edit Show-------------------------*/
+
+                /*---------------------Validation-----------------------------------*/
+                $(document).on('click', '#i_btn_salvar_modal_mudar_aqui',function(){
+                    validationForm('#form_mudar_aqui');
+                });
+                /*---------------------/Validation-------------------------*/            
+            </script>`;
+        }
+
+        return '';
+    }
+
 }
 
 @Injectable({
     providedIn: 'root'
 })
 export class Bootstrap {
-    tableName: string = "i_table_mudar_aqui";
     pages: Array<Page>;
     inputs: Array<Content>;
     code: string = '';
@@ -190,72 +256,6 @@ export class Bootstrap {
         return this.code;
     }
 
-    table(): string{
-        if(typeof this.inputs != 'undefined' && this.inputs.length > 0){
-            let th = this.inputs.map((item) => { 
-                return `\n<th>${item.html.label}</th>`;
-            }, '').join('');
-            return `
-            <table class="table table-striped" id="${this.tableName}">
-                <thead>
-                    <tr>
-                    ${th}
-                    <th class="td_justo no-sort text-right">
-                    {!! $HTML::iconeCriar(
-                        Auth::user()->can('admin.financeirodescontos.create'), 
-                        '#', 
-                        true, 
-                        route('admin.financeirodescontos.store'))
-                    !!}
-                    </th>                
-                    </tr>
-                </thead>
-            </table>
-            `;            
-        }
-        return '';
-    }
-
-    script(){
-        if(typeof this.inputs != 'undefined' && this.inputs.length > 0){
-            var script = this.inputs.map((item) => {
-                return { 
-                    data: item.table.columnName,
-                    name: item.table.columnName
-                };
-            }, []);
-
-            script.push({
-                'data': 'action',
-                'name': 'name'     
-            });
-
-            return `
-    <script>
-        /*---------------------Datatables--------------------------------*/
-        var table = $('#${this.tableName}').DataTable({
-            stateSave: true,
-            processing: true,
-            serverSide: true,
-            cache: true,
-            ajax: "",
-            columns: ${JSON.stringify(script, null, '\t')}
-        });        
-        /*---------------------/Datatables-------------------------------*/
-        /*---------------------CRUD IN MODAL-------------------------*/
-        modalCrudConstruct('modal_mudar_aqui','form_mudar_aqui');
-        /*---------------------/Create Edit Show-------------------------*/
-    
-        /*---------------------Validation-----------------------------------*/
-        $(document).on('click', '#i_btn_salvar_modal_mudar_aqui',function(){
-            validationForm('#form_mudar_aqui');
-        });
-        /*---------------------/Validation-------------------------*/            
-    </script>`;
-        }
-        return '';
-    }
-
     getInputs() {
         return this.inputs;
     }
@@ -293,7 +293,7 @@ export class FormBuilderComponent implements OnInit {
     constructor(
         private formConfigService: FormConfigService,
         private bootstrap: Bootstrap,
-        private validator: Validator,
+        private laravel: Laravel,
         private projectService: ProjectService,
         private homeService: HomeService,
         private pageService: PageService,
@@ -374,13 +374,26 @@ export class FormBuilderComponent implements OnInit {
         if(this.mvcList[tabNumber].isOpen){
             this.bootstrap.setPages(this.pages);
             this.bootstrap.init();
-            this.validator.setInputs(this.bootstrap.getInputs());
+            this.laravel.setInputs(this.bootstrap.getInputs());
+            this.laravel.setTableName(this.tableName);
         }
         return this.mvcList[tabNumber].isOpen;
     }
 
-    get laravel() {
-        return this.validator.laravel();
+    get validator() {
+        return this.laravel.blanka().validator;
+    }
+
+    get model(){
+        return this.laravel.blanka().model;
+    }
+
+    get view(){
+        return this.laravel.blanka().view;
+    }
+
+    get controller(){
+        return this.laravel.blanka().controller;
     }
 
     public removeDoubleQuotes(word: string){
@@ -416,4 +429,3 @@ export class FormBuilderComponent implements OnInit {
         //this.pages.push(pages);
     }
 }
-

@@ -10,44 +10,79 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Injectable } from '@angular/core';
 import * as nearley from 'nearley';
 import * as bracketexpr_grammar from './../_parser/create-table-oracle-to-json';
+String.prototype.replaceAllDecimalCommaToDecimalDot = function () {
+    var regex = {
+        valueBtwParentheses: "\\(([^)]*)\\)",
+        onlyNumeric: "(([0-9]+(\\,[0-9]+)?)(\\.[0-9]+)?)"
+    };
+    return this.replace(/^\((.+)\)$/, '$1')
+        .replace(new RegExp(regex.valueBtwParentheses, "g"), function (currentString, first) {
+        var r = new RegExp(regex.onlyNumeric, 'g');
+        if (r.test(first)) {
+            return "(" + first.replace(/,/g, '.') + ")";
+        }
+        return currentString;
+    });
+};
 var CreateTableToJsonService = /** @class */ (function () {
     function CreateTableToJsonService() {
         this._errors = [];
         this._data = [];
+        this.category = 'form';
         this._customLabel = this.getCustomLabelName();
+        this._data = [];
     }
     CreateTableToJsonService.prototype.parse = function () {
         this._string = this._string.replace(/\s+/g, " ").toLowerCase();
-        var parser = new nearley.Parser((bracketexpr_grammar)).feed(this._string);
-        this._rawData = parser.results[0];
-        this.convertData();
+        var parser = new nearley.Parser((bracketexpr_grammar));
+        try {
+            parser.feed(this._string.replaceAllDecimalCommaToDecimalDot());
+            this._rawData = parser.results[0];
+            this.convertData();
+        }
+        catch (error) {
+            this._errors.push(error);
+        }
     };
     CreateTableToJsonService.prototype.convertData = function () {
         var _this = this;
-        var hue = [];
-        var rawData = this._rawData
-            .filter(function (item) { return (item instanceof Array || item instanceof Object); });
-        this._table_name = rawData[0].table_name;
-        rawData[1].forEach(function (column) {
-            var columnName = column[0].name;
-            column.forEach(function (item) {
-                if (item instanceof Object) {
-                    var data_type = item.data_type;
-                    _this._data.push({
-                        html: {
-                            tag: data_type.tag,
-                            label: _this.customLabelName(columnName)
-                        },
-                        table: {
-                            columnName: columnName,
-                            type: data_type.type,
-                            size: data_type.size
-                        }
+        if (this._rawData instanceof Object && Object.keys(this._rawData).length > 0) {
+            var create_table_statement = this._rawData.create_table_statement;
+            var create_definition = this._rawData.create_definition;
+            this._table_name = create_table_statement.table_name;
+            create_definition.forEach(function (column) {
+                var columnName = column.name;
+                var data_type = column.data_type;
+                var column_definition = column.column_definition;
+                var is_primary_key = false;
+                var nullable = false;
+                if (column_definition instanceof Array && column_definition.length > 0) {
+                    column_definition.forEach(function (c) {
+                        if (typeof c.nullable != 'undefined')
+                            nullable = c.nullable;
+                        if (typeof c.is_primary_key != 'undefined')
+                            is_primary_key = c.is_primary_key;
                     });
                 }
+                _this._data.push({
+                    html: {
+                        category: _this.category,
+                        tag: data_type.tag,
+                        label: _this.customLabelName(columnName)
+                    },
+                    table: {
+                        isPrimaryKey: is_primary_key,
+                        columnName: columnName,
+                        type: data_type.type.toLowerCase(),
+                        size: data_type.size,
+                        nullable: nullable
+                    }
+                });
             });
-        });
-        console.log(this._data);
+        }
+        else {
+            //this._errors.push();
+        }
     };
     CreateTableToJsonService.prototype.customLabelName = function (columnName) {
         var _this = this;
@@ -75,7 +110,10 @@ var CreateTableToJsonService = /** @class */ (function () {
         return this._data;
     };
     CreateTableToJsonService.prototype.getRawData = function () {
-        this._rawData;
+        return this._rawData;
+    };
+    CreateTableToJsonService.prototype.getTableName = function () {
+        return this._table_name;
     };
     CreateTableToJsonService.prototype.getCustomLabelName = function () {
         return {
@@ -98,6 +136,7 @@ var CreateTableToJsonService = /** @class */ (function () {
             'docto': 'Documento',
             'doc': 'Documento',
             'val': 'Valor',
+            'valor': 'Valor',
             'sta': 'Status',
             'config': 'Configuração',
             'inicio': 'Ínicio',
