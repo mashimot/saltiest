@@ -98,7 +98,7 @@ export class CreateTableToJsonService {
 		return this._errors.length > 0? true: false;
 	}
 
-	getError(): Array<String>{
+	getError(): Array<string>{
 		return this._errors;
 	}
 
@@ -140,7 +140,8 @@ export class CreateTableToJsonService {
             'usuario': 'Usuário',
             'docto': 'Documento',
             'doc': 'Documento',
-            'val': 'Valor',
+			'val': 'Valor',
+			'valor': 'Valor',
             'sta': 'Status',
             'config': 'Configuração',
             'inicio': 'Ínicio',
