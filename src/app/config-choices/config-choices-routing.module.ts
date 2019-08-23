@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { ConfigChoicesComponent } from './config-choices.component';
 import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
 import { AuthGuard } from '../_core/guards/auth.guard';
-import { HomeComponent } from '../home/home.component';
 
 const routes: Routes = [
   {
