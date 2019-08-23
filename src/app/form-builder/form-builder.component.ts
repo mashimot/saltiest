@@ -61,14 +61,15 @@ export class Laravel {
 
     size(){
         if(typeof this.table.size != 'undefined'){
-            if(this.table.size != null && this.table.size != ''){
-                var size = {
-                    number: `digits_between:1,${this.table.size}`,
-                    date: 'max:' + this.table.size,
-                    text: 'max:' + this.table.size,
-                    textarea: 'max:' + this.table.size,
+            var size = this.table.size;
+            if(size != null && size != ''){
+                var list = {
+                    number: `digits_between:1,${size}`,
+                    date: 'max:' + size,
+                    text: 'max:' + size,
+                    textarea: 'max:' + size,
                 }            
-                return size[this.table.type];
+                return list[this.html.tag];
             }
         }
         return null;
@@ -89,7 +90,7 @@ export class Laravel {
                     primaryKey.push(`"${curr.table.columnName}"`);
                 }
                 fillable.push(curr.table.columnName);
-                request.push(`"${curr.table.columnName}" => $request->input('${curr.table.columnName}'),\n`);
+                request.push(`"${curr.table.columnName}" => $request->input('${curr.table.columnName}')`);
                 attributes.push(`\t'${this.table.columnName}' => '${this.html.label}'`);
                 rules.push(this.getRules());
             });
@@ -105,7 +106,7 @@ export class Laravel {
                 script: this.htmlScript()
             },
             controller: {
-                request:  `[${request}]`
+                request:  `[${request.join(",\n")}]`
             },
             validator: {
                 rules: `[\n${rules.join(",\n")}\n]`,
