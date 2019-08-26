@@ -11,7 +11,7 @@ import { Content } from '../../_core/model';
     styleUrls: ['./form-config.component.css']
 })
 export class FormConfigComponent implements OnInit {
-    @ViewChild('modal') modal: TemplateRef<any>;
+    @ViewChild('modal', { static: false }) modal: TemplateRef<any>;
     options: NgbModalOptions;
     configForm: FormGroup;
     //content: any;
