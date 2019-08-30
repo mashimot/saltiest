@@ -81,7 +81,7 @@ var FormConfigComponent = /** @class */ (function () {
         //this.activeModal.close();
     };
     __decorate([
-        ViewChild('modal'),
+        ViewChild('modal', { static: false }),
         __metadata("design:type", TemplateRef)
     ], FormConfigComponent.prototype, "modal", void 0);
     __decorate([

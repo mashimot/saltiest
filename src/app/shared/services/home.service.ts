@@ -11,7 +11,7 @@ export class HomeService {
     }
  
     public getHome(){
-      	return this.http.get(`${this.API_URL}/pages`);
+      	return this.http.get<any>(`${this.API_URL}/pages`);
 	}
 	
 	getHomeStatic() {

@@ -54,12 +54,18 @@ export class ConfigChoicesComponent implements OnInit {
         /*this.htmlElementService.getTools().subscribe(result => {
             if(result.success){
                 this.groups = result.data.groups;
-                console.log(this.groups);
+                console.log('teste',  this.groups);
             }
         });*/
     }
 
     ngOnInit() {
+        /*this.htmlElementService.getTools().subscribe(result => {
+            if(result.success){
+                this.groups = result.data.groups;
+                console.log('teste',  this.groups);
+            }
+        });*/
     }
 
     edit(index = null){

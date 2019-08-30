@@ -19,6 +19,7 @@ import { ProjectService } from '../shared/services/project.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 var Laravel = /** @class */ (function () {
     function Laravel() {
+        this.tableName = '';
         this.inputs = [];
     }
     Laravel.prototype.setParams = function (d) {
@@ -28,99 +29,105 @@ var Laravel = /** @class */ (function () {
     Laravel.prototype.setInputs = function (inputs) {
         this.inputs = inputs;
     };
-    Laravel.prototype.getValidator = function () {
-        var rules = [];
-        rules.push(this.isRequired(), this.getDataType(), this.getMaxlength());
-        var rules = rules.filter(function (el) {
-            return el != "" && el != null;
-        });
-        this.rules = "\t'" + this.table.columnName + "' => " + JSON.stringify(rules) + ",\n";
-        this.attributes = "\t'" + this.table.columnName + "' => '" + this.html.label + "',\n";
-    };
-    Laravel.prototype.getDataType = function () {
+    Laravel.prototype.getRules = function () {
         var basic = {
-            number: ['numeric'],
-            date: ['date_format:"d/m/Y"'],
-            text: ['string'],
-            textarea: ['string']
+            number: ['nullable', 'numeric'],
+            date: ['nullable', 'date_format:"d/m/Y"'],
+            text: ['nullable', 'string'],
+            textarea: ['nullable', 'string']
         };
-        console.log(this.table.type);
-        if (typeof basic[this.table.type] != 'undefined') {
-            if (typeof this.table.size != 'undefined') {
-                basic[this.table.type].push(this.joeys());
+        var tag = this.html.tag.toLowerCase();
+        if (typeof basic[tag] != 'undefined') {
+            basic[tag][0] = this.isRequired();
+            basic[tag].push(this.size());
+            var newBasic = basic[tag].filter(function (el) {
+                return el != "" && el != null;
+            });
+            return ["\"" + this.table.columnName + "\" => " + JSON.stringify(newBasic)].join(",");
+        }
+        return [this.table.columnName + " => " + JSON.stringify(basic[tag])].join(",");
+    };
+    Laravel.prototype.size = function () {
+        if (typeof this.table.size != 'undefined') {
+            var size = this.table.size;
+            if (size != null && size != '') {
+                var list = {
+                    number: "digits_between:1," + size,
+                    date: 'max:' + size,
+                    text: 'max:' + size,
+                    textarea: 'max:' + size,
+                };
+                return list[this.html.tag];
             }
-            console.log(basic[this.table.type]);
-            return basic[this.table.type];
         }
         return null;
     };
-    Laravel.prototype.joeys = function () {
-        if (this.table.size.indexOf('.') !== -1) {
-            var sizeArr = this.table.size.split('.');
-            var b = '.';
-            var position = parseInt(sizeArr[0]) - parseInt(sizeArr[1]);
-            var endBetween = '';
-            for (var i = 0; i < parseInt(this.table.size); i++) {
-                endBetween += '9';
-            }
-            var output = [endBetween.slice(0, position), b, endBetween.slice(position)].join('');
-            return "between:0," + output; //decimal
-        }
-        return "digits_between:1," + this.table.size; //integer
-    };
-    Laravel.prototype.getMaxlength = function () {
-        if (parseInt(this.table.size) > 0) {
-            if (this.table.type == 'number') {
-                if (this.table.size.indexOf('.') !== -1) {
-                    var sizeArr = this.table.size.split('.');
-                    var b = '.';
-                    var position = parseInt(sizeArr[0]) - parseInt(sizeArr[1]);
-                    var endBetween = '';
-                    for (var i = 0; i < parseInt(this.table.size); i++) {
-                        endBetween += '9';
-                    }
-                    var output = [endBetween.slice(0, position), b, endBetween.slice(position)].join('');
-                    return "between:0," + output; //decimal
-                }
-                return "digits_between:1," + this.table.size; //
-            }
-            return 'max:' + this.table.size;
-        }
-        return null;
-    };
-    Laravel.prototype.validator = function () {
+    Laravel.prototype.blanka = function () {
         var _this = this;
-        var attr = '';
-        var rules = '';
-        var request = '';
-        var fillable = [];
-        var primaryKey = [];
-        var hue = this.inputs.reduce(function (prev, curr) {
-            _this.setParams(curr);
-            _this.getDataType();
-            if (curr.table.isPrimaryKey) {
-                primaryKey.push("\"" + curr.table.columnName + "\"");
-            }
-            fillable.push(curr.table.columnName);
-            request += "\"" + curr.table.columnName + "\" => $request->input('" + curr.table.columnName + "'),\n";
-            return {
-                rules: rules += _this.rules,
-                attributes: attr += _this.attributes,
+        var fillable = [], primaryKey = [], rules = [], attributes = [], request = [];
+        if (this.inputs.length > 0) {
+            this.inputs.forEach(function (curr) {
+                _this.setParams(curr);
+                if (curr.table.isPrimaryKey) {
+                    primaryKey.push("\"" + curr.table.columnName + "\"");
+                }
+                fillable.push(curr.table.columnName);
+                request.push("\"" + curr.table.columnName + "\" => $request->input('" + curr.table.columnName + "')");
+                attributes.push("\t'" + _this.table.columnName + "' => '" + _this.html.label + "'");
+                rules.push(_this.getRules());
+            });
+        }
+        return {
+            model: {
                 fillable: JSON.stringify(fillable, null, "\t"),
-                request: "[" + request + "]",
-                th: "<th>" + curr.html.labelName + "</th>",
-                primaryKey: primaryKey,
-                table: ''
-            };
-        }, {});
-        console.log(hue);
-        return hue;
+                primaryKey: primaryKey
+            },
+            view: {
+                table: this.htmlTable(),
+                script: this.htmlScript()
+            },
+            controller: {
+                request: "[" + request.join(",\n") + "]"
+            },
+            validator: {
+                rules: "[\n" + rules.join(",\n") + "\n]",
+                attributes: attributes.join(",\n")
+            }
+        };
     };
     Laravel.prototype.isRequired = function () {
         return this.table.nullable ? 'required' : 'nullable';
     };
+    Laravel.prototype.setTableName = function (tableName) {
+        this.tableName = tableName;
+    };
     Laravel.prototype.getMessages = function () {
         return this.messages;
+    };
+    Laravel.prototype.htmlTable = function () {
+        if (this.inputs.length > 0) {
+            var th = this.inputs.map(function (item) {
+                return "\n<th>" + item.html.label + "</th>";
+            }, '').join('');
+            return "\n            <table class=\"table table-striped\" id=\"" + this.tableName + "\">\n                <thead>\n                    <tr>\n                    " + th + "\n                    <th class=\"td_justo no-sort text-right\">\n                    {!! $HTML::iconeCriar(\n                        Auth::user()->can('admin.financeirodescontos.create'), \n                        '#', \n                        true, \n                        route('admin.financeirodescontos.store'))\n                    !!}\n                    </th>                \n                    </tr>\n                </thead>\n            </table>\n            ";
+        }
+        return '';
+    };
+    Laravel.prototype.htmlScript = function () {
+        if (this.inputs.length > 0) {
+            var script = this.inputs.map(function (item) {
+                return {
+                    data: item.table.columnName,
+                    name: item.table.columnName
+                };
+            }, []);
+            script.push({
+                'data': 'action',
+                'name': 'name'
+            });
+            return "\n            <script>\n                /*---------------------Datatables--------------------------------*/\n                var table = $('#" + this.tableName + "').DataTable({\n                    stateSave: true,\n                    processing: true,\n                    serverSide: true,\n                    cache: true,\n                    ajax: \"\",\n                    columns: " + JSON.stringify(script, null, '\t') + "\n                });        \n                /*---------------------/Datatables-------------------------------*/\n                /*---------------------CRUD IN MODAL-------------------------*/\n                modalCrudConstruct('modal_mudar_aqui','form_mudar_aqui');\n                /*---------------------/Create Edit Show-------------------------*/\n\n                /*---------------------Validation-----------------------------------*/\n                $(document).on('click', '#i_btn_salvar_modal_mudar_aqui',function(){\n                    validationForm('#form_mudar_aqui');\n                });\n                /*---------------------/Validation-------------------------*/            \n            </script>";
+        }
+        return '';
     };
     Laravel = __decorate([
         Injectable({
@@ -134,7 +141,6 @@ export { Laravel };
 var Bootstrap = /** @class */ (function () {
     function Bootstrap(renderHtmlService) {
         this.renderHtmlService = renderHtmlService;
-        this.tableName = "i_table_mudar_aqui";
         this.code = '';
     }
     Bootstrap.prototype.init = function () {
@@ -182,31 +188,6 @@ var Bootstrap = /** @class */ (function () {
     Bootstrap.prototype.html = function () {
         return this.code;
     };
-    Bootstrap.prototype.table = function () {
-        if (typeof this.inputs != 'undefined' && this.inputs.length > 0) {
-            var th = this.inputs.map(function (item) {
-                return "\n<th>" + item.html.label + "</th>";
-            }, '').join('');
-            return "\n            <table class=\"table table-striped\" id=\"" + this.tableName + "\">\n                <thead>\n                    <tr>\n                    " + th + "\n                    <th class=\"td_justo no-sort text-right\">\n                    {!! $HTML::iconeCriar(\n                        Auth::user()->can('admin.financeirodescontos.create'), \n                        '#', \n                        true, \n                        route('admin.financeirodescontos.store'))\n                    !!}\n                    </th>                \n                    </tr>\n                </thead>\n            </table>\n            ";
-        }
-        return '';
-    };
-    Bootstrap.prototype.script = function () {
-        if (typeof this.inputs != 'undefined' && this.inputs.length > 0) {
-            var script = this.inputs.map(function (item) {
-                return {
-                    data: item.table.columnName,
-                    name: item.table.columnName
-                };
-            }, []);
-            script.push({
-                'data': 'action',
-                'name': 'name'
-            });
-            return "\n    <script>\n        /*---------------------Datatables--------------------------------*/\n        var table = $('#" + this.tableName + "').DataTable({\n            stateSave: true,\n            processing: true,\n            serverSide: true,\n            cache: true,\n            ajax: \"\",\n            columns: " + JSON.stringify(script, null, '\t') + "\n        });        \n        /*---------------------/Datatables-------------------------------*/\n        /*---------------------CRUD IN MODAL-------------------------*/\n        modalCrudConstruct('modal_mudar_aqui','form_mudar_aqui');\n        /*---------------------/Create Edit Show-------------------------*/\n    \n        /*---------------------Validation-----------------------------------*/\n        $(document).on('click', '#i_btn_salvar_modal_mudar_aqui',function(){\n            validationForm('#form_mudar_aqui');\n        });\n        /*---------------------/Validation-------------------------*/            \n    </script>";
-        }
-        return '';
-    };
     Bootstrap.prototype.getInputs = function () {
         return this.inputs;
     };
@@ -252,6 +233,9 @@ var FormBuilderComponent = /** @class */ (function () {
     FormBuilderComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.pages = [];
+        this.result = {
+            data: []
+        };
         //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
         //this.pages = this.homeService.getHomeStatic();
         this.route.params.subscribe(function (r) {
@@ -267,28 +251,61 @@ var FormBuilderComponent = /** @class */ (function () {
         this.loadFormBuilder();
     };
     FormBuilderComponent.prototype.loadFormBuilder = function () {
-        //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
         this.pages = this.homeService.getHomeStatic();
+        this.result = {
+            data: [
+                this.pages
+            ]
+        };
+        console.log(this.result.data[0]);
         /*this.pageService.getPageByProjectId(this.project_id)
-        .subscribe(result => {
-            if(result.success){
-                this.pages = result.data;
+        .subscribe(r => {
+            if(r.success){
+                this.pages = r.result.data[0];
+                this.result = r.result;
             }
             this.ngxLoader.stop();
         });*/
     };
+    FormBuilderComponent.prototype.pageNext = function () {
+        var _this = this;
+        this.pageService.getPageByUrl(this.result.next_page_url)
+            .subscribe(function (r) {
+            console.log(r);
+            if (r.success) {
+                console.log(r.current_page);
+                _this.pages = r.result.data[0];
+                _this.result = r.result;
+            }
+            _this.ngxLoader.stop();
+        });
+    };
+    FormBuilderComponent.prototype.pagePrevious = function () {
+        var _this = this;
+        this.pageService.getPageByUrl(this.result.prev_page_url)
+            .subscribe(function (r) {
+            console.log(r);
+            if (r.success) {
+                console.log(r.current_page);
+                _this.pages = r.result.data[0];
+                _this.result = r.result;
+            }
+            _this.ngxLoader.stop();
+        });
+    };
     FormBuilderComponent.prototype.ngAfterViewInit = function () {
     };
     FormBuilderComponent.prototype.save = function () {
-        /*this.pageService.createPage({
+        var _this = this;
+        this.pageService.createPage({
             project_id: this.project_id,
             pages: this.pages
         })
-        .subscribe(result => {
-            if(result.success){
-                this.loadFormBuilder();
+            .subscribe(function (result) {
+            if (result.success) {
+                _this.loadFormBuilder();
             }
-        });*/
+        });
     };
     FormBuilderComponent.prototype.preview = function () {
         //this.previewMode = !this.previewMode;
@@ -302,12 +319,34 @@ var FormBuilderComponent = /** @class */ (function () {
             this.bootstrap.setPages(this.pages);
             this.bootstrap.init();
             this.laravel.setInputs(this.bootstrap.getInputs());
+            this.laravel.setTableName(this.tableName);
         }
         return this.mvcList[tabNumber].isOpen;
     };
     Object.defineProperty(FormBuilderComponent.prototype, "validator", {
         get: function () {
-            return this.laravel.validator();
+            return this.laravel.blanka().validator;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FormBuilderComponent.prototype, "model", {
+        get: function () {
+            return this.laravel.blanka().model;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FormBuilderComponent.prototype, "view", {
+        get: function () {
+            return this.laravel.blanka().view;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FormBuilderComponent.prototype, "controller", {
+        get: function () {
+            return this.laravel.blanka().controller;
         },
         enumerable: true,
         configurable: true

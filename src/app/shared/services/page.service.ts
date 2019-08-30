@@ -20,8 +20,12 @@ export class PageService {
       	return this.http.get<RegisterResponse>(`${this.API_URL}`);
     }
     
+    getPageByUrl(url: string){
+        return this.http.get<any>(url);
+    }
+
     getPageByProjectId(projectId: number){
-        return this.http.get<RegisterResponse>(`${this.API_URL}/${projectId}/project`);
+        return this.http.get<any>(`${this.API_URL}/${projectId}/project`);
     }
 
     getPageById(id: number){

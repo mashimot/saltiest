@@ -272,6 +272,8 @@ export class FormPagesComponent implements OnInit {
         this.subs.add(dragulaService.dropModel("contents")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 item['table'] = {};
+                console.log('item ->', item);
+
                 if (item.table && item.html) {
                     const currRowId     = target.getAttribute('data-current-row-id');                
                     const currPageId    = target.getAttribute('data-current-page-id');
@@ -300,7 +302,6 @@ export class FormPagesComponent implements OnInit {
                         html: item.html,
                         table: item.table
                     }; 
-                    console.log(item);
                     if(typeof item.id != 'undefined'){
                         data['id'] = item.id;
                     } 

@@ -15,6 +15,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
 var ConfigChoicesComponent = /** @class */ (function () {
     function ConfigChoicesComponent(htmlElementService, dragulaService, router, modalService, cd) {
+        var _this = this;
         this.htmlElementService = htmlElementService;
         this.dragulaService = dragulaService;
         this.router = router;
@@ -40,13 +41,13 @@ var ConfigChoicesComponent = /** @class */ (function () {
             centered: true
         };
         this.toolType = this.toolTypes[1];
-        this.groups = this.htmlElementService.getStaticOptionChoices();
-        /*this.htmlElementService.getTools().subscribe(result => {
-            if(result.success){
-                this.groups = result.data.groups;
-                console.log(this.groups);
+        //this.groups = this.htmlElementService.getStaticOptionChoices();
+        this.htmlElementService.getTools().subscribe(function (result) {
+            if (result.success) {
+                _this.groups = result.data.groups;
+                console.log('teste', _this.groups);
             }
-        });*/
+        });
     }
     ConfigChoicesComponent.prototype.ngOnInit = function () {
     };

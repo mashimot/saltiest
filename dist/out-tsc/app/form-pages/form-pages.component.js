@@ -265,6 +265,7 @@ var FormPagesComponent = /** @class */ (function () {
             .subscribe(function (_a) {
             var name = _a.name, el = _a.el, target = _a.target, source = _a.source, item = _a.item, sourceModel = _a.sourceModel, targetModel = _a.targetModel, sourceIndex = _a.sourceIndex, targetIndex = _a.targetIndex;
             item['table'] = {};
+            console.log('item ->', item);
             if (item.table && item.html) {
                 var currRowId = target.getAttribute('data-current-row-id');
                 var currPageId = target.getAttribute('data-current-page-id');
@@ -290,7 +291,6 @@ var FormPagesComponent = /** @class */ (function () {
                     html: item.html,
                     table: item.table
                 };
-                console.log(item);
                 if (typeof item.id != 'undefined') {
                     data['id'] = item.id;
                 }

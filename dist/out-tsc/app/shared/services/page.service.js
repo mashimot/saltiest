@@ -22,6 +22,9 @@ var PageService = /** @class */ (function () {
     PageService.prototype.getPages = function () {
         return this.http.get("" + this.API_URL);
     };
+    PageService.prototype.getPageByUrl = function (url) {
+        return this.http.get(url);
+    };
     PageService.prototype.getPageByProjectId = function (projectId) {
         return this.http.get(this.API_URL + "/" + projectId + "/project");
     };
