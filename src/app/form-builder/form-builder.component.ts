@@ -321,7 +321,7 @@ export class FormBuilderComponent implements OnInit {
     ngOnInit() {
         this.pages = [];
         //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
-        //this.pages = this.homeService.getHomeStatic();
+        this.pages = this.homeService.getHomeStatic();
         this.route.params.subscribe(r => {
             this.project_id = r.projectId;
         });
@@ -337,7 +337,8 @@ export class FormBuilderComponent implements OnInit {
 
     loadFormBuilder(){
         //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
-        this.pages = this.homeService.getHomeStatic();
+        //this.pages = this.homeService.getHomeStatic();
+        //this.pages = [];
         /*this.pageService.getPageByProjectId(this.project_id)
         .subscribe(result => { 
             if(result.success){

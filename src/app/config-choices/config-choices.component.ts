@@ -4,7 +4,6 @@ import { DragulaService } from 'ng2-dragula';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
-import { IfStmt } from '@angular/compiler';
 
 @Component({
     selector: 'app-config-choices',
@@ -50,22 +49,17 @@ export class ConfigChoicesComponent implements OnInit {
         private cd: ChangeDetectorRef
     ) {
         this.toolType = this.toolTypes[1];
-        this.groups = this.htmlElementService.getStaticOptionChoices();
-        /*this.htmlElementService.getTools().subscribe(result => {
-            if(result.success){
-                this.groups = result.data.groups;
-                console.log('teste',  this.groups);
-            }
-        });*/
+        this.groups = [];
+        //this.groups = this.htmlElementService.getStaticOptionChoices();
     }
 
     ngOnInit() {
-        /*this.htmlElementService.getTools().subscribe(result => {
+        this.htmlElementService.getTools().subscribe(result => {
             if(result.success){
                 this.groups = result.data.groups;
                 console.log('teste',  this.groups);
             }
-        });*/
+        });
     }
 
     edit(index = null){
