@@ -364,6 +364,14 @@ export class FormBuilderComponent implements OnInit {
         });*/
     }
 
+    public pageNext(){
+
+    }
+
+    public pagePrevious(){
+
+    }
+    
     public preview(): void {
         //this.previewMode = !this.previewMode;
         this.config = {
