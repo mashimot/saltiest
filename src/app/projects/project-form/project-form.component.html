@@ -1,7 +1,7 @@
 <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
 	<div class="form-group">
 		<label for="project_name">Project Name</label>
-		<input type="text" id="project_name" formControlName="name" class="form-control"	[ngClass]="{ 'is-invalid': f.name.invalid }" >
+		<input type="text" id="project_name" formControlName="name" class="form-control" [ngClass]="{ 'is-invalid': f.name.invalid }" >
 	</div>
 	<div *ngIf="f.name.invalid || f.name.touched" class="invalid-feedback">
 		<div *ngIf="f.name.errors?.required">You did not enter a field</div>

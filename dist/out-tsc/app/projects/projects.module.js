@@ -10,6 +10,7 @@ import { ProjectsComponent } from './projects.component';
 import { ProjectsRoutingModule } from './projects-routing.module';
 import { ProjectFormComponent } from './project-form/project-form.component';
 import { SharedModule } from '../shared/shared.module';
+import { NgxPaginationModule } from 'ngx-pagination';
 var ProjectsModule = /** @class */ (function () {
     function ProjectsModule() {
     }
@@ -18,7 +19,8 @@ var ProjectsModule = /** @class */ (function () {
             imports: [
                 CommonModule,
                 ProjectsRoutingModule,
-                SharedModule
+                SharedModule,
+                NgxPaginationModule
             ],
             exports: [ProjectsComponent],
             declarations: [ProjectsComponent, ProjectFormComponent]

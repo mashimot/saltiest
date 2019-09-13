@@ -3,14 +3,14 @@
 		<div class="card">
 			<div class="card-body">
 				<p>
-					<b><span>username: test | password: test</span></b>
+					<b><span>email: test@test.com | password: 1</span></b>
 				</p>
-				<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+				<form [formGroup]="loginForm">
 					<div class="form-group">
-						<label for="username">Username</label>
-						<input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
-						<div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-							<div *ngIf="f.username.errors.required">Username is required</div>
+						<label for="email">email</label>
+						<input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+						<div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+							<div *ngIf="f.email.errors.required">email is required</div>
 						</div>
 					</div>
 					<div class="form-group">
@@ -22,7 +22,7 @@
 					</div>
 					<div class="form-group">
 						<div class="text-center">
-							<button class="btn btn-outline-primary">
+							<button type="button" (click)="onSubmit()" class="btn btn-outline-primary">
 								Login <i class="fas fa-sign-in-alt"></i>
 							</button>
 						</div>

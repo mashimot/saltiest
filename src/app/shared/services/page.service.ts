@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { RegisterResponse } from '../interface/register-response';
+import { RegisterResponse, Pageable } from '../interface/register-response';
 
 @Injectable({
     providedIn: 'root'
@@ -25,7 +25,7 @@ export class PageService {
     }
 
     getPageByProjectId(projectId: number){
-        return this.http.get<any>(`${this.API_URL}/${projectId}/project`);
+        return this.http.get<Pageable>(`${this.API_URL}/${projectId}/project`);
     }
 
     getPageById(id: number){

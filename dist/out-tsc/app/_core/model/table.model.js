@@ -1,8 +1,8 @@
 var Table = /** @class */ (function () {
     function Table(table) {
         if (table === void 0) { table = {}; }
-        this.columnName = '';
-        this.isPrimaryKey = false;
+        this.column_name = '';
+        this.is_primary_key = false;
         this.type = '';
         this.nullable = false;
         this.size = '';

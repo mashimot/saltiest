@@ -52,11 +52,11 @@ export class ConfigTableBuilderComponent implements OnInit {
 	
 	public newColumn(fieldIndex: number){
 		if(this.keyFields.length > 0){
-			let columnName = `column ${this.keyFields.length + 1}`;
+			let column_name = `column ${this.keyFields.length + 1}`;
 
-			this.keyFields.splice(fieldIndex + 1, 0, { text: columnName });
+			this.keyFields.splice(fieldIndex + 1, 0, { text: column_name });
 			for(let i = 0; i < this.fields.value.length; i++){
-				this.fields.value[i][columnName] = '';
+				this.fields.value[i][column_name] = '';
 			}
 			this.fields.updateValueAndValidity({ onlySelf: false, emitEvent: true });
 		}

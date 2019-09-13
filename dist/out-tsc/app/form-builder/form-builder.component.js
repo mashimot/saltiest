@@ -43,9 +43,9 @@ var Laravel = /** @class */ (function () {
             var newBasic = basic[tag].filter(function (el) {
                 return el != "" && el != null;
             });
-            return ["\"" + this.table.columnName + "\" => " + JSON.stringify(newBasic)].join(",");
+            return ["\"" + this.table.column_name + "\" => " + JSON.stringify(newBasic)].join(",");
         }
-        return [this.table.columnName + " => " + JSON.stringify(basic[tag])].join(",");
+        return [this.table.column_name + " => " + JSON.stringify(basic[tag])].join(",");
     };
     Laravel.prototype.size = function () {
         if (typeof this.table.size != 'undefined') {
@@ -68,12 +68,12 @@ var Laravel = /** @class */ (function () {
         if (this.inputs.length > 0) {
             this.inputs.forEach(function (curr) {
                 _this.setParams(curr);
-                if (curr.table.isPrimaryKey) {
-                    primaryKey.push("\"" + curr.table.columnName + "\"");
+                if (curr.table.is_primary_key) {
+                    primaryKey.push("\"" + curr.table.column_name + "\"");
                 }
-                fillable.push(curr.table.columnName);
-                request.push("\"" + curr.table.columnName + "\" => $request->input('" + curr.table.columnName + "')");
-                attributes.push("\t'" + _this.table.columnName + "' => '" + _this.html.label + "'");
+                fillable.push(curr.table.column_name);
+                request.push("\"" + curr.table.column_name + "\" => $request->input('" + curr.table.column_name + "')");
+                attributes.push("\t'" + _this.table.column_name + "' => '" + _this.html.label + "'");
                 rules.push(_this.getRules());
             });
         }
@@ -117,8 +117,8 @@ var Laravel = /** @class */ (function () {
         if (this.inputs.length > 0) {
             var script = this.inputs.map(function (item) {
                 return {
-                    data: item.table.columnName,
-                    name: item.table.columnName
+                    data: item.table.column_name,
+                    name: item.table.column_name
                 };
             }, []);
             script.push({
@@ -233,9 +233,6 @@ var FormBuilderComponent = /** @class */ (function () {
     FormBuilderComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.pages = [];
-        this.result = {
-            data: []
-        };
         //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
         //this.pages = this.homeService.getHomeStatic();
         this.route.params.subscribe(function (r) {
@@ -251,44 +248,14 @@ var FormBuilderComponent = /** @class */ (function () {
         this.loadFormBuilder();
     };
     FormBuilderComponent.prototype.loadFormBuilder = function () {
-        this.pages = this.homeService.getHomeStatic();
-        this.result = {
-            data: [
-                this.pages
-            ]
-        };
-        console.log(this.result.data[0]);
-        /*this.pageService.getPageByProjectId(this.project_id)
-        .subscribe(r => {
-            if(r.success){
-                this.pages = r.result.data[0];
-                this.result = r.result;
-            }
-            this.ngxLoader.stop();
-        });*/
-    };
-    FormBuilderComponent.prototype.pageNext = function () {
         var _this = this;
-        this.pageService.getPageByUrl(this.result.next_page_url)
-            .subscribe(function (r) {
-            console.log(r);
-            if (r.success) {
-                console.log(r.current_page);
-                _this.pages = r.result.data[0];
-                _this.result = r.result;
-            }
-            _this.ngxLoader.stop();
-        });
-    };
-    FormBuilderComponent.prototype.pagePrevious = function () {
-        var _this = this;
-        this.pageService.getPageByUrl(this.result.prev_page_url)
-            .subscribe(function (r) {
-            console.log(r);
-            if (r.success) {
-                console.log(r.current_page);
-                _this.pages = r.result.data[0];
-                _this.result = r.result;
+        //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
+        //this.pages = this.homeService.getHomeStatic();
+        this.pageService.getPageByProjectId(this.project_id)
+            .subscribe(function (result) {
+            console.log(result);
+            if (result.success) {
+                _this.pages = result.paginate.data;
             }
             _this.ngxLoader.stop();
         });
@@ -306,6 +273,10 @@ var FormBuilderComponent = /** @class */ (function () {
                 _this.loadFormBuilder();
             }
         });
+    };
+    FormBuilderComponent.prototype.pageNext = function () {
+    };
+    FormBuilderComponent.prototype.pagePrevious = function () {
     };
     FormBuilderComponent.prototype.preview = function () {
         //this.previewMode = !this.previewMode;
@@ -378,6 +349,7 @@ var FormBuilderComponent = /** @class */ (function () {
         }
     };
     FormBuilderComponent.prototype.getPages = function (pages) {
+        console.log(this.pages);
         this.pages = this.pages.concat([pages]);
         //this.pages.push(pages);
     };

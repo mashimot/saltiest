@@ -43,9 +43,9 @@
 				</div>
 			</fieldset>
 		</section>
-		<section id="tool-menu" class="pt-2">
+		<section id="tool-menu" class="pt-2" *ngIf="(tools$ | async) as tools">
 			<h3 class="text-center">Tools</h3>
-			<div *ngFor="let tool of tools | groupBy: 'html.category'; let toolCategoryIndex = index;">
+			<div *ngFor="let tool of tools | keyvalue; let toolCategoryIndex = index;">
 				<div class="border-bottom border-dark p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">
 					{{ tool.key }}
 				</div>
@@ -57,19 +57,20 @@
 					[ngClass]="{ }"
 					aria-expanded="true"
 					[attr.data-parent]="'#accordion'"
-					>
+				>
 					<div *ngFor="let t of tool.value"
 						[ngStyle]="{ 'cursor': 'move' }"
 						class="text-white content-handle menu-content-sortable col-md-6 "
 						[attr.data-content]="t | json"
 						>
+
 						<div class="p-1 mx-1 mt-1 border border-dark content-handle">
 							<span class="text-dark text-capitalize content-handle">{{ t.html.tag }}</span>
 						</div>
 					</div>
 				</div>
 			</div>
-			<app-config-choices></app-config-choices>
 		</section>
+		<app-config-choices></app-config-choices>
 	</div>
 </div>

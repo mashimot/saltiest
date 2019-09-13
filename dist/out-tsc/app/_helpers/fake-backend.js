@@ -8,46 +8,94 @@ import { Injectable } from '@angular/core';
 import { HttpResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
+// array in local storage for registered users
+var users = JSON.parse(localStorage.getItem('currentUser')) || [];
 var FakeBackendInterceptor = /** @class */ (function () {
     function FakeBackendInterceptor() {
     }
     FakeBackendInterceptor.prototype.intercept = function (request, next) {
-        var users = [
-            { id: 1, username: 'test', password: 'test', firstName: 'First Name', lastName: 'Last Name' }
-        ];
-        var authHeader = request.headers.get('Authorization');
-        var isLoggedIn = authHeader && authHeader.startsWith('Bearer fake-jwt-token');
+        var url = request.url, method = request.method, headers = request.headers, body = request.body;
         // wrap in delayed observable to simulate server api call
-        return of(null).pipe(mergeMap(function () {
-            // authenticate - public
-            if (request.url.endsWith('/auth/login') && request.method === 'POST') {
-                var user = users.find(function (x) { return x.username === request.body.username && x.password === request.body.password; });
-                if (!user)
-                    return error('Username or password is incorrect');
-                return ok({
-                    id: user.id,
-                    username: user.username,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    token: "fake-jwt-token"
-                });
-            }
-            // pass through any requests not handled above
-            return next.handle(request);
-        }))
-            // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
-            .pipe(materialize())
+        return of(null)
+            .pipe(mergeMap(handleRoute))
+            .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
             .pipe(delay(500))
             .pipe(dematerialize());
-        // private helper functions
+        function handleRoute() {
+            switch (true) {
+                case url.endsWith('/api/auth/register') && method === 'POST':
+                    return register();
+                case url.endsWith('/api/auth/authenticate') && method === 'POST':
+                    return authenticate();
+                case url.endsWith('/users') && method === 'GET':
+                    return getUsers();
+                case url.match(/\/users\/\d+$/) && method === 'GET':
+                    return getUserById();
+                case url.match(/\/users\/\d+$/) && method === 'DELETE':
+                    return deleteUser();
+                default:
+                    // pass through any requests not handled above
+                    return next.handle(request);
+            }
+        }
+        // route functions
+        function register() {
+            var user = body;
+            if (users.find(function (x) { return x.username === user.username; })) {
+                return error('Username "' + user.username + '" is already taken');
+            }
+            user.id = users.length ? Math.max.apply(Math, users.map(function (x) { return x.id; })) + 1 : 1;
+            users.push(user);
+            localStorage.setItem('currentUser', JSON.stringify(users));
+            return ok();
+        }
+        function authenticate() {
+            var username = body.username, password = body.password;
+            var user = users.find(function (x) { return x.username === username && x.password === password; });
+            if (!user)
+                return error('Username or password is incorrect');
+            return ok({
+                id: user.id,
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                token: 'fake-jwt-token'
+            });
+        }
+        function getUsers() {
+            if (!isLoggedIn())
+                return unauthorized();
+            return ok(users);
+        }
+        function getUserById() {
+            if (!isLoggedIn())
+                return unauthorized();
+            var user = users.find(function (x) { return x.id == idFromUrl(); });
+            return ok(user);
+        }
+        function deleteUser() {
+            if (!isLoggedIn())
+                return unauthorized();
+            users = users.filter(function (x) { return x.id !== idFromUrl(); });
+            localStorage.setItem('currentUser', JSON.stringify(users));
+            return ok();
+        }
+        // helper functions
         function ok(body) {
             return of(new HttpResponse({ status: 200, body: body }));
         }
-        function unauthorised() {
+        function unauthorized() {
             return throwError({ status: 401, error: { message: 'Unauthorised' } });
         }
         function error(message) {
-            return throwError({ status: 400, error: { message: message } });
+            return throwError({ error: { message: message } });
+        }
+        function isLoggedIn() {
+            return headers.get('Authorization') === 'Bearer fak3e-jwt-token';
+        }
+        function idFromUrl() {
+            var urlParts = url.split('/');
+            return parseInt(urlParts[urlParts.length - 1]);
         }
     };
     FakeBackendInterceptor = __decorate([

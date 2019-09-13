@@ -11,6 +11,7 @@ import { PageService } from '../shared/services/page.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../shared/services/project.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -54,9 +55,9 @@ export class Laravel {
             var newBasic = basic[tag].filter(el => {
                 return el != "" && el != null;
             });
-            return [`"${this.table.columnName}" => ${JSON.stringify(newBasic)}`].join(",");
+            return [`"${this.table.column_name}" => ${JSON.stringify(newBasic)}`].join(",");
         }
-        return [`${this.table.columnName} => ${JSON.stringify(basic[tag])}`].join(",");
+        return [`${this.table.column_name} => ${JSON.stringify(basic[tag])}`].join(",");
     }
 
     size(){
@@ -86,12 +87,12 @@ export class Laravel {
             this.inputs.forEach(curr => {
                 this.setParams(curr);
 
-                if(curr.table.isPrimaryKey){
-                    primaryKey.push(`"${curr.table.columnName}"`);
+                if(curr.table.is_primary_key){
+                    primaryKey.push(`"${curr.table.column_name}"`);
                 }
-                fillable.push(curr.table.columnName);
-                request.push(`"${curr.table.columnName}" => $request->input('${curr.table.columnName}')`);
-                attributes.push(`\t'${this.table.columnName}' => '${this.html.label}'`);
+                fillable.push(curr.table.column_name);
+                request.push(`"${curr.table.column_name}" => $request->input('${curr.table.column_name}')`);
+                attributes.push(`\t'${this.table.column_name}' => '${this.html.label}'`);
                 rules.push(this.getRules());
             });
         }
@@ -157,8 +158,8 @@ export class Laravel {
         if(this.inputs.length > 0){
             var script = this.inputs.map((item) => {
                 return { 
-                    data: item.table.columnName,
-                    name: item.table.columnName
+                    data: item.table.column_name,
+                    name: item.table.column_name
                 };
             }, []);
 
@@ -278,7 +279,7 @@ export interface MVC {
     //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormBuilderComponent implements OnInit {
-    pages: Array<Page>;
+    pages: Array<any>;
     inputs: Array<Content>;
     mvcList: Array<MVC>;
     tableName: string = '';
@@ -320,8 +321,6 @@ export class FormBuilderComponent implements OnInit {
 
     ngOnInit() {
         this.pages = [];
-        //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
-        this.pages = this.homeService.getHomeStatic();
         this.route.params.subscribe(r => {
             this.project_id = r.projectId;
         });
@@ -337,12 +336,12 @@ export class FormBuilderComponent implements OnInit {
 
     loadFormBuilder(){
         //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
-        //this.pages = this.homeService.getHomeStatic();
-        //this.pages = [];
+        this.pages = this.homeService.getHomeStatic();
         /*this.pageService.getPageByProjectId(this.project_id)
         .subscribe(result => { 
+            console.log(result);
             if(result.success){
-                this.pages = result.data;
+                this.pages = result.paginate.data;
             }
             this.ngxLoader.stop();
         });*/
@@ -353,15 +352,15 @@ export class FormBuilderComponent implements OnInit {
     }
 
     public save(){
-        /*this.pageService.createPage({ 
+        this.pageService.createPage({ 
             project_id: this.project_id,
-            pages: this.pages 
+            pages: this.pages
         })
         .subscribe(result => {
             if(result.success){
                 this.loadFormBuilder();
             }
-        });*/
+        });
     }
 
     public pageNext(){
@@ -423,10 +422,13 @@ export class FormBuilderComponent implements OnInit {
                     this.pages = result.data;
                 }
             });*/            
+        
             this.pages = [...this.pages, {
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []
             }];
+            
+            
             /*this.pages.push({
                 name: 'Page ' + (this.pages.length + 1),
                 rows: []
@@ -435,6 +437,7 @@ export class FormBuilderComponent implements OnInit {
     }
 
     public getPages(pages): void {
+        console.log(this.pages);
         this.pages = [...this.pages, pages];
         //this.pages.push(pages);
     }

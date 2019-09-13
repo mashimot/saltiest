@@ -11,11 +11,10 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
 	loginForm: FormGroup;
 	submitted: boolean = false;
-	email: string = 'test';
+	email: string = 'test@test.com';
 	password: string = 'test';
 	error: string;
 
-	
 	constructor(
 		private fb: FormBuilder,
 		private authService: AuthService
@@ -23,7 +22,7 @@ export class LoginComponent implements OnInit {
 
 	ngOnInit() {
 		this.loginForm = this.fb.group({
-			username: [
+			email: [
 				this.email, [
 				Validators.required,
 				//Validators.email

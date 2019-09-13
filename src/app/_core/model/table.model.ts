@@ -1,13 +1,13 @@
 export interface ITable {
-    columnName?: string;
-    isPrimaryKey?: boolean;
+    column_name?: string;
+    is_primary_key?: boolean;
     type?: string;
     nullable?: boolean;
     size?: string; 
 }
 export class Table {
-    columnName: string = '';
-    isPrimaryKey: boolean = false;
+    column_name: string = '';
+    is_primary_key: boolean = false;
     type: string = '';
     nullable: boolean = false;
     size?: string = ''; 

@@ -42,10 +42,10 @@ var ConfigTableBuilderComponent = /** @class */ (function () {
     };
     ConfigTableBuilderComponent.prototype.newColumn = function (fieldIndex) {
         if (this.keyFields.length > 0) {
-            var columnName = "column " + (this.keyFields.length + 1);
-            this.keyFields.splice(fieldIndex + 1, 0, { text: columnName });
+            var column_name = "column " + (this.keyFields.length + 1);
+            this.keyFields.splice(fieldIndex + 1, 0, { text: column_name });
             for (var i = 0; i < this.fields.value.length; i++) {
-                this.fields.value[i][columnName] = '';
+                this.fields.value[i][column_name] = '';
             }
             this.fields.updateValueAndValidity({ onlySelf: false, emitEvent: true });
         }

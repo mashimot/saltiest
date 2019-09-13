@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { RegisterResponse } from '../interface/register-response';
+import { Pageable } from '../interface/register-response';
+import { of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -8,6 +9,7 @@ import { RegisterResponse } from '../interface/register-response';
 export class HtmlElementService {
     category: string;
     API_URL: string = 'http://127.0.0.1:8000/api/tools';
+    API_URL2: string = 'http://127.0.0.1:8000/api/contents_choices';
 
 
     constructor(private http: HttpClient) {
@@ -26,17 +28,34 @@ export class HtmlElementService {
         return Object.keys(tags);
     }
     
+    queryParams(query){
+        const httpOptions = {
+            params: { ...query}
+        };        
+    
+        return this.http.get<Pageable>(
+            this.API_URL2, httpOptions
+        );
+    }
+
     getTools(){
-        return this.http.get<RegisterResponse>(`${this.API_URL}`);
+        return this.http.get<any>(`${this.API_URL}`);
+    }
+
+    getContentChoices(){
+        return this.http.get<Pageable>(`${this.API_URL2}`);
     }
 
     getStaticTools(){
-        //return this.http.get<RegisterResponse>(`${this.API_URL}`);
-        return [{"html":{"content_html_id":3,"content_html_tag_id":3,"category_id":1,"tag":"number","category":"form","label":"Number","text":"","src":null,"choices":[]}},{"html":{"content_html_id":4,"content_html_tag_id":4,"category_id":1,"tag":"date","category":"form","label":"Type your Text","text":"","src":null,"choices":[]}},{"html":{"content_html_id":5,"content_html_tag_id":5,"category_id":1,"tag":"text","category":"form","label":"Type your Text","text":"","src":null,"choices":[]}},{"html":{"content_html_id":6,"content_html_tag_id":6,"category_id":1,"tag":"textarea","category":"form","label":"Type your Text","text":"","src":null,"choices":[]}},{"html":{"content_html_id":7,"content_html_tag_id":7,"category_id":1,"tag":"file","category":"form","label":"Type your Text","text":"","src":null,"choices":[]}},{"html":{"content_html_id":9,"content_html_tag_id":9,"category_id":2,"tag":"html","category":"html","label":"Type your Text","text":"","src":null,"choices":[]}},{"html":{"content_html_id":10,"content_html_tag_id":10,"category_id":2,"tag":"image","category":"html","label":"Type your Text","text":"","src":null,"choices":[]}},{"html":{"content_html_id":11,"content_html_tag_id":11,"category_id":3,"tag":"h1","category":"headings","label":"","text":"Type your Text","src":null,"choices":[]}},{"html":{"content_html_id":12,"content_html_tag_id":12,"category_id":3,"tag":"h2","category":"headings","label":"","text":"Type your Text","src":null,"choices":[]}},{"html":{"content_html_id":13,"content_html_tag_id":13,"category_id":3,"tag":"h3","category":"headings","label":"","text":"Type your Text","src":null,"choices":[]}},{"html":{"content_html_id":14,"content_html_tag_id":14,"category_id":3,"tag":"h4","category":"headings","label":"","text":"Type your Text","src":null,"choices":[]}},{"html":{"content_html_id":15,"content_html_tag_id":15,"category_id":3,"tag":"h5","category":"headings","label":"","text":"Type your Text","src":null,"choices":[]}},{"html":{"content_html_id":16,"content_html_tag_id":16,"category_id":3,"tag":"h6","category":"headings","label":"","text":"Type your Text","src":null,"choices":[]}},{"html":{"content_html_id":17,"content_html_tag_id":17,"category_id":4,"tag":"legend","category":"formatting","label":"","text":"Type your Text","src":null,"choices":[]}}];
+        return of(
+            {"success":true,"message":"any","tools":{"form":[{"html":{"content_html_id":31,"content_html_tag_id":3,"category_id":1,"tag":"number","category":"form","label":"Type your Text","text":null,"src":null}},{"html":{"content_html_id":32,"content_html_tag_id":4,"category_id":1,"tag":"date","category":"form","label":"Type your Text","text":null,"src":null}},{"html":{"content_html_id":33,"content_html_tag_id":5,"category_id":1,"tag":"text","category":"form","label":"Type your Text","text":null,"src":null}}],"html":[{"html":{"content_html_id":34,"content_html_tag_id":9,"category_id":2,"tag":"html","category":"html","label":null,"text":null,"src":null}},{"html":{"content_html_id":35,"content_html_tag_id":10,"category_id":2,"tag":"image","category":"html","label":null,"text":null,"src":"http:\/\/i.imgur.com\/AVqsATi.gif"}}],"headings":[{"html":{"content_html_id":36,"content_html_tag_id":11,"category_id":3,"tag":"h1","category":"headings","label":null,"text":"<h1>Title<\/h1>","src":null}},{"html":{"content_html_id":37,"content_html_tag_id":12,"category_id":3,"tag":"h2","category":"headings","label":null,"text":"<h2>Title<\/h2>","src":null}},{"html":{"content_html_id":38,"content_html_tag_id":13,"category_id":3,"tag":"h3","category":"headings","label":null,"text":"<h3>Title<\/h3>","src":null}},{"html":{"content_html_id":39,"content_html_tag_id":14,"category_id":3,"tag":"h4","category":"headings","label":null,"text":"<h4>Title<\/h4>","src":null}},{"html":{"content_html_id":40,"content_html_tag_id":15,"category_id":3,"tag":"h5","category":"headings","label":null,"text":"<h5>Title<\/h5>","src":null}},{"html":{"content_html_id":41,"content_html_tag_id":16,"category_id":3,"tag":"h6","category":"headings","label":null,"text":"<h6>Title<\/h6>","src":null}}],"formatting":[{"html":{"content_html_id":42,"content_html_tag_id":17,"category_id":4,"tag":"legend","category":"formatting","label":null,"text":"<legend>Legend<\/legend>","src":null}}]}}
+        );
     }
     
     getStaticOptionChoices(){
-        return [{"html":{"content_choice_id":91,"content_html_tag_id":2,"category":"form","tag":"radio","group":"Discordo Totalmente|NA (Não Aplicável)|Não Concordo|Nem Discordo|Concordo|Concordo Totalmente","label":"Type your Text","choices":[{"id":190,"content_choice_id":91,"text":"Discordo Totalmente","value":"1","position":0,"created_at":"2019-04-25 14:18:07","updated_at":"2019-05-02 19:43:28"},{"id":195,"content_choice_id":91,"text":"NA (Não Aplicável)","value":"0","position":1,"created_at":"2019-04-25 14:19:08","updated_at":"2019-05-06 15:34:57"},{"id":191,"content_choice_id":91,"text":"Não Concordo","value":"2","position":2,"created_at":"2019-04-25 14:18:23","updated_at":"2019-05-06 15:34:57"},{"id":192,"content_choice_id":91,"text":"Nem Discordo","value":"3","position":3,"created_at":"2019-04-25 14:18:41","updated_at":"2019-05-06 15:34:57"},{"id":193,"content_choice_id":91,"text":"Concordo","value":"4","position":4,"created_at":"2019-04-25 14:18:49","updated_at":"2019-05-06 15:34:57"},{"id":194,"content_choice_id":91,"text":"Concordo Totalmente","value":"5","position":5,"created_at":"2019-04-25 14:18:58","updated_at":"2019-05-06 15:34:57"}]}},{"html":{"content_choice_id":92,"content_html_tag_id":2,"category":"form","tag":"radio","group":"56645645654|papagaio|rterter","label":"Type your Text","choices":[{"id":196,"content_choice_id":92,"text":"56645645654","value":"657657567565","position":0,"created_at":"2019-04-25 19:54:51","updated_at":"2019-05-02 19:23:31"},{"id":201,"content_choice_id":92,"text":"papagaio","value":"papagaio","position":1,"created_at":"2019-04-30 11:49:05","updated_at":"2019-05-02 19:23:31"},{"id":197,"content_choice_id":92,"text":"rterter","value":"tertertert","position":2,"created_at":"2019-04-25 19:55:13","updated_at":"2019-05-02 19:23:14"}]}},{"html":{"content_choice_id":93,"content_html_tag_id":2,"category":"form","tag":"radio","group":"7687768|hadoken|123221","label":"Type your Text","choices":[{"id":225,"content_choice_id":93,"text":"7687768","value":"78768768768768768678678678","position":null,"created_at":"2019-05-02 20:25:35","updated_at":"2019-05-02 20:25:35"},{"id":224,"content_choice_id":93,"text":"hadoken","value":"123213213123123","position":0,"created_at":"2019-05-02 20:25:25","updated_at":"2019-05-02 20:25:42"},{"id":223,"content_choice_id":93,"text":"123221","value":"123123123123123","position":1,"created_at":"2019-05-02 20:25:21","updated_at":"2019-05-02 20:25:29"}]}},{"html":{"content_choice_id":94,"content_html_tag_id":2,"category":"form","tag":"radio","group":"teste|Hadouken|Shoryuken","label":"Type your Text","choices":[{"id":202,"content_choice_id":94,"text":"teste","value":"teste","position":null,"created_at":"2019-05-02 19:22:02","updated_at":"2019-05-02 19:22:02"},{"id":203,"content_choice_id":94,"text":"Hadouken","value":"Hadouken","position":null,"created_at":"2019-05-02 19:22:19","updated_at":"2019-05-02 19:22:19"},{"id":204,"content_choice_id":94,"text":"Shoryuken","value":"Shoryuken","position":null,"created_at":"2019-05-02 19:22:31","updated_at":"2019-05-02 19:22:31"}]}},{"html":{"content_choice_id":95,"content_html_tag_id":2,"category":"form","tag":"radio","group":"Les Claypool|Flea|Geddy Lee|Chris Squire","label":"Type your Text","choices":[{"id":205,"content_choice_id":95,"text":"Les Claypool","value":"Les Claypool","position":null,"created_at":"2019-05-02 19:52:15","updated_at":"2019-05-02 19:52:15"},{"id":206,"content_choice_id":95,"text":"Flea","value":"Flea","position":null,"created_at":"2019-05-02 19:52:21","updated_at":"2019-05-02 19:52:21"},{"id":207,"content_choice_id":95,"text":"Geddy Lee","value":"Geddy Lee","position":null,"created_at":"2019-05-02 19:52:30","updated_at":"2019-05-02 19:52:30"},{"id":208,"content_choice_id":95,"text":"Chris Squire","value":"Chris Squire","position":null,"created_at":"2019-05-02 19:52:41","updated_at":"2019-05-02 19:52:41"}]}}];
+        return of(
+            {"success":true,"message":"any","paginate":{"current_page":1,"data":[{"description":"Escala Likert","html":{"content_choice_id":1,"content_html_tag_id":2,"category":"form","tag":"radio","label":"Type your Text","choices":[{"id":1,"content_choice_id":1,"text":"Discordo Totalmente","value":"1","position":1},{"id":2,"content_choice_id":1,"text":"Discordo","value":"2","position":2},{"id":3,"content_choice_id":1,"text":"Discordo Totalmente e Nem Discordo","value":"3","position":3},{"id":4,"content_choice_id":1,"text":"Concordo","value":"4","position":4},{"id":5,"content_choice_id":1,"text":"Concordo Totalmente","value":"5","position":5},{"id":6,"content_choice_id":1,"text":"NA (N\u00e3o Aplic\u00e1vel)","value":"0","position":6}]}},{"description":"Bass Players","html":{"content_choice_id":2,"content_html_tag_id":2,"category":"form","tag":"radio","label":"Type your Text","choices":[{"id":7,"content_choice_id":2,"text":"Les Claypool","value":"1","position":1},{"id":8,"content_choice_id":2,"text":"Geddy Lee","value":"2","position":2}]}}],"first_page_url":"http:\/\/127.0.0.1:8000\/api\/contents_choices?page=1","from":1,"last_page":2,"last_page_url":"http:\/\/127.0.0.1:8000\/api\/contents_choices?page=2","next_page_url":"http:\/\/127.0.0.1:8000\/api\/contents_choices?page=2","path":"http:\/\/127.0.0.1:8000\/api\/contents_choices","per_page":99999999999999999,"prev_page_url":null,"to":2,"total":3}}
+        );
     }
 
     getStaticTags() {

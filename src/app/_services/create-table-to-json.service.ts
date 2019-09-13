@@ -70,7 +70,7 @@ export class CreateTableToJsonService{
 			this._table_name = create_table_statement.table_name;
 
 			create_definition.forEach(column => {
-				let columnName = column.name;
+				let column_name = column.name;
 				let data_type = column.data_type;
 				let column_definition = column.column_definition;
 				let is_primary_key = false;
@@ -87,11 +87,11 @@ export class CreateTableToJsonService{
 					html: {
 						category: this.category,
 						tag: data_type.tag,
-						label: this.customLabelName(columnName)
+						label: this.customLabelName(column_name)
 					},
 					table: {
-						isPrimaryKey: is_primary_key,
-						columnName: columnName,
+						is_primary_key: is_primary_key,
+						column_name: column_name,
 						type: data_type.type.toLowerCase(),
 						size: data_type.size,
 						nullable: nullable
@@ -103,8 +103,8 @@ export class CreateTableToJsonService{
 		}
 	}
 
-	customLabelName(columnName: string): string {
-		return columnName
+	customLabelName(column_name: string): string {
+		return column_name
 		.split('_')
         .map(partialName => {
             let value = this._customLabel[partialName];

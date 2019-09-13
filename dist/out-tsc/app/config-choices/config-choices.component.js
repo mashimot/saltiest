@@ -10,90 +10,106 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { HtmlElementService } from '../shared/services/html-element.service';
 import { DragulaService } from 'ng2-dragula';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
+import { Location } from '@angular/common';
+import { CHOICE_TYPE } from '../_core/consts/choice-type.const';
+import { tap, map } from 'rxjs/operators';
 var ConfigChoicesComponent = /** @class */ (function () {
-    function ConfigChoicesComponent(htmlElementService, dragulaService, router, modalService, cd) {
-        var _this = this;
+    function ConfigChoicesComponent(htmlElementService, dragulaService, router, modalService, cd, location, activatedRoute) {
         this.htmlElementService = htmlElementService;
         this.dragulaService = dragulaService;
         this.router = router;
         this.modalService = modalService;
         this.cd = cd;
-        this.toolTypes = [{
-                type: 'select',
-                value: 3,
-                icon: 'fas fa-box-open'
-            }, {
-                type: 'radio',
-                icon: 'far fa-check-circle',
-                value: 1
-            }, {
-                type: 'checkbox',
-                icon: 'far fa-check-square',
-                value: 2
-            }];
+        this.location = location;
+        this.activatedRoute = activatedRoute;
         this.options = {
             size: 'lg',
             backdrop: 'static',
             keyboard: false,
             centered: true
         };
-        this.toolType = this.toolTypes[1];
-        //this.groups = this.htmlElementService.getStaticOptionChoices();
-        this.htmlElementService.getTools().subscribe(function (result) {
-            if (result.success) {
-                _this.groups = result.data.groups;
-                console.log('teste', _this.groups);
-            }
-        });
+        //this.choices = this.htmlElementService.getStaticOptionChoices();
     }
     ConfigChoicesComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.choiceTypes = CHOICE_TYPE;
+        /*this.choices = {
+            data: []
+        };*/
+        this.activatedRoute.queryParams.subscribe(function (x) { return _this.loadPage(x.page || 1); });
     };
     ConfigChoicesComponent.prototype.edit = function (index) {
         var _this = this;
         if (index === void 0) { index = null; }
-        var data = {
-            content: this.groups[index],
-            index: index
-        };
-        console.log(data.content);
-        var m = this.modalService.open(ConfigChoiceFormComponent, this.options);
-        //m.componentInstance.data = data;
-        console.log(this.groups[0]);
-        var myAss = {
-            html: {
-                category: "form",
-                choices: [],
-                group: "",
-                label: "Type your Text",
-                tag: "radio"
-            }
-        };
-        m.componentInstance.content = myAss;
-        if (index != null) {
-            m.componentInstance.content = this.groups[index];
-            m.componentInstance.index = data.index;
-        }
-        //console.log(this.groups.length);
-        m.componentInstance.emitData.subscribe(function ($e) {
-            if ($e.choices.length > 0) {
-                var text = $e.choices.map(function (item) {
-                    return item.text;
-                }).join("|");
-                if (index != null) {
-                    _this.groups[index].html.choices = $e.choices;
-                    _this.groups[index].html.group = text;
+        this.choices$.subscribe(function (result) {
+            var data = {
+                id: null,
+                content: result.data[index],
+                index: index
+            };
+            var myAss = {
+                html: {
+                    category: "form",
+                    choices: [],
+                    group: "",
+                    label: "Type your Text",
+                    tag: "radio"
                 }
-                else {
-                    myAss.html.group = text;
-                    myAss.html.choices = $e.choices;
-                    _this.groups.push(myAss);
-                }
+            };
+            var modal = _this.modalService.open(ConfigChoiceFormComponent, _this.options);
+            modal.componentInstance.content = myAss;
+            if (index != null) {
+                modal.componentInstance.content = data.content;
+                modal.componentInstance.index = data.index;
             }
-            m.dismiss();
+            modal.componentInstance.emitData.subscribe(function ($e) {
+                if ($e.choices.length > 0) {
+                    if (index != null) {
+                        _this.choices$ = _this.choices$.pipe(map(function (_) {
+                            result.data[index].html.choices = $e.choices;
+                            return result;
+                        }), tap(function (x) { return console.log(x); }));
+                    }
+                    else {
+                        myAss.html.choices = $e.choices;
+                        _this.choices$ = _this.choices$.pipe(map(function (_) {
+                            result.data.push(myAss);
+                            return result;
+                        }), tap(function (x) { return console.log(x); }));
+                    }
+                }
+                modal.dismiss();
+            });
         });
+        //console.log(this.choices.length);
+        /*;*/
+    };
+    ConfigChoicesComponent.prototype.loadPage = function (page) {
+        this.choices$ = this.htmlElementService.queryParams({
+            page: page
+        }).pipe(map(function (result) {
+            return result.paginate;
+        }));
+        /*this.htmlElementService.queryParams({
+            page: page
+        }).subscribe(result => {
+            this.choices = result.paginate;
+        });*/
+    };
+    ConfigChoicesComponent.prototype.pageChange = function ($e) {
+        var navigationExtras = {
+            queryParams: {
+                'page': $e
+            }
+        };
+        // Navigate to the login page with extras
+        this.router.navigate([], navigationExtras);
+    };
+    ConfigChoicesComponent.prototype.getChoiceType = function (tag) {
+        return this.choiceTypes[tag.toUpperCase()];
     };
     ConfigChoicesComponent.prototype.ngOnDestroy = function () {
         this.dragulaService.destroy('pages');
@@ -102,12 +118,8 @@ var ConfigChoicesComponent = /** @class */ (function () {
         this.dragulaService.destroy('rowSortable');
         this.dragulaService.destroy('sortableElements');
     };
-    ConfigChoicesComponent.prototype.setToolType = function (toolType) {
-        this.toolType = {
-            value: toolType.value,
-            icon: toolType.icon,
-            type: toolType.type
-        };
+    ConfigChoicesComponent.prototype.setchoiceType = function (content, choiceType) {
+        content.html.tag = choiceType.type;
     };
     ConfigChoicesComponent = __decorate([
         Component({
@@ -119,7 +131,9 @@ var ConfigChoicesComponent = /** @class */ (function () {
             DragulaService,
             Router,
             NgbModal,
-            ChangeDetectorRef])
+            ChangeDetectorRef,
+            Location,
+            ActivatedRoute])
     ], ConfigChoicesComponent);
     return ConfigChoicesComponent;
 }());

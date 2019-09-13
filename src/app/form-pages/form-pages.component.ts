@@ -24,15 +24,7 @@ export class FormPagesComponent implements OnInit {
     };
     project_id: number;
     subs = new Subscription();
-    optionType: number = -1;
-    objOptionType: {
-        [key: number]: string 
-    } = {
-        1: 'radio',
-        2: 'checkbox',
-        3: 'select'
-    };    
-    options: Array<string> = [];
+
     private dropModelPageUpdated = false;
 
     constructor(
@@ -46,9 +38,7 @@ export class FormPagesComponent implements OnInit {
         private route: ActivatedRoute,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.options = Object.values(this.objOptionType).map(item => {
-            return item;
-        }, []);
+   
         this.route.params.subscribe(result => {
             this.project_id = result.projectId;
         });
@@ -250,14 +240,6 @@ export class FormPagesComponent implements OnInit {
             .subscribe(({ name, clone, original, cloneType }) => {
                 if (original.classList.contains('menu-content-sortable')) {
                     let currentDataAttr = JSON.parse(original.getAttribute('data-content'));
-                    if (original.classList.contains('option-type-sortable')) {
-                        let tag = currentDataAttr.html.tag;
-                        if(this.options.includes(tag)){
-                            let optionType = clone.getAttribute('data-option-type');
-                            this.optionType = parseInt(optionType);
-                            currentDataAttr['html']['tag'] = this.objOptionType[this.optionType];
-                        }
-                    }
                     let r = new BootstrapForm(currentDataAttr);
                     //r.setParams(currentDataAttr);
                     clone.classList.remove('badge', 'bg-dark', 'col-md-6', 'bg-primary', 'text-white');
@@ -280,13 +262,9 @@ export class FormPagesComponent implements OnInit {
                     const currcolumnId  = target.getAttribute('data-current-column-id');      
 
                     if (
-                        typeof item.table.columnName === 'undefined' && item.html.category === 'form'
+                        typeof item.table.column_name === 'undefined' && item.html.category === 'form'
                     ) {
-                        let tag = item.html.tag;
-                        if(this.options.includes(tag)){
-                            item.html.tag = this.objOptionType[this.optionType];
-                        }
-                        item.table.columnName = 'name__' + new Date().getUTCMilliseconds();
+                        item.table.column_name = 'name__' + new Date().getUTCMilliseconds();
                         item.table.size = '';
                     }
                     const data = {
@@ -381,7 +359,7 @@ export class FormPagesComponent implements OnInit {
         this.pageService.getPageByProjectId(this.project_id)
         .subscribe(result => { 
             if(result.success){
-                this.pages = result.data;
+                this.pages = result.paginate;
             }
             this.ngxLoader.stop();
         });

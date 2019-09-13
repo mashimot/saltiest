@@ -8,12 +8,17 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ProjectsComponent } from './projects.component';
 import { ProjectFormComponent } from './project-form/project-form.component';
-var routes = [
-    { path: 'projects', component: ProjectsComponent },
-    { path: 'projects/create', component: ProjectFormComponent },
-    { path: 'projects/:id', component: ProjectsComponent },
-    { path: 'projects/:id/edit', component: ProjectFormComponent },
-];
+import { AuthGuard } from '../_core/guards/auth.guard';
+var routes = [{
+        path: 'projects',
+        canActivate: [AuthGuard],
+        children: [
+            { path: '', component: ProjectsComponent },
+            { path: 'create', component: ProjectFormComponent },
+            { path: ':id', component: ProjectsComponent },
+            { path: ':id/edit', component: ProjectFormComponent },
+        ]
+    }];
 var ProjectsRoutingModule = /** @class */ (function () {
     function ProjectsRoutingModule() {
     }

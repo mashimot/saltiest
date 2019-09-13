@@ -19,7 +19,7 @@ export class AuthService {
         })
     };
     //private API_URL: string = 'http://localhost:8000/api';
-    private API_URL: string = '';
+    private API_URL: string = '/api';
 
     
     constructor(

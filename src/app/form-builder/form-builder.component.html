@@ -50,8 +50,10 @@
                 </div>
             </div>
             <app-form-pages *ngIf="tabNumber == 1" [(pages)]="pages"></app-form-pages>
+            <!--
             <button class="btn btn-primary" (click)="pageNext()">Next</button>
             <button class="btn btn-primary" (click)="pagePrevious()">Previous</button>
+            -->
             <app-form-info [(pages)]="pages" *ngIf="tabNumber == 2"></app-form-info>
         </div>            
     </div>

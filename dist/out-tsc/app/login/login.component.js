@@ -20,7 +20,7 @@ var LoginComponent = /** @class */ (function () {
     }
     LoginComponent.prototype.ngOnInit = function () {
         this.loginForm = this.fb.group({
-            username: [
+            email: [
                 this.email, [
                     Validators.required,
                 ]

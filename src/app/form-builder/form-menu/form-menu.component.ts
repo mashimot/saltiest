@@ -3,6 +3,8 @@ import { HtmlElementService } from '../../shared/services/html-element.service';
 import { BootstrapGridSystemService } from '../../_services/bootstrap-grid-system.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoicesComponent } from '../../config-choices/config-choices.component';
+import { Observable } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-form-menu',
@@ -11,7 +13,8 @@ import { ConfigChoicesComponent } from '../../config-choices/config-choices.comp
 })
 export class FormMenuComponent implements OnInit {
     tools: Array<any>;
-    categories: Array<any>;
+    tools$: Observable<any>;
+    //categories: Array<any>;
     pageModel: object; 
     grids: Array<any>;
     bootstrap: Array<{
@@ -33,7 +36,7 @@ export class FormMenuComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.tools = [];
+        //this.tools = [];
         this.grids = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
             grid: [
@@ -43,11 +46,17 @@ export class FormMenuComponent implements OnInit {
                 `7 5`
             ].join("\n")
         }];
-        this.tools = this.htmlElementService.getStaticTools();
+        //this.tools = this.htmlElementService.getStaticTools();
+        this.tools$ = this.htmlElementService/*.getTools()*/.getStaticTools()
+        .pipe(
+            map(res => {
+                return res.tools;
+            })
+        );
         /*this.htmlElementService.getTools().subscribe(result => {
+            console.log(result);
             if(result.success){
-                this.categories = result.data.categories;
-                this.tools = result.data.tools;
+                this.tools = result.tools;
             }
         });*/
         this.pageModel = [{

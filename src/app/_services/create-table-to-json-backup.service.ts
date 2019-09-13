@@ -85,7 +85,7 @@ export class CreateTableToJsonService {
 
     createTableSyntax(): string {
         var types               = Object.keys(this._dataBase).join("|");
-        var columnNames         = `[\`]${this.regex.onlyWords}[\`]|(${this.regex.onlyWords})`;
+        var column_names         = `[\`]${this.regex.onlyWords}[\`]|(${this.regex.onlyWords})`;
         var columnConstraints   = this.convertToRegex(this.columnConstraints)
         .map(constraint => `(?:${constraint}?)?`)
         .join("")
@@ -94,7 +94,7 @@ export class CreateTableToJsonService {
         let row = `
         (
             (?:
-                ${columnNames}
+                ${column_names}
             )
             \\s+
             (?:
@@ -140,7 +140,7 @@ export class CreateTableToJsonService {
             hasValueBtwParen = true;
             dataType = secondMatch.replace(matchValBtwParen[0], '');
         } else {
-            //(2) probably the next element -thirdMatch- must have(or not) the size of the columnName (it must be an integer or float)
+            //(2) probably the next element -thirdMatch- must have(or not) the size of the column_name (it must be an integer or float)
             if (str.length > 2) { //has more than 2 elements
                 let thirdMatch = str[2];
                 matchValBtwParen = thirdMatch.match(new RegExp(this.regex.valueBtwParentheses)); //get value between parentheses
@@ -155,7 +155,7 @@ export class CreateTableToJsonService {
             let numeric = matchValBtwParen[1];
             let onlyNumericRegex = new RegExp(`^${this.regex.onlyNumeric}$`);
             if (!onlyNumericRegex.test(numeric)) {
-                this._errors.push(`\`${this.table.columnName}\`: ${numeric} is not a number!`);
+                this._errors.push(`\`${this.table.column_name}\`: ${numeric} is not a number!`);
             }
             size = numeric;
         }
@@ -164,7 +164,7 @@ export class CreateTableToJsonService {
         if (typeof database !== 'undefined' && dataType !== '') {
             inputType = database;
         } else {
-            this._errors.push(`Check the manual for the right syntax to use near '${this.table.columnName}'`);
+            this._errors.push(`Check the manual for the right syntax to use near '${this.table.column_name}'`);
         }
         this.table.type = dataType;
         this.html.tag = inputType;
@@ -174,7 +174,7 @@ export class CreateTableToJsonService {
     }
 
     getColumnName(words: Array<string>){
-        this.table.columnName = words[0].replace(/`/g, ""); // column name
+        this.table.column_name = words[0].replace(/`/g, ""); // column name
         return this;
     }
 
@@ -252,14 +252,14 @@ export class CreateTableToJsonService {
                 value += `${prevValue} ${currentWord} ${nextValue}`;
 
                 if(isDiff.length > 0){
-                    this._errors.push(`error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this.table.columnName}`);
+                    this._errors.push(`error: \`${currentWord}\` maybe \`${allowed[currentWord].correct}\` ? at line: ${this.table.column_name}`);
                 }
             }
         }
         value = value.replace(/\s\s+/g, ' ').trim();
         //console.log(value);
         this.table.nullable = (value.indexOf("not null") !== -1) ? true : false;
-        this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
+        this.table.is_primary_key = (value.indexOf("primary key") !== -1) ? true : false;
 
         this._wordIndex = 2;
     }
@@ -313,7 +313,7 @@ export class CreateTableToJsonService {
             if (eachWords.length <= 1) {
                 //this._errors.push(`Incompleted`);
             } else {
-                //this.table.columnName = eachWords[0].replace(/`/g, ""); // column name
+                //this.table.column_name = eachWords[0].replace(/`/g, ""); // column name
                 //the firstMatch  (stringArr[0]) will be always the column name
                 //the secondMatch (stringArr[1]) will be always the column data type
                 this.getColumnName(eachWords)
@@ -329,8 +329,8 @@ export class CreateTableToJsonService {
                         label: this.html.label || ''
                     },
                     table: {
-                        isPrimaryKey: this.table.isPrimaryKey,
-                        columnName: this.table.columnName,
+                        is_primary_key: this.table.is_primary_key,
+                        column_name: this.table.column_name,
                         type: this.table.type,
                         nullable: this.table.nullable,
                         size: this.table.size
@@ -343,7 +343,7 @@ export class CreateTableToJsonService {
     }
 
     customLabelName() {
-        this.html.label = this.table.columnName.split('_')
+        this.html.label = this.table.column_name.split('_')
         .map(partialName => {
             let value = this._customLabel[partialName];
             if (typeof value !== 'undefined')
@@ -358,7 +358,7 @@ export class CreateTableToJsonService {
     }
    
     customInput() {
-        if (this.table.columnName.indexOf('ind_') !== -1)
+        if (this.table.column_name.indexOf('ind_') !== -1)
             this.html.tag = 'select';
 
         if (this.html.tag === 'text' || this.html.tag === 'textarea') {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +16,7 @@ export class HomeService {
 	}
 	
 	getHomeStatic() {
-        return [
+		return ([
 			{
 				"rows": [
 					{
@@ -134,6 +135,6 @@ export class HomeService {
 				],
 				"name": "Salt - A tool for Lazy Developer"
 			}
-		];
+		]);
     }	
 }

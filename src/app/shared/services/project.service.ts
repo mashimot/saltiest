@@ -15,8 +15,11 @@ export class ProjectService {
 
 	constructor(private http: HttpClient) { }
 
-	getProjects(){
-		return this.http.get<RegisterResponse>(`${this.API_URL}`);
+	getProjects(queryParams?){
+		const httpOptions = {
+            params: { ...queryParams}
+        };
+		return this.http.get<any>(`${this.API_URL}`, httpOptions);
 	}
 
 	getProjectById(id: number){

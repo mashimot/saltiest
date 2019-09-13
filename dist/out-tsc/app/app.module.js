@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
@@ -23,7 +23,8 @@ import { CoreModule } from './_core/core.module';
 import { NgxUiLoaderModule, NgxUiLoaderHttpModule, POSITION, SPINNER, PB_DIRECTION, NgxUiLoaderRouterModule } from 'ngx-ui-loader';
 import { SpellCheckerModule } from './spell-checker/spell-checker.module';
 import { LoginModule } from './login/login.module';
-import { fakeBackendProvider } from './_helpers/fake-backend';
+import { JwtInterceptor } from './_helpers/jwt';
+import { ErrorInterceptor } from './_helpers/error';
 var ngxUiLoaderConfig = {
     overlayColor: 'white',
     fgsType: SPINNER.rotatingPlane,
@@ -62,16 +63,16 @@ var AppModule = /** @class */ (function () {
                 HttpModule,
                 HttpClientModule,
                 NgbModule,
+                //NgxPaginationModule,
                 HighlightModule.forRoot(),
                 NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
                 NgxUiLoaderHttpModule,
                 NgxUiLoaderRouterModule
             ],
             providers: [
-                //{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-                //{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+                { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+                { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
                 DragulaService,
-                fakeBackendProvider,
             ],
             bootstrap: [AppComponent]
         })

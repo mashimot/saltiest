@@ -41,7 +41,7 @@ var FormConfigComponent = /** @class */ (function () {
                         'data': [this.content.html.data]
                     }),
                     table: this.fb.group({
-                        'columnName': [this.content.table.columnName,[]],
+                        'column_name': [this.content.table.column_name,[]],
                         'type': [this.content.table.type,[]],
                         'size': [this.content.table.size,[]],
                         'nullable': [this.content.table.nullable]
@@ -66,7 +66,7 @@ var FormConfigComponent = /** @class */ (function () {
                 'data': [this.content.html.data]
             }),
             table: this.fb.group({
-                'columnName': [this.content.table.columnName, []],
+                'column_name': [this.content.table.column_name, []],
                 'type': [this.content.table.type, []],
                 'size': [this.content.table.size, []],
                 'nullable': [this.content.table.nullable, []]

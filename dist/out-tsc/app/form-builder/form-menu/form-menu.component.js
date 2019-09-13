@@ -12,6 +12,7 @@ import { HtmlElementService } from '../../shared/services/html-element.service';
 import { BootstrapGridSystemService } from '../../_services/bootstrap-grid-system.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoicesComponent } from '../../config-choices/config-choices.component';
+import { map } from 'rxjs/operators';
 var FormMenuComponent = /** @class */ (function () {
     function FormMenuComponent(htmlElementService, modalService) {
         this.htmlElementService = htmlElementService;
@@ -26,7 +27,7 @@ var FormMenuComponent = /** @class */ (function () {
         this.isNewPage = new EventEmitter();
     }
     FormMenuComponent.prototype.ngOnInit = function () {
-        this.tools = [];
+        //this.tools = [];
         this.grids = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
                 grid: [
@@ -36,11 +37,15 @@ var FormMenuComponent = /** @class */ (function () {
                     "7 5"
                 ].join("\n")
             }];
-        this.tools = this.htmlElementService.getStaticTools();
+        //this.tools = this.htmlElementService.getStaticTools();
+        this.tools$ = this.htmlElementService.getTools()
+            .pipe(map(function (res) {
+            return res.tools;
+        }));
         /*this.htmlElementService.getTools().subscribe(result => {
+            console.log(result);
             if(result.success){
-                this.categories = result.data.categories;
-                this.tools = result.data.tools;
+                this.tools = result.tools;
             }
         });*/
         this.pageModel = [{

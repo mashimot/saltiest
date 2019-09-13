@@ -51,7 +51,7 @@ var CreateTableToJsonService = /** @class */ (function () {
             var create_definition = this._rawData.create_definition;
             this._table_name = create_table_statement.table_name;
             create_definition.forEach(function (column) {
-                var columnName = column.name;
+                var column_name = column.name;
                 var data_type = column.data_type;
                 var column_definition = column.column_definition;
                 var is_primary_key = false;
@@ -68,11 +68,11 @@ var CreateTableToJsonService = /** @class */ (function () {
                     html: {
                         category: _this.category,
                         tag: data_type.tag,
-                        label: _this.customLabelName(columnName)
+                        label: _this.customLabelName(column_name)
                     },
                     table: {
-                        isPrimaryKey: is_primary_key,
-                        columnName: columnName,
+                        is_primary_key: is_primary_key,
+                        column_name: column_name,
                         type: data_type.type.toLowerCase(),
                         size: data_type.size,
                         nullable: nullable
@@ -84,9 +84,9 @@ var CreateTableToJsonService = /** @class */ (function () {
             //this._errors.push();
         }
     };
-    CreateTableToJsonService.prototype.customLabelName = function (columnName) {
+    CreateTableToJsonService.prototype.customLabelName = function (column_name) {
         var _this = this;
-        return columnName
+        return column_name
             .split('_')
             .map(function (partialName) {
             var value = _this._customLabel[partialName];

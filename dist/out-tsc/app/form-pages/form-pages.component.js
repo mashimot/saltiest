@@ -43,17 +43,7 @@ var FormPagesComponent = /** @class */ (function () {
         this.ngxLoader = ngxLoader;
         this.pagesChange = new EventEmitter();
         this.subs = new Subscription();
-        this.optionType = -1;
-        this.objOptionType = {
-            1: 'radio',
-            2: 'checkbox',
-            3: 'select'
-        };
-        this.options = [];
         this.dropModelPageUpdated = false;
-        this.options = Object.values(this.objOptionType).map(function (item) {
-            return item;
-        }, []);
         this.route.params.subscribe(function (result) {
             _this.project_id = result.projectId;
         });
@@ -246,14 +236,6 @@ var FormPagesComponent = /** @class */ (function () {
             var name = _a.name, clone = _a.clone, original = _a.original, cloneType = _a.cloneType;
             if (original.classList.contains('menu-content-sortable')) {
                 var currentDataAttr = JSON.parse(original.getAttribute('data-content'));
-                if (original.classList.contains('option-type-sortable')) {
-                    var tag = currentDataAttr.html.tag;
-                    if (_this.options.includes(tag)) {
-                        var optionType = clone.getAttribute('data-option-type');
-                        _this.optionType = parseInt(optionType);
-                        currentDataAttr['html']['tag'] = _this.objOptionType[_this.optionType];
-                    }
-                }
                 var r = new BootstrapForm(currentDataAttr);
                 //r.setParams(currentDataAttr);
                 clone.classList.remove('badge', 'bg-dark', 'col-md-6', 'bg-primary', 'text-white');
@@ -270,12 +252,8 @@ var FormPagesComponent = /** @class */ (function () {
                 var currRowId = target.getAttribute('data-current-row-id');
                 var currPageId = target.getAttribute('data-current-page-id');
                 var currcolumnId = target.getAttribute('data-current-column-id');
-                if (typeof item.table.columnName === 'undefined' && item.html.category === 'form') {
-                    var tag = item.html.tag;
-                    if (_this.options.includes(tag)) {
-                        item.html.tag = _this.objOptionType[_this.optionType];
-                    }
-                    item.table.columnName = 'name__' + new Date().getUTCMilliseconds();
+                if (typeof item.table.column_name === 'undefined' && item.html.category === 'form') {
+                    item.table.column_name = 'name__' + new Date().getUTCMilliseconds();
                     item.table.size = '';
                 }
                 var data = {
@@ -364,7 +342,7 @@ var FormPagesComponent = /** @class */ (function () {
         this.pageService.getPageByProjectId(this.project_id)
             .subscribe(function (result) {
             if (result.success) {
-                _this.pages = result.data;
+                _this.pages = result.paginate;
             }
             _this.ngxLoader.stop();
         });

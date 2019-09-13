@@ -67,12 +67,12 @@ var CreateTableToJsonService = /** @class */ (function () {
     };
     CreateTableToJsonService.prototype.createTableSyntax = function () {
         var types = Object.keys(this._dataBase).join("|");
-        var columnNames = "[`]" + this.regex.onlyWords + "[`]|(" + this.regex.onlyWords + ")";
+        var column_names = "[`]" + this.regex.onlyWords + "[`]|(" + this.regex.onlyWords + ")";
         var columnConstraints = this.convertToRegex(this.columnConstraints)
             .map(function (constraint) { return "(?:" + constraint + "?)?"; })
             .join("")
             .replace(/\s+/g, '\\s+');
-        var row = "\n        (\n            (?:\n                " + columnNames + "\n            )\n            \\s+\n            (?:\n                (" + types + ")(\\s*)?\n                (\n                    ([(]" + this.regex.onlyNumeric + "[)])\n                )?\n            )\n            \\s+?\n            (?:\n                (" + columnConstraints + ")*\n            )?\n        )";
+        var row = "\n        (\n            (?:\n                " + column_names + "\n            )\n            \\s+\n            (?:\n                (" + types + ")(\\s*)?\n                (\n                    ([(]" + this.regex.onlyNumeric + "[)])\n                )?\n            )\n            \\s+?\n            (?:\n                (" + columnConstraints + ")*\n            )?\n        )";
         var regexCreateTableSyntax = ("\n        " + this.regex.createTable + "\n        [(]\n            (\\s*\n                (\n                    \\s*" + row + "[,]\n                )*\n                (\n                    \\s*" + row + "\n                )\n            )\\s*\n        [)]\\s*([;])")
             .toLowerCase()
             .replace(/\s+/g, '')
@@ -91,7 +91,7 @@ var CreateTableToJsonService = /** @class */ (function () {
             dataType = secondMatch.replace(matchValBtwParen[0], '');
         }
         else {
-            //(2) probably the next element -thirdMatch- must have(or not) the size of the columnName (it must be an integer or float)
+            //(2) probably the next element -thirdMatch- must have(or not) the size of the column_name (it must be an integer or float)
             if (str.length > 2) { //has more than 2 elements
                 var thirdMatch = str[2];
                 matchValBtwParen = thirdMatch.match(new RegExp(this.regex.valueBtwParentheses)); //get value between parentheses
@@ -105,7 +105,7 @@ var CreateTableToJsonService = /** @class */ (function () {
             var numeric = matchValBtwParen[1];
             var onlyNumericRegex = new RegExp("^" + this.regex.onlyNumeric + "$");
             if (!onlyNumericRegex.test(numeric)) {
-                this._errors.push("`" + this.table.columnName + "`: " + numeric + " is not a number!");
+                this._errors.push("`" + this.table.column_name + "`: " + numeric + " is not a number!");
             }
             size = numeric;
         }
@@ -114,7 +114,7 @@ var CreateTableToJsonService = /** @class */ (function () {
             inputType = database;
         }
         else {
-            this._errors.push("Check the manual for the right syntax to use near '" + this.table.columnName + "'");
+            this._errors.push("Check the manual for the right syntax to use near '" + this.table.column_name + "'");
         }
         this.table.type = dataType;
         this.html.tag = inputType;
@@ -122,7 +122,7 @@ var CreateTableToJsonService = /** @class */ (function () {
         return this;
     };
     CreateTableToJsonService.prototype.getColumnName = function (words) {
-        this.table.columnName = words[0].replace(/`/g, ""); // column name
+        this.table.column_name = words[0].replace(/`/g, ""); // column name
         return this;
     };
     CreateTableToJsonService.prototype.validateSyntax = function (words) {
@@ -197,7 +197,7 @@ var CreateTableToJsonService = /** @class */ (function () {
                 }
                 value += prevValue + " " + currentWord + " " + nextValue;
                 if (isDiff.length > 0) {
-                    this_1._errors.push("error: `" + currentWord + "` maybe `" + allowed[currentWord].correct + "` ? at line: " + this_1.table.columnName);
+                    this_1._errors.push("error: `" + currentWord + "` maybe `" + allowed[currentWord].correct + "` ? at line: " + this_1.table.column_name);
                 }
             }
         };
@@ -208,7 +208,7 @@ var CreateTableToJsonService = /** @class */ (function () {
         value = value.replace(/\s\s+/g, ' ').trim();
         //console.log(value);
         this.table.nullable = (value.indexOf("not null") !== -1) ? true : false;
-        this.table.isPrimaryKey = (value.indexOf("primary key") !== -1) ? true : false;
+        this.table.is_primary_key = (value.indexOf("primary key") !== -1) ? true : false;
         this._wordIndex = 2;
     };
     CreateTableToJsonService.prototype.convert = function () {
@@ -252,7 +252,7 @@ var CreateTableToJsonService = /** @class */ (function () {
                 //this._errors.push(`Incompleted`);
             }
             else {
-                //this.table.columnName = eachWords[0].replace(/`/g, ""); // column name
+                //this.table.column_name = eachWords[0].replace(/`/g, ""); // column name
                 //the firstMatch  (stringArr[0]) will be always the column name
                 //the secondMatch (stringArr[1]) will be always the column data type
                 this.getColumnName(eachWords)
@@ -268,8 +268,8 @@ var CreateTableToJsonService = /** @class */ (function () {
                         label: this.html.label || ''
                     },
                     table: {
-                        isPrimaryKey: this.table.isPrimaryKey,
-                        columnName: this.table.columnName,
+                        is_primary_key: this.table.is_primary_key,
+                        column_name: this.table.column_name,
                         type: this.table.type,
                         nullable: this.table.nullable,
                         size: this.table.size
@@ -282,7 +282,7 @@ var CreateTableToJsonService = /** @class */ (function () {
     };
     CreateTableToJsonService.prototype.customLabelName = function () {
         var _this = this;
-        this.html.label = this.table.columnName.split('_')
+        this.html.label = this.table.column_name.split('_')
             .map(function (partialName) {
             var value = _this._customLabel[partialName];
             if (typeof value !== 'undefined')
@@ -294,7 +294,7 @@ var CreateTableToJsonService = /** @class */ (function () {
         return this;
     };
     CreateTableToJsonService.prototype.customInput = function () {
-        if (this.table.columnName.indexOf('ind_') !== -1)
+        if (this.table.column_name.indexOf('ind_') !== -1)
             this.html.tag = 'select';
         if (this.html.tag === 'text' || this.html.tag === 'textarea') {
             //this.html.tag = (parseInt(this.table.size) <= this._isTextareaWhenSizeEquals)? 'text' : 'textarea';
