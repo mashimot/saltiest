@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as nearley from 'nearley';
 import * as oracle_grammar from './../_parser/create-table-oracle-to-json';
 import { Content, Html, Definition } from "./../_core/model";
-import * as Parser from 'sql-ddl-to-json-schema';
+//import * as Parser from 'sql-ddl-to-json-schema';
 
 
 declare global {
@@ -67,12 +67,13 @@ export class CreateTableToJsonService{
 	parse(): void{
 		this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
 		//const parser = new nearley.Parser(oracle_grammar);
-		let parser = Parser;
+		//let parser = Parser;
+		let parser = new nearley.Parser(oracle_grammar);
 		if(this.getDataBase() == 'mysql'){
-			parser = new Parser('mysql');
+			//parser = new Parser('mysql');
 		}
 		if(this.getDataBase() == 'oracle'){
-			parser = new nearley.Parser(oracle_grammar);
+			//parser = new nearley.Parser(oracle_grammar);
 		}
 
 		try {
