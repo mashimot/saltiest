@@ -253,19 +253,17 @@ export class FormPagesComponent implements OnInit {
         
         this.subs.add(dragulaService.dropModel("contents")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
-                item['table'] = {};
-                console.log('item ->', item);
-
-                if (item.table && item.html) {
+                item.definition = item.definition || {};
+                item.html = item.html || {};
+                if (item.definition && item.html) {
                     const currRowId     = target.getAttribute('data-current-row-id');                
                     const currPageId    = target.getAttribute('data-current-page-id');
                     const currcolumnId  = target.getAttribute('data-current-column-id');      
-
                     if (
-                        typeof item.table.column_name === 'undefined' && item.html.category === 'form'
+                        typeof item.definition.column_name === 'undefined' && item.html.category === 'form'
                     ) {
-                        item.table.column_name = 'name__' + new Date().getUTCMilliseconds();
-                        item.table.size = '';
+                        item.definition.column_name = 'name__' + new Date().getUTCMilliseconds();
+                        item.definition.size = '';
                     }
                     const data = {
                         project_id: this.project_id,
@@ -278,7 +276,7 @@ export class FormPagesComponent implements OnInit {
                             return item.id;
                         }),
                         html: item.html,
-                        table: item.table
+                        definition: item.definition
                     }; 
                     if(typeof item.id != 'undefined'){
                         data['id'] = item.id;

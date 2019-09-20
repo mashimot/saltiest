@@ -39,6 +39,7 @@
     "ngx-ui-loader": "^7.2.2",
     "popper.js": "^1.15.0",
     "rxjs": "^6.5.3",
+    "sql-ddl-to-json-schema": "^3.1.2",
     "stable": "^0.1.8",
     "zone.js": "~0.9.1"
   },
@@ -49,7 +50,7 @@
     "@angular/language-service": "^8.2.5",
     "@types/jasmine": "^2.8.16",
     "@types/jasminewd2": "^2.0.6",
-    "@types/node": "~8.9.4",
+    "@types/node": "^8.10.54",
     "codelyzer": "^5.1.0",
     "enhanced-resolve": "^3.4.1",
     "jasmine-core": "~2.99.1",

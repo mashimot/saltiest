@@ -41,10 +41,10 @@ var FormConfigComponent = /** @class */ (function () {
                         'data': [this.content.html.data]
                     }),
                     table: this.fb.group({
-                        'column_name': [this.content.table.column_name,[]],
-                        'type': [this.content.table.type,[]],
-                        'size': [this.content.table.size,[]],
-                        'nullable': [this.content.table.nullable]
+                        'column_name': [this.content.definition.column_name,[]],
+                        'type': [this.content.definition.type,[]],
+                        'size': [this.content.definition.size,[]],
+                        'nullable': [this.content.definition.nullable]
                     })
                 });
             }
@@ -65,11 +65,11 @@ var FormConfigComponent = /** @class */ (function () {
                 'text': [this.content.html.text, []],
                 'data': [this.content.html.data]
             }),
-            table: this.fb.group({
-                'column_name': [this.content.table.column_name, []],
-                'type': [this.content.table.type, []],
-                'size': [this.content.table.size, []],
-                'nullable': [this.content.table.nullable, []]
+            definition: this.fb.group({
+                'column_name': [this.content.definition.column_name, []],
+                'type': [this.content.definition.type, []],
+                'size': [this.content.definition.size, []],
+                'nullable': [this.content.definition.nullable, []]
             })
         });
     };

@@ -18,7 +18,7 @@ var HomeService = /** @class */ (function () {
         return this.http.get(this.API_URL + "/pages");
     };
     HomeService.prototype.getHomeStatic = function () {
-        return [
+        return ([
             {
                 "rows": [
                     {
@@ -137,7 +137,7 @@ var HomeService = /** @class */ (function () {
                 ],
                 "name": "Salt - A tool for Lazy Developer"
             }
-        ];
+        ]);
     };
     HomeService = __decorate([
         Injectable({

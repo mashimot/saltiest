@@ -246,15 +246,15 @@ var FormPagesComponent = /** @class */ (function () {
         this.subs.add(dragulaService.dropModel("contents")
             .subscribe(function (_a) {
             var name = _a.name, el = _a.el, target = _a.target, source = _a.source, item = _a.item, sourceModel = _a.sourceModel, targetModel = _a.targetModel, sourceIndex = _a.sourceIndex, targetIndex = _a.targetIndex;
-            item['table'] = {};
+            item['definition'] = {};
             console.log('item ->', item);
-            if (item.table && item.html) {
+            if (item.definition && item.html) {
                 var currRowId = target.getAttribute('data-current-row-id');
                 var currPageId = target.getAttribute('data-current-page-id');
                 var currcolumnId = target.getAttribute('data-current-column-id');
-                if (typeof item.table.column_name === 'undefined' && item.html.category === 'form') {
-                    item.table.column_name = 'name__' + new Date().getUTCMilliseconds();
-                    item.table.size = '';
+                if (typeof item.definition.column_name === 'undefined' && item.html.category === 'form') {
+                    item.definition.column_name = 'name__' + new Date().getUTCMilliseconds();
+                    item.definition.size = '';
                 }
                 var data = {
                     project_id: _this.project_id,
@@ -267,7 +267,7 @@ var FormPagesComponent = /** @class */ (function () {
                         return item.id;
                     }),
                     html: item.html,
-                    table: item.table
+                    definition: item.definition
                 };
                 if (typeof item.id != 'undefined') {
                     data['id'] = item.id;

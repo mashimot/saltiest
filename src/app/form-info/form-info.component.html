@@ -10,8 +10,8 @@
                             <div class="form-group">
                                 <div class="form-check">
                                     <input type="checkbox" 
-                                    [checked]="d.table.is_primary_key" 
-                                    [(ngModel)]="d.table.is_primary_key"
+                                    [checked]="d.definition.is_primary_key" 
+                                    [(ngModel)]="d.definition.is_primary_key"
                                     [ngModelOptions]="{ standalone: true }"
                                     #is_primary_key="ngModel"                                    
                                     class="form-check-input" 
@@ -22,8 +22,8 @@
                         </div>
                         <div class="col-md-2">
                             <div class="input-group">
-                                <div class="input-group-append" *ngIf="d.table.column_name.toLowerCase().indexOf('ind_') != -1 && d.table.column_name">
-                                    <button (click)="buscaDominio(d.table.column_name)" class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <div class="input-group-append" *ngIf="d.definition.column_name.toLowerCase().indexOf('ind_') != -1 && d.definition.column_name">
+                                    <button (click)="buscaDominio(d.definition.column_name)" class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-search fa-1x" aria-hidden="true"></i>
                                     </button>
                                     <div class="dropdown-menu" [ngStyle]="{ width: '100%' }">
@@ -40,7 +40,7 @@
                                 </div>
                                 <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableColumnName.invalid }" 
                                 name="table-column-name-{{ pageIndex + rowIndex + columnIndex + contentIndex }}"
-                                [(ngModel)]="d.table.column_name" 
+                                [(ngModel)]="d.definition.column_name" 
                                 [ngModelOptions]="{ standalone: true }"
                                 #tableColumnName="ngModel"
                                 required
@@ -80,7 +80,7 @@
                         <div class="col-md-2">
                             <select class="form-control text-uppercase" [ngClass]="{ 'is-invalid': tableType.invalid }"
                             name="table-type-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
-                            [(ngModel)]="d.table.type"
+                            [(ngModel)]="d.definition.type"
                             [ngModelOptions]="{ standalone: true }"
                             #tableType="ngModel"
                             required
@@ -94,7 +94,7 @@
                         </div>
                         <div class="col-md-1">
                             <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableSize.invalid }"
-                            [(ngModel)]="d.table.size"
+                            [(ngModel)]="d.definition.size"
                             [ngModelOptions]="{ standalone: true }"
                             pattern="^[0-9]+(.[0-9])?$"
                             name="table-size-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
@@ -105,11 +105,11 @@
                         </div>
                         <div class="col-md-1">
                             <div class="row">
-                                <label [ngClass]="{'badge-danger': d.table.nullable, 'badge-default' : !d.table.nullable}"
+                                <label [ngClass]="{'badge-danger': d.definition.nullable, 'badge-default' : !d.definition.nullable}"
                                        class="badge col-md-12"
                                        [ngStyle]="{ 'cursor': 'pointer' }">
-                                    nullable? {{ d.table.nullable? 'No' : 'Yes' }}
-                                    <input type="checkbox" [(ngModel)]="d.table.nullable" name="asd3" class="checkbox" [ngStyle]="{ display: 'none' }">
+                                    nullable? {{ d.definition.nullable? 'No' : 'Yes' }}
+                                    <input type="checkbox" [(ngModel)]="d.definition.nullable" name="asd3" class="checkbox" [ngStyle]="{ display: 'none' }">
                                 </label>
                             </div>
                         </div>

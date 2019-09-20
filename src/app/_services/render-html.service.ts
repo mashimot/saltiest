@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Html, Table } from "./../_core/model";
+import { Html, Definition } from "./../_core/model";
 
 export class BootstrapForm{
-    table: Table;
+    definition: Definition;
     html: Html;
 
     constructor(d) { 
         this.html = new Html(d.html);
-        this.table = new Table(d.table);
+        this.definition = new Definition(d.definition);
     }
     
     get() {
@@ -26,42 +26,42 @@ export class BootstrapForm{
             `</table>`],
             "image": [`<img src="${this.html.src}" class="img-fluid">`],
             "textarea": 
-            [`<div class="form-group" id="div_${this.table.column_name}">`,
-                `<label for="txt_${this.table.column_name}">${this.html.label}</label>`,
-                `<textarea class="form-control" name="${this.table.column_name}" id="txt_${this.table.column_name}"  ${this.table.nullable ? `` : `required`}></textarea>`,
+            [`<div class="form-group" id="div_${this.definition.column_name}">`,
+                `<label for="txt_${this.definition.column_name}">${this.html.label}</label>`,
+                `<textarea class="form-control" name="${this.definition.column_name}" id="txt_${this.definition.column_name}"  ${this.definition.nullable ? `` : `required`}></textarea>`,
             `</div>`],
             "select": 
-            [`<div class="form-group" id="div_${this.table.column_name}">`,
-                `<label for="i_${this.table.column_name}">${this.html.label}</label>`,
-                `<select class="form-control" name="${this.table.column_name}" id="i_${this.table.column_name}" ${this.table.nullable ? `` : `required`}>`,
+            [`<div class="form-group" id="div_${this.definition.column_name}">`,
+                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
+                `<select class="form-control" name="${this.definition.column_name}" id="i_${this.definition.column_name}" ${this.definition.nullable ? `` : `required`}>`,
                     `<option value="">Selecione</option>`,
                     `${this.html.choices.map(element => `<option value="${element.value}">${element.text}</option>`).join('')}`,
                 `</select>`,
             `</div>`],
             "checkbox":
-            [`<div class="form-group" id="div_${this.table.column_name}">`,
-                `<label for="i_${this.table.column_name}">${this.html.label}</label>`,
-                `${this.html.choices.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.table.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+            [`<div class="form-group" id="div_${this.definition.column_name}">`,
+                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
+                `${this.html.choices.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.definition.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "radio": 
-            [`<div class="form-group" id="div_${this.table.column_name}">`,
-                `<label for="i_${this.table.column_name}">${this.html.label}</label>`,
-                `${this.html.choices.map(element => `<div class="radio"><label><input type="radio" name="${this.table.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+            [`<div class="form-group" id="div_${this.definition.column_name}">`,
+                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
+                `${this.html.choices.map(element => `<div class="radio"><label><input type="radio" name="${this.definition.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "text": 
-            [`<div class="form-group" id="div_${this.table.column_name}">`,
-                `<label for="i_${this.table.column_name}">${this.html.label}</label>`,
-                `<input type="text" class="form-control" name="${this.table.column_name}" id="i_${this.table.column_name}" value=""  ${this.table.nullable ? `` : `required`}>`,
+            [`<div class="form-group" id="div_${this.definition.column_name}">`,
+                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
+                `<input type="text" class="form-control" name="${this.definition.column_name}" id="i_${this.definition.column_name}" value=""  ${this.definition.nullable ? `` : `required`}>`,
             `</div>`],
             "number": 
-            [`<div class="form-group" id="div_${this.table.column_name}">`,
-                `<label for="i_${this.table.column_name}">${this.html.label}</label>`,
-                `<input type="number" class="form-control" name="${this.table.column_name}" id="i_${this.table.column_name}" value="" ${this.table.nullable ? `` : `required`}>`,
+            [`<div class="form-group" id="div_${this.definition.column_name}">`,
+                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
+                `<input type="number" class="form-control" name="${this.definition.column_name}" id="i_${this.definition.column_name}" value="" ${this.definition.nullable ? `` : `required`}>`,
             `</div>`],
             "date":
-            [`<div class="form-group" id="div_${this.table.column_name}">`,
-                `<label for="i_${this.table.column_name}">${this.html.label}</label>`,
-                `<input type="date" class="form-control" name="${this.table.column_name}" id="i_${this.table.column_name}" value="" ${this.table.nullable ? `` : `required`}>`,
+            [`<div class="form-group" id="div_${this.definition.column_name}">`,
+                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
+                `<input type="date" class="form-control" name="${this.definition.column_name}" id="i_${this.definition.column_name}" value="" ${this.definition.nullable ? `` : `required`}>`,
             `</div>`]
         }
         return typeof data[this.html.tag] !== 'undefined'? data[this.html.tag].join("\n") : '';
@@ -69,12 +69,12 @@ export class BootstrapForm{
 }
 
 export class CustomForm{
-    table: Table;
+    definition: Definition;
     html: Html;
 
     constructor(d) { 
         this.html = new Html(d.html);
-        this.table = new Table(d.table);
+        this.definition = new Definition(d.definition);
     }
     
     get() {
@@ -93,25 +93,25 @@ export class CustomForm{
             `</table>`],
             "image": [`<img src="${this.html.src}" class="img-fluid">`],
             "textarea": 
-            [`{!! $HTML::textArea(${this.html.grid}, '${this.table.column_name}', ${parseInt(this.table.size) > 0? `${this.table.size}` : `''`}, "${this.html.label}", ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.column_name}') !!}`],
+            [`{!! $HTML::textArea(${this.html.grid}, '${this.definition.column_name}', ${parseInt(this.definition.size) > 0? `${this.definition.size}` : `''`}, "${this.html.label}", ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}') !!}`],
             "select": 
-            [`{!! $HTML::selectDominio(${this.html.grid}, '${this.table.column_name}', '${this.html.label}', ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.column_name}' ) !!}`],
+            [`{!! $HTML::selectDominio(${this.html.grid}, '${this.definition.column_name}', '${this.html.label}', ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}' ) !!}`],
             "checkbox":
-            [`<div class="form-group" id="div_${this.table.column_name}">`,
-                `<label for="i_${this.table.column_name}">${this.html.label}</label>`,
-                `${this.html.choices.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.table.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+            [`<div class="form-group" id="div_${this.definition.column_name}">`,
+                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
+                `${this.html.choices.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.definition.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "radio": 
-            [`<div class="form-group" id="div_${this.table.column_name}">`,
-                `<label for="i_${this.table.column_name}">${this.html.label}</label>`,
-                `${this.html.choices.map(element => `<div class="radio"><label><input type="radio" name="${this.table.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+            [`<div class="form-group" id="div_${this.definition.column_name}">`,
+                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
+                `${this.html.choices.map(element => `<div class="radio"><label><input type="radio" name="${this.definition.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "text": 
-            [`{!! $HTML::inputTexto(${this.html.grid}, '${this.table.column_name}', ${parseInt(this.table.size) > 0? `${this.table.size}` : `''`}, '${this.html.label}', ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.column_name}') !!}`],
+            [`{!! $HTML::inputTexto(${this.html.grid}, '${this.definition.column_name}', ${parseInt(this.definition.size) > 0? `${this.definition.size}` : `''`}, '${this.html.label}', ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}') !!}`],
             "number": 
-            [`{!! $HTML::inputNumero(${this.html.grid}, '${this.table.size? (this.table.size.indexOf('.') != -1? `decimal`: `inteiro`) : '' }', '${this.table.column_name}', ${parseInt(this.table.size) > 0? `${this.table.size}` : `''`}, '${this.html.label}', ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.column_name}') !!}`],
+            [`{!! $HTML::inputNumero(${this.html.grid}, '${this.definition.size? (this.definition.size.indexOf('.') != -1? `decimal`: `inteiro`) : '' }', '${this.definition.column_name}', ${parseInt(this.definition.size) > 0? `${this.definition.size}` : `''`}, '${this.html.label}', ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}') !!}`],
             "date": 
-            [`{!! $HTML::inputData(${this.html.grid}, '${this.table.column_name}', '${this.html.label}', ${this.table.nullable? `true` : `false`}, true, true, '', '${this.table.column_name}') !!}`]
+            [`{!! $HTML::inputData(${this.html.grid}, '${this.definition.column_name}', '${this.html.label}', ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}') !!}`]
         }
         return typeof data[this.html.tag] !== 'undefined'? data[this.html.tag].join("\n") : '';
     }    

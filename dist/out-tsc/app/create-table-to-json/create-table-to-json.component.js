@@ -170,7 +170,7 @@ var CreateTableToJsonComponent = /** @class */ (function () {
             'create table if not exists random_table_1 (',
             'supplier_id number(10) not null primary key,',
             '`cod_user` number(10) not null,',
-            '`favorite_fruit` varchar2(10) default 10 not null,',
+            '`favorite_fruit` varchasdr2(10) default 10 not null,',
             'supplier_name varchar2(50) not null,',
             'address varchar2(50),',
             'city varchar2(50),',

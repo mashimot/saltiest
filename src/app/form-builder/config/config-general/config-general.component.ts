@@ -14,18 +14,18 @@ export class ConfigGeneralComponent implements OnInit {
 	constructor(private fb: FormBuilder) { }
 
 	ngOnInit() {
-		console.log(this.content.table);
+		console.log(this.content.definition);
 		this.html.get('label').setValidators([
 			Validators.required
 		]);
 		this.html.patchValue({
 			'label': this.content.html.label,
 		});
-		this.table.get('nullable').setValidators([
+		this.definition.get('nullable').setValidators([
 			Validators.required
 		]);
-		this.table.patchValue({
-			'nullable': this.content.table.nullable? this.content.table.nullable: false
+		this.definition.patchValue({
+			'nullable': this.content.definition.nullable? this.content.definition.nullable: false
 		});
 	}
 
@@ -33,8 +33,8 @@ export class ConfigGeneralComponent implements OnInit {
 		return this.parentFormGroup.get('html');
 	}
 
-	get table() {
-		return this.parentFormGroup.get('table');
+	get definition() {
+		return this.parentFormGroup.get('definition');
 	}
 	
 	get label() {
@@ -42,6 +42,6 @@ export class ConfigGeneralComponent implements OnInit {
 	}
 
 	get nullable() {
-		return this.parentFormGroup.get('table.nullable');
+		return this.parentFormGroup.get('definition.nullable');
 	}
 }

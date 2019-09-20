@@ -15,7 +15,7 @@ var LoginComponent = /** @class */ (function () {
         this.fb = fb;
         this.authService = authService;
         this.submitted = false;
-        this.email = 'test';
+        this.email = 'test@test.com';
         this.password = 'test';
     }
     LoginComponent.prototype.ngOnInit = function () {

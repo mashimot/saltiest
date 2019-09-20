@@ -17,6 +17,7 @@ import { RenderContentModule } from '../form-pages/render-content/render-content
 import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-case.pipe';
 import { ConfigChoicesModule } from '../config-choices/config-choices.module';
 import { SharedModule } from '../shared/shared.module';
+import { NgbPopoverModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     imports: [
@@ -28,7 +29,8 @@ import { SharedModule } from '../shared/shared.module';
         FormConfigModule,
         FormInfoModule,
         ConfigChoicesModule,
-        SharedModule
+        SharedModule,
+        NgbPopoverModule
     ],
     exports: [
         DragulaModule

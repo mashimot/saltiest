@@ -8,8 +8,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
-import * as nearley from 'nearley';
-import * as bracketexpr_grammar from './../_parser/create-table-oracle-to-json';
+//import { readFile } from 'fs';
+var Parser = require('sql-ddl-to-json-schema');
 String.prototype.replaceAllDecimalCommaToDecimalDot = function () {
     var regex = {
         valueBtwParentheses: "\\(([^)]*)\\)",
@@ -33,19 +33,87 @@ var CreateTableToJsonService = /** @class */ (function () {
         this._data = [];
     }
     CreateTableToJsonService.prototype.parse = function () {
-        this._string = this._string.replace(/\s+/g, " ").toLowerCase();
-        var parser = new nearley.Parser((bracketexpr_grammar));
+        this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
+        //const parser = new nearley.Parser(oracle_grammar);
+        var parser = new Parser('mysql');
         try {
-            parser.feed(this._string.replaceAllDecimalCommaToDecimalDot());
+            parser.feed(this._sql);
+            var options = {};
+            var results = parser.feed(this._sql)
+                .toJsonSchemaArray(options);
+            this._rawData = results[0];
+            this.convertData2();
+            /*parser.feed(this._sql.replaceAllDecimalCommaToDecimalDot());
             this._rawData = parser.results[0];
-            this.convertData();
+            this.convertData();*/
         }
         catch (error) {
-            this._errors.push(error);
+            //this._errors.push(error);
+            this._errors.push(this.reportError(error, parser));
         }
+    };
+    CreateTableToJsonService.prototype.reportError = function (e, parser) {
+        if (parser.table) {
+            var lastColumnIndex = parser.table.length - 2;
+            var lastColumn = parser.table[lastColumnIndex];
+            var token = parser.lexer.buffer[parser.current];
+            return [
+                "You have an error in your SQL syntax. <br />",
+                //`Instead of a ${JSON.stringify(token)}`,
+                this.setCharAt(parser.lexer.buffer, parser.current, "<mark class=\"text-danger\">" + token + "</mark>")
+            ].join("<br />");
+        }
+        return '';
+        //console.log(parser.lexer.buffer);
+        //console.log(`Instead of a ${JSON.stringify(token)}, I was expecting to see one of the following:`);
+        //console.log(lastColumn.states);
+    };
+    CreateTableToJsonService.prototype.setCharAt = function (str, index, chr) {
+        if (index > str.length - 1)
+            return str;
+        return str.substr(0, index) + chr + str.substr(index + 1);
+    };
+    CreateTableToJsonService.prototype.convertData2 = function () {
+        var _this = this;
+        if (this._rawData instanceof Object && Object.keys(this._rawData).length > 0) {
+            var definitions = this._rawData.definitions;
+            var required_1 = this._rawData.required;
+            definitions.forEach(function (definition, columnName) {
+                var column_name = columnName;
+                //let column_definition = definition.column_definition;
+                var is_primary_key = false;
+                var nullable = false;
+                if (required_1 instanceof Array && required_1.length > 0) {
+                    required_1.forEach(function (value) {
+                        if (value == columnName)
+                            nullable = true;
+                    });
+                }
+                _this._data.push({
+                    html: {
+                        category: _this.category,
+                        tag: definition.tag,
+                        label: _this.customLabelName(column_name)
+                    },
+                    definition: {
+                        is_primary_key: is_primary_key,
+                        column_name: column_name,
+                        type: definition.type.toLowerCase(),
+                        size: definition.maxLength,
+                        nullable: nullable
+                    }
+                });
+            });
+        }
+        else {
+            //this._errors.push();
+        }
+        console.log(this._data);
     };
     CreateTableToJsonService.prototype.convertData = function () {
         var _this = this;
+        console.log(this._rawData);
+        console.log(this._data);
         if (this._rawData instanceof Object && Object.keys(this._rawData).length > 0) {
             var create_table_statement = this._rawData.create_table_statement;
             var create_definition = this._rawData.create_definition;
@@ -70,7 +138,7 @@ var CreateTableToJsonService = /** @class */ (function () {
                         tag: data_type.tag,
                         label: _this.customLabelName(column_name)
                     },
-                    table: {
+                    definition: {
                         is_primary_key: is_primary_key,
                         column_name: column_name,
                         type: data_type.type.toLowerCase(),
@@ -104,7 +172,7 @@ var CreateTableToJsonService = /** @class */ (function () {
         return this._errors;
     };
     CreateTableToJsonService.prototype.setString = function (string) {
-        this._string = string;
+        this._sql = string;
     };
     CreateTableToJsonService.prototype.getData = function () {
         return this._data;

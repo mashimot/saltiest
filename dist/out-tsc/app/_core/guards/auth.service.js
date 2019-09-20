@@ -13,7 +13,6 @@ import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 var AuthService = /** @class */ (function () {
-    //private API_URL: string = '';
     function AuthService(http, router) {
         this.http = http;
         this.router = router;
@@ -23,7 +22,8 @@ var AuthService = /** @class */ (function () {
                 'Access-Control-Allow-Origin': '*'
             })
         };
-        this.API_URL = 'http://localhost:8000/api';
+        //private API_URL: string = 'http://localhost:8000/api';
+        this.API_URL = '/api';
         this.currentUserSubject = new BehaviorSubject(JSON.parse(localStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
     }

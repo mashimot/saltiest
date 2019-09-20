@@ -4,8 +4,7 @@ import { HomeService } from "../shared/services/home.service";
 
 import { Page } from "../_core/model/page.model";
 import { Content } from "../_core/model/content.model";
-import { Html, IHtml } from "../_core/model/html.model";
-import { Table, ITable } from "../_core/model/table.model";
+import { Definition, IDefinition, Html, IHtml } from "../_core/model";
 import { FormConfigService } from '../_services/form-config.service';
 import { PageService } from '../shared/services/page.service';
 import { ActivatedRoute } from '@angular/router';
@@ -24,7 +23,7 @@ export class Laravel {
     messages: string;
     tableName: string = '';
     html: IHtml;
-    table: ITable;
+    definition: IDefinition;
 
     constructor() { 
         this.inputs = [];
@@ -32,7 +31,7 @@ export class Laravel {
 
     setParams(d) {
         this.html = new Html(d.html);
-        this.table = new Table(d.table);
+        this.definition = new Definition(d.definition);
     }
 
     setInputs(inputs) {
@@ -41,6 +40,9 @@ export class Laravel {
 
     getRules() {
         var basic = {
+            radio: ['nullable'],
+            checkbox: ['nullable'],
+            select: ['nullable'],
             number: ['nullable', 'numeric'],
             date: ['nullable', 'date_format:"d/m/Y"'],
             text: ['nullable', 'string'],
@@ -55,19 +57,22 @@ export class Laravel {
             var newBasic = basic[tag].filter(el => {
                 return el != "" && el != null;
             });
-            return [`"${this.table.column_name}" => ${JSON.stringify(newBasic)}`].join(",");
+            return [`"${this.definition.column_name}" => ${JSON.stringify(newBasic)}`].join(",");
         }
-        return [`${this.table.column_name} => ${JSON.stringify(basic[tag])}`].join(",");
+        return [`${this.definition.column_name} => ${JSON.stringify(basic[tag])}`].join(",");
     }
 
     size(){
-        if(typeof this.table.size != 'undefined'){
-            var size = this.table.size;
+        if(typeof this.definition.size != 'undefined'){
+            var size = this.definition.size;
             if(size != null && size != ''){
                 var list = {
                     number: `digits_between:1,${size}`,
                     date: 'max:' + size,
                     text: 'max:' + size,
+                    radio: 'max:' + size,
+                    checkbox: 'max:' + size,
+                    select: 'max:' + size,
                     textarea: 'max:' + size,
                 }            
                 return list[this.html.tag];
@@ -87,12 +92,12 @@ export class Laravel {
             this.inputs.forEach(curr => {
                 this.setParams(curr);
 
-                if(curr.table.is_primary_key){
-                    primaryKey.push(`"${curr.table.column_name}"`);
+                if(curr.definition.is_primary_key){
+                    primaryKey.push(`"${curr.definition.column_name}"`);
                 }
-                fillable.push(curr.table.column_name);
-                request.push(`"${curr.table.column_name}" => $request->input('${curr.table.column_name}')`);
-                attributes.push(`\t'${this.table.column_name}' => '${this.html.label}'`);
+                fillable.push(curr.definition.column_name);
+                request.push(`"${curr.definition.column_name}" => $request->input('${curr.definition.column_name}')`);
+                attributes.push(`\t'${this.definition.column_name}' => '${this.html.label}'`);
                 rules.push(this.getRules());
             });
         }
@@ -117,7 +122,7 @@ export class Laravel {
     }
     
     isRequired(): string {
-        return this.table.nullable ? 'required' : 'nullable';
+        return this.definition.nullable ? 'required' : 'nullable';
     }
 
     setTableName(tableName: string){
@@ -158,8 +163,8 @@ export class Laravel {
         if(this.inputs.length > 0){
             var script = this.inputs.map((item) => {
                 return { 
-                    data: item.table.column_name,
-                    name: item.table.column_name
+                    data: item.definition.column_name,
+                    name: item.definition.column_name
                 };
             }, []);
 

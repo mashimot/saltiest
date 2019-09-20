@@ -10,8 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, Injectable } from '@angular/core';
 import { RenderHtmlService } from '../_services/render-html.service';
 import { HomeService } from "../shared/services/home.service";
-import { Html } from "../_core/model/html.model";
-import { Table } from "../_core/model/table.model";
+import { Definition, Html } from "../_core/model";
 import { FormConfigService } from '../_services/form-config.service';
 import { PageService } from '../shared/services/page.service';
 import { ActivatedRoute } from '@angular/router';
@@ -24,13 +23,16 @@ var Laravel = /** @class */ (function () {
     }
     Laravel.prototype.setParams = function (d) {
         this.html = new Html(d.html);
-        this.table = new Table(d.table);
+        this.definition = new Definition(d.definition);
     };
     Laravel.prototype.setInputs = function (inputs) {
         this.inputs = inputs;
     };
     Laravel.prototype.getRules = function () {
         var basic = {
+            radio: ['nullable'],
+            checkbox: ['nullable'],
+            select: ['nullable'],
             number: ['nullable', 'numeric'],
             date: ['nullable', 'date_format:"d/m/Y"'],
             text: ['nullable', 'string'],
@@ -43,18 +45,21 @@ var Laravel = /** @class */ (function () {
             var newBasic = basic[tag].filter(function (el) {
                 return el != "" && el != null;
             });
-            return ["\"" + this.table.column_name + "\" => " + JSON.stringify(newBasic)].join(",");
+            return ["\"" + this.definition.column_name + "\" => " + JSON.stringify(newBasic)].join(",");
         }
-        return [this.table.column_name + " => " + JSON.stringify(basic[tag])].join(",");
+        return [this.definition.column_name + " => " + JSON.stringify(basic[tag])].join(",");
     };
     Laravel.prototype.size = function () {
-        if (typeof this.table.size != 'undefined') {
-            var size = this.table.size;
+        if (typeof this.definition.size != 'undefined') {
+            var size = this.definition.size;
             if (size != null && size != '') {
                 var list = {
                     number: "digits_between:1," + size,
                     date: 'max:' + size,
                     text: 'max:' + size,
+                    radio: 'max:' + size,
+                    checkbox: 'max:' + size,
+                    select: 'max:' + size,
                     textarea: 'max:' + size,
                 };
                 return list[this.html.tag];
@@ -68,12 +73,12 @@ var Laravel = /** @class */ (function () {
         if (this.inputs.length > 0) {
             this.inputs.forEach(function (curr) {
                 _this.setParams(curr);
-                if (curr.table.is_primary_key) {
-                    primaryKey.push("\"" + curr.table.column_name + "\"");
+                if (curr.definition.is_primary_key) {
+                    primaryKey.push("\"" + curr.definition.column_name + "\"");
                 }
-                fillable.push(curr.table.column_name);
-                request.push("\"" + curr.table.column_name + "\" => $request->input('" + curr.table.column_name + "')");
-                attributes.push("\t'" + _this.table.column_name + "' => '" + _this.html.label + "'");
+                fillable.push(curr.definition.column_name);
+                request.push("\"" + curr.definition.column_name + "\" => $request->input('" + curr.definition.column_name + "')");
+                attributes.push("\t'" + _this.definition.column_name + "' => '" + _this.html.label + "'");
                 rules.push(_this.getRules());
             });
         }
@@ -96,7 +101,7 @@ var Laravel = /** @class */ (function () {
         };
     };
     Laravel.prototype.isRequired = function () {
-        return this.table.nullable ? 'required' : 'nullable';
+        return this.definition.nullable ? 'required' : 'nullable';
     };
     Laravel.prototype.setTableName = function (tableName) {
         this.tableName = tableName;
@@ -117,8 +122,8 @@ var Laravel = /** @class */ (function () {
         if (this.inputs.length > 0) {
             var script = this.inputs.map(function (item) {
                 return {
-                    data: item.table.column_name,
-                    name: item.table.column_name
+                    data: item.definition.column_name,
+                    name: item.definition.column_name
                 };
             }, []);
             script.push({
@@ -233,8 +238,6 @@ var FormBuilderComponent = /** @class */ (function () {
     FormBuilderComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.pages = [];
-        //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
-        //this.pages = this.homeService.getHomeStatic();
         this.route.params.subscribe(function (r) {
             _this.project_id = r.projectId;
         });
@@ -248,17 +251,16 @@ var FormBuilderComponent = /** @class */ (function () {
         this.loadFormBuilder();
     };
     FormBuilderComponent.prototype.loadFormBuilder = function () {
-        var _this = this;
         //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
-        //this.pages = this.homeService.getHomeStatic();
-        this.pageService.getPageByProjectId(this.project_id)
-            .subscribe(function (result) {
+        this.pages = this.homeService.getHomeStatic();
+        /*this.pageService.getPageByProjectId(this.project_id)
+        .subscribe(result => {
             console.log(result);
-            if (result.success) {
-                _this.pages = result.paginate.data;
+            if(result.success){
+                this.pages = result.paginate.data;
             }
-            _this.ngxLoader.stop();
-        });
+            this.ngxLoader.stop();
+        });*/
     };
     FormBuilderComponent.prototype.ngAfterViewInit = function () {
     };

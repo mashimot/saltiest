@@ -9,7 +9,10 @@ import { HttpResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
 // array in local storage for registered users
-var users = JSON.parse(localStorage.getItem('currentUser')) || [];
+//let users = JSON.parse(localStorage.getItem('currentUser')) || [];
+var users = [
+    { id: 1, username: 'test', password: 'test', email: 'test@test.com', firstName: 'First Name', lastName: 'Last Name' }
+];
 var FakeBackendInterceptor = /** @class */ (function () {
     function FakeBackendInterceptor() {
     }
@@ -25,7 +28,7 @@ var FakeBackendInterceptor = /** @class */ (function () {
             switch (true) {
                 case url.endsWith('/api/auth/register') && method === 'POST':
                     return register();
-                case url.endsWith('/api/auth/authenticate') && method === 'POST':
+                case url.endsWith('/api/auth/login') && method === 'POST':
                     return authenticate();
                 case url.endsWith('/users') && method === 'GET':
                     return getUsers();
@@ -50,12 +53,13 @@ var FakeBackendInterceptor = /** @class */ (function () {
             return ok();
         }
         function authenticate() {
-            var username = body.username, password = body.password;
-            var user = users.find(function (x) { return x.username === username && x.password === password; });
+            var email = body.email, password = body.password;
+            var user = users.find(function (x) { /*x.username === username &&*/ return x.email === email && x.password === password; });
             if (!user)
                 return error('Username or password is incorrect');
             return ok({
                 id: user.id,
+                email: user.email,
                 username: user.username,
                 firstName: user.firstName,
                 lastName: user.lastName,

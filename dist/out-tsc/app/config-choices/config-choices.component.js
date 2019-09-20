@@ -51,8 +51,11 @@ var ConfigChoicesComponent = /** @class */ (function () {
                 index: index
             };
             var myAss = {
+                description: "",
                 html: {
                     category: "form",
+                    content_choice_id: 2,
+                    content_html_tag_id: 2,
                     choices: [],
                     group: "",
                     label: "Type your Text",
@@ -67,6 +70,7 @@ var ConfigChoicesComponent = /** @class */ (function () {
             }
             modal.componentInstance.emitData.subscribe(function ($e) {
                 if ($e.choices.length > 0) {
+                    var groups = $e.choices.map(function (choice) { return choice.text; });
                     if (index != null) {
                         _this.choices$ = _this.choices$.pipe(map(function (_) {
                             result.data[index].html.choices = $e.choices;
@@ -75,8 +79,10 @@ var ConfigChoicesComponent = /** @class */ (function () {
                     }
                     else {
                         myAss.html.choices = $e.choices;
+                        myAss.description = groups.join('|');
                         _this.choices$ = _this.choices$.pipe(map(function (_) {
-                            result.data.push(myAss);
+                            //result.data.push(myAss);
+                            result.data = result.data.concat([myAss]);
                             return result;
                         }), tap(function (x) { return console.log(x); }));
                     }
@@ -88,9 +94,10 @@ var ConfigChoicesComponent = /** @class */ (function () {
         /*;*/
     };
     ConfigChoicesComponent.prototype.loadPage = function (page) {
-        this.choices$ = this.htmlElementService.queryParams({
+        this.choices$ = this.htmlElementService /*.queryParams({
             page: page
-        }).pipe(map(function (result) {
+        })*/
+            .getStaticOptionChoices().pipe(map(function (result) {
             return result.paginate;
         }));
         /*this.htmlElementService.queryParams({

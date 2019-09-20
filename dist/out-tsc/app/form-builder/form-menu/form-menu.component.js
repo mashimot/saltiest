@@ -38,7 +38,7 @@ var FormMenuComponent = /** @class */ (function () {
                 ].join("\n")
             }];
         //this.tools = this.htmlElementService.getStaticTools();
-        this.tools$ = this.htmlElementService.getTools()
+        this.tools$ = this.htmlElementService /*.getTools()*/.getStaticTools()
             .pipe(map(function (res) {
             return res.tools;
         }));

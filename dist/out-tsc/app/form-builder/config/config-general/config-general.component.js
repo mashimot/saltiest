@@ -14,18 +14,18 @@ var ConfigGeneralComponent = /** @class */ (function () {
         this.fb = fb;
     }
     ConfigGeneralComponent.prototype.ngOnInit = function () {
-        console.log(this.content.table);
+        console.log(this.content.definition);
         this.html.get('label').setValidators([
             Validators.required
         ]);
         this.html.patchValue({
             'label': this.content.html.label,
         });
-        this.table.get('nullable').setValidators([
+        this.definition.get('nullable').setValidators([
             Validators.required
         ]);
-        this.table.patchValue({
-            'nullable': this.content.table.nullable ? this.content.table.nullable : false
+        this.definition.patchValue({
+            'nullable': this.content.definition.nullable ? this.content.definition.nullable : false
         });
     };
     Object.defineProperty(ConfigGeneralComponent.prototype, "html", {
@@ -35,9 +35,9 @@ var ConfigGeneralComponent = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ConfigGeneralComponent.prototype, "table", {
+    Object.defineProperty(ConfigGeneralComponent.prototype, "definition", {
         get: function () {
-            return this.parentFormGroup.get('table');
+            return this.parentFormGroup.get('definition');
         },
         enumerable: true,
         configurable: true
@@ -51,7 +51,7 @@ var ConfigGeneralComponent = /** @class */ (function () {
     });
     Object.defineProperty(ConfigGeneralComponent.prototype, "nullable", {
         get: function () {
-            return this.parentFormGroup.get('table.nullable');
+            return this.parentFormGroup.get('definition.nullable');
         },
         enumerable: true,
         configurable: true
