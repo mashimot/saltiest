@@ -81,7 +81,7 @@ export class FormContentsComponent implements OnInit {
         }
     }
 
-    sendDataToModal(contents, index): void{
+    sendDataToModal(contents, index: number): void{
         let m = this.modalService.open(FormConfigComponent, this.options);
         m.componentInstance.content_id = contents[index].id;
         m.componentInstance.content = contents[index];

@@ -32,7 +32,7 @@ export class HomeService {
 											"text": "Salt.",
 											"class": "text-center"
 										},
-										"table": {}
+										"definition": {}
 									},
 									{
 										"html": {
@@ -41,7 +41,7 @@ export class HomeService {
 											"text": "A tool for lazy Developers.",
 											"class": "text-center"
 										},
-										"table": {}
+										"definition": {}
 									}
 								]
 							}
@@ -58,7 +58,7 @@ export class HomeService {
 											"category": "html",
 											"data": "<h1 class=\"p-3 mb-3 bg-danger text-white text-center\">A simple drag & drop Bootstrap Form Builder </h1>"
 										},
-										"table": {}
+										"definition": {}
 									}
 								]
 							}
@@ -75,7 +75,7 @@ export class HomeService {
 											"category": "html",
 											"src": "http://i.imgur.com/AVqsATi.gif"
 										},
-										"table": {}
+										"definition": {}
 									}
 								]
 							},
@@ -87,7 +87,7 @@ export class HomeService {
 											"category": "html",
 											"data": "<p class=\"f3\">This project was made with Angular 6.1.2.</p>\n<p>It's been in development since December 2017 and is <strong>currently being developed.</strong></p>"
 										},
-										"table": {}
+										"definition": {}
 									}
 								]
 							}
@@ -106,7 +106,7 @@ export class HomeService {
 											"text": "Features",
 											"class": "text-center"
 										},
-										"table": {}
+										"definition": {}
 									}
 								]
 							},
@@ -126,7 +126,7 @@ export class HomeService {
 											"category": "html",
 											"data": "<a href=\"http://wiki.languagetool.org/public-http-api\" target=\"_blank\">API RESTful - Language Tool (LanguageTool Style and Grammar Checker)</a> http://wiki.languagetool.org/public-http-api"
 										},
-										"table": {}
+										"definition": {}
 									}
 								]
 							}
