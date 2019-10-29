@@ -31,7 +31,7 @@
     "core-js": "^2.6.9",
     "express": "^4.17.1",
     "jquery": "^3.4.1",
-    "mongoose": "^5.7.0",
+    "mongoose": "^5.7.5",
     "nearley": "^2.19.0",
     "ng2-dragula": "^2.1.1",
     "ngx-highlightjs": "^2.1.4",
