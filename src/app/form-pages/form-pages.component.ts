@@ -92,23 +92,24 @@ export class FormPagesComponent implements OnInit {
                     gridArr.splice(targetIndex, 0, aux);
                     let newGrid = gridArr.join(" ").trim();
                     this.pages[pageIndex].rows[currRowIndex].grid = newGrid;
-                    const data = {
+                    const params = {
                         project_id: this.project_id,
                         page: {
                             currRowId: parseInt(currRowId)
                         },
                         newGrid: newGrid,
                         columnPos: targetModel.map(item => {
-                            return item.id;
+                            return item.id? item.id: null;
                         })
                     }
-                    /*this.columnService.updateColumn(data.page.currRowId, data)
+                    console.info('column sorted');
+                    this.columnService.updateColumn(params.page.currRowId, params)
                     .subscribe(result => {
                         if(result.success){
                             this.loadFormBuilder();
                             this.dropModelPageUpdated = true;
                         }
-                    });*/
+                    });
                 }   
             })
         );
@@ -141,26 +142,29 @@ export class FormPagesComponent implements OnInit {
                 const currRowId     = el.getAttribute('data-current-row-id');
 
                 if(typeof item.grid != 'undefined' && typeof item.columns == 'undefined'){//gambiarra, mas funciona
-                    let rows = [];
+                    //let rows = [];
                     let lines = item.grid.trim().split("\n");
                     delete item.grid;
-                    for(let i = 0; i < lines.length; i++){
-                        let line = lines[i].replace(/\s+/g, ' ').trim();
-                        if(line != ''){
-                            let arrNumbers = line.split(' ');
-                            if (arrNumbers.length > 0) {
-                                rows.push({
-                                    grid: line,
-                                    columns: []
+                    let rows = lines.map(line => {
+                        return line.replace(/\s+/g, ' ').trim();
+                    })
+                    .filter(line => line != '')
+                    .map(line => {
+                        let arrNumbers = line.split(' ');
+                        if (arrNumbers.length > 0) {
+                            let columns = [];
+                            for (let j = 0; j < arrNumbers.length; j++) {
+                                columns.push({
+                                    contents: []
                                 });
-                                for (let j = 0; j < arrNumbers.length; j++) {
-                                    rows[rows.length - 1].columns.push({
-                                        contents: []
-                                    });
-                                }
                             }
+                            return {
+                                grid: line,
+                                columns: columns
+                            };
                         }
-                    }
+                    });
+
 
                     for(var i = 0 ; i < targetModel.length; i++){
                         if(Object.keys(targetModel[i]).length <= 0){
@@ -171,21 +175,21 @@ export class FormPagesComponent implements OnInit {
                     for (let i = 0; i < numSeparators; i++) {
                         targetModel.splice(targetIndex + (i), 0, rows[i]);
                     }
-                    /* API
-                    const data = {
+                    //API
+                    const params = {
                         project_id: this.project_id,
                         page: {
                             targetPageId: parseInt(targetPageId)
                         },
                         rowsPos: targetModel.map(item => {
-                            return item.id;
+                            return item.id? item.id: null;
                         }),
                         rowTargetIndex: targetIndex,
                         rows: rows
-                    };                    
-
+                    };                
+                    console.info('row sorted');
                     if(rows.length > 0){
-                        this.rowService.storeRow(data)
+                        this.rowService.storeRow(params)
                         .subscribe(result => {
                             if(result.success){
                                 this.loadFormBuilder();
@@ -194,23 +198,23 @@ export class FormPagesComponent implements OnInit {
                         });
                     }
                 } else {
-                    const data = {
+                    const params = {
                         project_id: this.project_id,
                         page: {
                             currRowId: parseInt(currRowId),
                             targetPageId: parseInt(targetPageId)
                         },
                         rowPos: targetModel.map(item => {
-                            return item.id;
+                            return item.id? item.id: null;
                         })
                     };
-                    this.rowService.updateRow(data.page.targetPageId, data)
+                    this.rowService.updateRow(params.page.targetPageId, params)
                     .subscribe(result => {
                         if(result.success){
                             this.loadFormBuilder();
                             this.dropModelPageUpdated = true;
                         }
-                    });*/
+                    });
                 }
                 return item;                    
             })
@@ -265,29 +269,31 @@ export class FormPagesComponent implements OnInit {
                         item.definition.column_name = 'name__' + new Date().getUTCMilliseconds();
                         item.definition.size = '';
                     }
-                    const data = {
+                    const params = {
                         project_id: this.project_id,
                         page: {
                             currPageId: currPageId,
                             currRowId: currRowId,
                             currColumnId: currcolumnId    
                         },
-                        contentPos: targetModel.map(item => {
-                            return item.id;
+                        contentPos: targetModel
+                        .map(item => {
+                            return item.id? item.id: null;
                         }),
                         html: item.html,
                         definition: item.definition
                     }; 
+                    console.info('content sorted', params);
                     if(typeof item.id != 'undefined'){
-                        data['id'] = item.id;
-                    } 
-                    /*this.contentService.storeContent(data)
+                        params['id'] = item.id;
+                    }
+                    this.contentService.storeContent(params)
                     .subscribe(result => {
                         if(result.success){
                             this.loadFormBuilder();
                             this.dropModelPageUpdated = true;
                         }
-                    });*/
+                    });
                 }
             })
         );
@@ -305,7 +311,7 @@ export class FormPagesComponent implements OnInit {
     ngAfterViewInit() {
         this.subs.add(this.dragulaService.dropModel("pages")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
-                const data = {
+                const params = {
                     project_id: this.project_id,
                     pagesPos: targetModel.map(item => {
                         return item.id;
@@ -314,7 +320,7 @@ export class FormPagesComponent implements OnInit {
                 };    
 
                 this.dropModelPageUpdated = true;
-                /*this.pageService.updatePagesPosition(data.project_id, data)
+                /*this.pageService.updatePagesPosition(data.project_id, params)
                 .subscribe(result => {
                     console.log(result);
                 });*/
@@ -357,9 +363,9 @@ export class FormPagesComponent implements OnInit {
         this.pageService.getPageByProjectId(this.project_id)
         .subscribe(result => { 
             if(result.success){
-                this.pages = result.paginate;
+                this.pages = result.paginate.data;
             }
             this.ngxLoader.stop();
-        });
+        });        
     }    
 }

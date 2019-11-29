@@ -20,7 +20,9 @@ import { LoginModule } from './login/login.module';
 import { fakeBackendProvider } from './_helpers/fake-backend';
 import { JwtInterceptor } from './_helpers/jwt';
 import { ErrorInterceptor } from './_helpers/error';
-import { NgxPaginationModule } from 'ngx-pagination'; // <-- import the module
+import { NgxPaginationModule } from 'ngx-pagination';
+import { CreateTableToJsonModule } from './create-table-to-json/create-table-to-json.module';
+
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     overlayColor: 'white',
@@ -52,6 +54,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
         HomeModule,
         SpellCheckerModule,
         LoginModule,
+        CreateTableToJsonModule,
         DragulaModule,
         AppRoutingModule,
         HttpModule,

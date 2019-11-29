@@ -54,7 +54,7 @@ var ConfigChoicesComponent = /** @class */ (function () {
                 description: "",
                 html: {
                     category: "form",
-                    content_choice_id: 2,
+                    content_choice_id: null,
                     content_html_tag_id: 2,
                     choices: [],
                     group: "",
@@ -94,10 +94,10 @@ var ConfigChoicesComponent = /** @class */ (function () {
         /*;*/
     };
     ConfigChoicesComponent.prototype.loadPage = function (page) {
-        this.choices$ = this.htmlElementService /*.queryParams({
-            page: page
-        })*/
-            .getStaticOptionChoices().pipe(map(function (result) {
+        this.choices$ = this.htmlElementService
+            //.queryParams({ page: page })
+            .getStaticOptionChoices()
+            .pipe(map(function (result) {
             return result.paginate;
         }));
         /*this.htmlElementService.queryParams({

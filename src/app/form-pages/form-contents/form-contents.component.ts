@@ -98,18 +98,21 @@ export class FormContentsComponent implements OnInit {
         });
     }
 
-    deleteContent(contentIndex): void {
-        /*this.contentService.deleteContent(content.id)
-        .subscribe(result =>{
-            if(result.success){
-                this.column.contents.forEach((cV, index) => {
-                    if(cV.id == content.id){
-                        this.column.contents.splice(index, 1);
-                    }
-                });
-                this.cd.markForCheck();
-            }
-        });*/
-        this.column.contents.splice(contentIndex, 1);
+    deleteContent(contentIndex: number, content = { id: null }): void {
+        if(content.id != null){
+            this.contentService.deleteContent(content.id)
+            .subscribe(result =>{
+                if(result.success){
+                    this.column.contents.forEach((cV, index) => {
+                        if(cV.id == content.id){
+                            this.column.contents.splice(index, 1);
+                        }
+                    });
+                    this.cd.markForCheck();
+                }
+            });
+        } else {
+            this.column.contents.splice(contentIndex, 1);
+        }
     }
 }

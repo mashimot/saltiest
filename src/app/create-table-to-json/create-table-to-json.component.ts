@@ -194,20 +194,37 @@ export class CreateTableToJsonComponent implements OnInit {
 	ngOnInit() {
 		this.database = DatabaseEngine.getDatabaseEngines();
 		this.database = [this.database[0]];
+		this.options.database = 'oracle';
 		this.setDatabaseEngineLogo(this.options.database);
 		this.string = [
 			'create table if not exists random_table_1 (',
-			'supplier_id num2ber(10) not null primary key,',
+			'supplier_id number(10) not null primary key,',
 			'`cod_user` number(10) not null,',
 			'`favorite_fruit` varchar2(10) default 10 not null,',
 			'supplier_name varchar2(50) not null,',
+			'status_supplier CHAR(1) default "Ok",',
 			'address varchar2(50),',
 			'city varchar2(50),',
 			'state varchar2(25),',
 			'dat_now date,',
-			'zip_code number(10),price number(10.2)',
+			'zip_code number(10),price number(10.2),',
+			'title VARCHAR(255) NOT NULL,',
+			'start_date DATE,',
+			'due_date DATE',
 			');'
 		].join("\n");
+/*
+		this.string = [
+			`CREATE TABLE tasks (`,
+			`id INT(11) NOT NULL AUTO_INCREMENT,`,
+			`nickname VARCHAR(255) NOT NULL,`,
+			`deleted_at TIMESTAMP NULL,`,
+			`created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,`,
+			`updated_at TIMESTAMP,`,
+			`PRIMARY KEY (id)`,
+			');'
+		].join("\n");
+*/
 		let s = new Silabalize;
 		s.silabalize();
 	}
@@ -237,15 +254,18 @@ export class CreateTableToJsonComponent implements OnInit {
 		ct.parse();
 		this.errors = ct.getError();
 		if (!ct.hasError()) {
-			let data = ct.getData();
-            let bootstrapGridSystem = new BootstrapGridSystemService(data, `${this.gridModel}\n`);
+			let schema = ct.getSchema();
+			console.log(schema)
+            let bootstrapGridSystem = new BootstrapGridSystemService(schema.data, `${this.gridModel}\n`);
 			bootstrapGridSystem.convert();
-			let pages = bootstrapGridSystem.getPage();
+			//let pages = bootstrapGridSystem.getPage();
+			schema.pages = bootstrapGridSystem.getPage();
+			//console.log('pgaes -> ', pages);
 			this.tableNameChange.emit(
 				ct.getTableName()
 				//this.joeys.setWord(ct.getTableName()).singularize()
 			);
-			this.pageChange.emit(pages);
+			this.pageChange.emit(schema.pages);
 		} 
 	}
 }

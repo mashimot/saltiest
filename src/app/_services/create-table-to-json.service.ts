@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import * as nearley from 'nearley';
 import * as oracle_grammar from './../_parser/create-table-oracle-to-json';
-import { Content, Html, Definition } from "./../_core/model";
-//import * as Parser from 'sql-ddl-to-json-schema';
+//import * as Parser from './../_parser/lib/parser';
+//const Parser = require('./../_parser/lib/parser');
+import { Content, Html, Definition, Page } from "./../_core/model";
 
 
 declare global {
@@ -34,14 +35,19 @@ export class CreateTableToJsonService{
 	_sql: string;
 	_database: string;
 	_errors: Object = {};
-	_data: Array<any> = [];
-	/*_rawData: {
+	_schema: {
+		$id: string,
+		data: Array<any>,
+		definitions?: Object,
+		pages?: Page
+	};
+	/*_rawSchema: {
 		create_table_statement: {
 			table_name: string
 		},
 		create_definition: Array<any>
 	};*/
-	_rawData: any;
+	_rawSchema: any;
 
 	_table_name: string;
     _customLabel: {
@@ -53,7 +59,11 @@ export class CreateTableToJsonService{
  
 	constructor() {
 		this._customLabel = this.getCustomLabelName();
-		this._data = [];
+		this._schema = {
+			$id: '',
+			data: [],
+			definitions: {}
+		};
 	}
 
 	setDataBase(database: string){
@@ -66,31 +76,27 @@ export class CreateTableToJsonService{
 
 	parse(): void{
 		this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
-		//const parser = new nearley.Parser(oracle_grammar);
-		//let parser = Parser;
-		let parser = new nearley.Parser(oracle_grammar);
-		if(this.getDataBase() == 'mysql'){
-			//parser = new Parser('mysql');
-		}
-		if(this.getDataBase() == 'oracle'){
-			//parser = new nearley.Parser(oracle_grammar);
-		}
-
+		let p = new nearley.Parser(oracle_grammar);
+		//let p = new Parser('mysql');
+		/**if(this.getDataBase() == 'oracle'){
+			p = new nearley.Parser(oracle_grammar);
+		}*/
 		try {
 			const options = {};
-			if(this.getDataBase() == 'mysql'){
-				const results = parser.feed(this._sql).toJsonSchemaArray(options);
-				this._rawData = results[0];
+			/*if(this.getDataBase() == 'mysql'){
+				const results = p.feed(this._sql).toJsonSchemaArray(options);
+				this._rawSchema = results[0];
+				console.log(this._rawSchema);
 				this.convertDataMysql();	
-			}
+			}*/
 			if(this.getDataBase() == 'oracle'){
-				const results = parser.feed(this._sql.replaceAllDecimalCommaToDecimalDot()).results;
-				this._rawData = results[0];
+				const results = p.feed(this._sql.replaceAllDecimalCommaToDecimalDot()).results;
+				this._rawSchema = results[0];
 				this.convertDataOracle();
 			}
 		} catch(error){
 			//this._errors.push(error);
-			this._errors = this.reportError(error, parser);
+			this._errors = this.reportError(error, p);
 		}
 	}
 
@@ -131,14 +137,17 @@ export class CreateTableToJsonService{
 			str: str,
 			strBegin: str.substr(0, index),
 			char: chr,
-			strEnd: str.substr(index+1)
+			strEnd: str.substr(index + 1)
 		};
 	}
 
 	convertDataMysql(): void{
-		if(Object.keys(this._rawData).length > 0){	
-			let definitions = this._rawData.definitions;
-			let required = this._rawData.required;
+		if(Object.keys(this._rawSchema).length > 0){	
+			let definitions = this._rawSchema.definitions;
+			let required = this._rawSchema.required;
+			this._schema.$id = this._rawSchema.$id;
+			this._table_name = this._rawSchema.$id;
+			this._schema.definitions = definitions;
 
 			for(let columnName in definitions){
 				if (definitions.hasOwnProperty(columnName)) {
@@ -152,7 +161,12 @@ export class CreateTableToJsonService{
 								nullable = true;
 						});
 					}
-					this._data.push({
+					if(typeof definition.$comment != 'undefined'){
+						if(definition.$comment == 'primary key'){
+							is_primary_key = true;
+						}
+					}
+					this._schema.data.push({
 						html: {
 							category: this.category,
 							tag: definition.tag || 'text',
@@ -172,10 +186,11 @@ export class CreateTableToJsonService{
 	}
 
 	convertDataOracle(): void{
-		if(this._rawData instanceof Object && Object.keys(this._rawData).length > 0){	
-			let create_table_statement = this._rawData.create_table_statement;
-			let create_definition = this._rawData.create_definition;
+		if(this._rawSchema instanceof Object && Object.keys(this._rawSchema).length > 0){	
+			let create_table_statement = this._rawSchema.create_table_statement;
+			let create_definition = this._rawSchema.create_definition;
 			this._table_name = create_table_statement.table_name;
+			this._schema.$id = this._table_name
 
 			create_definition.forEach(column => {
 				let column_name = column.name;
@@ -191,7 +206,7 @@ export class CreateTableToJsonService{
 							is_primary_key = c.is_primary_key;
 					});
 				}
-				this._data.push({
+				this._schema.data.push({
 					html: {
 						category: this.category,
 						tag: data_type.tag,
@@ -201,10 +216,16 @@ export class CreateTableToJsonService{
 						is_primary_key: is_primary_key,
 						column_name: column_name,
 						type: data_type.type.toLowerCase(),
-						size: data_type.size,
-						nullable: nullable
+						size: data_type.size || '',
+						nullable: nullable,
 					}
 				});
+				this._schema.definitions[column_name] = {
+					is_primary_key: is_primary_key,
+					type: data_type.type.toLowerCase(),
+					size: data_type.size || '',
+					nullable: nullable,
+				};
 			});
 		}
 	}
@@ -235,15 +256,15 @@ export class CreateTableToJsonService{
 		this._sql = sql;
 	}
 
-	getData(): Array<Content>{
-		return this._data;
+	getSchema(){
+		return this._schema;
 	}
 
 	getRawData(){
-		return this._rawData;
+		return this._rawSchema;
 	}
 
-	getTableName(): string{
+	getTableName(): string {
 		return this._table_name;
 	}
 

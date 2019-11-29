@@ -44,14 +44,12 @@ var BootstrapGridSystemService = /** @class */ (function () {
         for (var i = 0; i < this._data.length; i += chunkSize) {
             groups.push(this._data.slice(i, i + chunkSize));
         }
-        var count = -1;
         this._page = groups.reduce(function (acc, group, index) {
             page.rows.push({
                 grid: grid,
                 columns: []
             });
             group.map(function (data, i) {
-                count++;
                 return page.rows[index].columns.push({
                     contents: [data]
                 });

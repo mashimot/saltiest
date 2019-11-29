@@ -83,19 +83,25 @@ var FormContentsComponent = /** @class */ (function () {
             });*/
         });
     };
-    FormContentsComponent.prototype.deleteContent = function (contentIndex) {
-        /*this.contentService.deleteContent(content.id)
-        .subscribe(result =>{
-            if(result.success){
-                this.column.contents.forEach((cV, index) => {
-                    if(cV.id == content.id){
-                        this.column.contents.splice(index, 1);
-                    }
-                });
-                this.cd.markForCheck();
-            }
-        });*/
-        this.column.contents.splice(contentIndex, 1);
+    FormContentsComponent.prototype.deleteContent = function (contentIndex, content) {
+        var _this = this;
+        if (content === void 0) { content = { id: null }; }
+        if (content.id != null) {
+            this.contentService.deleteContent(content.id)
+                .subscribe(function (result) {
+                if (result.success) {
+                    _this.column.contents.forEach(function (cV, index) {
+                        if (cV.id == content.id) {
+                            _this.column.contents.splice(index, 1);
+                        }
+                    });
+                    _this.cd.markForCheck();
+                }
+            });
+        }
+        else {
+            this.column.contents.splice(contentIndex, 1);
+        }
     };
     __decorate([
         Input(),

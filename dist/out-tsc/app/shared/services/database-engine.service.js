@@ -46,7 +46,7 @@ var DatabaseEngine = /** @class */ (function () {
     */
     DatabaseEngine.engines = {
         ORACLE: {
-            logo: 'https://www.oracle.com/webfolder/s/brand/assets/i/specimens/identity/logo/badge-color-print.gif',
+            logo: 'https://i.pinimg.com/originals/9f/40/17/9f4017db985f89ae182ba4b0db568677.jpg',
             types: {
                 CHAR: 'text',
                 NCHAR: 'text',

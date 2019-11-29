@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { CreateTableToJsonService } from '../_services/create-table-to-json.service';
 import { BootstrapGridSystemService } from '../_services/bootstrap-grid-system.service';
 import { DatabaseEngine } from '../shared/services/database-engine.service';
@@ -154,35 +154,56 @@ var CreateTableToJsonComponent = /** @class */ (function () {
         this.joeys = joeys;
         this.pageChange = new EventEmitter();
         this.tableNameChange = new EventEmitter();
+        this.errors = {};
         this.options = {
             database: 'oracle',
             logo: ''
         };
         this.tabNumber = 1;
         this.gridModel = '4 4 4';
-        this.errors = [];
+        this.errors = {};
         this.database = [];
     }
     CreateTableToJsonComponent.prototype.ngOnInit = function () {
         this.database = DatabaseEngine.getDatabaseEngines();
+        //this.database = [this.database[0]];
+        this.options.database = 'mysql';
         this.setDatabaseEngineLogo(this.options.database);
         this.string = [
             'create table if not exists random_table_1 (',
-            'supplier_id number(10) not null primary key,',
+            /*'supplier_id number(10) not null primary key,',
             '`cod_user` number(10) not null,',
-            '`favorite_fruit` varchasdr2(10) default 10 not null,',
-            'supplier_name varchar2(50) not null,',
+            '`favorite_fruit` varchar2(10) default 10 not null,',
+            'supplier_name varchar2(50) not null,',*/
+            /*'status_supplier CHAR(1) default "Ok",',
             'address varchar2(50),',
             'city varchar2(50),',
             'state varchar2(25),',
             'dat_now date,',
-            'zip_code number(10),price number(10.2)',
+            'zip_code number(10),price number(10.2)',*/
+            'task_id INT AUTO_INCREMENT PRIMARY KEY,',
+            'title VARCHAR(255) NOT NULL,',
+            'start_date DATE,',
+            'due_date DATE',
+            ');'
+        ].join("\n");
+        this.string = [
+            "CREATE TABLE tasks (",
+            "id INT(11) NOT NULL AUTO_INCREMENT,",
+            "nickname VARCHAR(255) NOT NULL,",
+            "deleted_at TIMESTAMP NULL,",
+            "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,",
+            "updated_at TIMESTAMP,",
+            "PRIMARY KEY (id)",
             ');'
         ].join("\n");
         var s = new Silabalize;
         s.silabalize();
     };
     CreateTableToJsonComponent.prototype.onSubmit = function () {
+    };
+    CreateTableToJsonComponent.prototype.objectLength = function () {
+        return Object.keys(this.errors).length;
     };
     CreateTableToJsonComponent.prototype.setDatabaseEngineLogo = function (value) {
         for (var i = 0; i < this.database.length; i++) {
@@ -195,19 +216,22 @@ var CreateTableToJsonComponent = /** @class */ (function () {
     };
     CreateTableToJsonComponent.prototype.createTable = function () {
         var ct = new CreateTableToJsonService();
-        ct.setString(this.string);
+        ct.setSql(this.string);
+        ct.setDataBase(this.options.database);
         ct.parse();
         this.errors = ct.getError();
-        console.log(ct.hasError());
         if (!ct.hasError()) {
-            var data = ct.getData();
-            console.log(data);
-            var bootstrapGridSystem = new BootstrapGridSystemService(data, this.gridModel + "\n");
+            var schema = ct.getSchema();
+            console.log(schema);
+            var bootstrapGridSystem = new BootstrapGridSystemService(schema.data, this.gridModel + "\n");
             bootstrapGridSystem.convert();
             var pages = bootstrapGridSystem.getPage();
+            //schema.pages = bootstrapGridSystem.getPage();
+            console.log('pgaes -> ', pages);
             this.tableNameChange.emit(ct.getTableName()
             //this.joeys.setWord(ct.getTableName()).singularize()
             );
+            console.log(pages);
             this.pageChange.emit(pages);
         }
     };
@@ -223,6 +247,10 @@ var CreateTableToJsonComponent = /** @class */ (function () {
         Output(),
         __metadata("design:type", Object)
     ], CreateTableToJsonComponent.prototype, "tableNameChange", void 0);
+    __decorate([
+        ViewChild('popContent', { static: false }),
+        __metadata("design:type", ElementRef)
+    ], CreateTableToJsonComponent.prototype, "popContent", void 0);
     CreateTableToJsonComponent = __decorate([
         Component({
             selector: 'app-create-table-to-json',

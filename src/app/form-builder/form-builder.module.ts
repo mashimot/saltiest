@@ -18,11 +18,13 @@ import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-ca
 import { ConfigChoicesModule } from '../config-choices/config-choices.module';
 import { SharedModule } from '../shared/shared.module';
 import { NgbPopoverModule} from '@ng-bootstrap/ng-bootstrap';
+import { CreateTableToJsonModule } from '../create-table-to-json/create-table-to-json.module';
 
 @NgModule({
     imports: [
         CommonModule,
         DragulaModule,
+        CreateTableToJsonModule,
         FormBuilderRoutingModule,
         RenderContentModule,
         FormPagesModule,
@@ -36,7 +38,6 @@ import { NgbPopoverModule} from '@ng-bootstrap/ng-bootstrap';
         DragulaModule
     ],
     declarations: [
-        CreateTableToJsonComponent,
         FormMenuComponent,
         FormBuilderComponent,
         SnakeCaseToCamelCasePipe,

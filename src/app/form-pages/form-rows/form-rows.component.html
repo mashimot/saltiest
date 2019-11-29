@@ -17,7 +17,7 @@
 				<small class="row-handle">row {{ rowIndex + 1 }}</small>
 			</div>
 			<div class="float-right">
-				<small (click)="deleteRow(rowIndex)" class="badge btn-outline-danger" [ngStyle]="{ cursor: 'pointer' }">
+				<small (click)="deleteRow(rowIndex, row)" class="badge btn-outline-danger" [ngStyle]="{ cursor: 'pointer' }">
 					<i class="fas fa-window-close"></i> row {{ rowIndex + 1 }}
 				</small>
 			</div>

@@ -8,8 +8,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
-//import { readFile } from 'fs';
-var Parser = require('sql-ddl-to-json-schema');
+import * as nearley from 'nearley';
+import * as oracle_grammar from './../_parser/create-table-oracle-to-json';
+import * as Parser from './../_parser/lib/parser';
 String.prototype.replaceAllDecimalCommaToDecimalDot = function () {
     var regex = {
         valueBtwParentheses: "\\(([^)]*)\\)",
@@ -26,30 +27,46 @@ String.prototype.replaceAllDecimalCommaToDecimalDot = function () {
 };
 var CreateTableToJsonService = /** @class */ (function () {
     function CreateTableToJsonService() {
-        this._errors = [];
-        this._data = [];
+        this._errors = {};
         this.category = 'form';
         this._customLabel = this.getCustomLabelName();
-        this._data = [];
+        this._schema = {
+            $id: '',
+            data: [],
+            definitions: [],
+            pages: []
+        };
     }
+    CreateTableToJsonService.prototype.setDataBase = function (database) {
+        this._database = database;
+    };
+    CreateTableToJsonService.prototype.getDataBase = function () {
+        return this._database;
+    };
     CreateTableToJsonService.prototype.parse = function () {
         this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
-        //const parser = new nearley.Parser(oracle_grammar);
-        var parser = new Parser('mysql');
+        var hadouken = new Parser('mysql');
+        //alert(this.getDataBase());
+        if (this.getDataBase() == 'oracle') {
+            hadouken = new nearley.Parser(oracle_grammar);
+        }
         try {
-            parser.feed(this._sql);
             var options = {};
-            var results = parser.feed(this._sql)
-                .toJsonSchemaArray(options);
-            this._rawData = results[0];
-            this.convertData2();
-            /*parser.feed(this._sql.replaceAllDecimalCommaToDecimalDot());
-            this._rawData = parser.results[0];
-            this.convertData();*/
+            if (this.getDataBase() == 'mysql') {
+                var results = hadouken.feed(this._sql).toJsonSchemaArray(options);
+                this._rawSchema = results[0];
+                console.log(this._rawSchema);
+                this.convertDataMysql();
+            }
+            if (this.getDataBase() == 'oracle') {
+                var results = hadouken.feed(this._sql.replaceAllDecimalCommaToDecimalDot()).results;
+                this._rawSchema = results[0];
+                this.convertDataOracle();
+            }
         }
         catch (error) {
             //this._errors.push(error);
-            this._errors.push(this.reportError(error, parser));
+            this._errors = this.reportError(error, hadouken);
         }
     };
     CreateTableToJsonService.prototype.reportError = function (e, parser) {
@@ -57,66 +74,85 @@ var CreateTableToJsonService = /** @class */ (function () {
             var lastColumnIndex = parser.table.length - 2;
             var lastColumn = parser.table[lastColumnIndex];
             var token = parser.lexer.buffer[parser.current];
-            return [
-                "You have an error in your SQL syntax. <br />",
-                //`Instead of a ${JSON.stringify(token)}`,
-                this.setCharAt(parser.lexer.buffer, parser.current, "<mark class=\"text-danger\">" + token + "</mark>")
-            ].join("<br />");
+            return {
+                title: "You have an error in your SQL syntax.",
+                msg: this.setCharAt(parser.lexer.buffer, parser.current, token)
+            };
         }
-        return '';
+        return {};
         //console.log(parser.lexer.buffer);
         //console.log(`Instead of a ${JSON.stringify(token)}, I was expecting to see one of the following:`);
         //console.log(lastColumn.states);
     };
     CreateTableToJsonService.prototype.setCharAt = function (str, index, chr) {
-        if (index > str.length - 1)
-            return str;
-        return str.substr(0, index) + chr + str.substr(index + 1);
+        if (index > str.length - 1) {
+            return {
+                str: str,
+                strBegin: '',
+                char: chr,
+                strEnd: ''
+            };
+        }
+        //return str.substr(0, index) + chr + str.substr(index+1);
+        return {
+            str: str,
+            strBegin: str.substr(0, index),
+            char: chr,
+            strEnd: str.substr(index + 1)
+        };
     };
-    CreateTableToJsonService.prototype.convertData2 = function () {
-        var _this = this;
-        if (this._rawData instanceof Object && Object.keys(this._rawData).length > 0) {
-            var definitions = this._rawData.definitions;
-            var required_1 = this._rawData.required;
-            definitions.forEach(function (definition, columnName) {
-                var column_name = columnName;
-                //let column_definition = definition.column_definition;
-                var is_primary_key = false;
-                var nullable = false;
-                if (required_1 instanceof Array && required_1.length > 0) {
-                    required_1.forEach(function (value) {
-                        if (value == columnName)
-                            nullable = true;
+    CreateTableToJsonService.prototype.convertDataMysql = function () {
+        if (Object.keys(this._rawSchema).length > 0) {
+            var definitions = this._rawSchema.definitions;
+            var required = this._rawSchema.required;
+            this._schema.$id = this._rawSchema.$id;
+            this._table_name = this._rawSchema.$id;
+            this._schema.definitions = definitions;
+            var _loop_1 = function (columnName) {
+                if (definitions.hasOwnProperty(columnName)) {
+                    var definition = definitions[columnName];
+                    var column_name = columnName;
+                    var is_primary_key = false;
+                    var nullable_1 = false;
+                    if (required instanceof Array && required.length > 0) {
+                        required.forEach(function (value) {
+                            if (value == columnName)
+                                nullable_1 = true;
+                        });
+                    }
+                    if (typeof definition.$comment != 'undefined') {
+                        if (definition.$comment == 'primary key') {
+                            is_primary_key = true;
+                        }
+                    }
+                    this_1._schema.data.push({
+                        html: {
+                            category: this_1.category,
+                            tag: definition.tag || 'text',
+                            label: this_1.customLabelName(column_name)
+                        },
+                        definition: {
+                            is_primary_key: is_primary_key || false,
+                            column_name: column_name,
+                            type: definition.type.toLowerCase(),
+                            size: definition.maxLength || '',
+                            nullable: nullable_1 || false
+                        }
                     });
                 }
-                _this._data.push({
-                    html: {
-                        category: _this.category,
-                        tag: definition.tag,
-                        label: _this.customLabelName(column_name)
-                    },
-                    definition: {
-                        is_primary_key: is_primary_key,
-                        column_name: column_name,
-                        type: definition.type.toLowerCase(),
-                        size: definition.maxLength,
-                        nullable: nullable
-                    }
-                });
-            });
+            };
+            var this_1 = this;
+            for (var columnName in definitions) {
+                _loop_1(columnName);
+            }
+            ;
         }
-        else {
-            //this._errors.push();
-        }
-        console.log(this._data);
     };
-    CreateTableToJsonService.prototype.convertData = function () {
+    CreateTableToJsonService.prototype.convertDataOracle = function () {
         var _this = this;
-        console.log(this._rawData);
-        console.log(this._data);
-        if (this._rawData instanceof Object && Object.keys(this._rawData).length > 0) {
-            var create_table_statement = this._rawData.create_table_statement;
-            var create_definition = this._rawData.create_definition;
+        if (this._rawSchema instanceof Object && Object.keys(this._rawSchema).length > 0) {
+            var create_table_statement = this._rawSchema.create_table_statement;
+            var create_definition = this._rawSchema.create_definition;
             this._table_name = create_table_statement.table_name;
             create_definition.forEach(function (column) {
                 var column_name = column.name;
@@ -132,7 +168,7 @@ var CreateTableToJsonService = /** @class */ (function () {
                             is_primary_key = c.is_primary_key;
                     });
                 }
-                _this._data.push({
+                _this._schema.data.push({
                     html: {
                         category: _this.category,
                         tag: data_type.tag,
@@ -143,13 +179,10 @@ var CreateTableToJsonService = /** @class */ (function () {
                         column_name: column_name,
                         type: data_type.type.toLowerCase(),
                         size: data_type.size,
-                        nullable: nullable
+                        nullable: nullable,
                     }
                 });
             });
-        }
-        else {
-            //this._errors.push();
         }
     };
     CreateTableToJsonService.prototype.customLabelName = function (column_name) {
@@ -166,19 +199,19 @@ var CreateTableToJsonService = /** @class */ (function () {
             .trim();
     };
     CreateTableToJsonService.prototype.hasError = function () {
-        return this._errors.length > 0 ? true : false;
+        return Object.keys(this._errors).length > 0 ? true : false;
     };
     CreateTableToJsonService.prototype.getError = function () {
         return this._errors;
     };
-    CreateTableToJsonService.prototype.setString = function (string) {
-        this._sql = string;
+    CreateTableToJsonService.prototype.setSql = function (sql) {
+        this._sql = sql;
     };
-    CreateTableToJsonService.prototype.getData = function () {
-        return this._data;
+    CreateTableToJsonService.prototype.getSchema = function () {
+        return this._schema;
     };
     CreateTableToJsonService.prototype.getRawData = function () {
-        return this._rawData;
+        return this._rawSchema;
     };
     CreateTableToJsonService.prototype.getTableName = function () {
         return this._table_name;

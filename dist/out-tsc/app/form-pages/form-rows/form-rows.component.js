@@ -23,20 +23,26 @@ var FormRowsComponent = /** @class */ (function () {
             _this.cd.markForCheck();
         });
     };
-    FormRowsComponent.prototype.deleteRow = function (rowIndex) {
-        /*this.rowService.deleteRow(row.id).subscribe(result => {
-            if(result['success']){
-                this.page.rows.forEach((cV, index) => {
-                    if(cV.id == row.id){
-                        this.page.rows.splice(index, 1);
-                    }
-                });
-                this.cd.markForCheck();
-            }
-        });*/
-        //static remove
-        this.page.rows.splice(rowIndex, 1);
-        this.cd.markForCheck();
+    FormRowsComponent.prototype.deleteRow = function (rowIndex, row) {
+        var _this = this;
+        if (row === void 0) { row = { id: null }; }
+        if (row.id != null) {
+            this.rowService.deleteRow(row.id).subscribe(function (result) {
+                if (result.success) {
+                    _this.page.rows.forEach(function (cV, index) {
+                        if (cV.id == row.id) {
+                            _this.page.rows.splice(index, 1);
+                        }
+                    });
+                    _this.cd.markForCheck();
+                }
+            });
+        }
+        else {
+            //static remove
+            this.page.rows.splice(rowIndex, 1);
+            this.cd.markForCheck();
+        }
     };
     FormRowsComponent.prototype.trackByFn = function (index, item) {
         return index;

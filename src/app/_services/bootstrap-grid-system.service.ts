@@ -14,8 +14,8 @@ export class BootstrapGridSystemService {
   
     getGrid() {
         return [{
-          grid: '6 6',
-          columns: []
+            grid: '6 6',
+            columns: []
         },{
             grid: '4 4 4',
             columns: []
@@ -44,14 +44,12 @@ export class BootstrapGridSystemService {
         for (let i = 0; i < this._data.length; i += chunkSize) {
             groups.push(this._data.slice(i, i + chunkSize));
         }
-        let count = -1;
         this._page = groups.reduce(function (acc, group, index) {
             page.rows.push({
                 grid: grid,
                 columns: []
             });
             group.map(function (data, i) {
-                count++;
                 return page.rows[index].columns.push({
                     contents: [data]
                 });

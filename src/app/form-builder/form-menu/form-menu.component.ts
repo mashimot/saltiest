@@ -46,19 +46,14 @@ export class FormMenuComponent implements OnInit {
                 `7 5`
             ].join("\n")
         }];
-        //this.tools = this.htmlElementService.getStaticTools();
-        this.tools$ = this.htmlElementService/*.getTools()*/.getStaticTools()
+        this.tools$ = this.htmlElementService
+        //.getTools()
+        .getStaticTools()
         .pipe(
             map(res => {
                 return res.tools;
             })
         );
-        /*this.htmlElementService.getTools().subscribe(result => {
-            console.log(result);
-            if(result.success){
-                this.tools = result.tools;
-            }
-        });*/
         this.pageModel = [{
             rows: [],
             name: "Salt - A tool for Lazy Developer"

@@ -94,23 +94,24 @@ var FormPagesComponent = /** @class */ (function () {
                 gridArr.splice(targetIndex, 0, aux);
                 var newGrid = gridArr.join(" ").trim();
                 _this.pages[pageIndex].rows[currRowIndex].grid = newGrid;
-                var data = {
+                var params = {
                     project_id: _this.project_id,
                     page: {
                         currRowId: parseInt(currRowId)
                     },
                     newGrid: newGrid,
                     columnPos: targetModel.map(function (item) {
-                        return item.id;
+                        return item.id ? item.id : null;
                     })
                 };
-                /*this.columnService.updateColumn(data.page.currRowId, data)
-                .subscribe(result => {
-                    if(result.success){
-                        this.loadFormBuilder();
-                        this.dropModelPageUpdated = true;
+                console.info('column sorted');
+                _this.columnService.updateColumn(params.page.currRowId, params)
+                    .subscribe(function (result) {
+                    if (result.success) {
+                        _this.loadFormBuilder();
+                        _this.dropModelPageUpdated = true;
                     }
-                });*/
+                });
             }
         }));
         dragulaService.createGroup('rowSortable', {
@@ -140,75 +141,78 @@ var FormPagesComponent = /** @class */ (function () {
             var targetPageId = target.getAttribute('data-current-page-id');
             var currRowId = el.getAttribute('data-current-row-id');
             if (typeof item.grid != 'undefined' && typeof item.columns == 'undefined') { //gambiarra, mas funciona
-                var rows = [];
+                //let rows = [];
                 var lines = item.grid.trim().split("\n");
                 delete item.grid;
-                for (var i_1 = 0; i_1 < lines.length; i_1++) {
-                    var line = lines[i_1].replace(/\s+/g, ' ').trim();
-                    if (line != '') {
-                        var arrNumbers = line.split(' ');
-                        if (arrNumbers.length > 0) {
-                            rows.push({
-                                grid: line,
-                                columns: []
+                var rows = lines.map(function (line) {
+                    return line.replace(/\s+/g, ' ').trim();
+                })
+                    .filter(function (line) { return line != ''; })
+                    .map(function (line) {
+                    var arrNumbers = line.split(' ');
+                    if (arrNumbers.length > 0) {
+                        var columns = [];
+                        for (var j = 0; j < arrNumbers.length; j++) {
+                            columns.push({
+                                contents: []
                             });
-                            for (var j = 0; j < arrNumbers.length; j++) {
-                                rows[rows.length - 1].columns.push({
-                                    contents: []
-                                });
-                            }
                         }
+                        return {
+                            grid: line,
+                            columns: columns
+                        };
                     }
-                }
+                });
                 for (var i = 0; i < targetModel.length; i++) {
                     if (Object.keys(targetModel[i]).length <= 0) {
                         targetModel.splice(i, 1);
                     }
                 }
                 var numSeparators = rows.length;
-                for (var i_2 = 0; i_2 < numSeparators; i_2++) {
-                    targetModel.splice(targetIndex + (i_2), 0, rows[i_2]);
+                for (var i_1 = 0; i_1 < numSeparators; i_1++) {
+                    targetModel.splice(targetIndex + (i_1), 0, rows[i_1]);
                 }
-                /* API
-                const data = {
-                    project_id: this.project_id,
+                //API
+                var params = {
+                    project_id: _this.project_id,
                     page: {
                         targetPageId: parseInt(targetPageId)
                     },
-                    rowsPos: targetModel.map(item => {
-                        return item.id;
+                    rowsPos: targetModel.map(function (item) {
+                        return item.id ? item.id : null;
                     }),
                     rowTargetIndex: targetIndex,
                     rows: rows
                 };
-
-                if(rows.length > 0){
-                    this.rowService.storeRow(data)
-                    .subscribe(result => {
-                        if(result.success){
-                            this.loadFormBuilder();
-                            this.dropModelPageUpdated = true;
+                console.info('row sorted');
+                if (rows.length > 0) {
+                    _this.rowService.storeRow(params)
+                        .subscribe(function (result) {
+                        if (result.success) {
+                            _this.loadFormBuilder();
+                            _this.dropModelPageUpdated = true;
                         }
                     });
                 }
-            } else {
-                const data = {
-                    project_id: this.project_id,
+            }
+            else {
+                var params = {
+                    project_id: _this.project_id,
                     page: {
                         currRowId: parseInt(currRowId),
                         targetPageId: parseInt(targetPageId)
                     },
-                    rowPos: targetModel.map(item => {
-                        return item.id;
+                    rowPos: targetModel.map(function (item) {
+                        return item.id ? item.id : null;
                     })
                 };
-                this.rowService.updateRow(data.page.targetPageId, data)
-                .subscribe(result => {
-                    if(result.success){
-                        this.loadFormBuilder();
-                        this.dropModelPageUpdated = true;
+                _this.rowService.updateRow(params.page.targetPageId, params)
+                    .subscribe(function (result) {
+                    if (result.success) {
+                        _this.loadFormBuilder();
+                        _this.dropModelPageUpdated = true;
                     }
-                });*/
+                });
             }
             return item;
         }));
@@ -246,8 +250,8 @@ var FormPagesComponent = /** @class */ (function () {
         this.subs.add(dragulaService.dropModel("contents")
             .subscribe(function (_a) {
             var name = _a.name, el = _a.el, target = _a.target, source = _a.source, item = _a.item, sourceModel = _a.sourceModel, targetModel = _a.targetModel, sourceIndex = _a.sourceIndex, targetIndex = _a.targetIndex;
-            item['definition'] = {};
-            console.log('item ->', item);
+            item.definition = item.definition || {};
+            item.html = item.html || {};
             if (item.definition && item.html) {
                 var currRowId = target.getAttribute('data-current-row-id');
                 var currPageId = target.getAttribute('data-current-page-id');
@@ -256,29 +260,31 @@ var FormPagesComponent = /** @class */ (function () {
                     item.definition.column_name = 'name__' + new Date().getUTCMilliseconds();
                     item.definition.size = '';
                 }
-                var data = {
+                var params = {
                     project_id: _this.project_id,
                     page: {
                         currPageId: currPageId,
                         currRowId: currRowId,
                         currColumnId: currcolumnId
                     },
-                    contentPos: targetModel.map(function (item) {
-                        return item.id;
+                    contentPos: targetModel
+                        .map(function (item) {
+                        return item.id ? item.id : null;
                     }),
                     html: item.html,
                     definition: item.definition
                 };
+                console.info('content sorted', params);
                 if (typeof item.id != 'undefined') {
-                    data['id'] = item.id;
+                    params['id'] = item.id;
                 }
-                /*this.contentService.storeContent(data)
-                .subscribe(result => {
-                    if(result.success){
-                        this.loadFormBuilder();
-                        this.dropModelPageUpdated = true;
+                _this.contentService.storeContent(params)
+                    .subscribe(function (result) {
+                    if (result.success) {
+                        _this.loadFormBuilder();
+                        _this.dropModelPageUpdated = true;
                     }
-                });*/
+                });
             }
         }));
     }
@@ -295,7 +301,7 @@ var FormPagesComponent = /** @class */ (function () {
         this.subs.add(this.dragulaService.dropModel("pages")
             .subscribe(function (_a) {
             var name = _a.name, el = _a.el, target = _a.target, source = _a.source, item = _a.item, sourceModel = _a.sourceModel, targetModel = _a.targetModel, sourceIndex = _a.sourceIndex, targetIndex = _a.targetIndex;
-            var data = {
+            var params = {
                 project_id: _this.project_id,
                 pagesPos: targetModel.map(function (item) {
                     return item.id;
@@ -303,7 +309,7 @@ var FormPagesComponent = /** @class */ (function () {
                 pageTargetIndex: targetIndex,
             };
             _this.dropModelPageUpdated = true;
-            /*this.pageService.updatePagesPosition(data.project_id, data)
+            /*this.pageService.updatePagesPosition(data.project_id, params)
             .subscribe(result => {
                 console.log(result);
             });*/
@@ -342,7 +348,7 @@ var FormPagesComponent = /** @class */ (function () {
         this.pageService.getPageByProjectId(this.project_id)
             .subscribe(function (result) {
             if (result.success) {
-                _this.pages = result.paginate;
+                _this.pages = result.paginate.data;
             }
             _this.ngxLoader.stop();
         });

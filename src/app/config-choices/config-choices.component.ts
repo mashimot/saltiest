@@ -69,7 +69,7 @@ export class ConfigChoicesComponent implements OnInit {
                 description: "",
                 html: {
                     category: "form",
-                    content_choice_id: 2,
+                    content_choice_id: null,
                     content_html_tag_id: 2,
                     choices: [],
                     group: "",
@@ -122,9 +122,10 @@ export class ConfigChoicesComponent implements OnInit {
     }
 
     private loadPage(page: number) {
-        this.choices$ = this.htmlElementService/*.queryParams({
-            page: page
-        })*/.getStaticOptionChoices().pipe(
+        this.choices$ = this.htmlElementService
+        //.queryParams({ page: page })
+        .getStaticOptionChoices()
+        .pipe(
             map(result => {
                 return result.paginate;
             })

@@ -1,8 +1,6 @@
 @builtin "number.ne"
 @builtin "whitespace.ne"
 
-@{% %}
-
 
 MAIN -> (
 	create_table_statement
@@ -109,8 +107,21 @@ column_name -> strchar:+ {% id %} | "`" strchar:+ "`" {%
 	} 
 %}
 data_type_size ->  _ "(" _ unsigned_decimal _ ")" {%  (d) => { return d[3] } %}
-default_value -> ("(" _ decimal _  ")" | decimal) {% id %}
+default_value -> 
+	S_NUMBER
+  |
+	( S_LPARENS _ S_NUMBER:? _ S_RPARENS
+		{% (d) => {
+			return d[2];
+		}
+		%}
+	):? 
+  | O_QUOTED_STRING
 
+
+O_QUOTED_STRING ->
+	S_DQUOTE_STRING
+	| S_SQUOTE_STRING 
 
 oracle_data_type -> (
 	"CHAR"i data_type_size:? {% 
@@ -210,7 +221,7 @@ oracle_column_definition -> (
 			return { type: "primary key", is_primary_key: true }
 		} 
 	%} |
-	"DEFAULT"i _ default_value {% 
+	"DEFAULT"i __ default_value {% 
 		(d) => { 
 			return { type: "default", default_value: d[2].join("") }
 		} 
@@ -221,3 +232,14 @@ oracle_column_definition -> (
 #shared
 comma -> [,] {% id %}
 strchar -> [\w] {% id %}
+S_NUMBER -> [0-9]:+  
+S_EQUAL           -> "="
+S_LPARENS         -> "("
+S_RPARENS         -> ")"
+S_COMMA           -> ","
+S_SEMICOLON       -> ";"
+S_BIT_FORMAT      ->  "0"|"1"
+#S_HEXA_FORMAT     -> "123"
+S_DQUOTE_STRING   -> "\"" _ strchar:+ _ "\""   {% (d) => { return d[2].join("") } %}
+S_SQUOTE_STRING   -> "'" _ strchar:+ _ "'"  {% (d) => { return d[2].join("") } %}
+#S_IDENTIFIER      -> ""

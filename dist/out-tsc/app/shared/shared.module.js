@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { GroupByPipe } from './pipes/group-by.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModalComponent } from './modal.component';
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 var components = [
     ModalComponent
 ];
@@ -19,13 +20,15 @@ var SharedModule = /** @class */ (function () {
         NgModule({
             declarations: [
                 GroupByPipe,
-                ModalComponent
+                ModalComponent,
+                SafeHtmlPipe
             ],
             exports: [
                 GroupByPipe,
                 ModalComponent,
                 FormsModule,
-                ReactiveFormsModule
+                ReactiveFormsModule,
+                SafeHtmlPipe
             ],
             imports: [
                 CommonModule,
