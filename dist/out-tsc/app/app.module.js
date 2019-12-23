@@ -24,6 +24,8 @@ import { NgxUiLoaderModule, NgxUiLoaderHttpModule, POSITION, SPINNER, PB_DIRECTI
 import { SpellCheckerModule } from './spell-checker/spell-checker.module';
 import { LoginModule } from './login/login.module';
 import { fakeBackendProvider } from './_helpers/fake-backend';
+import { CreateTableToJsonModule } from './create-table-to-json/create-table-to-json.module';
+import { MigrationModule } from './migration/migration.module';
 var ngxUiLoaderConfig = {
     overlayColor: 'white',
     fgsType: SPINNER.rotatingPlane,
@@ -57,6 +59,8 @@ var AppModule = /** @class */ (function () {
                 HomeModule,
                 SpellCheckerModule,
                 LoginModule,
+                CreateTableToJsonModule,
+                MigrationModule,
                 DragulaModule,
                 AppRoutingModule,
                 HttpModule,

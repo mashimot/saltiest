@@ -22,8 +22,8 @@
                         </div>
                         <div class="col-md-2">
                             <div class="input-group">
-                                <div class="input-group-append" *ngIf="d.definition.column_name.toLowerCase().indexOf('ind_') != -1 && d.definition.column_name">
-                                    <button (click)="buscaDominio(d.definition.column_name)" class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <div class="input-group-append" *ngIf="d.definition.name && d.definition.name.toLowerCase().indexOf('ind_') != -1">
+                                    <button (click)="buscaDominio(d.definition.name)" class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-search fa-1x" aria-hidden="true"></i>
                                     </button>
                                     <div class="dropdown-menu" [ngStyle]="{ width: '100%' }">
@@ -40,7 +40,7 @@
                                 </div>
                                 <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableColumnName.invalid }" 
                                 name="table-column-name-{{ pageIndex + rowIndex + columnIndex + contentIndex }}"
-                                [(ngModel)]="d.definition.column_name" 
+                                [(ngModel)]="d.definition.name" 
                                 [ngModelOptions]="{ standalone: true }"
                                 #tableColumnName="ngModel"
                                 required
@@ -77,24 +77,25 @@
                                 <div *ngIf="htmlTag.errors?.required">This is required.</div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2" *ngIf="d.definition?.type?.datatype">
                             <select class="form-control text-uppercase" [ngClass]="{ 'is-invalid': tableType.invalid }"
                             name="table-type-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
-                            [(ngModel)]="d.definition.type"
+                            
+                            [(ngModel)]="d.definition?.type.datatype"
                             [ngModelOptions]="{ standalone: true }"
                             #tableType="ngModel"
                             required
                             >
                                 <option value="">Selecione</option>
-                                <option *ngFor="let db of database; let column_name = index;" [value]="db.toLowerCase()">{{ db }}</option>
+                                <option *ngFor="let db of database; let name = index;" [value]="db.toLowerCase()">{{ db }}</option>
                             </select>
                             <div *ngIf="tableType.invalid || tableType.touched" class="invalid-feedback">
                                 <div *ngIf="tableType.errors?.required">This is required.</div>
                             </div>                            
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-1" *ngIf="d.definition?.type?.length">
                             <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableSize.invalid }"
-                            [(ngModel)]="d.definition.size"
+                            [(ngModel)]="d.definition.type.length"
                             [ngModelOptions]="{ standalone: true }"
                             pattern="^[0-9]+(.[0-9])?$"
                             name="table-size-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
@@ -103,13 +104,13 @@
                             <div *ngIf="tableSize.invalid || tableSize.touched" class="invalid-feedback">
                             </div>                               
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-1" *ngIf="d.definition?.options?.nullable">
                             <div class="row">
-                                <label [ngClass]="{'badge-danger': d.definition.nullable, 'badge-default' : !d.definition.nullable}"
+                                <label [ngClass]="{'badge-danger': d.definition.options.nullable, 'badge-default' : !d.definition.options.nullable}"
                                        class="badge col-md-12"
                                        [ngStyle]="{ 'cursor': 'pointer' }">
                                     nullable? {{ d.definition.nullable? 'No' : 'Yes' }}
-                                    <input type="checkbox" [(ngModel)]="d.definition.nullable" name="asd3" class="checkbox" [ngStyle]="{ display: 'none' }">
+                                    <input type="checkbox" [(ngModel)]="d.definition.options.nullable" name="" class="checkbox" [ngStyle]="{ display: 'none' }">
                                 </label>
                             </div>
                         </div>

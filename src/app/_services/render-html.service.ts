@@ -1,16 +1,50 @@
 import { Injectable } from '@angular/core';
-import { Html, Definition } from "./../_core/model";
+import { IHtml, IDefinition } from "./../_core/model";
 
 export class BootstrapForm{
-    definition: Definition;
-    html: Html;
+    definition: IDefinition;
+    html: IHtml;
+    choices?: {
+        radio: Array<string>,
+        checkbox: Array<string>,
+        select: Array<string>
+    }
 
     constructor(d) { 
-        this.html = new Html(d.html);
-        this.definition = new Definition(d.definition);
+        this.html = d.html;
+        this.definition = d.definition || {};
     }
     
     get() {
+        var nullable = '';
+        if(typeof this.definition.options != 'undefined'){
+            nullable = this.definition.options.nullable? `` : `required`
+        }
+   
+        if(typeof this.html.choices != 'undefined'){
+            this.choices = this.html.choices.reduce((acc, el) => {
+                var input = {
+                    radio: `<div class="radio"><label><input type="radio" name="${this.definition.name}" value="${el.value}"> ${el.text}</label></div>`,
+                    checkbox: `<div class="checkbox"><label><input type="checkbox" name="${this.definition.name}" value="${el.value}"> ${el.text}</label></div>`,
+                    select: `<option value="${el.value}">${el.text}</option>`
+                };
+
+                Object.keys(input).forEach((item) => {
+                    if(typeof acc[item] != 'undefined'){
+                        acc[item].push(input[item]);
+                    } else {
+                        acc[item] = [input[item]];
+                    }
+                }, {});
+
+                return acc;
+            }, {
+                radio: [],
+                checkbox: [],
+                select: []
+            });
+        }          
+
         var data = {
             "html": [`${this.html.data}`],
             "legend": [`<legend>${this.html.text}</legend>`],
@@ -26,42 +60,42 @@ export class BootstrapForm{
             `</table>`],
             "image": [`<img src="${this.html.src}" class="img-fluid">`],
             "textarea": 
-            [`<div class="form-group" id="div_${this.definition.column_name}">`,
-                `<label for="txt_${this.definition.column_name}">${this.html.label}</label>`,
-                `<textarea class="form-control" name="${this.definition.column_name}" id="txt_${this.definition.column_name}"  ${this.definition.nullable ? `` : `required`}></textarea>`,
+            [`<div class="form-group" id="div_${this.definition.name}">`,
+                `<label for="txt_${this.definition.name}">${this.html.label}</label>`,
+                `<textarea class="form-control" name="${this.definition.name}" id="txt_${this.definition.name}"  ${nullable ? `` : `required`}></textarea>`,
             `</div>`],
             "select": 
-            [`<div class="form-group" id="div_${this.definition.column_name}">`,
-                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
-                `<select class="form-control" name="${this.definition.column_name}" id="i_${this.definition.column_name}" ${this.definition.nullable ? `` : `required`}>`,
+            [`<div class="form-group" id="div_${this.definition.name}">`,
+                `<label for="i_${this.definition.name}">${this.html.label}</label>`,
+                `<select class="form-control" name="${this.definition.name}" id="i_${this.definition.name}" ${nullable ? `` : `required`}>`,
                     `<option value="">Selecione</option>`,
-                    `${this.html.choices.map(element => `<option value="${element.value}">${element.text}</option>`).join('')}`,
+                    `${this.choices? this.choices.select.join(''): ''}`,
                 `</select>`,
             `</div>`],
             "checkbox":
-            [`<div class="form-group" id="div_${this.definition.column_name}">`,
-                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
-                `${this.html.choices.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.definition.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+            [`<div class="form-group" id="div_${this.definition.name}">`,
+                `<label for="i_${this.definition.name}">${this.html.label}</label>`,
+                `${this.choices? this.choices.checkbox.join(''): ''}`,
             `</div>`],
             "radio": 
-            [`<div class="form-group" id="div_${this.definition.column_name}">`,
-                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
-                `${this.html.choices.map(element => `<div class="radio"><label><input type="radio" name="${this.definition.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+            [`<div class="form-group" id="div_${this.definition.name}">`,
+                `<label for="i_${this.definition.name}">${this.html.label}</label>`,
+                `${this.choices? this.choices.radio.join(''): ''}`,
             `</div>`],
             "text": 
-            [`<div class="form-group" id="div_${this.definition.column_name}">`,
-                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
-                `<input type="text" class="form-control" name="${this.definition.column_name}" id="i_${this.definition.column_name}" value=""  ${this.definition.nullable ? `` : `required`}>`,
+            [`<div class="form-group" id="div_${this.definition.name}">`,
+                `<label for="i_${this.definition.name}">${this.html.label}</label>`,
+                `<input type="text" class="form-control" name="${this.definition.name}" id="i_${this.definition.name}" value=""  ${nullable}>`,
             `</div>`],
             "number": 
-            [`<div class="form-group" id="div_${this.definition.column_name}">`,
-                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
-                `<input type="number" class="form-control" name="${this.definition.column_name}" id="i_${this.definition.column_name}" value="" ${this.definition.nullable ? `` : `required`}>`,
+            [`<div class="form-group" id="div_${this.definition.name}">`,
+                `<label for="i_${this.definition.name}">${this.html.label}</label>`,
+                `<input type="number" class="form-control" name="${this.definition.name}" id="i_${this.definition.name}" value="" ${nullable}>`,
             `</div>`],
             "date":
-            [`<div class="form-group" id="div_${this.definition.column_name}">`,
-                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
-                `<input type="date" class="form-control" name="${this.definition.column_name}" id="i_${this.definition.column_name}" value="" ${this.definition.nullable ? `` : `required`}>`,
+            [`<div class="form-group" id="div_${this.definition.name}">`,
+                `<label for="i_${this.definition.name}">${this.html.label}</label>`,
+                `<input type="date" class="form-control" name="${this.definition.name}" id="i_${this.definition.name}" value="" ${nullable}>`,
             `</div>`]
         }
         return typeof data[this.html.tag] !== 'undefined'? data[this.html.tag].join("\n") : '';
@@ -69,15 +103,21 @@ export class BootstrapForm{
 }
 
 export class CustomForm{
-    definition: Definition;
-    html: Html;
+    definition: IDefinition;
+    html: IHtml;
 
     constructor(d) { 
-        this.html = new Html(d.html);
-        this.definition = new Definition(d.definition);
+        this.html = d.html;
+        this.definition = d.definition;
     }
     
     get() {
+        var nullable = '';
+        var choices = '';
+        if(this.definition.options){
+            nullable = this.definition.options.nullable? `` : `required`
+        }
+      
         var data = {
             "html": [`${this.html.data}`],
             "legend": [`<legend>${this.html.text}</legend>`],
@@ -93,25 +133,25 @@ export class CustomForm{
             `</table>`],
             "image": [`<img src="${this.html.src}" class="img-fluid">`],
             "textarea": 
-            [`{!! $HTML::textArea(${this.html.grid}, '${this.definition.column_name}', ${parseInt(this.definition.size) > 0? `${this.definition.size}` : `''`}, "${this.html.label}", ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}') !!}`],
+            [`{!! $HTML::textArea(${this.html.grid}, '${this.definition.name}', ${parseInt(this.definition.type.length) > 0? `${this.definition.type.length}` : `''`}, "${this.html.label}", ${nullable? `true` : `false`}, true, true, '', '${this.definition.name}') !!}`],
             "select": 
-            [`{!! $HTML::selectDominio(${this.html.grid}, '${this.definition.column_name}', '${this.html.label}', ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}' ) !!}`],
+            [`{!! $HTML::selectDominio(${this.html.grid}, '${this.definition.name}', '${this.html.label}', ${nullable? `true` : `false`}, true, true, '', '${this.definition.name}' ) !!}`],
             "checkbox":
-            [`<div class="form-group" id="div_${this.definition.column_name}">`,
-                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
-                `${this.html.choices.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.definition.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+            [`<div class="form-group" id="div_${this.definition.name}">`,
+                `<label for="i_${this.definition.name}">${this.html.label}</label>`,
+                `${this.html.choices.map(element => `<div class="checkbox"><label><input type="checkbox" name="${this.definition.name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "radio": 
-            [`<div class="form-group" id="div_${this.definition.column_name}">`,
-                `<label for="i_${this.definition.column_name}">${this.html.label}</label>`,
-                `${this.html.choices.map(element => `<div class="radio"><label><input type="radio" name="${this.definition.column_name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
+            [`<div class="form-group" id="div_${this.definition.name}">`,
+                `<label for="i_${this.definition.name}">${this.html.label}</label>`,
+                `${this.html.choices.map(element => `<div class="radio"><label><input type="radio" name="${this.definition.name}" value="${element.value}"> ${element.text}</label></div>`).join('')}`,
             `</div>`],
             "text": 
-            [`{!! $HTML::inputTexto(${this.html.grid}, '${this.definition.column_name}', ${parseInt(this.definition.size) > 0? `${this.definition.size}` : `''`}, '${this.html.label}', ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}') !!}`],
+            [`{!! $HTML::inputTexto(${this.html.grid}, '${this.definition.name}', ${parseInt(this.definition.type.length) > 0? `${this.definition.type.length}` : `''`}, '${this.html.label}', ${nullable? `true` : `false`}, true, true, '', '${this.definition.name}') !!}`],
             "number": 
-            [`{!! $HTML::inputNumero(${this.html.grid}, '${this.definition.size? (this.definition.size.indexOf('.') != -1? `decimal`: `inteiro`) : '' }', '${this.definition.column_name}', ${parseInt(this.definition.size) > 0? `${this.definition.size}` : `''`}, '${this.html.label}', ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}') !!}`],
+            [`{!! $HTML::inputNumero(${this.html.grid}, '${this.definition.type.length? (this.definition.type.length.indexOf('.') != -1? `decimal`: `inteiro`) : '' }', '${this.definition.name}', ${parseInt(this.definition.type.length) > 0? `${this.definition.type.length}` : `''`}, '${this.html.label}', ${nullable? `true` : `false`}, true, true, '', '${this.definition.name}') !!}`],
             "date": 
-            [`{!! $HTML::inputData(${this.html.grid}, '${this.definition.column_name}', '${this.html.label}', ${this.definition.nullable? `true` : `false`}, true, true, '', '${this.definition.column_name}') !!}`]
+            [`{!! $HTML::inputData(${this.html.grid}, '${this.definition.name}', '${this.html.label}', ${nullable? `true` : `false`}, true, true, '', '${this.definition.name}') !!}`]
         }
         return typeof data[this.html.tag] !== 'undefined'? data[this.html.tag].join("\n") : '';
     }    

@@ -67,9 +67,13 @@ var FormConfigComponent = /** @class */ (function () {
             }),
             definition: this.fb.group({
                 'column_name': [this.content.definition.column_name, []],
-                'type': [this.content.definition.type, []],
-                'size': [this.content.definition.size, []],
-                'nullable': [this.content.definition.nullable, []]
+                'type': this.fb.group({
+                    datatype: [this.content.definition.type.datatype, []],
+                    size: [this.content.definition.type.length, []],
+                }),
+                'options': this.fb.group({
+                    'nullable': [this.content.definition.options.nullable, []]
+                })
             })
         });
     };

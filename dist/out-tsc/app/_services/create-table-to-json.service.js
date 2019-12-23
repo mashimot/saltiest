@@ -30,12 +30,7 @@ var CreateTableToJsonService = /** @class */ (function () {
         this._errors = {};
         this.category = 'form';
         this._customLabel = this.getCustomLabelName();
-        this._schema = {
-            $id: '',
-            data: [],
-            definitions: [],
-            pages: []
-        };
+        this._schemas = [];
     }
     CreateTableToJsonService.prototype.setDataBase = function (database) {
         this._database = database;
@@ -45,28 +40,57 @@ var CreateTableToJsonService = /** @class */ (function () {
     };
     CreateTableToJsonService.prototype.parse = function () {
         this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
-        var hadouken = new Parser('mysql');
-        //alert(this.getDataBase());
-        if (this.getDataBase() == 'oracle') {
-            hadouken = new nearley.Parser(oracle_grammar);
+        var p = new nearley.Parser(oracle_grammar);
+        if (this.getDataBase() == 'mysql') {
+            p = new Parser('mysql');
         }
         try {
             var options = {};
             if (this.getDataBase() == 'mysql') {
-                var results = hadouken.feed(this._sql).toJsonSchemaArray(options);
+                /*
+                            * Read on for available options.
+                            */
+                var options_1 = {};
+                /*
+                * Feed the parser with the SQL DDL statements...
+                */
+                p.feed(this._sql);
+                /*
+                * You can get the parsed results in JSON format...
+                */
+                var parsedJsonFormat = p.results;
+                /*
+                * And pass it to be formatted in a compact JSON format...
+                */
+                var compactJsonTablesArray = p.toCompactJson(parsedJsonFormat);
+                /*
+                * Then pass it to format to an array of JSON Schema items. One for each table...
+                const jsonSchemaDocuments = p.toJsonSchemaArray(options, compactJsonTablesArray);
+                */
+                /*
+                * Finally spread the JSON Schema documents to files, which returns a promise...
+                const jsonFilesOutput = p.toJsonSchemaFiles(__dirname, options, jsonSchemaDocuments)
+                .then((outputFilePaths) => {
+                    // ...
+                });
+                */
+                this._rawSchema = compactJsonTablesArray;
+                this.convertDataMysql();
+                /*const results = p.feed(this._sql).toJsonSchemaArray(options);
                 this._rawSchema = results[0];
                 console.log(this._rawSchema);
-                this.convertDataMysql();
+                
+                this.convertDataMysql();	*/
             }
             if (this.getDataBase() == 'oracle') {
-                var results = hadouken.feed(this._sql.replaceAllDecimalCommaToDecimalDot()).results;
+                var results = p.feed(this._sql.replaceAllDecimalCommaToDecimalDot()).results;
                 this._rawSchema = results[0];
                 this.convertDataOracle();
             }
         }
         catch (error) {
             //this._errors.push(error);
-            this._errors = this.reportError(error, hadouken);
+            this._errors = this.reportError(error, p);
         }
     };
     CreateTableToJsonService.prototype.reportError = function (e, parser) {
@@ -102,88 +126,182 @@ var CreateTableToJsonService = /** @class */ (function () {
         };
     };
     CreateTableToJsonService.prototype.convertDataMysql = function () {
-        if (Object.keys(this._rawSchema).length > 0) {
-            var definitions = this._rawSchema.definitions;
-            var required = this._rawSchema.required;
-            this._schema.$id = this._rawSchema.$id;
-            this._table_name = this._rawSchema.$id;
-            this._schema.definitions = definitions;
-            var _loop_1 = function (columnName) {
-                if (definitions.hasOwnProperty(columnName)) {
-                    var definition = definitions[columnName];
-                    var column_name = columnName;
-                    var is_primary_key = false;
-                    var nullable_1 = false;
-                    if (required instanceof Array && required.length > 0) {
-                        required.forEach(function (value) {
-                            if (value == columnName)
-                                nullable_1 = true;
+        var _this = this;
+        if (this._rawSchema.length > 0) {
+            this._rawSchema.forEach(function (schema) {
+                var data = [];
+                var primaryKey = schema.primaryKey;
+                schema.columns.forEach(function (column) {
+                    var hasPk = false;
+                    if (typeof schema.primaryKey != 'undefined') {
+                        //console.log(column.name);
+                        schema.primaryKey.columns.forEach(function (pk) {
+                            if (pk.column == column.name) {
+                                hasPk = true;
+                            }
                         });
                     }
-                    if (typeof definition.$comment != 'undefined') {
-                        if (definition.$comment == 'primary key') {
+                    data.push({
+                        html: {
+                            category: _this.category,
+                            tag: column.definition || 'text',
+                            label: _this.customLabelName(column.name)
+                        },
+                        definition: schema.columns
+                        /*definition: {
+                            is_primary_key: hasPk,
+                            column_name: column.name,
+                            type: column.type.datatype.toLowerCase(),
+                            size:  column.type.length || '',
+                            nullable: column.options.nullable
+                        }*/
+                    });
+                    /*data.push({
+                        html: {
+                            category: this.category,
+                            tag: 'definition.tag' || 'text',
+                            label: this.customLabelName(column.name)
+                        },
+                        definition: {
+                            is_primary_key: hasPk,
+                            column_name: column.name,
+                            type: column.type.toLowerCase(),
+                            size: column.type.length || '',
+                            nullable: column.options.nullable
+                        }
+                    });		*/
+                });
+                _this._schemas.push({
+                    name: schema.name,
+                    data: data,
+                    primaryKey: primaryKey,
+                    definitions: schema.columns
+                });
+            });
+            console.log('schema', this._schemas);
+        }
+        /*if(Object.keys(this._rawSchema).length > 0){
+            console.log(this._rawSchema);
+            let definitions = this._rawSchema.definitions;
+            let required = this._rawSchema.required;
+            this._schemas.$id = this._rawSchema.$id;
+            this._table_name = this._rawSchema.$id;
+            this._schemas.definitions = definitions;
+            this._schemas.required = required;
+
+            for(let columnName in definitions){
+                if (definitions.hasOwnProperty(columnName)) {
+                    let definition = definitions[columnName];
+                    let column_name = columnName;
+                    let is_primary_key = false;
+                    let nullable = false;
+                    if(required instanceof Array && required.length > 0){
+                        required.forEach(value => {
+                            if(value == columnName)
+                                nullable = true;
+                        });
+                    }
+                    if(typeof definition.$comment != 'undefined'){
+                        if(definition.$comment == 'primary key'){
                             is_primary_key = true;
                         }
                     }
-                    this_1._schema.data.push({
+                    this._schemas.data.push({
                         html: {
-                            category: this_1.category,
+                            category: this.category,
                             tag: definition.tag || 'text',
-                            label: this_1.customLabelName(column_name)
+                            label: this.customLabelName(column_name)
                         },
                         definition: {
                             is_primary_key: is_primary_key || false,
                             column_name: column_name,
                             type: definition.type.toLowerCase(),
                             size: definition.maxLength || '',
-                            nullable: nullable_1 || false
+                            nullable: nullable || false
                         }
                     });
                 }
             };
-            var this_1 = this;
-            for (var columnName in definitions) {
-                _loop_1(columnName);
-            }
-            ;
-        }
+        }*/
     };
     CreateTableToJsonService.prototype.convertDataOracle = function () {
         var _this = this;
-        if (this._rawSchema instanceof Object && Object.keys(this._rawSchema).length > 0) {
-            var create_table_statement = this._rawSchema.create_table_statement;
-            var create_definition = this._rawSchema.create_definition;
-            this._table_name = create_table_statement.table_name;
-            create_definition.forEach(function (column) {
-                var column_name = column.name;
-                var data_type = column.data_type;
-                var column_definition = column.column_definition;
-                var is_primary_key = false;
-                var nullable = false;
-                if (column_definition instanceof Array && column_definition.length > 0) {
-                    column_definition.forEach(function (c) {
-                        if (typeof c.nullable != 'undefined')
-                            nullable = c.nullable;
-                        if (typeof c.is_primary_key != 'undefined')
-                            is_primary_key = c.is_primary_key;
-                    });
-                }
-                _this._schema.data.push({
-                    html: {
-                        category: _this.category,
-                        tag: data_type.tag,
-                        label: _this.customLabelName(column_name)
-                    },
-                    definition: {
-                        is_primary_key: is_primary_key,
-                        column_name: column_name,
-                        type: data_type.type.toLowerCase(),
-                        size: data_type.size,
-                        nullable: nullable,
+        console.log('raw', this._rawSchema);
+        if (Array.isArray(this._rawSchema) && this._rawSchema.length > 0) {
+            this._rawSchema.forEach(function (schema) {
+                var data = [];
+                var definitions = [];
+                var primaryKey = [];
+                var create_table_statement = schema.create_table_statement;
+                var create_definition = schema.create_definition;
+                var last_create_definition = schema.last_create_definition;
+                _this._table_name = create_table_statement.table_name;
+                create_definition.push(last_create_definition);
+                create_definition.forEach(function (column) {
+                    var column_name = column.name;
+                    var data_type = column.data_type;
+                    var column_definition = column.column_definition;
+                    var is_primary_key = false;
+                    var nullable = true;
+                    if (column_definition instanceof Array && column_definition.length > 0) {
+                        column_definition.forEach(function (c) {
+                            if (typeof c.nullable != 'undefined') {
+                                nullable = c.nullable;
+                            }
+                            if (typeof c.is_primary_key != 'undefined') {
+                                is_primary_key = c.is_primary_key;
+                            }
+                        });
                     }
+                    if (is_primary_key) {
+                        primaryKey.push({
+                            column: column_name
+                        });
+                    }
+                    data.push({
+                        html: {
+                            category: _this.category,
+                            tag: data_type.tag,
+                            label: _this.customLabelName(column_name)
+                        },
+                        /*definition: {
+                            is_primary_key: is_primary_key,
+                            column_name: column_name,
+                            type: data_type.type.toLowerCase(),
+                            length: data_type.size || '',
+                            nullable: nullable || false,
+                        }*/
+                        definition: {
+                            name: column_name,
+                            type: {
+                                datatype: data_type.type.toLowerCase(),
+                                length: data_type.length || '',
+                            },
+                            options: {
+                                nullable: nullable || false,
+                            }
+                        }
+                    });
+                    definitions.push({
+                        name: column_name,
+                        type: {
+                            datatype: data_type.type.toLowerCase(),
+                            length: data_type.size || '',
+                        },
+                        options: {
+                            nullable: nullable || false,
+                        }
+                    });
+                });
+                _this._schemas.push({
+                    name: _this._table_name,
+                    data: data,
+                    primaryKey: primaryKey,
+                    definitions: definitions
                 });
             });
         }
+        console.log(this._schemas);
     };
     CreateTableToJsonService.prototype.customLabelName = function (column_name) {
         var _this = this;
@@ -207,8 +325,8 @@ var CreateTableToJsonService = /** @class */ (function () {
     CreateTableToJsonService.prototype.setSql = function (sql) {
         this._sql = sql;
     };
-    CreateTableToJsonService.prototype.getSchema = function () {
-        return this._schema;
+    CreateTableToJsonService.prototype.getSchemas = function () {
+        return this._schemas;
     };
     CreateTableToJsonService.prototype.getRawData = function () {
         return this._rawSchema;

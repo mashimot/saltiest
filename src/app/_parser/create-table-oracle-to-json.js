@@ -2,6 +2,9 @@
 // http://github.com/Hardmath123/nearley
 (function () {
 function id(x) { return x[0]; }
+
+
+
 var grammar = {
     Lexer: undefined,
     ParserRules: [
@@ -98,25 +101,27 @@ var grammar = {
     {"name": "__$ebnf$1", "symbols": ["__$ebnf$1", "wschar"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "__", "symbols": ["__$ebnf$1"], "postprocess": function(d) {return null;}},
     {"name": "wschar", "symbols": [/[ \t\n\v\f]/], "postprocess": id},
-    {"name": "MAIN$subexpression$1$ebnf$1", "symbols": []},
-    {"name": "MAIN$subexpression$1$ebnf$1$subexpression$1", "symbols": ["create_definition", "_", "comma", "_"], "postprocess": id},
-    {"name": "MAIN$subexpression$1$ebnf$1", "symbols": ["MAIN$subexpression$1$ebnf$1", "MAIN$subexpression$1$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "MAIN$subexpression$1", "symbols": ["create_table_statement", {"literal":"("}, "_", "MAIN$subexpression$1$ebnf$1", "create_definition", "_", {"literal":")"}, "_", {"literal":";"}, "_"], "postprocess":  
+    {"name": "MAIN$ebnf$1", "symbols": []},
+    {"name": "MAIN$ebnf$1", "symbols": ["MAIN$ebnf$1", "MAINCREATE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "MAIN", "symbols": ["MAIN$ebnf$1"], "postprocess": (d) => { return d[0]; }},
+    {"name": "MAINCREATE$subexpression$1$ebnf$1", "symbols": []},
+    {"name": "MAINCREATE$subexpression$1$ebnf$1$subexpression$1", "symbols": ["create_definition", "_", "comma", "_"], "postprocess": id},
+    {"name": "MAINCREATE$subexpression$1$ebnf$1", "symbols": ["MAINCREATE$subexpression$1$ebnf$1", "MAINCREATE$subexpression$1$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "MAINCREATE$subexpression$1", "symbols": ["create_table_statement", {"literal":"("}, "_", "MAINCREATE$subexpression$1$ebnf$1", "create_definition", "_", {"literal":")"}, "_", {"literal":";"}, "_"], "postprocess":  
         (d) => { 
         	let create_definition = [];
         	if(d[3].length > 0){
         		create_definition = d[3];		
         	}
-        	
-        	create_definition.push(d[4]);
         
         	return {
         		create_table_statement: d[0],
         		create_definition: create_definition,
+        		last_create_definition: d[4]
         	}
         } 
         },
-    {"name": "MAIN", "symbols": ["MAIN$subexpression$1"], "postprocess": id},
+    {"name": "MAINCREATE", "symbols": ["MAINCREATE$subexpression$1"], "postprocess": (d) => { return d[0]; }},
     {"name": "create_table_statement$ebnf$1$subexpression$1", "symbols": ["__", "OR_REPLACE"]},
     {"name": "create_table_statement$ebnf$1", "symbols": ["create_table_statement$ebnf$1$subexpression$1"], "postprocess": id},
     {"name": "create_table_statement$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
@@ -273,7 +278,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$1", "oracle_data_type$subexpression$1$ebnf$1"], "postprocess":  
         (d) => { 
-        	return { type: 'CHAR', tag: 'text', size: d[1] }
+        	return { type: 'CHAR', tag: 'text', length: d[1] }
         }
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$2", "symbols": [/[nN]/, /[cC]/, /[hH]/, /[aA]/, /[rR]/], "postprocess": function(d) {return d.join(""); }},
@@ -281,7 +286,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$2", "oracle_data_type$subexpression$1$ebnf$2"], "postprocess":  
         (d) => { 
-        	return { type: 'NCHAR', tag: 'text', size: d[1] }
+        	return { type: 'NCHAR', tag: 'text', length: d[1] }
         	   	} 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$3", "symbols": [/[vV]/, /[aA]/, /[rR]/, /[cC]/, /[hH]/, /[aA]/, /[rR]/, {"literal":"2"}], "postprocess": function(d) {return d.join(""); }},
@@ -289,7 +294,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$3", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$3", "oracle_data_type$subexpression$1$ebnf$3"], "postprocess":  
         (d) => { 
-        	return { type: d[0], tag: 'textarea', size: d[1]  }
+        	return { type: d[0], tag: 'textarea', length: d[1]  }
         	   } 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$4", "symbols": [/[vV]/, /[aA]/, /[rR]/, /[cC]/, /[hH]/, /[aA]/, /[rR]/], "postprocess": function(d) {return d.join(""); }},
@@ -297,7 +302,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$4", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$4", "oracle_data_type$subexpression$1$ebnf$4"], "postprocess":  
         (d) => { 
-        	return { type: d[0], tag: 'textarea', size: d[1], size: d[1], size: d[1] }
+        	return { type: d[0], tag: 'textarea', length: d[1] }
         } 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$5", "symbols": [/[nN]/, /[vV]/, /[aA]/, /[rR]/, /[cC]/, /[hH]/, /[aA]/, /[rR]/, {"literal":"2"}], "postprocess": function(d) {return d.join(""); }},
@@ -305,7 +310,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$5", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$5", "oracle_data_type$subexpression$1$ebnf$5"], "postprocess":  
         (d) => { 
-        	return { type: 'NVARCHAR2', tag: 'text', size: d[1], size: d[1] }
+        	return { type: 'NVARCHAR2', tag: 'text', length: d[1] }
         } 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$6", "symbols": [/[iI]/, /[nN]/, /[tT]/, /[eE]/, /[gG]/, /[eE]/, /[rR]/], "postprocess": function(d) {return d.join(""); }},
@@ -314,7 +319,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$6", "oracle_data_type$subexpression$1$ebnf$6"], "postprocess":  
         (d) => { 
         	return { 
-        		type: 'INTEGER', tag: 'number', size: d[1] 
+        		type: 'INTEGER', tag: 'number', length: d[1] 
            	}
         } 
         	},
@@ -338,7 +343,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$9", "oracle_data_type$subexpression$1$ebnf$7"], "postprocess":  
         (d) => { 
         	return { 
-        		type: 'LONG', tag: 'number', size: d[1] 
+        		type: 'LONG', tag: 'number', length: d[1] 
         	}
         } 
         	},
@@ -347,9 +352,22 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$8", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$10", "oracle_data_type$subexpression$1$ebnf$8"], "postprocess":  
         (d) => { 
-        	return { 
-        		type: 'NUMBER', tag: 'number', size: d[1] 
+        	var data_type = {};
+        	var number = d[1];
+        	data_type.type = "Number";
+        	data_type.tag = "number";
+        	if(number != null){
+        		var numberAsString = number.toString();
+        		if(numberAsString.indexOf('.') !== -1){
+        			var numberArr = numberAsString.split('.');
+        			data_type.digits = numberArr[0];
+        			data_type.decimals = numberArr[1] || '';
+        		} else {
+        			data_type.length = numberArr[0];
+        		}
         	}
+        	
+        	return data_type;
         } 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$11", "symbols": [/[dD]/, /[aA]/, /[tT]/, /[eE]/], "postprocess": function(d) {return d.join(""); }},
@@ -380,7 +398,7 @@ var grammar = {
     {"name": "oracle_column_definition$subexpression$1$subexpression$1", "symbols": [/[nN]/, /[oO]/, /[tT]/, {"literal":" "}, /[nN]/, /[uU]/, /[lL]/, /[lL]/], "postprocess": function(d) {return d.join(""); }},
     {"name": "oracle_column_definition$subexpression$1", "symbols": ["oracle_column_definition$subexpression$1$subexpression$1"], "postprocess":  
         (d) => { 
-        	return { type: "not null", nullable: true }
+        	return { type: "not null", nullable: false }
         } 
         	},
     {"name": "oracle_column_definition$subexpression$1$subexpression$2", "symbols": [/[nN]/, /[uU]/, /[lL]/, /[lL]/], "postprocess": function(d) {return d.join(""); }},

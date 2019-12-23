@@ -152,8 +152,7 @@ export { Silabalize };
 var CreateTableToJsonComponent = /** @class */ (function () {
     function CreateTableToJsonComponent(joeys) {
         this.joeys = joeys;
-        this.pageChange = new EventEmitter();
-        this.tableNameChange = new EventEmitter();
+        this.schemasChange = new EventEmitter();
         this.errors = {};
         this.options = {
             database: 'oracle',
@@ -167,36 +166,58 @@ var CreateTableToJsonComponent = /** @class */ (function () {
     CreateTableToJsonComponent.prototype.ngOnInit = function () {
         this.database = DatabaseEngine.getDatabaseEngines();
         //this.database = [this.database[0]];
-        this.options.database = 'mysql';
+        this.options.database = 'oracle';
         this.setDatabaseEngineLogo(this.options.database);
         this.string = [
-            'create table if not exists random_table_1 (',
-            /*'supplier_id number(10) not null primary key,',
+            /*'create table if not exists random_table_1 (',
+            'supplier_id number(10) not null primary key,',
             '`cod_user` number(10) not null,',
             '`favorite_fruit` varchar2(10) default 10 not null,',
-            'supplier_name varchar2(50) not null,',*/
-            /*'status_supplier CHAR(1) default "Ok",',
+            'supplier_name varchar2(50) not null,',
+            'status_supplier CHAR(1) default "Ok",',
             'address varchar2(50),',
             'city varchar2(50),',
             'state varchar2(25),',
             'dat_now date,',
-            'zip_code number(10),price number(10.2)',*/
-            'task_id INT AUTO_INCREMENT PRIMARY KEY,',
+            'zip_code number(10),price number(10.2),',
             'title VARCHAR(255) NOT NULL,',
             'start_date DATE,',
             'due_date DATE',
+            ');',*/
+            'create table if not exists hadouken (',
+            'state varchar2(25),',
+            'start_date number(10,2)',
+            //'decimal_hue number(10.2)',
             ');'
         ].join("\n");
+        /*
         this.string = [
-            "CREATE TABLE tasks (",
-            "id INT(11) NOT NULL AUTO_INCREMENT,",
-            "nickname VARCHAR(255) NOT NULL,",
-            "deleted_at TIMESTAMP NULL,",
-            "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,",
-            "updated_at TIMESTAMP,",
-            "PRIMARY KEY (id)",
+            `CREATE TABLE tasks (`,
+            //`id BIGINT(11) NOT NULL AUTO_INCREMENT,`,
+            `ID int NOT NULL UNIQUE,`,
+            `bigint_col bigint NOT NULL AUTO_INCREMENT,`,
+            `int_col INT UNIQUE,`,
+            `smallint_col SMALLINT,`,
+            `tinyint_col tinyint,`,
+            `nickname VARCHAR(255) NOT NULL,`,
+            `CHAR CHAR(50),`,
+            `teste SET('up', 'down', 'right', 'left'),`,
+            `deleted_at TIMESTAMP NULL,`,
+            `created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,`,
+            `joeys_world_tour enum('hue', 'oie', 'hadouken'),`,
+            `updated_at TIMESTAMP,`,
+            `MEDIUMINT  MEDIUMINT UNSIGNED,`,
+            `your_column DECIMAL(10) NOT NULL,`,
+            `PRIMARY KEY (id)`,
+            ');',
+            `CREATE TABLE haoduken (`,
+            //`id BIGINT(11) NOT NULL AUTO_INCREMENT,`,
+            `ID int NOT NULL UNIQUE,`,
+            `bigint_col bigint NOT NULL AUTO_INCREMENT,`,
+            `your_column DECIMAL(10) NOT NULL,`,
+            `PRIMARY KEY (id)`,
             ');'
-        ].join("\n");
+        ].join("\n");*/
         var s = new Silabalize;
         s.silabalize();
     };
@@ -215,24 +236,20 @@ var CreateTableToJsonComponent = /** @class */ (function () {
         }
     };
     CreateTableToJsonComponent.prototype.createTable = function () {
+        var _this = this;
         var ct = new CreateTableToJsonService();
         ct.setSql(this.string);
         ct.setDataBase(this.options.database);
         ct.parse();
         this.errors = ct.getError();
         if (!ct.hasError()) {
-            var schema = ct.getSchema();
-            console.log(schema);
-            var bootstrapGridSystem = new BootstrapGridSystemService(schema.data, this.gridModel + "\n");
-            bootstrapGridSystem.convert();
-            var pages = bootstrapGridSystem.getPage();
-            //schema.pages = bootstrapGridSystem.getPage();
-            console.log('pgaes -> ', pages);
-            this.tableNameChange.emit(ct.getTableName()
-            //this.joeys.setWord(ct.getTableName()).singularize()
-            );
-            console.log(pages);
-            this.pageChange.emit(pages);
+            var schemas = ct.getSchemas();
+            schemas.forEach(function (schema) {
+                var bootstrapGridSystem = new BootstrapGridSystemService(schema.data, _this.gridModel + "\n");
+                bootstrapGridSystem.convert();
+                schema.pages = bootstrapGridSystem.getPage();
+            });
+            this.schemasChange.emit(schemas);
         }
     };
     __decorate([
@@ -242,11 +259,7 @@ var CreateTableToJsonComponent = /** @class */ (function () {
     __decorate([
         Output(),
         __metadata("design:type", Object)
-    ], CreateTableToJsonComponent.prototype, "pageChange", void 0);
-    __decorate([
-        Output(),
-        __metadata("design:type", Object)
-    ], CreateTableToJsonComponent.prototype, "tableNameChange", void 0);
+    ], CreateTableToJsonComponent.prototype, "schemasChange", void 0);
     __decorate([
         ViewChild('popContent', { static: false }),
         __metadata("design:type", ElementRef)

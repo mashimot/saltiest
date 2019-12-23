@@ -22,6 +22,7 @@ import { JwtInterceptor } from './_helpers/jwt';
 import { ErrorInterceptor } from './_helpers/error';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CreateTableToJsonModule } from './create-table-to-json/create-table-to-json.module';
+import { MigrationModule } from './migration/migration.module';
 
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
@@ -55,6 +56,8 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
         SpellCheckerModule,
         LoginModule,
         CreateTableToJsonModule,
+        MigrationModule,
+
         DragulaModule,
         AppRoutingModule,
         HttpModule,

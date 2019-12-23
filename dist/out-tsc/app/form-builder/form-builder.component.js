@@ -350,10 +350,15 @@ var FormBuilderComponent = /** @class */ (function () {
             });*/
         }
     };
-    FormBuilderComponent.prototype.getPages = function (pages) {
-        console.log(this.pages);
-        this.pages = this.pages.concat([pages]);
-        //this.pages.push(pages);
+    FormBuilderComponent.prototype.getSchemas = function ($schemas) {
+        var _this = this;
+        var schemas = $schemas;
+        var pages = [];
+        schemas.forEach(function (schema) {
+            _this.tableName = schema.name;
+            pages.push(schema.pages);
+        });
+        this.pages = this.pages.concat(pages);
     };
     FormBuilderComponent = __decorate([
         Component({

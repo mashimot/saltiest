@@ -65,10 +65,10 @@ export class FormConfigComponent implements OnInit {
         const tag = this.content.html.tag;
         this.render = this.formContentConfig.render()[tag];
         this.configForm = this.fb.group({
-            id: [this.content_id,[]],
+            id: [this.content_id, []],
             html: this.fb.group({
-                'tag': [this.content.html.tag,[]],
-                'content_choice_id': [this.content.html.content_choice_id ,[]],
+                'tag': [this.content.html.tag, []],
+                'content_choice_id': [this.content.html.content_choice_id, []],
                 'choices': this.fb.array([]),
                 'category': [this.content.html.category, []],
                 'fields': [this.content.html.fields, []],
@@ -79,15 +79,17 @@ export class FormConfigComponent implements OnInit {
             }),
             definition: this.fb.group({
                 'column_name': [this.content.definition.column_name, []],
-                'type': [this.content.definition.type,[]],
-                'size': [this.content.definition.size,[]],
-                'nullable': [this.content.definition.nullable, []]
+                'type': this.fb.group({
+                    datatype: ['', []],
+                    length: ['', []],
+                }),
+                'options': this.fb.group({
+                    'nullable': ['', []]
+                })
             })
         });        
     }
 
-    editContent(element){
-    }
 
     register(){
         console.log(this.configForm.value);
@@ -95,3 +97,4 @@ export class FormConfigComponent implements OnInit {
         //this.activeModal.close();
     }
 }
+

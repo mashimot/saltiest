@@ -8,7 +8,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragulaModule } from 'ng2-dragula';
 import { FormBuilderComponent } from "./form-builder.component";
-import { CreateTableToJsonComponent } from './../create-table-to-json/create-table-to-json.component';
 import { FormMenuComponent } from './form-menu/form-menu.component';
 import { FormBuilderRoutingModule } from "./form-builder-routing.module";
 import { FormConfigModule } from './../form-builder/form-config/form-config.module';
@@ -20,6 +19,7 @@ import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-ca
 import { ConfigChoicesModule } from '../config-choices/config-choices.module';
 import { SharedModule } from '../shared/shared.module';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { CreateTableToJsonModule } from '../create-table-to-json/create-table-to-json.module';
 var FormBuilderModule = /** @class */ (function () {
     function FormBuilderModule() {
     }
@@ -28,6 +28,7 @@ var FormBuilderModule = /** @class */ (function () {
             imports: [
                 CommonModule,
                 DragulaModule,
+                CreateTableToJsonModule,
                 FormBuilderRoutingModule,
                 RenderContentModule,
                 FormPagesModule,
@@ -41,7 +42,6 @@ var FormBuilderModule = /** @class */ (function () {
                 DragulaModule
             ],
             declarations: [
-                CreateTableToJsonComponent,
                 FormMenuComponent,
                 FormBuilderComponent,
                 SnakeCaseToCamelCasePipe,

@@ -264,10 +264,10 @@ export class FormPagesComponent implements OnInit {
                     const currPageId    = target.getAttribute('data-current-page-id');
                     const currcolumnId  = target.getAttribute('data-current-column-id');      
                     if (
-                        typeof item.definition.column_name === 'undefined' && item.html.category === 'form'
+                        typeof item.definition.name === 'undefined' && item.html.category === 'form'
                     ) {
-                        item.definition.column_name = 'name__' + new Date().getUTCMilliseconds();
-                        item.definition.size = '';
+                        item.definition.name = 'name__' + new Date().getUTCMilliseconds();
+                        //item.definition.options.leng = '';
                     }
                     const params = {
                         project_id: this.project_id,

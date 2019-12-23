@@ -1,18 +1,21 @@
 var Definition = /** @class */ (function () {
-    function Definition(definition) {
-        if (definition === void 0) { definition = {}; }
+    function Definition() {
         this.column_name = '';
         this.is_primary_key = false;
         this.type = '';
         this.nullable = false;
         this.size = '';
-        for (var key in definition) {
-            if (definition.hasOwnProperty(key)) {
-                var value = definition[key];
-                if (typeof value !== "undefined")
-                    this[key] = value;
+        /*constructor(definition: IDefinition = {}){
+            for (let key in definition)
+            {
+                if (definition.hasOwnProperty(key))
+                {
+                    let value = definition[key];
+                    if (typeof value !== "undefined")
+                        this[key] = value;
+                }
             }
-        }
+        }*/
     }
     return Definition;
 }());

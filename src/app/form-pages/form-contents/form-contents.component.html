@@ -29,8 +29,8 @@
         <div *ngIf="content">
             <div [hidden]="config?.previewMode">
                 <span *ngIf="content.html.tag" class="badge badge-primary">{{ content.html.tag }}</span>
-                <span *ngIf="content.definition?.nullable && content.html.category === 'form'" class="badge badge-success">required</span>
-                <span *ngIf="!content.definition?.nullable && content.html.category === 'form'" class="badge badge-danger">not required</span>
+                <span *ngIf="!content.definition?.options?.nullable && content.html.category === 'form'" class="badge badge-success">required</span>
+                <span *ngIf="content.definition?.options?.nullable && content.html.category === 'form'" class="badge badge-danger">not required</span>
             </div>
             <app-render-content [content]="content"></app-render-content>
         </div>

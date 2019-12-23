@@ -4,13 +4,12 @@ import { HomeService } from "../shared/services/home.service";
 
 import { Page } from "../_core/model/page.model";
 import { Content } from "../_core/model/content.model";
-import { Definition, IDefinition, Html, IHtml } from "../_core/model";
+import { IDefinition, IHtml } from "../_core/model";
 import { FormConfigService } from '../_services/form-config.service';
 import { PageService } from '../shared/services/page.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../shared/services/project.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -30,8 +29,9 @@ export class Laravel {
     }
 
     setParams(d) {
-        this.html = new Html(d.html);
-        this.definition = new Definition(d.definition);
+        this.html = d.html;
+        this.definition = d.definition;
+        console.log('def', this.definition);
     }
 
     setInputs(inputs) {
@@ -57,14 +57,14 @@ export class Laravel {
             var newBasic = basic[tag].filter(el => {
                 return el != "" && el != null;
             });
-            return [`"${this.definition.column_name}" => ${JSON.stringify(newBasic)}`].join(",");
+            return [`"${this.definition.name}" => ${JSON.stringify(newBasic)}`].join(",");
         }
-        return [`${this.definition.column_name} => ${JSON.stringify(basic[tag])}`].join(",");
+        return [`${this.definition.name} => ${JSON.stringify(basic[tag])}`].join(",");
     }
 
     size(){
-        if(typeof this.definition.size != 'undefined'){
-            var size = this.definition.size;
+        if(typeof this.definition.type.length != 'undefined'){
+            var size = this.definition.type.length;
             if(size != null && size != ''){
                 var list = {
                     number: `digits_between:1,${size}`,
@@ -93,11 +93,11 @@ export class Laravel {
                 this.setParams(curr);
 
                 if(curr.definition.is_primary_key){
-                    primaryKey.push(`"${curr.definition.column_name}"`);
+                    primaryKey.push(`"${curr.definition.name}"`);
                 }
-                fillable.push(curr.definition.column_name);
-                request.push(`"${curr.definition.column_name}" => $request->input('${curr.definition.column_name}')`);
-                attributes.push(`\t'${this.definition.column_name}' => '${this.html.label}'`);
+                fillable.push(curr.definition.name);
+                request.push(`"${curr.definition.name}" => $request->input('${curr.definition.name}')`);
+                attributes.push(`\t'${this.definition.name}' => '${this.html.label}'`);
                 rules.push(this.getRules());
             });
         }
@@ -122,7 +122,7 @@ export class Laravel {
     }
     
     isRequired(): string {
-        return this.definition.nullable ? 'required' : 'nullable';
+        return this.definition.options.nullable ? 'required' : 'nullable';
     }
 
     setTableName(tableName: string){
@@ -163,8 +163,8 @@ export class Laravel {
         if(this.inputs.length > 0){
             var script = this.inputs.map((item) => {
                 return { 
-                    data: item.definition.column_name,
-                    name: item.definition.column_name
+                    data: item.definition.name,
+                    name: item.definition.name
                 };
             }, []);
 
@@ -441,9 +441,14 @@ export class FormBuilderComponent implements OnInit {
         }
     }
 
-    public getPages(pages): void {
-        console.log(this.pages);
-        this.pages = [...this.pages, pages];
-        //this.pages.push(pages);
+    public getSchemas($schemas): void {
+        let schemas = $schemas;
+        let pages = [];
+        schemas.forEach(schema => {
+            this.tableName = schema.name;
+            pages.push(schema.pages);
+        });      
+        this.pages = [...this.pages, ...pages];
+        console.log('this.pages', this.pages);
     }
 }

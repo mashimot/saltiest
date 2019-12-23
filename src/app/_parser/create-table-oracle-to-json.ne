@@ -1,8 +1,12 @@
 @builtin "number.ne"
 @builtin "whitespace.ne"
+@{%
 
 
-MAIN -> (
+%}
+
+MAIN -> MAINCREATE:* {% (d) => { return d[0]; } %}
+MAINCREATE -> (
 	create_table_statement
     "(" 
     	_
@@ -17,16 +21,15 @@ MAIN -> (
 		if(d[3].length > 0){
 			create_definition = d[3];		
 		}
-		
-		create_definition.push(d[4]);
 
 		return {
 			create_table_statement: d[0],
 			create_definition: create_definition,
+			last_create_definition: d[4]
 		}
 	} 
 %}
-) {% id %}
+) {% (d) => { return d[0]; } %}
 
 
 
@@ -126,33 +129,33 @@ O_QUOTED_STRING ->
 oracle_data_type -> (
 	"CHAR"i data_type_size:? {% 
 		(d) => { 
-			return { type: 'CHAR', tag: 'text', size: d[1] }
+			return { type: 'CHAR', tag: 'text', length: d[1] }
 		}
 	%} |
     "NCHAR"i data_type_size:? {% 
 		(d) => { 
-			return { type: 'NCHAR', tag: 'text', size: d[1] }
+			return { type: 'NCHAR', tag: 'text', length: d[1] }
 	   	} 
 	%} |
     "VARCHAR2"i data_type_size:? {% 
 		(d) => { 
-			return { type: d[0], tag: 'textarea', size: d[1]  }
+			return { type: d[0], tag: 'textarea', length: d[1]  }
 	   } 
 	%} |
     "VARCHAR"i data_type_size:? {% 
 		(d) => { 
-			return { type: d[0], tag: 'textarea', size: d[1], size: d[1], size: d[1] }
+			return { type: d[0], tag: 'textarea', length: d[1] }
 		} 
 	%} |
     "NVARCHAR2"i data_type_size:? {% 
 		(d) => { 
-			return { type: 'NVARCHAR2', tag: 'text', size: d[1], size: d[1] }
+			return { type: 'NVARCHAR2', tag: 'text', length: d[1] }
 		} 
 	%} |
     "INTEGER"i data_type_size:? {% 
 		(d) => { 
 			return { 
-				type: 'INTEGER', tag: 'number', size: d[1] 
+				type: 'INTEGER', tag: 'number', length: d[1] 
 		   	}
 		} 
 	%} |
@@ -171,15 +174,28 @@ oracle_data_type -> (
     "LONG"i data_type_size:? {% 
 		(d) => { 
 			return { 
-				type: 'LONG', tag: 'number', size: d[1] 
+				type: 'LONG', tag: 'number', length: d[1] 
 			}
 		} 
 	%} |
     "NUMBER"i data_type_size:? {% 
 		(d) => { 
-			return { 
-				type: 'NUMBER', tag: 'number', size: d[1] 
+			var data_type = {};
+			var number = d[1];
+			data_type.type = "Number";
+			data_type.tag = "number";
+			if(number != null){
+				var numberAsString = number.toString();
+				if(numberAsString.indexOf('.') !== -1){
+					var numberArr = numberAsString.split('.');
+					data_type.digits = numberArr[0];
+					data_type.decimals = numberArr[1] || '';
+				} else {
+					data_type.length = numberArr[0];
+				}
 			}
+			
+			return data_type;
 		} 
 	%} |
     "DATE"i {% 
@@ -208,7 +224,7 @@ oracle_data_type -> (
 oracle_column_definition -> (
 	"NOT NULL"i  {% 
 		(d) => { 
-			return { type: "not null", nullable: true }
+			return { type: "not null", nullable: false }
 		} 
 	%} | 
 	"NULL"i  {% 

@@ -14,19 +14,20 @@ var ConfigGeneralComponent = /** @class */ (function () {
         this.fb = fb;
     }
     ConfigGeneralComponent.prototype.ngOnInit = function () {
-        console.log(this.content.definition);
+        console.log('hue', this.content.definition);
         this.html.get('label').setValidators([
             Validators.required
         ]);
         this.html.patchValue({
             'label': this.content.html.label,
         });
-        this.definition.get('nullable').setValidators([
+        this.options.get('nullable').setValidators([
             Validators.required
         ]);
-        this.definition.patchValue({
-            'nullable': this.content.definition.nullable ? this.content.definition.nullable : false
+        this.options.patchValue({
+            'nullable': this.content.definition.options.nullable || false
         });
+        console.log(this.nullable);
     };
     Object.defineProperty(ConfigGeneralComponent.prototype, "html", {
         get: function () {
@@ -51,7 +52,14 @@ var ConfigGeneralComponent = /** @class */ (function () {
     });
     Object.defineProperty(ConfigGeneralComponent.prototype, "nullable", {
         get: function () {
-            return this.parentFormGroup.get('definition.nullable');
+            return this.parentFormGroup.get('definition.options.nullable');
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ConfigGeneralComponent.prototype, "options", {
+        get: function () {
+            return this.parentFormGroup.get('definition.options');
         },
         enumerable: true,
         configurable: true

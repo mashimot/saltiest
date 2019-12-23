@@ -4,8 +4,8 @@
         <div class="col-md-3" [hidden]="config?.previewMode" *ngIf="tabNumber == 1">            
             <div class="sticky-top scrollbar-near-moon thin square">                     
                 <app-create-table-to-json 
-                (pageChange)="getPages($event)" 
-                [(tableName)]="tableName"></app-create-table-to-json>
+                (schemasChange)="getSchemas($event)" 
+                ></app-create-table-to-json>
                 <app-form-menu 
                 (isNewPage)="isNewPage($event)"
                 ></app-form-menu>
@@ -55,6 +55,7 @@
             <button class="btn btn-primary" (click)="pageNext()">Next</button>
             <button class="btn btn-primary" (click)="pagePrevious()">Previous</button>
             -->
+
             <app-form-info [(pages)]="pages" *ngIf="tabNumber == 2"></app-form-info>
         </div>            
     </div>
