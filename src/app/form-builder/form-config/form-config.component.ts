@@ -78,13 +78,13 @@ export class FormConfigComponent implements OnInit {
                 'data': [this.content.html.data]
             }),
             definition: this.fb.group({
-                'column_name': [this.content.definition.column_name, []],
+                'name': [this.content.definition.name, []],
                 'type': this.fb.group({
                     datatype: ['', []],
                     length: ['', []],
                 }),
                 'options': this.fb.group({
-                    'nullable': ['', []]
+                    'nullable': [true, []]
                 })
             })
         });        

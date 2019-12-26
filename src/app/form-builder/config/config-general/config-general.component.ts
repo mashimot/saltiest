@@ -25,7 +25,7 @@ export class ConfigGeneralComponent implements OnInit {
 			Validators.required
 		]);
 		this.options.patchValue({
-			'nullable': this.content.definition.options.nullable || false
+			'nullable': (this.content.definition.options && this.content.definition.options.nullable)? this.content.definition.options.nullable: true	
 		});
 		console.log(this.nullable);
 	}

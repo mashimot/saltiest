@@ -31,7 +31,6 @@ export class Laravel {
     setParams(d) {
         this.html = d.html;
         this.definition = d.definition;
-        console.log('def', this.definition);
     }
 
     setInputs(inputs) {
@@ -63,7 +62,7 @@ export class Laravel {
     }
 
     size(){
-        if(typeof this.definition.type.length != 'undefined'){
+        if(this.definition && this.definition.type && this.definition.type.length){
             var size = this.definition.type.length;
             if(size != null && size != ''){
                 var list = {
@@ -122,7 +121,11 @@ export class Laravel {
     }
     
     isRequired(): string {
-        return this.definition.options.nullable ? 'required' : 'nullable';
+        if(this.definition && this.definition.options){
+            return this.definition.options.nullable ? 'nullable' : 'required';
+        }
+
+        return 'nullable';
     }
 
     setTableName(tableName: string){

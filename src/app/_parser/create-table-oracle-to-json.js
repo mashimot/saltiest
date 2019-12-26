@@ -352,21 +352,24 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$8", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$10", "oracle_data_type$subexpression$1$ebnf$8"], "postprocess":  
         (d) => { 
-        	var data_type = {};
+        	let data_type = {
+        		type: 'NUMBER', 
+        		tag: 'number'
+        	};
+        
         	var number = d[1];
-        	data_type.type = "Number";
-        	data_type.tag = "number";
         	if(number != null){
         		var numberAsString = number.toString();
+        
         		if(numberAsString.indexOf('.') !== -1){
         			var numberArr = numberAsString.split('.');
         			data_type.digits = numberArr[0];
         			data_type.decimals = numberArr[1] || '';
         		} else {
-        			data_type.length = numberArr[0];
+        			data_type.length = number;
         		}
         	}
-        	
+        
         	return data_type;
         } 
         	},
@@ -425,6 +428,9 @@ var grammar = {
     {"name": "S_NUMBER$ebnf$1", "symbols": [/[0-9]/]},
     {"name": "S_NUMBER$ebnf$1", "symbols": ["S_NUMBER$ebnf$1", /[0-9]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "S_NUMBER", "symbols": ["S_NUMBER$ebnf$1"]},
+    {"name": "S_DECIMAL$ebnf$1", "symbols": ["strchar"]},
+    {"name": "S_DECIMAL$ebnf$1", "symbols": ["S_DECIMAL$ebnf$1", "strchar"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "S_DECIMAL", "symbols": ["S_DECIMAL$ebnf$1"]},
     {"name": "S_EQUAL", "symbols": [{"literal":"="}]},
     {"name": "S_LPARENS", "symbols": [{"literal":"("}]},
     {"name": "S_RPARENS", "symbols": [{"literal":")"}]},

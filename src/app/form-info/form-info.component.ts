@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, ChangeDetectorRef } from '@angular/core';
 import { DatabaseEngine } from '../shared/services/database-engine.service';
 import { HtmlElementService } from '../shared/services/html-element.service';
 
@@ -15,7 +15,8 @@ export class FormInfoComponent implements OnInit {
 	tags: Array<string>;
 
 	constructor(
-		private htmlElementService: HtmlElementService
+		private htmlElementService: HtmlElementService,
+		private cdRef: ChangeDetectorRef 
 	) { }
 
 	ngOnInit() {
@@ -23,8 +24,12 @@ export class FormInfoComponent implements OnInit {
 			return item.toUpperCase();
 		});
 		this.tags = this.htmlElementService.getTags();
-    }
-
+	}
+	
+    ngAfterContentChecked(): void {
+        this.cdRef.detectChanges()
+	}
+	
     public buscaDominio() {
         alert("implementação");
     }

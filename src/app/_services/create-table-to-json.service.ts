@@ -274,8 +274,7 @@ export class CreateTableToJsonService{
 							column: column_name
 						});
 					} 
-
-					data.push({
+					var obj = {
 						html: {
 							category: this.category,
 							tag: data_type.tag,
@@ -283,25 +282,14 @@ export class CreateTableToJsonService{
 						},
 						definition: {
 							name: column_name,
-							type: {
-								datatype: data_type.type.toLowerCase(),
-								length: data_type.length || '',
-							},
+							type: data_type,
 							options: {
 								nullable: nullable || false,
 							}
 						}
-					});
-					definitions.push({
-						column_name: column_name,
-						type: {
-							datatype: data_type.type.toLowerCase(),
-							length: data_type.size || '',
-						},
-						options: {
-							nullable: nullable || false,
-						}
-					});
+					};
+					data.push(obj);
+					definitions.push(obj);
 				});
 
 				this._schemas.push({

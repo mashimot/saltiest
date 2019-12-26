@@ -96,7 +96,7 @@ export class MigrationComponent implements OnInit {
 		this.schemas.forEach(schema => {
 			let tableName = schema.name;
 			let schemaCreate = '';
-			schema.column.s.forEach(column => {
+			schema.definitions.forEach(column => {
 				let _values = column.type.values? `${JSON.stringify(column.type.values)}`: '';
 				let _nullable = column.options.nullable? '->nullable()': ''
 				let _dataType = column.type.datatype.toUpperCase();

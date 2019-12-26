@@ -178,23 +178,26 @@ oracle_data_type -> (
 			}
 		} 
 	%} |
-    "NUMBER"i data_type_size:? {% 
+	"NUMBER"i data_type_size:? {% 
 		(d) => { 
-			var data_type = {};
+			let data_type = {
+				type: 'NUMBER', 
+				tag: 'number'
+			};
+
 			var number = d[1];
-			data_type.type = "Number";
-			data_type.tag = "number";
 			if(number != null){
 				var numberAsString = number.toString();
+
 				if(numberAsString.indexOf('.') !== -1){
 					var numberArr = numberAsString.split('.');
 					data_type.digits = numberArr[0];
 					data_type.decimals = numberArr[1] || '';
 				} else {
-					data_type.length = numberArr[0];
+					data_type.length = number;
 				}
 			}
-			
+
 			return data_type;
 		} 
 	%} |
@@ -248,7 +251,8 @@ oracle_column_definition -> (
 #shared
 comma -> [,] {% id %}
 strchar -> [\w] {% id %}
-S_NUMBER -> [0-9]:+  
+S_NUMBER -> [0-9]:+ 
+S_DECIMAL -> strchar:+ 
 S_EQUAL           -> "="
 S_LPARENS         -> "("
 S_RPARENS         -> ")"

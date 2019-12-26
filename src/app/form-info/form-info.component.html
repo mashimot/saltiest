@@ -1,4 +1,4 @@
-<form  class="card">
+<form class="card">
     <div *ngFor="let page of pages; let pageIndex = index;" class="px-2 py-2">
         <span>Page {{ pageIndex + 1 }}</span>
         <hr />
@@ -10,45 +10,26 @@
                             <div class="form-group">
                                 <div class="form-check">
                                     <input type="checkbox" 
-                                    [checked]="d.definition.is_primary_key" 
-                                    [(ngModel)]="d.definition.is_primary_key"
+                                    [checked]="d.definition?.is_primary_key" 
+                                    [(ngModel)]="d.definition && d.definition.is_primary_key"
                                     [ngModelOptions]="{ standalone: true }"
                                     #is_primary_key="ngModel"                                    
                                     class="form-check-input" 
                                     id="is-primary-{{ pageIndex + rowIndex + columnIndex + contentIndex }}">
-                                    <label class="form-check-label" for="is-primary-{{ pageIndex + rowIndex + columnIndex + contentIndex }}">Primary Key?</label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="input-group">
-                                <div class="input-group-append" *ngIf="d.definition.name && d.definition.name.toLowerCase().indexOf('ind_') != -1">
-                                    <button (click)="buscaDominio(d.definition.name)" class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-search fa-1x" aria-hidden="true"></i>
-                                    </button>
-                                    <div class="dropdown-menu" [ngStyle]="{ width: '100%' }">
-                                        <a class="dropdown-item" href="#" ng-show="vm.loading">
-                                            <i class="fa fa-cog fa-1x fa-spin"></i> Loading...
-                                        </a>
-                                        <a class="dropdown-item" href="#" ng-show="!vm.loading && vm.dominio.error.has">
-                                            <span class="text-danger" ng-bind="vm.dominio.error.msg"></span>
-                                        </a>
-                                        <a class="dropdown-item" href="#" ng-repeat="(dI, dom) in vm.dominio.data" ng-if="vm.dominio.data.length > 0">
-                                            <span ng-bind="dom.val_dominio_item"></span> - <span ng-bind="dom.dsc_dominio_item"></span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableColumnName.invalid }" 
-                                name="table-column-name-{{ pageIndex + rowIndex + columnIndex + contentIndex }}"
-                                [(ngModel)]="d.definition.name" 
-                                [ngModelOptions]="{ standalone: true }"
-                                #tableColumnName="ngModel"
-                                required
-                                >
-                                <div *ngIf="tableColumnName.invalid || tableColumnName.touched" class="invalid-feedback">
-                                    <div *ngIf="tableColumnName.errors?.required">This is required.</div>
-                                </div> 
-                            </div>
+                            <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableColumnName.invalid }" 
+                            name="table-column-name-{{ pageIndex + rowIndex + columnIndex + contentIndex }}"
+                            [(ngModel)]="d.definition && d.definition.name" 
+                            [ngModelOptions]="{ standalone: true }"
+                            #tableColumnName="ngModel"
+                            required
+                            >
+                            <div *ngIf="tableColumnName.invalid || tableColumnName.touched" class="invalid-feedback">
+                                <div *ngIf="tableColumnName.errors?.required">This is required.</div>
+                            </div> 
                         </div>
                         <div class="col-md-2">
                             <input type="text" class="form-control" [ngClass]="{ 'is-invalid': htmlLabel.invalid }" 
@@ -77,11 +58,11 @@
                                 <div *ngIf="htmlTag.errors?.required">This is required.</div>
                             </div>
                         </div>
-                        <div class="col-md-2" *ngIf="d.definition?.type?.datatype">
+                        <div class="col-md-2">
                             <select class="form-control text-uppercase" [ngClass]="{ 'is-invalid': tableType.invalid }"
                             name="table-type-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
                             
-                            [(ngModel)]="d.definition?.type.datatype"
+                            [(ngModel)]="d.definition?.type && d.definition?.type.datatype"
                             [ngModelOptions]="{ standalone: true }"
                             #tableType="ngModel"
                             required
@@ -93,9 +74,9 @@
                                 <div *ngIf="tableType.errors?.required">This is required.</div>
                             </div>                            
                         </div>
-                        <div class="col-md-1" *ngIf="d.definition?.type?.length">
+                        <div class="col-md-1">
                             <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableSize.invalid }"
-                            [(ngModel)]="d.definition.type.length"
+                            [(ngModel)]="d.definition.type && d.definition.type.length"
                             [ngModelOptions]="{ standalone: true }"
                             pattern="^[0-9]+(.[0-9])?$"
                             name="table-size-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
@@ -104,13 +85,14 @@
                             <div *ngIf="tableSize.invalid || tableSize.touched" class="invalid-feedback">
                             </div>                               
                         </div>
-                        <div class="col-md-1" *ngIf="d.definition?.options?.nullable">
+                        <div class="col-md-1">
                             <div class="row">
-                                <label [ngClass]="{'badge-danger': d.definition.options.nullable, 'badge-default' : !d.definition.options.nullable}"
+                                <label [ngClass]="{'badge-danger': d.definition?.options?.nullable, 'badge-default' : !d.definition?.options?.nullable}"
                                        class="badge col-md-12"
+                                       
                                        [ngStyle]="{ 'cursor': 'pointer' }">
                                     nullable? {{ d.definition.nullable? 'No' : 'Yes' }}
-                                    <input type="checkbox" [(ngModel)]="d.definition.options.nullable" name="" class="checkbox" [ngStyle]="{ display: 'none' }">
+                                    <input type="checkbox" [(ngModel)]="d.definition && d.definition.options && d.definition.options.nullable" [ngModelOptions]="{ standalone: true }" name="" class="checkbox" [ngStyle]="{ display: 'none' }">
                                 </label>
                             </div>
                         </div>

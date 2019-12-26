@@ -213,7 +213,20 @@ export class CreateTableToJsonComponent implements OnInit {
 			');',*/
 			'create table if not exists hadouken (',
 			'state varchar2(25),',
-			'start_date number(10,2)',
+				'supplier_id number(10) not null primary key,',
+			'`cod_user` number(10) not null,',
+			'`favorite_fruit` varchar2(10) default 10 not null,',
+			'supplier_name varchar2(50) not null,',
+			'status_supplier CHAR(1) default "Ok",',
+			'address varchar2(50),',
+			'city varchar2(50),',
+			'state varchar2(25),',
+			'dat_now date,',
+			'zip_code number(10,2),price number(102),',
+			'title VARCHAR(255) NOT NULL,',
+			'start_date DATE,',
+			'due_date DATE',
+
 			');'
 		].join("\n");
 
