@@ -87,11 +87,10 @@
                         </div>
                         <div class="col-md-1">
                             <div class="row">
-                                <label [ngClass]="{'badge-danger': d.definition?.options?.nullable, 'badge-default' : !d.definition?.options?.nullable}"
+                                <label [ngClass]="{'badge-danger': d.definition?.options?.nullable, 'badge-success' : !d.definition?.options?.nullable}"
                                        class="badge col-md-12"
-                                       
                                        [ngStyle]="{ 'cursor': 'pointer' }">
-                                    nullable? {{ d.definition.nullable? 'No' : 'Yes' }}
+                                    {{ d.definition.options.nullable? 'not required' : 'required' }}
                                     <input type="checkbox" [(ngModel)]="d.definition && d.definition.options && d.definition.options.nullable" [ngModelOptions]="{ standalone: true }" name="" class="checkbox" [ngStyle]="{ display: 'none' }">
                                 </label>
                             </div>

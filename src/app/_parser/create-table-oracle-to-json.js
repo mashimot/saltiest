@@ -278,7 +278,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$1", "oracle_data_type$subexpression$1$ebnf$1"], "postprocess":  
         (d) => { 
-        	return { type: 'CHAR', tag: 'text', length: d[1] }
+        	return { datatype: 'CHAR', tag: 'text', length: d[1] }
         }
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$2", "symbols": [/[nN]/, /[cC]/, /[hH]/, /[aA]/, /[rR]/], "postprocess": function(d) {return d.join(""); }},
@@ -286,7 +286,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$2", "oracle_data_type$subexpression$1$ebnf$2"], "postprocess":  
         (d) => { 
-        	return { type: 'NCHAR', tag: 'text', length: d[1] }
+        	return { datatype: 'NCHAR', tag: 'text', length: d[1] }
         	   	} 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$3", "symbols": [/[vV]/, /[aA]/, /[rR]/, /[cC]/, /[hH]/, /[aA]/, /[rR]/, {"literal":"2"}], "postprocess": function(d) {return d.join(""); }},
@@ -294,7 +294,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$3", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$3", "oracle_data_type$subexpression$1$ebnf$3"], "postprocess":  
         (d) => { 
-        	return { type: d[0], tag: 'textarea', length: d[1]  }
+        	return { datatype: d[0], tag: 'textarea', length: d[1]  }
         	   } 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$4", "symbols": [/[vV]/, /[aA]/, /[rR]/, /[cC]/, /[hH]/, /[aA]/, /[rR]/], "postprocess": function(d) {return d.join(""); }},
@@ -302,7 +302,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$4", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$4", "oracle_data_type$subexpression$1$ebnf$4"], "postprocess":  
         (d) => { 
-        	return { type: d[0], tag: 'textarea', length: d[1] }
+        	return { datatype: d[0], tag: 'textarea', length: d[1] }
         } 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$5", "symbols": [/[nN]/, /[vV]/, /[aA]/, /[rR]/, /[cC]/, /[hH]/, /[aA]/, /[rR]/, {"literal":"2"}], "postprocess": function(d) {return d.join(""); }},
@@ -310,7 +310,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1$ebnf$5", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$5", "oracle_data_type$subexpression$1$ebnf$5"], "postprocess":  
         (d) => { 
-        	return { type: 'NVARCHAR2', tag: 'text', length: d[1] }
+        	return { datatype: 'NVARCHAR2', tag: 'text', length: d[1] }
         } 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$6", "symbols": [/[iI]/, /[nN]/, /[tT]/, /[eE]/, /[gG]/, /[eE]/, /[rR]/], "postprocess": function(d) {return d.join(""); }},
@@ -319,21 +319,21 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$6", "oracle_data_type$subexpression$1$ebnf$6"], "postprocess":  
         (d) => { 
         	return { 
-        		type: 'INTEGER', tag: 'number', length: d[1] 
+        		datatype: 'INTEGER', tag: 'number', length: d[1] 
            	}
         } 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$7", "symbols": [/[cC]/, /[lL]/, /[oO]/, /[bB]/], "postprocess": function(d) {return d.join(""); }},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$7"], "postprocess":  
         (d) => { 
-        	return { type: 'CLOB', tag: 'textarea' }
+        	return { datatype: 'CLOB', tag: 'textarea' }
         	   	} 
         	},
     {"name": "oracle_data_type$subexpression$1$subexpression$8", "symbols": [/[nN]/, /[cC]/, /[lL]/, /[oO]/, /[bB]/], "postprocess": function(d) {return d.join(""); }},
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$8"], "postprocess":  
         (d) => { 
         	return { 
-        		type: 'NCLOB', tag: 'textarea' 
+        		datatype: 'NCLOB', tag: 'textarea' 
         	}
         } 
         	},
@@ -343,7 +343,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$9", "oracle_data_type$subexpression$1$ebnf$7"], "postprocess":  
         (d) => { 
         	return { 
-        		type: 'LONG', tag: 'number', length: d[1] 
+        		datatype: 'LONG', tag: 'number', length: d[1] 
         	}
         } 
         	},
@@ -353,7 +353,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$10", "oracle_data_type$subexpression$1$ebnf$8"], "postprocess":  
         (d) => { 
         	let data_type = {
-        		type: 'NUMBER', 
+        		datatype: 'NUMBER', 
         		tag: 'number'
         	};
         
@@ -377,7 +377,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$11"], "postprocess":  
         (d) => { 
         	return { 
-        		type: 'DATE', tag: 'date' 
+        		datatype: 'DATE', tag: 'date' 
            }
         } 
         	},
@@ -385,7 +385,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$12"], "postprocess":  
         (d) => {
         	return { 
-        		type: 'INTERVAL', tag: 'text' 
+        		datatype: 'INTERVAL', tag: 'text' 
            }
         } 
         	},
@@ -393,7 +393,7 @@ var grammar = {
     {"name": "oracle_data_type$subexpression$1", "symbols": ["oracle_data_type$subexpression$1$subexpression$13"], "postprocess":  
         (d) => { 
         	return { 
-        		type: 'TIMESTAMP', tag: 'date' 
+        		datatype: 'TIMESTAMP', tag: 'date' 
         	}
         } 
         	},
@@ -419,7 +419,9 @@ var grammar = {
     {"name": "oracle_column_definition$subexpression$1$subexpression$4", "symbols": [/[dD]/, /[eE]/, /[fF]/, /[aA]/, /[uU]/, /[lL]/, /[tT]/], "postprocess": function(d) {return d.join(""); }},
     {"name": "oracle_column_definition$subexpression$1", "symbols": ["oracle_column_definition$subexpression$1$subexpression$4", "__", "default_value"], "postprocess":  
         (d) => { 
-        	return { type: "default", default_value: d[2].join("") }
+        	return { 
+        		type: "default", values: d[2].join("") 
+        	}
         } 
         	},
     {"name": "oracle_column_definition", "symbols": ["oracle_column_definition$subexpression$1"], "postprocess": id},

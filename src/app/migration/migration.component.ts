@@ -80,6 +80,7 @@ export class MigrationComponent implements OnInit {
 
 	getSchemas($schemas){
 		this.schemas = $schemas;
+		console.log(this.schemas);
 		this.laravelMigration();
 	}
 

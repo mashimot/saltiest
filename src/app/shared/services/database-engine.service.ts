@@ -15,7 +15,7 @@ export class DatabaseEngine {
 	| VARCHAR2    | <textarea></textarea>
 	*/	
 	public static engines = {
-		ORACLE:{
+		ORACLE: {
 			logo: 'https://i.pinimg.com/originals/9f/40/17/9f4017db985f89ae182ba4b0db568677.jpg',
 			types: {
 				CHAR: 'text',
@@ -31,7 +31,8 @@ export class DatabaseEngine {
 				DATE: 'date',
 				INTERVAL: 'text',
 				TIMESTAMP: 'date'
-			}
+			},
+			ddl: ''
 		},
 		MYSQL: {
 			logo: 'https://www.mysql.com/common/logos/logo-mysql-170x115.png',
@@ -59,17 +60,22 @@ export class DatabaseEngine {
 				TIME: 'TEXT',
 				DATETIME: 'TEXT',
 				TIMESTAMP: 'TEXT'
-			}
+			},
+			ddl: ''
 		}
 	};
-
+	
 	public static getDatabaseEngines() {
 		return Object.keys(this.engines).map(
 			item => { 
+				var fn = DatabaseEngine[item.toLowerCase()]();
 				return {
-					engine: item.toLowerCase(), 
-					logo: this.engines[item].logo
-				}
+					database: {
+						engine: item.toLowerCase(), 
+						logo: this.engines[item].logo
+					},
+					ddl: typeof fn != 'undefined'? fn: ''
+				};
 			}
 		);
 	}
@@ -91,4 +97,57 @@ export class DatabaseEngine {
 		}
 		return {};
 	}
+
+
+
+	static oracle(): string{
+		return [
+			'create table if not exists hadouken (',
+			'state varchar2(25),',
+			'supplier_id number(10) not null primary key,',
+			'`cod_user` number(10) not null,',
+			'`favorite_fruit` varchar2(10) default 10 not null,',
+			'supplier_name varchar2(50) not null,',
+			'status_supplier CHAR(1) default "Ok",',
+			'address varchar2(50),',
+			'city varchar2(50),',
+			'state varchar2(25),',
+			'dat_now date,',
+			'zip_code number(10,2),price number(102),',
+			'title VARCHAR(255) NOT NULL,',
+			'start_date DATE,',
+			'due_date DATE',
+			');'
+		].join("\n");
+	}	
+
+	static mysql(): string{
+		return [
+			`CREATE TABLE tasks (`,
+			//`id BIGINT(11) NOT NULL AUTO_INCREMENT,`,
+			`ID int NOT NULL UNIQUE,`,
+			`bigint_col bigint NOT NULL AUTO_INCREMENT,`,
+			`int_col INT UNIQUE,`,
+			`smallint_col SMALLINT,`,
+			`tinyint_col tinyint,`,
+			`nickname VARCHAR(255) NOT NULL,`,
+			`CHAR CHAR(50),`,
+			`teste SET('up', 'down', 'right', 'left'),`,
+			`deleted_at TIMESTAMP NULL,`,
+			`created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,`,
+			`joeys_world_tour enum('hue', 'oie', 'hadouken'),`,
+			`updated_at varchar(255) DEFAULT 'Sandnes',`,
+			`MEDIUMINT  MEDIUMINT UNSIGNED,`,
+			`your_column DECIMAL(10) NOT NULL,`,
+			`PRIMARY KEY (id)`,
+			');',
+			`CREATE TABLE haoduken (`,
+			//`id BIGINT(11) NOT NULL AUTO_INCREMENT,`,
+			`ID int NOT NULL UNIQUE,`,
+			`bigint_col bigint NOT NULL AUTO_INCREMENT,`,
+			`your_column DECIMAL(10) NOT NULL,`,
+			`PRIMARY KEY (id)`,
+			');'			
+		].join("\n");
+	}	
 }

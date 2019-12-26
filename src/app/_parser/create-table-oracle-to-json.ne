@@ -129,59 +129,59 @@ O_QUOTED_STRING ->
 oracle_data_type -> (
 	"CHAR"i data_type_size:? {% 
 		(d) => { 
-			return { type: 'CHAR', tag: 'text', length: d[1] }
+			return { datatype: 'CHAR', tag: 'text', length: d[1] }
 		}
 	%} |
     "NCHAR"i data_type_size:? {% 
 		(d) => { 
-			return { type: 'NCHAR', tag: 'text', length: d[1] }
+			return { datatype: 'NCHAR', tag: 'text', length: d[1] }
 	   	} 
 	%} |
     "VARCHAR2"i data_type_size:? {% 
 		(d) => { 
-			return { type: d[0], tag: 'textarea', length: d[1]  }
+			return { datatype: d[0], tag: 'textarea', length: d[1]  }
 	   } 
 	%} |
     "VARCHAR"i data_type_size:? {% 
 		(d) => { 
-			return { type: d[0], tag: 'textarea', length: d[1] }
+			return { datatype: d[0], tag: 'textarea', length: d[1] }
 		} 
 	%} |
     "NVARCHAR2"i data_type_size:? {% 
 		(d) => { 
-			return { type: 'NVARCHAR2', tag: 'text', length: d[1] }
+			return { datatype: 'NVARCHAR2', tag: 'text', length: d[1] }
 		} 
 	%} |
     "INTEGER"i data_type_size:? {% 
 		(d) => { 
 			return { 
-				type: 'INTEGER', tag: 'number', length: d[1] 
+				datatype: 'INTEGER', tag: 'number', length: d[1] 
 		   	}
 		} 
 	%} |
     "CLOB"i {% 
 		(d) => { 
-			return { type: 'CLOB', tag: 'textarea' }
+			return { datatype: 'CLOB', tag: 'textarea' }
 	   	} 
 	%} |
     "NCLOB"i {% 
 		(d) => { 
 			return { 
-				type: 'NCLOB', tag: 'textarea' 
+				datatype: 'NCLOB', tag: 'textarea' 
 			}
 		} 
 	%} |
     "LONG"i data_type_size:? {% 
 		(d) => { 
 			return { 
-				type: 'LONG', tag: 'number', length: d[1] 
+				datatype: 'LONG', tag: 'number', length: d[1] 
 			}
 		} 
 	%} |
 	"NUMBER"i data_type_size:? {% 
 		(d) => { 
 			let data_type = {
-				type: 'NUMBER', 
+				datatype: 'NUMBER', 
 				tag: 'number'
 			};
 
@@ -204,21 +204,21 @@ oracle_data_type -> (
     "DATE"i {% 
 		(d) => { 
 			return { 
-				type: 'DATE', tag: 'date' 
+				datatype: 'DATE', tag: 'date' 
 		   }
 		} 
 	%} |
     "INTERVAL"i {% 
 		(d) => {
 			return { 
-				type: 'INTERVAL', tag: 'text' 
+				datatype: 'INTERVAL', tag: 'text' 
 		   }
 		} 
 	%} |
     "TIMESTAMP"i {% 
 		(d) => { 
 			return { 
-				type: 'TIMESTAMP', tag: 'date' 
+				datatype: 'TIMESTAMP', tag: 'date' 
 			}
 		} 
 	%}
@@ -242,7 +242,9 @@ oracle_column_definition -> (
 	%} |
 	"DEFAULT"i __ default_value {% 
 		(d) => { 
-			return { type: "default", default_value: d[2].join("") }
+			return { 
+				type: "default", values: d[2].join("") 
+			}
 		} 
 	%}
 ) {% id %}

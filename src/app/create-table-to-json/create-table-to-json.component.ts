@@ -168,17 +168,23 @@ export class CreateTableToJsonComponent implements OnInit {
 	@ViewChild('popContent', {static: false}) popContent: ElementRef;
 	
 	gridModel: string;
-	database: Array<{
-		engine: string,
-		logo: string
-	}>;
 	errors: Object = {};
 	primaryKeys: any[];
-	options = {
-		database: <string> 'oracle',
-		logo: <string> ''
+	options: {
+		database: {
+			engine: string,
+			logo?: string,
+		},
+		ddl?: string
 	};
-	string: string;
+	sql: Array<{
+		database: {
+			engine: string,
+			logo?: string,
+		},
+		ddl?: string
+	}>;	
+
 	tabNumber: number;
 
 	constructor(
@@ -187,79 +193,30 @@ export class CreateTableToJsonComponent implements OnInit {
 		this.tabNumber = 1;
 		this.gridModel = '4 4 4';
 		this.errors = {};
-		this.database = [];
 	}
 
+
 	ngOnInit() {
-		this.database = DatabaseEngine.getDatabaseEngines();
-		this.database = [this.database[0]];
-		//this.options.database = 'mysql';
-		this.setDatabaseEngineLogo(this.options.database);
-		this.string = [
-			/*'create table if not exists random_table_1 (',
-			'supplier_id number(10) not null primary key,',
-			'`cod_user` number(10) not null,',
-			'`favorite_fruit` varchar2(10) default 10 not null,',
-			'supplier_name varchar2(50) not null,',
-			'status_supplier CHAR(1) default "Ok",',
-			'address varchar2(50),',
-			'city varchar2(50),',
-			'state varchar2(25),',
-			'dat_now date,',
-			'zip_code number(10),price number(102),',
-			'title VARCHAR(255) NOT NULL,',
-			'start_date DATE,',
-			'due_date DATE',
-			');',*/
-			'create table if not exists hadouken (',
-			'state varchar2(25),',
-				'supplier_id number(10) not null primary key,',
-			'`cod_user` number(10) not null,',
-			'`favorite_fruit` varchar2(10) default 10 not null,',
-			'supplier_name varchar2(50) not null,',
-			'status_supplier CHAR(1) default "Ok",',
-			'address varchar2(50),',
-			'city varchar2(50),',
-			'state varchar2(25),',
-			'dat_now date,',
-			'zip_code number(10,2),price number(102),',
-			'title VARCHAR(255) NOT NULL,',
-			'start_date DATE,',
-			'due_date DATE',
-
-			');'
-		].join("\n");
-
-		/*this.string = [
-			`CREATE TABLE tasks (`,
-			//`id BIGINT(11) NOT NULL AUTO_INCREMENT,`,
-			`ID int NOT NULL UNIQUE,`,
-			`bigint_col bigint NOT NULL AUTO_INCREMENT,`,
-			`int_col INT UNIQUE,`,
-			`smallint_col SMALLINT,`,
-			`tinyint_col tinyint,`,
-			`nickname VARCHAR(255) NOT NULL,`,
-			`CHAR CHAR(50),`,
-			`teste SET('up', 'down', 'right', 'left'),`,
-			`deleted_at TIMESTAMP NULL,`,
-			`created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,`,
-			`joeys_world_tour enum('hue', 'oie', 'hadouken'),`,
-			`updated_at TIMESTAMP,`,
-			`MEDIUMINT  MEDIUMINT UNSIGNED,`,
-			`your_column DECIMAL(10) NOT NULL,`,
-			`PRIMARY KEY (id)`,
-			');',
-			`CREATE TABLE haoduken (`,
-			//`id BIGINT(11) NOT NULL AUTO_INCREMENT,`,
-			`ID int NOT NULL UNIQUE,`,
-			`bigint_col bigint NOT NULL AUTO_INCREMENT,`,
-			`your_column DECIMAL(10) NOT NULL,`,
-			`PRIMARY KEY (id)`,
-			');'			
-		].join("\n");*/
-
+		let database = DatabaseEngine.getDatabaseEngines();
+		this.sql = [database[0]];			
+		this.options = {
+			database: {
+				engine: 'oracle'
+			}
+		};
+		this.setDDL(this.options.database);
 		let s = new Silabalize;
 		s.silabalize();
+	}
+
+	public setDDL(database){
+		let index = this.sql.findIndex(item => {
+			return item.database.engine == database.engine;
+		});
+		if(index != -1){
+			this.options = this.sql[index];
+			console.log(this.options);
+		}
 	}
 
 	public onSubmit() {
@@ -270,20 +227,13 @@ export class CreateTableToJsonComponent implements OnInit {
 		return Object.keys(this.errors).length;
 	}
 
-	public setDatabaseEngineLogo(value: string){
-		for(let i = 0; i < this.database.length; i++){
-			if(this.database[i].engine == value){
-				this.options.database = value;
-				this.options.logo = this.database[i].logo;
-				break;
-			}
-		}
-	}
-
 	public createTable() {
 		let ct = new CreateTableToJsonService();
-		ct.setSql(this.string);
-		ct.setDataBase(this.options.database);
+		let sql = this.sql.find(item => {
+			return item.database.engine == this.options.database.engine;
+		});
+		ct.setDataBase(sql.database.engine);
+		ct.setSql(sql.ddl);
 		ct.parse();
 		this.errors = ct.getError();
 		if (!ct.hasError()) {
@@ -296,4 +246,5 @@ export class CreateTableToJsonComponent implements OnInit {
 			this.schemasChange.emit(schemas);
 		}
 	}
+
 }

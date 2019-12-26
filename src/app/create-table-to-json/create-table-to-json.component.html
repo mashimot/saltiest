@@ -6,22 +6,23 @@
                 <div class="dropdown">
                     <h6 class="text-center text-bold">Select a Database Engine</h6>
                     <a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img [src]="options.logo" alt="{{ options.database }}" class="img-fluid mx-auto d-block">
+                        <img [src]="options.database.logo" class="img-fluid mx-auto d-block">
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li *ngFor="let db of database" (click)="options.database = db.engine; options.logo = db.logo;" class="dropdown-item p-3" [ngStyle]="{'cursor': 'pointer'}">
-                            <img [src]="db.logo" alt="{{ db.engine }}" class="img-fluid"> 
+                        <li *ngFor="let s of sql" (click)="setDDL(s.database)" class="dropdown-item p-3" [ngStyle]="{'cursor': 'pointer'}">
+                            <img [src]="s.database.logo" alt="{{ s.database.engine }}" class="img-fluid"> 
                         </li>
                     </ul>    
                 </div>
+                <textarea [(ngModel)]="options.ddl"
+                    name="string"
+                    [ngClass]="{ 'is-invalid' : objectLength() > 0 }"
+                    class="form-control form-control-sm h-20 mt-4"
+                    rows="10"
+                ></textarea>                
             </div>
         </div>
-        <textarea [(ngModel)]="string"
-            name="string"
-            [ngClass]="{ 'is-invalid' : objectLength() > 0 }"
-            class="form-control form-control-sm h-20 mt-4"
-            rows="10"
-        ></textarea>
+
         <div *ngIf="errors && objectLength() > 0">
             <div class="card card-body border-danger p-3 mt-2">
                 <small class="error">

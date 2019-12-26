@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as nearley from 'nearley';
 import * as oracle_grammar from './../_parser/create-table-oracle-to-json';
-//import * as Parser from './../_parser/lib/parser';
+import * as Parser from './../_parser/lib/parser';
 //const Parser = require('./../_parser/lib/parser');
 import { Content, IHtml, IDefinition, Page } from "./../_core/model";
 
@@ -257,15 +257,16 @@ export class CreateTableToJsonService{
 					let data_type = column.data_type;
 					let column_definition = column.column_definition;
 					let is_primary_key = false;
-					let nullable = true;
-
+					let options = {
+						nullable: true
+					};
 					if(column_definition instanceof Array && column_definition.length > 0){
 						column_definition.forEach(c => {
 							if(typeof c.nullable != 'undefined'){
-								nullable = c.nullable;
+								options.nullable = c.nullable;
 							}
-							if(typeof c.is_primary_key != 'undefined'){
-								is_primary_key = c.is_primary_key;
+							if(typeof c.values != 'undefined'){
+								data_type.values = c.values;
 							}
 						});
 					}
@@ -274,22 +275,21 @@ export class CreateTableToJsonService{
 							column: column_name
 						});
 					} 
-					var obj = {
+					var definition = {
+						name: column_name,
+						type: data_type,
+						options: options
+					};
+					var camera = {
 						html: {
 							category: this.category,
 							tag: data_type.tag,
 							label: this.customLabelName(column_name)
 						},
-						definition: {
-							name: column_name,
-							type: data_type,
-							options: {
-								nullable: nullable || false,
-							}
-						}
+						definition: definition
 					};
-					data.push(obj);
-					definitions.push(obj);
+					data.push(camera);
+					definitions.push(definition);
 				});
 
 				this._schemas.push({
