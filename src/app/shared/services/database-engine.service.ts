@@ -16,7 +16,7 @@ export class DatabaseEngine {
 	*/	
 	public static engines = {
 		ORACLE: {
-			logo: 'https://i.pinimg.com/originals/9f/40/17/9f4017db985f89ae182ba4b0db568677.jpg',
+			logo: 'https://tulula.sfo2.cdn.digitaloceanspaces.com/prod/images/cf2cf79cde738047d3dfdc8a5287ee87c909c9035bb61f32857f7536e4622505.png',
 			types: {
 				CHAR: 'text',
 				NCHAR: 'text',
@@ -32,10 +32,10 @@ export class DatabaseEngine {
 				INTERVAL: 'text',
 				TIMESTAMP: 'date'
 			},
-			ddl: ''
+			ddl: DatabaseEngine.oracle()
 		},
 		MYSQL: {
-			logo: 'https://www.mysql.com/common/logos/logo-mysql-170x115.png',
+			logo: 'http://webtr.net.tr/upload/referanslar/0dd7193f-e747-4a15-b797-818b9fac3656-mysql.png',
 			types: {
 				//integer
 				INT: 'TEXT',
@@ -61,20 +61,19 @@ export class DatabaseEngine {
 				DATETIME: 'TEXT',
 				TIMESTAMP: 'TEXT'
 			},
-			ddl: ''
+			ddl: DatabaseEngine.mysql()
 		}
 	};
 	
 	public static getDatabaseEngines() {
 		return Object.keys(this.engines).map(
 			item => { 
-				var fn = DatabaseEngine[item.toLowerCase()]();
 				return {
 					database: {
 						engine: item.toLowerCase(), 
 						logo: this.engines[item].logo
 					},
-					ddl: typeof fn != 'undefined'? fn: ''
+					ddl: this.engines[item].ddl
 				};
 			}
 		);

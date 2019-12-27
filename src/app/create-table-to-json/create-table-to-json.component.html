@@ -1,16 +1,18 @@
 
 <form class="card" #f="ngForm" (ngSubmit)="onSubmit()">
+    <div class="card-header">
+        <h6 class="text-center text-bold">Select a Database Engine</h6>
+    </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md-12">
                 <div class="dropdown">
-                    <h6 class="text-center text-bold">Select a Database Engine</h6>
-                    <a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img [src]="options.database.logo" class="img-fluid mx-auto d-block">
+                    <a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-link">
+                        <img [src]="options.database.logo" width="100" height="100" class="mx-auto">
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li *ngFor="let s of sql" (click)="setDDL(s.database)" class="dropdown-item p-3" [ngStyle]="{'cursor': 'pointer'}">
-                            <img [src]="s.database.logo" alt="{{ s.database.engine }}" class="img-fluid"> 
+                        <li *ngFor="let s of sql" (click)="setDDL(s.database)" class="dropdown-item p-1 btn btn-link" [ngStyle]="{'cursor': 'pointer'}">
+                            <img [src]="s.database.logo" width="100" height="100" alt="{{ s.database.engine }}" class="d-block mx-auto"> 
                         </li>
                     </ul>    
                 </div>
@@ -34,7 +36,7 @@
                 </small>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group mt-1">
             <label for="form_ct_grid">Bootstrap Grid</label>
             <input type="text"
                 id="form_ct_grid"

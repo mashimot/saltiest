@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-case.pipe';
 
 @Component({
 	selector: 'app-migration',
 	templateUrl: './migration.component.html',
-	styleUrls: ['./migration.component.css']
+	styleUrls: ['./migration.component.css'],
+	providers: [SnakeCaseToCamelCasePipe]
 })
 export class MigrationComponent implements OnInit {
 	schemas: any;
@@ -73,7 +75,7 @@ export class MigrationComponent implements OnInit {
 		YEAR: `year('#columnName')`
 	  };
 
-	constructor() { }
+	constructor(private snakeCaseToCamelCase: SnakeCaseToCamelCasePipe) { }
 
 	ngOnInit() {
 	}
@@ -96,6 +98,7 @@ export class MigrationComponent implements OnInit {
 		};		
 		this.schemas.forEach(schema => {
 			let tableName = schema.name;
+			let tableNameSnaked = this.snakeCaseToCamelCase.transform(tableName);
 			let schemaCreate = '';
 			schema.definitions.forEach(column => {
 				let _values = column.type.values? `${JSON.stringify(column.type.values)}`: '';
@@ -153,7 +156,7 @@ export class MigrationComponent implements OnInit {
 				use Illuminate\Database\Schema\Blueprint;
 				use Illuminate\Database\Migrations\Migration;
 				
-				class CreateFlightsTable extends Migration
+				class Create${tableNameSnaked}Table extends Migration
 				{
 					/**
 					 * Run the migrations.
