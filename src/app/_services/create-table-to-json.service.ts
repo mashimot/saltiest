@@ -74,19 +74,19 @@ export class CreateTableToJsonService{
 	parse(): void{
 		this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
 		let p = new nearley.Parser(oracle_grammar);
-		if(this.getDataBase() == 'mysql'){
+		/*if(this.getDataBase() == 'mysql'){
 			p = new Parser('mysql');
-		}
+		}*/
 		try {
 			const options = {};
-			if(this.getDataBase() == 'mysql'){
+			/*if(this.getDataBase() == 'mysql'){
 				const options = {};
 				p.feed(this._sql);
 				const parsedJsonFormat = p.results;
 				const compactJsonTablesArray = p.toCompactJson(parsedJsonFormat);
 				this._rawSchema = compactJsonTablesArray;
 				this.convertDataMysql();
-			}
+			}*/
 			if(this.getDataBase() == 'oracle'){
 				const results = p.feed(this._sql.replaceAllDecimalCommaToDecimalDot()).results;
 				this._rawSchema = results[0];
