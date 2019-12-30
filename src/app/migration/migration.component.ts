@@ -10,7 +10,10 @@ import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-ca
 export class MigrationComponent implements OnInit {
 	schemas: any;
 	schemaCreate: string;
-	migrations: Array<string>;
+	migrations: Array<{
+		tableName: string,
+		laravel: string
+	}>;
 	mysql: {
 		[key:string]: string
 	} = {
@@ -149,7 +152,9 @@ export class MigrationComponent implements OnInit {
 				${$table}
 			});`;
 			$table = '';
-			this.migrations.push(`
+			this.migrations.push({
+				tableName: tableName,
+				laravel: `
 				<?php
 
 				use Illuminate\Support\Facades\Schema;
@@ -178,7 +183,7 @@ export class MigrationComponent implements OnInit {
 						Schema::drop('${tableName}');
 					}
 				}`
-			);
+			});
 		})
 	}
 }

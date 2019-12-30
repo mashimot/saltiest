@@ -116,6 +116,10 @@ export class DatabaseEngine {
 			'title VARCHAR(255) NOT NULL,',
 			'start_date DATE,',
 			'due_date DATE',
+			');',
+			`CREATE TABLE shoryuken (`,
+			`ID NUMBER(11) NOT NULL,`,
+			`your_column NUMBER(100) NOT NULL`,
 			');'
 		].join("\n");
 	}	

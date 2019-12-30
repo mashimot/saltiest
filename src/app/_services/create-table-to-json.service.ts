@@ -74,19 +74,19 @@ export class CreateTableToJsonService{
 	parse(): void{
 		this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
 		let p = new nearley.Parser(oracle_grammar);
-		/*if(this.getDataBase() == 'mysql'){
+		if(this.getDataBase() == 'mysql'){
 			p = new Parser('mysql');
-		}*/
+		}
 		try {
 			const options = {};
-			/*if(this.getDataBase() == 'mysql'){
+			if(this.getDataBase() == 'mysql'){
 				const options = {};
 				p.feed(this._sql);
 				const parsedJsonFormat = p.results;
 				const compactJsonTablesArray = p.toCompactJson(parsedJsonFormat);
 				this._rawSchema = compactJsonTablesArray;
 				this.convertDataMysql();
-			}*/
+			}
 			if(this.getDataBase() == 'oracle'){
 				const results = p.feed(this._sql.replaceAllDecimalCommaToDecimalDot()).results;
 				this._rawSchema = results[0];
@@ -99,17 +99,31 @@ export class CreateTableToJsonService{
 	}
 
 	reportError(e, parser) {
+		console.log(parser);
+
 		if(parser.table){
+			var s = parser.lexer.buffer;
+			var i = s.lastIndexOf(" ", parser.current);
+			var j = s.indexOf(" ", i + 1);
+			console.log(s.substr(i, j-i));
+			//var afterbang = s.substring(parser.current, s.indexOf(' ', parser.current));
+			//console.log(afterbang);
 			const lastColumnIndex = parser.table.length - 2;
 			const lastColumn = parser.table[lastColumnIndex];
 			const token = parser.lexer.buffer[parser.current];
 	
 			return {
 				title: `You have an error in your SQL syntax.`,
-				msg: this.setCharAt(					
+				/*msg: this.setCharAt(					
 					parser.lexer.buffer, 
 					parser.current, 
 					token
+				)*/
+				msg: this.replaceBetween(
+					parser.lexer.buffer, 
+					i,
+					j,
+					s.substr(i, j-i),
 				)
 			};
 				
@@ -119,23 +133,14 @@ export class CreateTableToJsonService{
 		//console.log(`Instead of a ${JSON.stringify(token)}, I was expecting to see one of the following:`);
 		//console.log(lastColumn.states);
 	}
-
-	setCharAt(str: string, index: number, chr: string) {
-		if(index > str.length-1) {
-			return {
-				str: str,
-				strBegin: '',
-				char: chr,
-				strEnd: ''
-			};
-		}
-		
-		//return str.substr(0, index) + chr + str.substr(index+1);
+	
+	replaceBetween(str, start, end, what) {
 		return {
 			str: str,
-			strBegin: str.substr(0, index),
-			char: chr,
-			strEnd: str.substr(index + 1)
+			strBegin: str.substring(0, start),
+			strMiddle: what,
+			strEnd: str.substring(end),
+			hue: str.substring(0, start) + what + str.substring(end)
 		};
 	}
 
@@ -193,50 +198,6 @@ export class CreateTableToJsonService{
 			});
 			console.log('schema', this._schemas);
 		}
-		
-		/*if(Object.keys(this._rawSchema).length > 0){	
-			console.log(this._rawSchema);
-			let definitions = this._rawSchema.definitions;
-			let required = this._rawSchema.required;
-			this._schemas.$id = this._rawSchema.$id;
-			this._table_name = this._rawSchema.$id;
-			this._schemas.definitions = definitions;
-			this._schemas.required = required;
-
-			for(let columnName in definitions){
-				if (definitions.hasOwnProperty(columnName)) {
-					let definition = definitions[columnName];
-					let column_name = columnName;
-					let is_primary_key = false;
-					let nullable = false;
-					if(required instanceof Array && required.length > 0){
-						required.forEach(value => {
-							if(value == columnName)
-								nullable = true;
-						});
-					}
-					if(typeof definition.$comment != 'undefined'){
-						if(definition.$comment == 'primary key'){
-							is_primary_key = true;
-						}
-					}
-					this._schemas.data.push({
-						html: {
-							category: this.category,
-							tag: definition.tag || 'text',
-							label: this.customLabelName(column_name)
-						},
-						definition: {
-							is_primary_key: is_primary_key || false,
-							column_name: column_name,
-							type: definition.type.toLowerCase(),
-							size: definition.maxLength || '',
-							nullable: nullable || false
-						}
-					});
-				}
-			};
-		}*/
 	}
 
 	convertDataOracle(): void{

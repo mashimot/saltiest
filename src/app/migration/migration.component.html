@@ -2,7 +2,14 @@
     <div class="col-md-8 offset-md-2">
         <app-create-table-to-json (schemasChange)="getSchemas($event)"></app-create-table-to-json>
         <div class=" border mt-2" *ngFor="let migration of migrations;">
-            <textarea class="form-control" cols="30" rows="10">{{ migration }}</textarea>
+            <div class="card">
+                <div class="card-header">
+                    <h1>{{ migration.tableName }}</h1>
+                </div>
+                <div class="card-body">
+                    <textarea class="form-control" cols="30" rows="10">{{ migration.laravel }}</textarea>
+                </div>
+            </div>
         </div>  
     </div>
 </div>

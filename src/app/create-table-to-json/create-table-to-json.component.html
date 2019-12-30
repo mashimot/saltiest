@@ -11,7 +11,7 @@
                         <img [src]="options.database.logo" width="100" height="100" class="mx-auto">
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li *ngFor="let s of sql" (click)="setDDL(s.database)" class="dropdown-item p-1 btn btn-link" [ngStyle]="{'cursor': 'pointer'}">
+                        <li *ngFor="let s of sql" (click)="setDDL(s.database)" class="dropdown-item p-1" [ngStyle]="{'cursor': 'pointer'}">
                             <img [src]="s.database.logo" width="100" height="100" alt="{{ s.database.engine }}" class="d-block mx-auto"> 
                         </li>
                     </ul>    
@@ -29,11 +29,11 @@
             <div class="card card-body border-danger p-3 mt-2">
                 <small class="error">
                     {{ errors.msg.strBegin }}
-                    <span [ngbPopover]="errors.title" triggers="mouseenter:mouseleave">
-                        <i class="fas fa-exclamation-triangle text-danger"></i>{{ errors.msg.char }}
+                    <span [ngbPopover]="errors.title" triggers="mouseenter:mouseleave">                         
+                        <span class="text-danger text-bold">{{ errors.msg.strMiddle }}</span>
                     </span>
                     {{ errors.msg.strEnd }}
-                </small>
+                </small>                
             </div>
         </div>
         <div class="form-group mt-1">
