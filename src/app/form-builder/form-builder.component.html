@@ -15,7 +15,6 @@
             <div class="sticky-top">
                 <div class="btn-group d-flex bg-white" role="group">
                     <!--<button (click)="save();"
-                    class="btn btn-md w-100" 
                     [ngClass]="{ 
                         'btn-success': tabNumber == 1 && !previewMode, 
                         'btn-outline-dark': tabNumber == 2 && previewMode 
@@ -50,7 +49,7 @@
                     </button>
                 </div>
             </div>
-            <app-form-pages *ngIf="tabNumber == 1" [(pages)]="pages"></app-form-pages>
+            <app-form-pages *ngIf="tabNumber == 1" [(pages)]="pages" (newPageChange)="newPage($event)"></app-form-pages>
             <!--
             <button class="btn btn-primary" (click)="pageNext()">Next</button>
             <button class="btn btn-primary" (click)="pagePrevious()">Previous</button>

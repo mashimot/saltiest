@@ -6,7 +6,7 @@ import { RegisterResponse, Pageable } from '../interface/register-response';
     providedIn: 'root'
 })
 export class PageService {
-    API_URL: string = 'http://127.0.0.1:8000/api/pages';
+    API_URL: string = 'https://salty-suite.herokuapp.com/api/pages';
     httpOptions = {
         headers: new HttpHeaders({
           'Content-Type':  'application/json'

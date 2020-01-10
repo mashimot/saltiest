@@ -6,7 +6,7 @@ import { RegisterResponse } from '../interface/register-response';
     providedIn: 'root'
 })
 export class ColumnService {
-    API_URL: string = 'http://127.0.0.1:8000/api/columns';
+    API_URL: string = 'https://salty-suite.herokuapp.com/api/columns';
     httpOptions = {
         headers: new HttpHeaders({
           'Content-Type':  'application/json'

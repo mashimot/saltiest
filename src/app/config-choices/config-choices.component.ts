@@ -9,6 +9,8 @@ import { CHOICE_TYPE } from '../_core/consts/choice-type.const';
 import { Content } from '../_core/model';
 import { Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
+import { ContentService } from '../shared/services/content.service';
+import { ContentChoiceItemService } from '../shared/services/content-choice-item.service';
 
 interface ConfigChoice {
     type: string;
@@ -44,6 +46,7 @@ export class ConfigChoicesComponent implements OnInit {
         private modalService: NgbModal,
         private cd: ChangeDetectorRef,
         private location: Location,
+        private contentChoiceItemService: ContentChoiceItemService,
         private activatedRoute: ActivatedRoute
     ) {
 
@@ -101,6 +104,12 @@ export class ConfigChoicesComponent implements OnInit {
                     } else {
                         myAss.html.choices = $e.choices;
                         myAss.description = groups.join('|');
+
+                        console.log(myAss);
+                        /*this.contentChoiceItemService.storeContentChoiceItem(myAss)
+                        .subscribe(result => {
+                            console.log(result);
+                        });*/                 
                         this.choices$ = this.choices$.pipe(
                             map( _ => {
                                 //result.data.push(myAss);

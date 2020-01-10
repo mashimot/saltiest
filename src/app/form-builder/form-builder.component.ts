@@ -444,6 +444,25 @@ export class FormBuilderComponent implements OnInit {
         }
     }
 
+    public newPage($event){
+        if($event.isNewPage){
+            var index = $event.pageIndex;
+            this.pages = [
+                // part of the array before the specified index
+                ...this.pages.slice(0, index),
+                // inserted item
+                {
+                    name: 'Page ' + (index + 1),
+                    rows: []
+                },
+                // part of the array after the specified index
+                ...this.pages.slice(index)
+            ];
+
+        }
+        console.log('newPage', $event);
+    }
+
     public getSchemas($schemas): void {
         let schemas = $schemas;
         let pages = [];

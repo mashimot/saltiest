@@ -6,7 +6,7 @@ import { RegisterResponse } from '../interface/register-response';
   	providedIn: 'root'
 })
 export class ContentChoiceItemService {
-    API_URL: string = 'http://127.0.0.1:8000/api/contents_choices_items';
+    API_URL: string = 'https://salty-suite.herokuapp.com/api/contents_choices_items';
     httpOptions = {
         headers: new HttpHeaders({
           'Content-Type':  'application/json'

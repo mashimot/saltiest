@@ -4,6 +4,7 @@
     [(dragulaModel)]="pages"
 >
     <div *ngFor="let page of pages; let pageIndex = index; " class="mb-1">
+        <!--button class="btn btn-outline-primary btn-sm" (click)="newPage(pageIndex)">New Page</button-->
         <div class="px-3 py-3" [ngClass]="{ 'card bg-white text-dark': !config?.previewMode }">
             <div class="row" [hidden]="config?.previewMode">
                 <div class="col-md-12 page-handle" [ngStyle]="{ cursor: 'move' }">

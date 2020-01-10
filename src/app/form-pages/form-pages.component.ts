@@ -19,6 +19,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 export class FormPagesComponent implements OnInit {
     @Input() pages;
     @Output() pagesChange = new EventEmitter();
+    @Output() newPageChange = new EventEmitter();
+
     config: {
         previewMode: boolean
     };
@@ -356,6 +358,14 @@ export class FormPagesComponent implements OnInit {
         });*/
         //static
         this.pages.splice(pageIndex, 1);
+    }
+
+    public newPage(index: number): void{
+        console.log(index);
+        this.newPageChange.emit({
+            isNewPage: true,
+            pageIndex: index
+        });
     }
 
     loadFormBuilder(){

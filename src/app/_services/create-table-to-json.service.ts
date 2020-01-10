@@ -38,7 +38,7 @@ export class CreateTableToJsonService{
 	_schemas: Array<{
 		name: string,
 		data: Array<any>,
-		primaryKey: Array<any>,
+		primaryKey: Array<string>,
 		definitions?: Array<any>,
 		pages?: Page
 	}>;

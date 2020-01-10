@@ -8,8 +8,8 @@ import { of } from 'rxjs';
 })
 export class HtmlElementService {
     category: string;
-    API_URL: string = 'http://127.0.0.1:8000/api/tools';
-    API_URL2: string = 'http://127.0.0.1:8000/api/contents_choices';
+    API_URL: string = 'https://salty-suite.herokuapp.com/api/tools';
+    API_URL2: string = 'https://salty-suite.herokuapp.com/api/contents_choices';
 
 
     constructor(private http: HttpClient) {
