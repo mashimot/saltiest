@@ -39,6 +39,8 @@ export class CreateTableToJsonService{
 		name: string,
 		data: Array<any>,
 		primaryKey: Array<string>,
+		foreignKeys?: Array<any>,
+		uniqueKeys?: Array<any>,
 		definitions?: Array<any>,
 		pages?: Page
 	}>;
@@ -74,24 +76,24 @@ export class CreateTableToJsonService{
 	parse(): void{
 		this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
 		let p = new nearley.Parser(oracle_grammar);
-		/*if(this.getDataBase() == 'mysql'){
+		if(this.getDataBase() == 'mysql'){
 			p = new Parser('mysql');
-		}*/
+		}
 		try {
 			const options = {};
-			/*if(this.getDataBase() == 'mysql'){
+			if(this.getDataBase() == 'mysql'){
 				const options = {};
 				p.feed(this._sql);
 				const parsedJsonFormat = p.results;
 				const compactJsonTablesArray = p.toCompactJson(parsedJsonFormat);
 				this._rawSchema = compactJsonTablesArray;
 				this.convertDataMysql();
-			}*/
-			if(this.getDataBase() == 'oracle'){
+			}
+			/*if(this.getDataBase() == 'oracle'){
 				const results = p.feed(this._sql.replaceAllDecimalCommaToDecimalDot()).results;
 				this._rawSchema = results[0];
 				this.convertDataOracle();
-			}
+			}*/
 		} catch(error){
 			//this._errors.push(error);
 			this._errors = this.reportError(error, p);
@@ -148,17 +150,11 @@ export class CreateTableToJsonService{
 		if(this._rawSchema.length > 0){	
 			this._rawSchema.forEach(schema => {
 				var data = [];
-				var primaryKey = schema.primaryKey;
+				var primaryKey =  typeof schema.primaryKey != 'undefined'? schema.primaryKey: [];
+				var foreignKeys = typeof schema.foreignKeys != 'undefined'? schema.foreignKeys: [];
+				var uniqueKeys = typeof schema.uniqueKeys != 'undefined'? schema.uniqueKeys: [];
 				schema.columns.forEach(column => {
-					var hasPk = false;
-					if(typeof schema.primaryKey != 'undefined'){
-						//console.log(column.name);
-						schema.primaryKey.columns.forEach(pk => {
-							if(pk.column == column.name){
-								hasPk = true;
-							}
-						});
-					}
+					
 					data.push({
 						html: {
 							category: this.category,
@@ -166,38 +162,21 @@ export class CreateTableToJsonService{
 							label: this.customLabelName(column.name)
 						},
 						definition: column
-						/*definition: {
-							is_primary_key: hasPk,
-							column_name: column.name,
-							type: column.type.datatype.toLowerCase(),
-							size:  column.type.length || '',
-							nullable: column.options.nullable
-						}*/
 					});
-					/*data.push({
-						html: {
-							category: this.category,
-							tag: 'definition.tag' || 'text',
-							label: this.customLabelName(column.name)
-						},
-						definition: {
-							is_primary_key: hasPk,
-							column_name: column.name,
-							type: column.type.toLowerCase(),
-							size: column.type.length || '',
-							nullable: column.options.nullable
-						}
-					});		*/			
 				});
 				this._schemas.push({
 					name: schema.name,
 					data: data,
 					primaryKey: primaryKey,
-					definitions: schema.columns				
+					foreignKeys: foreignKeys,
+					uniqueKeys: uniqueKeys,
+					definitions: schema.columns
 				});
 			});
 			console.log('schema', this._schemas);
+			console.log('rawSchema', this._rawSchema);
 		}
+
 	}
 
 	convertDataOracle(): void{

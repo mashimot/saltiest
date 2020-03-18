@@ -198,11 +198,11 @@ export class CreateTableToJsonComponent implements OnInit {
 
 	ngOnInit() {
 		let database = DatabaseEngine.getDatabaseEngines();
-		this.sql = [database[0]];			
-		//this.sql = database;			
+		//this.sql = [database[0]];			
+		this.sql = database;			
 		this.options = {
 			database: {
-				engine: 'oracle'
+				engine: 'mysql'
 			}
 		};
 		this.setDDL(this.options.database);

@@ -4,7 +4,7 @@
         <div class=" border mt-2" *ngFor="let migration of migrations;">
             <div class="card">
                 <div class="card-header">
-                    <h1>{{ migration.tableName }}</h1>
+                    <h1>Table: {{ migration.tableName }}</h1>
                 </div>
                 <div class="card-body">
                     <textarea class="form-control" cols="30" rows="10">{{ migration.laravel }}</textarea>

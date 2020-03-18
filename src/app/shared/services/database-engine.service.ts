@@ -150,7 +150,14 @@ export class DatabaseEngine {
 			`bigint_col bigint NOT NULL AUTO_INCREMENT,`,
 			`your_column DECIMAL(10) NOT NULL,`,
 			`PRIMARY KEY (id)`,
-			');'			
+			`);`,
+			`CREATE TABLE Orders (`,
+			`OrderID int NOT NULL,`,
+			`OrderNumber int NOT NULL,`,
+			`PersonID int,`,
+			`PRIMARY KEY (OrderID),`,
+			`FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)`,
+			`);`
 		].join("\n");
 	}	
 }

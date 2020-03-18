@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-case.pipe';
+import { platform } from 'os';
 
 @Component({
 	selector: 'app-migration',
@@ -17,29 +18,29 @@ export class MigrationComponent implements OnInit {
 	mysql: {
 		[key:string]: string
 	} = {
-		INT: `integer('#columnName')`,
-		BIGINT: `bigInteger('#columnName')`,
+		INT: `integer('#columnName')#unsigned`,
+		BIGINT: `bigInteger('#columnName')#unsigned`,
 		BLOB: `binary`,
 		BOOLEAN: `boolean`,
 		CHAR: `char('#columnName', #length)`,
 		DATE: `date('#columnName')`,
 		DATETIME: `dateTime('#columnName')`,
 		//DATETIME: dateTimeTz('created_at'),
-		DECIMAL: `decimal('#columnName', #total_digits_comma_decimal_digits)`,
+		DECIMAL: `decimal('#columnName', #total_digits_comma_decimal_digits)#unsigned`,
 		DOUBLE: `double('#columnName', #total_digits_comma_decimal_digits)`,
 		ENUM: `enum('#columnName', #array)`,
 		FLOAT: `float('#columnName', #total_digits_comma_decimal_digits)`,
 		GEOMETRY: `geometry('#columnName')`,
 		GEOMETRYCOLLECTION: `geometryCollection('#columnName')`,
 		//INTEGER: increments('id'),
-		INTEGER: `integer('#columnName')`,
+		INTEGER: `integer('#columnName')#unsigned`,
 		IP: `ipAddress('#columnName')`,
 		JSON: `json('#columnName')`,
 		JSONB: `jsonb('#columnName')`,
 		LINESTRING: `lineString('#columnName')`,
 		LONGTEXT: `longText('#columnName')`,
 		MAC: `macAddress('#columnName')`,
-		MEDIUMINT: `mediumIncrements('#columnName')`,
+		MEDIUMINT: `mediumInteger('#columnName')#unsigned`,
 		//MEDIUMINT: mediumInteger('votes')`,
 		MEDIUMTEXT: `mediumText('#columnName')`,
 		//BIGINT: morphs('taggable')`,
@@ -54,8 +55,8 @@ export class MigrationComponent implements OnInit {
 		POLYGON: `polygon('#columnName')`,
 		//rememberToken(),
 		SET: `set('#columnName', #array)`,
-		SMALLINT: `smallIncrements('#columnName')`,
-		//SMALLINT: smallInteger('votes')`,
+		//SMALLINT: `smallIncrements('#columnName')#unsigned`,
+		SMALLINT: `smallInteger('#columnName')#unsigned`,
 		//TIMESTAMP: `softDeletes()`,
 		//TIMESTAMP: softDeletesTz(),
 		VARCHAR: `string('#columnName', #length)`,
@@ -66,14 +67,8 @@ export class MigrationComponent implements OnInit {
 		//TIMESTAMP: timestampTz('added_on')`,
 		//TIMESTAMP: timestamps()`,
 		//TIMESTAMP: timestampsTz()`,
-		TINYINT: `tinyIncrements('#columnName')`,
-		//TINYINT: tinyInteger('votes'),
-		/*BIGINT: `unsignedBigInteger('#columnName')`,
-		DECIMAL: `unsignedDecimal('#columnName', 8, 2)`,
-		INTEGER: `unsignedInteger('#columnName')`,
-		MEDIUMINT: `unsignedMediumInteger('#columnName')`,
-		SMALLINT: `unsignedSmallInteger('#columnName')`,
-		TINYINT: `unsignedTinyInteger('#columnName')`,*/
+		//TINYINT: `tinyIncrements('#columnName')#unsigned`,
+		TINYINT: `tinyInteger('#columnName')#unsigned`,
 		UUID: `uuid('#columnName')`,
 		YEAR: `year('#columnName')`
 	  };
@@ -85,7 +80,6 @@ export class MigrationComponent implements OnInit {
 
 	getSchemas($schemas){
 		this.schemas = $schemas;
-		console.log(this.schemas);
 		this.laravelMigration();
 	}
 
@@ -104,49 +98,91 @@ export class MigrationComponent implements OnInit {
 			let tableNameSnaked = this.snakeCaseToCamelCase.transform(tableName);
 			let schemaCreate = '';
 			schema.definitions.forEach(column => {
-				let _values = column.type.values? `${JSON.stringify(column.type.values)}`: '';
-				let _nullable = column.options.nullable? '->nullable()': ''
+				let _values = ''; 
+				let _nullable = '';
+				let _unsigned = '';
+
 				let _dataType = column.type.datatype.toUpperCase();
 				let _type = this.mysql[column.type.datatype.toUpperCase()];
+				_type = _type.replace(/#unsigned/g, '');
+				
 				if(typeof _type == 'undefined'){
 					_type = `${_dataType}('#columnName')`;
 				}
-				if(column.options.autoincrement){
-					Object.keys(autoIncrement).forEach(dataType => {
-						if(_dataType == dataType){
-							_type = autoIncrement[dataType];
-						}
-					});
-				}				
+				if(column.options){
+					if(column.options.autoincrement){
+						Object.keys(autoIncrement).forEach(dataType => {
+							if(_dataType == dataType){
+								_type = autoIncrement[dataType];
+							}
+						});
+					}
+				}
+				
 				if(_type){
 					_type = _type.replace(/#columnName/g, column.name);
 				}
-				if(column.type.values){
-					_type = _type.replace(/#array/g, _values);
-				}
-				if(column.type.length){
-					if(column.type.length != '')
-					_type = _type.replace(/#length/g, column.type.length);
-				}
-				if(column.options.unsigned){
-					_type = `unsigned${_type.charAt(0).toUpperCase() + _type.slice(1)}`;
-				}
-				if(column.type.decimals || column.type.digits){
-					let total_digits_comma_decimal_digits = column.type.digits + ', ' + column.type.decimals;
-					_type = _type.replace(/#total_digits_comma_decimal_digits/g, total_digits_comma_decimal_digits);
+
+				if(column.options){
+					if(column.options.nullable){
+						_nullable = '->nullable()';
+					}
+					if(column.options.unsigned){
+						_unsigned = '->unsigned()';
+					}
 				}
 
-				$table += `\t$table->${_type}${_nullable};\n`;				
+				if(column.type){
+					if(column.type.values){
+						_values = JSON.stringify(column.type.values);
+						_type = _type.replace(/#array/g, _values);
+					}
+					if(column.type.length){
+						if(column.type.length != ''){
+							_type = _type.replace(/#length/g, column.type.length);
+						}
+					}
+					if(column.type.decimals || column.type.digits){
+						let total_digits_comma_decimal_digits = column.type.digits + ', ' + column.type.decimals;
+						_type = _type.replace(/#total_digits_comma_decimal_digits/g, total_digits_comma_decimal_digits);
+					}
+				}
+
+				$table += `\t$table->${_type}${_unsigned}${_nullable};\n`;
 			});
 
-			/*this.migrations.push( 
-				[
-					//`$ php artisan make:migration create_${tableName}_table --create="${tableName}"\n`,
-					`Schema::create('${tableName}', function (Blueprint $table) {\n`,
-					`${$table}`,
-					`});\n`
-				].join("")
-			);*/
+			if(schema.primaryKey){
+				if(schema.primaryKey.columns.length > 0){
+					let pkColumns = schema.primaryKey.columns.map(i => i.column);
+					$table +=  `\t$table->primary(${JSON.stringify(pkColumns)})\n`;
+				}
+			}
+			if(schema.uniqueKeys){
+				if(schema.uniqueKeys.length > 0){
+					let ukColumns = [];
+					schema.uniqueKeys.forEach(schemaUk =>{
+						 schemaUk.columns.map(uk => ukColumns.push(uk.column));
+					})
+					$table += `\t$table->unique(${JSON.stringify(ukColumns)});\n`;
+				}
+			}			
+
+			if(schema.foreignKeys){
+				if(schema.foreignKeys.length > 0){					
+					schema.foreignKeys.forEach(fk => {
+						let foreign = '';
+						let reference = '';							
+						fk.columns.forEach(fk => {
+							foreign = `foreign('${fk.column}')`;
+						});
+						fk.reference.columns.forEach(ref => {
+							reference = `references('${ref.column}')->on('${fk.reference.table}')`;
+						});
+						$table += `\t$table->${foreign}->${reference}\n`;
+					});
+				}
+			}
+
 			schemaCreate = `
 			Schema::create('${tableName}', function (Blueprint $table) {
 				${$table}
