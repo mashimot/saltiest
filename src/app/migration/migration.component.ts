@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-case.pipe';
-import { platform } from 'os';
 
 @Component({
 	selector: 'app-migration',
