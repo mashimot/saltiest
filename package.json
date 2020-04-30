@@ -30,7 +30,7 @@
     "bson": "^3.0.2",
     "core-js": "^2.6.11",
     "express": "^4.17.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "mongoose": "^5.9.4",
     "nearley": "^2.19.1",
     "ng2-dragula": "^2.1.1",
