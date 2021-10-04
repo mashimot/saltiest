@@ -71,7 +71,243 @@ export class HtmlElementService {
     }
 
     getStatic(){
-        return [{"html":{"content_html_tag_id":1,"tag":"select","category":"form","content_choice_id":1,"label":"Type your Text23","text":"","elements":[{"id":1,"text":"Radio 1","value":"Radio 1"},{"id":2,"text":"Radio 2","value":"Radio 2"},{"id":3,"text":"Radio 3","value":"Radio 3"}]}},{"html":{"content_html_tag_id":2,"tag":"radio","category":"form","content_choice_id":1,"label":"Type your Text","text":"","elements":[{"id":1,"text":"Radio 1","value":"Radio 1"},{"id":2,"text":"Radio 2","value":"Radio 2"},{"id":3,"text":"Radio 3","value":"Radio 3"}]}},{"html":{"content_html_tag_id":3,"tag":"number","category":"form","content_choice_id":null,"label":"Type your Text","text":"","elements":[]}},{"html":{"content_html_tag_id":4,"tag":"date","category":"form","content_choice_id":null,"label":"Type your Text","text":"","elements":[]}},{"html":{"content_html_tag_id":5,"tag":"text","category":"form","content_choice_id":null,"label":"Type your Text","text":"","elements":[]}},{"html":{"content_html_tag_id":6,"tag":"textarea","category":"form","content_choice_id":null,"label":"Type your Text","text":"","elements":[]}},{"html":{"content_html_tag_id":7,"tag":"file","category":"form","content_choice_id":null,"label":"Type your Text","text":"","elements":[]}},{"html":{"content_html_tag_id":8,"tag":"checkbox","category":"form","content_choice_id":1,"label":"Type your Text","text":"","elements":[{"id":1,"text":"Radio 1","value":"Radio 1"},{"id":2,"text":"Radio 2","value":"Radio 2"},{"id":3,"text":"Radio 3","value":"Radio 3"}]}},{"html":{"content_html_tag_id":9,"tag":"html","category":"html","content_choice_id":null,"label":"Type your Text","text":"","elements":[]}},{"html":{"content_html_tag_id":10,"tag":"image","category":"html","content_choice_id":null,"label":"Type your Text","text":"","elements":[]}},{"html":{"content_html_tag_id":11,"tag":"h1","category":"headings","content_choice_id":null,"label":"","text":"Type your Text","elements":[]}},{"html":{"content_html_tag_id":12,"tag":"h2","category":"headings","content_choice_id":null,"label":"","text":"Type your Text","elements":[]}},{"html":{"content_html_tag_id":13,"tag":"h3","category":"headings","content_choice_id":null,"label":"","text":"Type your Text","elements":[]}},{"html":{"content_html_tag_id":14,"tag":"h4","category":"headings","content_choice_id":null,"label":"","text":"Type your Text","elements":[]}},{"html":{"content_html_tag_id":15,"tag":"h5","category":"headings","content_choice_id":null,"label":"","text":"Type your Text","elements":[]}},{"html":{"content_html_tag_id":16,"tag":"h6","category":"headings","content_choice_id":null,"label":"","text":"Type your Text","elements":[]}},{"html":{"content_html_tag_id":17,"tag":"legend","category":"formatting","content_choice_id":null,"label":"","text":"Type your Text","elements":[]}}];
+        return [
+            {
+              "html": {
+                "content_html_tag_id": 1,
+                "tag": "select",
+                "category": "form",
+                "content_choice_id": 1,
+                "label": "Type your Text23",
+                "text": "",
+                "elements": [
+                  {
+                    "id": 1,
+                    "text": "Radio 1",
+                    "value": "Radio 1"
+                  },
+                  {
+                    "id": 2,
+                    "text": "Radio 2",
+                    "value": "Radio 2"
+                  },
+                  {
+                    "id": 3,
+                    "text": "Radio 3",
+                    "value": "Radio 3"
+                  }
+                ]
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 2,
+                "tag": "radio",
+                "category": "form",
+                "content_choice_id": 1,
+                "label": "Type your Text",
+                "text": "",
+                "elements": [
+                  {
+                    "id": 1,
+                    "text": "Radio 1",
+                    "value": "Radio 1"
+                  },
+                  {
+                    "id": 2,
+                    "text": "Radio 2",
+                    "value": "Radio 2"
+                  },
+                  {
+                    "id": 3,
+                    "text": "Radio 3",
+                    "value": "Radio 3"
+                  }
+                ]
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 3,
+                "tag": "number",
+                "category": "form",
+                "content_choice_id": null,
+                "label": "Type your Text",
+                "text": "",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 4,
+                "tag": "date",
+                "category": "form",
+                "content_choice_id": null,
+                "label": "Type your Text",
+                "text": "",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 5,
+                "tag": "text",
+                "category": "form",
+                "content_choice_id": null,
+                "label": "Type your Text",
+                "text": "",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 6,
+                "tag": "textarea",
+                "category": "form",
+                "content_choice_id": null,
+                "label": "Type your Text",
+                "text": "",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 7,
+                "tag": "file",
+                "category": "form",
+                "content_choice_id": null,
+                "label": "Type your Text",
+                "text": "",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 8,
+                "tag": "checkbox",
+                "category": "form",
+                "content_choice_id": 1,
+                "label": "Type your Text",
+                "text": "",
+                "elements": [
+                  {
+                    "id": 1,
+                    "text": "Radio 1",
+                    "value": "Radio 1"
+                  },
+                  {
+                    "id": 2,
+                    "text": "Radio 2",
+                    "value": "Radio 2"
+                  },
+                  {
+                    "id": 3,
+                    "text": "Radio 3",
+                    "value": "Radio 3"
+                  }
+                ]
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 9,
+                "tag": "html",
+                "category": "html",
+                "content_choice_id": null,
+                "label": "Type your Text",
+                "text": "",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 10,
+                "tag": "image",
+                "category": "html",
+                "content_choice_id": null,
+                "label": "Type your Text",
+                "text": "",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 11,
+                "tag": "h1",
+                "category": "headings",
+                "content_choice_id": null,
+                "label": "",
+                "text": "Type your Text",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 12,
+                "tag": "h2",
+                "category": "headings",
+                "content_choice_id": null,
+                "label": "",
+                "text": "Type your Text",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 13,
+                "tag": "h3",
+                "category": "headings",
+                "content_choice_id": null,
+                "label": "",
+                "text": "Type your Text",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 14,
+                "tag": "h4",
+                "category": "headings",
+                "content_choice_id": null,
+                "label": "",
+                "text": "Type your Text",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 15,
+                "tag": "h5",
+                "category": "headings",
+                "content_choice_id": null,
+                "label": "",
+                "text": "Type your Text",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 16,
+                "tag": "h6",
+                "category": "headings",
+                "content_choice_id": null,
+                "label": "",
+                "text": "Type your Text",
+                "elements": []
+              }
+            },
+            {
+              "html": {
+                "content_html_tag_id": 17,
+                "tag": "legend",
+                "category": "formatting",
+                "content_choice_id": null,
+                "label": "",
+                "text": "Type your Text",
+                "elements": []
+              }
+            }
+          ];
     }
 
     get2() {

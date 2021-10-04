@@ -30,32 +30,36 @@ export class BootstrapGridSystemService {
             columns: []
         }];
     }
+    
     convert() {
         let groups = [];
         let grid = this._grid.replace(/ +/g, ' ').trim();
         let arrGrid = grid.split(' ');
 
         let chunkSize = arrGrid.length;
-        let page = {
-            rows: [],
-            name: 'Page 1'
-        };
 
         for (let i = 0; i < this._data.length; i += chunkSize) {
             groups.push(this._data.slice(i, i + chunkSize));
         }
-        this._page = groups.reduce(function (acc, group, index) {
+
+        this._page = groups.reduce((page, group, index) => {
+            if(!page.rows){
+                page = {
+                    rows: [],
+                    name: 'Page ' + (index + 1)
+                }
+            }
             page.rows.push({
                 grid: grid,
                 columns: []
             });
-            group.map(function (data, i) {
+            group.map(data => {
                 return page.rows[index].columns.push({
                     contents: [data]
                 });
-            }, 0);
+            });
             return page;
-        }, 0);
+        }, []);
 
         let lastRow = this._page.rows.length;
         let columns = this._page.rows[lastRow - 1].columns;
@@ -67,6 +71,7 @@ export class BootstrapGridSystemService {
             }
         }
     }
+
     getPage() {
         return this._page;
     }

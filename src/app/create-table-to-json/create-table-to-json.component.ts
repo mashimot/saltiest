@@ -202,7 +202,7 @@ export class CreateTableToJsonComponent implements OnInit {
 		this.sql = database;			
 		this.options = {
 			database: {
-				engine: 'mysql'
+				engine: 'oracle'
 			}
 		};
 		this.setDDL(this.options.database);
@@ -239,10 +239,12 @@ export class CreateTableToJsonComponent implements OnInit {
 		this.errors = ct.getError();
 		if (!ct.hasError()) {
 			let schemas = ct.getSchemas();
-			schemas.forEach(schema => {
+			schemas = schemas.map(schema => {
 				let bootstrapGridSystem = new BootstrapGridSystemService(schema.data, `${this.gridModel}\n`);
 				bootstrapGridSystem.convert();
 				schema.pages = bootstrapGridSystem.getPage();
+
+				return schema;
 			});
 			this.schemasChange.emit(schemas);
 		}

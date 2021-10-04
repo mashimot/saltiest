@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { RenderHtmlService } from './../../_services/render-html.service';
+import { BootstrapHtmlTemplate } from './../../_services/bootstrap-html-template.service';
 
 @Component({
     selector: 'app-render-content',
@@ -13,8 +13,7 @@ export class RenderContentComponent implements OnInit {
     mustRender: boolean = true;
 
     constructor(
-        private sanitizer: DomSanitizer,
-        private renderHtml: RenderHtmlService
+        private sanitizer: DomSanitizer
     ) {
         this.content = {
             html: {},
@@ -28,9 +27,8 @@ export class RenderContentComponent implements OnInit {
     render() {
         if (typeof this.content !== 'undefined') {
             console.log('render');
-            this.renderHtml.setParams(this.content);
-            let html = this.renderHtml.get().html;
-            //console.log(html);
+            let bootstrapHtmlTemplate = new BootstrapHtmlTemplate();
+            let html = bootstrapHtmlTemplate.get(this.content);
             return this.sanitizer.bypassSecurityTrustHtml(html);
         }
         return 'undefined';

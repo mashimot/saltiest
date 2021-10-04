@@ -40,12 +40,12 @@ import { CreateTableToJsonModule } from '../create-table-to-json/create-table-to
     declarations: [
         FormMenuComponent,
         FormBuilderComponent,
-        SnakeCaseToCamelCasePipe,
-        SumBeEqualsToDirective
+        SnakeCaseToCamelCasePipe
     ],
     providers: [],
     entryComponents: [
         //ConfigChoicesComponent
     ]
 })
+
 export class FormBuilderModule { }

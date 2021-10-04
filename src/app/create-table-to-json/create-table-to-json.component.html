@@ -58,8 +58,10 @@
         </div>
     </div>
     <div class="card-footer">
-        <button class="btn btn-dark btn-block btn-sm" 
-        (click)="createTable()" 
-        [disabled]="f.controls.grid?.invalid">Generate</button>
+        <button
+            class="btn btn-dark btn-block btn-sm" 
+            (click)="createTable()" 
+            [disabled]="f.controls.grid?.invalid"
+        >Generate</button>
     </div>
 </form>

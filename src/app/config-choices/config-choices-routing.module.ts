@@ -4,7 +4,7 @@ import { ConfigChoicesComponent } from './config-choices.component';
 import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
 import { AuthGuard } from '../_core/guards/auth.guard';
 
-const routes: Routes = [
+/*const routes: Routes = [
   {
     path: 'config-choices',
     component: ConfigChoicesComponent,
@@ -14,10 +14,22 @@ const routes: Routes = [
       { path: ':id/edit', component: ConfigChoiceFormComponent }
     ]
   }
+];*/
+const routes: Routes = [
+  {
+    path: '',
+    component: ConfigChoicesComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: ':id/edit', 
+    canActivate: [AuthGuard],
+    component: ConfigChoiceFormComponent
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class ConfigChoicesRoutingModule { }

@@ -8,6 +8,7 @@ import { DragulaModule } from 'ng2-dragula';
 import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
 import { SharedModule } from '../shared/shared.module';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
@@ -15,11 +16,16 @@ import { NgxPaginationModule } from 'ngx-pagination';
     ConfigChoicesRoutingModule,
     FormsModule,
     ReactiveFormsModule, 
-    DragulaModule,
+    DragulaModule.forRoot(),
     SharedModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    NgbModalModule
   ],
   exports: [ConfigChoicesComponent, ConfigChoiceFormComponent],
-  declarations: [ConfigChoicesComponent, ConfigChoiceFormComponent]
+
+  declarations: [ConfigChoicesComponent, ConfigChoiceFormComponent],
+  entryComponents: [
+    ConfigChoiceFormComponent
+  ],
 })
 export class ConfigChoicesModule { }

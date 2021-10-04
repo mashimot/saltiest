@@ -35,6 +35,6 @@ export class ProjectService {
 	}
 
 	deleteProject(id: number){
-		return this.http.delete<RegisterResponse>(`${this.API_URL}/${id}`);
+		return this.http.delete<RegisterResponse>(`${this.API_URL}/${id}`, this.httpOptions);
 	}	
 }

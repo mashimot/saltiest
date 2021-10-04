@@ -23,28 +23,34 @@
                         <i class="fas fa-save" [ngClass]="{ 'fa-beat': tabNumber == 1 && !previewMode }"></i> Save
                     </button>
                     -->
-                    <button (click)="tabNumber = 1; previewMode = false; preview();"
-                    class="btn btn-md w-100" 
-                    [ngClass]="{ 
-                        'btn-primary': tabNumber == 1 && !previewMode, 
-                        'btn-outline-dark': tabNumber == 2 && previewMode 
-                    }"
-                    [ngStyle]="{ 'opacity': tabNumber == 2 && previewMode? 0.4 : 1 }">
+                    <button
+                        (click)="tabNumber = 1; previewMode = false; preview();"
+                        class="btn btn-md w-100" 
+                        [ngClass]="{ 
+                            'btn-primary': tabNumber == 1 && !previewMode, 
+                            'btn-outline-dark': tabNumber == 2 && previewMode 
+                        }"
+                        [ngStyle]="{ 'opacity': tabNumber == 2 && previewMode? 0.4 : 1 }"
+                    >
                         <i class="fas fa-edit fa-1x" [ngClass]="{ 'fa-beat': tabNumber == 1 && !previewMode }"></i> Editor
                     </button>
-                    <button (click)="this.previewMode = !this.previewMode; preview(); tabNumber = 1;" 
-                    class="btn btn-md w-100" 
-                    [ngClass]="{ 
-                        'btn-success': previewMode,
-                        'btn-outline-danger': !previewMode
-                    }"
-                    [ngStyle]="{ 'opacity': tabNumber == 2 || !config?.previewMode? 0.4 : 1 }">
-                        <i [ngClass]="{ 'fa-eye fa-1x fa-beat': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-1x"></i>
+                    <button
+                        (click)="this.previewMode = !this.previewMode; preview(); tabNumber = 1;" 
+                        class="btn btn-md w-100" 
+                        [ngClass]="{ 
+                            'btn-success': previewMode,
+                            'btn-outline-danger': !previewMode
+                        }"
+                        [ngStyle]="{ 'opacity': tabNumber == 2 || !config?.previewMode? 0.4 : 1 }"
+                    >
+                        <i [ngClass]="{ 'fa-eye fa-1x fa-beat': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-1x"></i> Preview
                     </button>
-                    <button (click)="tabNumber = 2; previewMode = false; preview();" 
-                    class="btn btn-md w-100" 
-                    [ngClass]="{ 'btn-primary': tabNumber == 2, 'btn-outline-dark': tabNumber == 1 }"
-                    [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }">
+                    <button
+                        (click)="tabNumber = 2; previewMode = false; preview();" 
+                        class="btn btn-md w-100" 
+                        [ngClass]="{ 'btn-primary': tabNumber == 2, 'btn-outline-dark': tabNumber == 1 }"
+                        [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }"
+                    >
                         <i class="fas fa-edit fa-1x" [ngClass]="{ 'fa-beat': tabNumber == 2 }"></i> Faster entry
                     </button>
                 </div>
@@ -78,200 +84,10 @@
     </li>
     <li class="list-group-item">
         <div *ngIf="isTabMvcOpen(0)">
-            <h1>MODEL</h1>
-            <textarea class="form-control" rows="40" >
-            <?php
-
-            namespace App;
-            
-            use Illuminate\Database\Eloquent\Model;
-         
-            class {{ tableName | snakeCaseToCamelCase }} extends Model {
-                protected $table      = '{{ tableName }}';
-                protected $primaryKey = {{ model.primaryKey? (model.primaryKey.length > 1? "[" +  model.primaryKey + "]": model.primaryKey[0]) : [] }};
-                public $incrementing  = true; 
-                public $sequence      = 'sga_{{ model.primaryKey? removeDoubleQuotes(model.primaryKey[0]) : '' }}_seq';  
-                
-                protected $fillable = {{ model.fillable }};
-            }
-            </textarea>            
-        </div>
-        <div *ngIf="isTabMvcOpen(1)">
             <h1>VIEW</h1>
             <textarea class="form-control" rows="40">
-                @extends('Admin.layouts.app_index')
-
-                @section('css')
-                @endsection
-
-                @section('breadcrumb-manual')
-                <li></li>
-                @endsection
-
-                @section('pagina_header')
-                @endsection
-
-                @section('pagina_conteudo')    
-                    {{ view.table }}
-
-                    <!-- MODAL CRUD -->
-                    {!! $HTML::modalOpen('mudar_aqui', 'Adicionar') !!}
-                        {!! $HTML::formOpen('form_mudar_aqui', $acao) !!}  
-                            {{ bootstrap.html() }}
-                        {!! $HTML::formClose() !!}
-                    {!! $HTML::modalClose(true, $HTML::modalBotoesSalvar('mudar_aqui')) !!}
-                @endsection   
-                    
-                @section('bibliotecascript')
-                    @include('bibliotecas.js.scripts.modalCrud')
-                @endsection
-
-                @section('script')    
-                    {{ view.script }}
-                @endsection
+                {{ bootstrapHtmlTemplate.getTemplate(pages) }}
             </textarea>
-        </div>
-        <div *ngIf="isTabMvcOpen(2)">
-            <h1>CONTROLLER</h1>
-            <textarea class="form-control" rows="40">
-            <?php
-
-            namespace App\Http\Controllers;
-            
-            use Illuminate\Http\Request;
-            use App\{{ tableName | snakeCaseToCamelCase }};
-            use App\Http\Requests\{{ tableName | snakeCaseToCamelCase }}Request;
-
-            class {{ tableName | snakeCaseToCamelCase }}Controller extends Controller
-            {
-                /**
-                * Display a listing of the resource.
-                *
-                * @return \Illuminate\Http\Response
-                */
-                public function index()
-                {
-                    //
-                    $r = {{ tableName | snakeCaseToCamelCase }}::all();
-
-                    return view('shares.index', compact('r'));
-                }
-            
-                /**
-                * Show the form for creating a new resource.
-                *
-                * @return \Illuminate\Http\Response
-                */
-                public function create()
-                {
-                    //
-                    return view('mudar_aqui.create');
-                }
-            
-                /**
-                * Store a newly created resource in storage.
-                *
-                * @param  \Illuminate\Http\Request  $request
-                * @return \Illuminate\Http\Response
-                */
-                public function store({{ tableName | snakeCaseToCamelCase }}Request $request)
-                {
-                    //
-                    $r = {{ tableName | snakeCaseToCamelCase }}::create({{ controller.request }});
-
-
-                    return redirect('/path_mudar_aqui')->with('success', true);
-                }
-            
-                /**
-                * Display the specified resource.
-                *
-                * @param  int  $id
-                * @return \Illuminate\Http\Response
-                */
-                public function show($id)
-                {
-                    //
-                    $r = {{ tableName | snakeCaseToCamelCase }}::find($id);
-
-                    return view('mudar_aqui.show', compact('r'));
-                }
-            
-                /**
-                * Show the form for editing the specified resource.
-                *
-                * @param  int  $id
-                * @return \Illuminate\Http\Response
-                */
-                public function edit($id)
-                {
-                    //
-                    $r = {{ tableName | snakeCaseToCamelCase }}::find($id);
-
-                    return view('mudar_aqui.edit', compact('r'));
-                }
-            
-                /**
-                * Update the specified resource in storage.
-                *
-                * @param  \Illuminate\Http\Request  $request
-                * @param  int  $id
-                * @return \Illuminate\Http\Response
-                */
-                public function update({{ tableName | snakeCaseToCamelCase }}Request $request, $id)
-                {
-                    //
-                    $r = {{ tableName | snakeCaseToCamelCase }}::find($id);
-                    $r->update({{ controller.request }});
-                }
-            
-                /**
-                * Remove the specified resource from storage.
-                *
-                * @param  int  $id
-                * @return \Illuminate\Http\Response
-                */
-                public function destroy($id)
-                {
-                    //
-                    $r = {{ tableName | snakeCaseToCamelCase }}::find($id);
-                    $r->delete();
-            
-                    return redirect('/teste')->with('success', true);
-                }
-            }
-            </textarea>
-        </div>
-        <div  *ngIf="isTabMvcOpen(3)">
-            <h1>VALIDATION</h1>
-            <textarea class="form-control" rows="40">
-                /**
-                * Determine if the user is authorized to make this request.
-                *
-                * @return bool
-                */
-                public function authorize(){
-                    return true;
-                }
-            
-                public function rules(){
-                    $rules = {{ validator.rules }};
-                   
-                    return $rules;
-                }
-            
-                /**
-                * Get the validation rules that apply to the request.
-                *
-                * @return array
-                */
-                public function attributes(){
-                    $attributes = [
-                        {{ validator.attributes }}
-                    ];
-                    return $attributes;
-                }
-            </textarea>
-        </div>
+        </div>       
     </li>    
 </ul>

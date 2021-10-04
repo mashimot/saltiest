@@ -12,7 +12,6 @@ import { tap, map } from 'rxjs/operators';
     styleUrls: ['./form-menu.component.css']
 })
 export class FormMenuComponent implements OnInit {
-    tools: Array<any>;
     tools$: Observable<any>;
     //categories: Array<any>;
     pageModel: object; 
@@ -36,7 +35,6 @@ export class FormMenuComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        //this.tools = [];
         this.grids = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
             grid: [
@@ -59,7 +57,7 @@ export class FormMenuComponent implements OnInit {
             name: "Salt - A tool for Lazy Developer"
         }];
     }
-    
+
     createChoices(): void{
         this.modalService.open(ConfigChoicesComponent, this.options);
     }

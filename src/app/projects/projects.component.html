@@ -1,32 +1,21 @@
 <div *ngIf="(projects$ | async) as projects">
-	<table class="table table-stripped table-condensed table-bordered">
-		<thead>
-			<tr>
-				<th scope="col">id</th>
-				<th scope="col">Name</th>
-				<th scope="col">Data de Criação</th>
-				<th scope="col">Última Atualização</th>
-				<th scope="col">
-					<a [routerLink]="['/projects', 'create']" class="btn btn-outline-primary btn-sm">Create</a>
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr *ngFor="let project of projects.data | paginate: { itemsPerPage: projects.per_page , currentPage: projects.current_page, totalItems: projects.total }">
-				<td>{{ project.id }}</td>
-				<td>{{ project.name }}</td>
-				<td>{{ project.created_at | date: 'dd/MM/yyyy' }}</td>
-				<td>{{ project.updated_at | date: 'dd/MM/yyyy' }}</td>
-				<td>
-					<a [routerLink]="['/form-builder', project.id, 'edit']" class="btn btn-outline-dark btn-sm">Form Builder</a>
-					<a [routerLink]="['/projects', project.id, 'edit']" class="btn btn-outline-dark btn-sm">Edit</a>
-					<button (click)="askToDelete(project)" class="btn btn-outline-danger btn-sm">Delete</button>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-	<pre>{{ projects.data | json }}</pre>
-    <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
+	<a [routerLink]="['/projects', 'create']" class="btn btn-outline-primary btn-sm">Create</a>
+	<div class="row">
+		<div class="card col-md-4" *ngFor="let project of projects.data | paginate: { itemsPerPage: projects.per_page , currentPage: projects.current_page, totalItems: projects.total }">
+			<div class="card-header">
+				<h5 class="card-title">{{ project.name }}</h5>
+				<a [routerLink]="['/projects', project.id, 'edit']" class="btn btn-outline-dark btn-sm">Edit</a>
+				<button (click)="askToDelete(project)" class="btn btn-outline-danger btn-sm">Delete</button>
+			</div>
+			<div class="card-body">
+				<p class="card-text">Created at: {{ project.created_at | date: 'dd/MM/yyyy' }}</p>
+				<p class="card-text">Last Update: {{ project.updated_at | date: 'dd/MM/yyyy' }}</p>
 
+				<a [routerLink]="['/form-builder', project.id, 'edit']" class="btn btn-outline-dark btn-sm">Form Builder</a>
+			</div>
+		</div>
+	</div>
+	<pre>{{ projects | json }}</pre>
+	<pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
 	<app-modal [message]="message" [isOpen]="showModal" (handleNo)="closeModal()" (handleYes)="deleteProject()"></app-modal>
 </div>

@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy
 import { FormConfigService } from './../_services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
-import { BootstrapForm } from '../_services/render-html.service';
+import { BootstrapHtmlTemplate } from '../_services/bootstrap-html-template.service';
 import { PageService } from '../shared/services/page.service';
 import { ContentService } from '../shared/services/content.service';
 import { RowService } from '../shared/services/row.service';
@@ -81,7 +81,8 @@ export class FormPagesComponent implements OnInit {
             }
         });
 
-        this.subs.add(dragulaService.dropModel("columns")
+        this.subs.add(
+            dragulaService.dropModel("columns")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 let currRowIndex    = el.getAttribute('data-current-row-index');
                 let pageIndex       = el.getAttribute('data-current-page-index');
@@ -106,12 +107,12 @@ export class FormPagesComponent implements OnInit {
                     }
                     console.info('column sorted');
                     this.columnService.updateColumn(params.page.currRowId, params)
-                    .subscribe(result => {
-                        if(result.success){
-                            this.loadFormBuilder();
-                            this.dropModelPageUpdated = true;
-                        }
-                    });
+                        .subscribe(result => {
+                            if(result.success){
+                                this.loadFormBuilder();
+                                this.dropModelPageUpdated = true;
+                            }
+                        });
                 }   
             })
         );
@@ -138,7 +139,8 @@ export class FormPagesComponent implements OnInit {
             }
         });
 
-        this.subs.add(dragulaService.dropModel("rowSortable")
+        this.subs.add(
+            dragulaService.dropModel("rowSortable")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 const targetPageId  = target.getAttribute('data-current-page-id');
                 const currRowId     = el.getAttribute('data-current-row-id');
@@ -192,12 +194,12 @@ export class FormPagesComponent implements OnInit {
                     console.info('row sorted');
                     if(rows.length > 0){
                         this.rowService.storeRow(params)
-                        .subscribe(result => {
-                            if(result.success){
-                                this.loadFormBuilder();
-                                this.dropModelPageUpdated = true;
-                            }
-                        });
+                            .subscribe(result => {
+                                if(result.success){
+                                    this.loadFormBuilder();
+                                    this.dropModelPageUpdated = true;
+                                }
+                            });
                     }
                 } else {
                     const params = {
@@ -211,12 +213,12 @@ export class FormPagesComponent implements OnInit {
                         })
                     };
                     this.rowService.updateRow(params.page.targetPageId, params)
-                    .subscribe(result => {
-                        if(result.success){
-                            this.loadFormBuilder();
-                            this.dropModelPageUpdated = true;
-                        }
-                    });
+                        .subscribe(result => {
+                            if(result.success){
+                                this.loadFormBuilder();
+                                this.dropModelPageUpdated = true;
+                            }
+                        });
                 }
                 return item;                    
             })
@@ -242,34 +244,40 @@ export class FormPagesComponent implements OnInit {
             }
         });
 
-        this.subs.add(dragulaService.cloned("contents")
-            .subscribe(({ name, clone, original, cloneType }) => {
-                if (original.classList.contains('menu-content-sortable')) {
-                    let currentDataAttr = JSON.parse(original.getAttribute('data-content'));
-                    let r = new BootstrapForm(currentDataAttr);
-                    //r.setParams(currentDataAttr);
-                    clone.classList.remove('badge', 'bg-dark', 'col-md-6', 'bg-primary', 'text-white');
-                    clone.innerHTML = '';
-                    clone.insertAdjacentHTML('afterbegin',
-                        '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get() + '</div>'
-                    );
-                }
-            })
+        this.subs.add(
+            dragulaService.cloned("contents")
+                .subscribe(({ name, clone, original, cloneType }) => {
+                    if (original.classList.contains('menu-content-sortable')) {
+                        let currentDataAttr = JSON.parse(original.getAttribute('data-content'));
+                        let r = new BootstrapHtmlTemplate();
+                        clone.classList.remove('badge', 'bg-dark', 'col-md-6', 'bg-primary', 'text-white');
+                        clone.innerHTML = '';
+                        clone.insertAdjacentHTML('afterbegin',
+                            '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' + r.get(currentDataAttr) + '</div>'
+                        );
+                    }
+                })
         );
         
-        this.subs.add(dragulaService.dropModel("contents")
+        this.subs.add(
+            dragulaService.dropModel("contents")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 item.definition = item.definition || {};
                 item.html = item.html || {};
                 if (item.definition && item.html) {
                     const currRowId     = target.getAttribute('data-current-row-id');                
                     const currPageId    = target.getAttribute('data-current-page-id');
-                    const currcolumnId  = target.getAttribute('data-current-column-id');      
-                    if (
-                        typeof item.definition.name === 'undefined' && item.html.category === 'form'
-                    ) {
-                        item.definition.name = 'name__' + new Date().getUTCMilliseconds();
-                        //item.definition.options.leng = '';
+                    const currcolumnId  = target.getAttribute('data-current-column-id');
+                    if(item.html.category === 'form'){
+                        if(!item.definition.name){
+                            item.definition.name = `name__${new Date().getUTCMilliseconds()}`;
+                        } 
+                        if(!item.definition.options){
+                            item.definition.options = {};
+                            if(!item.definition.options.nullable){
+                                item.definition.options.nullable = true;
+                            }
+                        }
                     }
                     const params = {
                         project_id: this.project_id,
@@ -280,7 +288,9 @@ export class FormPagesComponent implements OnInit {
                         },
                         contentPos: targetModel
                         .map(item => {
-                            return item.id? item.id: null;
+                            return item.id
+                                ? item.id
+                                : null;
                         }),
                         html: item.html,
                         definition: item.definition
@@ -289,13 +299,14 @@ export class FormPagesComponent implements OnInit {
                     if(typeof item.id != 'undefined'){
                         params['id'] = item.id;
                     }
-                    this.contentService.storeContent(params)
-                    .subscribe(result => {
-                        if(result.success){
-                            this.loadFormBuilder();
-                            this.dropModelPageUpdated = true;
-                        }
-                    });
+                     /*this.contentService.storeContent(params)
+                        .subscribe(result => {
+                            if(result.success){
+                                this.loadFormBuilder();
+                                this.dropModelPageUpdated = true;
+                            }
+                        });
+                    */
                 }
             })
         );
@@ -304,14 +315,15 @@ export class FormPagesComponent implements OnInit {
     ngOnInit() {
         this.pages = this.pages ? this.pages.length > 0 ? this.pages : [] : [];
         this.formConfigService.getConfig()
-        .subscribe(data => {
-            this.config = {...data};
-        });
+            .subscribe(data => {
+                this.config = {...data};
+            });
     }
     
 
     ngAfterViewInit() {
-        this.subs.add(this.dragulaService.dropModel("pages")
+        this.subs.add(
+            this.dragulaService.dropModel("pages")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 const params = {
                     project_id: this.project_id,
@@ -328,6 +340,11 @@ export class FormPagesComponent implements OnInit {
                 });*/
             })
         );
+
+    }
+
+    ngAfterContentChecked() {
+        this.cd.detectChanges();
     }
 
     ngDoCheck() {    
@@ -371,11 +388,11 @@ export class FormPagesComponent implements OnInit {
     loadFormBuilder(){
         this.ngxLoader.start();
         this.pageService.getPageByProjectId(this.project_id)
-        .subscribe(result => { 
-            if(result.success){
-                this.pages = result.paginate.data;
-            }
-            this.ngxLoader.stop();
-        });        
+            .subscribe(result => { 
+                if(result.success){
+                    this.pages = result.paginate.data;
+                }
+                this.ngxLoader.stop();
+            });        
     }    
 }

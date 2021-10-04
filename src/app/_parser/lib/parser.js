@@ -9,7 +9,7 @@ const { JSONSchemaFormatOptions, JSONSchemaFileOptions } = require('./shared/opt
 const utils = require('./shared/utils');
 
 //const fs = require('fs');
-const { join } = require('path');
+//const { join } = require('path');
 
 /**
  * Main Parser class, wraps nearley parser main methods.

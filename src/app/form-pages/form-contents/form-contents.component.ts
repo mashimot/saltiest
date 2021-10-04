@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormConfigService } from './../../_services/form-config.service';
-import { RenderHtmlService } from '../../_services/render-html.service';
+import { BootstrapHtmlTemplate } from '../../_services/bootstrap-html-template.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
 import { ContentService } from '../../shared/services/content.service';
@@ -36,7 +36,6 @@ export class FormContentsComponent implements OnInit {
 
     constructor(
         private formConfigService: FormConfigService,
-        private renderHtmlService: RenderHtmlService,
         private modalService: NgbModal,
         private cd: ChangeDetectorRef,
         private contentService: ContentService
@@ -55,8 +54,8 @@ export class FormContentsComponent implements OnInit {
     }
     
     copyHtml(content): void{
-        this.renderHtmlService.setParams(content);
-        let code = this.renderHtmlService.get().html;
+        let bootstrapHtmlTemplate = new BootstrapHtmlTemplate();
+        let code = bootstrapHtmlTemplate.get(content);
         this.copyToClipboard(code);
     }
 

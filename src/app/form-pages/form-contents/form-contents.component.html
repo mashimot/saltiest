@@ -1,10 +1,10 @@
 <div dragula="contents"
-     [(dragulaModel)]="column.contents"
-     [ngStyle]="{ 'min-height': '20px' }"
-     [attr.data-current-page-id]="pageId"
-     [attr.data-current-row-id]="rowId"
-     [attr.data-current-column-id]="columnId"
-     >
+    [(dragulaModel)]="column.contents"
+    [ngStyle]="{ 'min-height': '20px' }"
+    [attr.data-current-page-id]="pageId"
+    [attr.data-current-row-id]="rowId"
+    [attr.data-current-column-id]="columnId"
+>
     <div *ngFor="let content of column.contents; let contentIndex = index;" class="mt-1">
         <div class="row" [hidden]="config?.previewMode">
             <div class="col-md-12">

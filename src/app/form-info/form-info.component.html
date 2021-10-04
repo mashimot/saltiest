@@ -6,6 +6,7 @@
             <section *ngFor="let column of row.columns; let columnIndex = index;">
                 <div *ngFor="let d of column.contents; let contentIndex = index;">
                     <section *ngIf="d.html?.category === 'form'" class="row">
+                        <!--
                         <div class="col-md-1">
                             <div class="form-group">
                                 <div class="form-check">
@@ -19,6 +20,7 @@
                                 </div>
                             </div>
                         </div>
+                        -->
                         <div class="col-md-2">
                             <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableColumnName.invalid }" 
                             name="table-column-name-{{ pageIndex + rowIndex + columnIndex + contentIndex }}"
@@ -58,6 +60,7 @@
                                 <div *ngIf="htmlTag.errors?.required">This is required.</div>
                             </div>
                         </div>
+                        <!--
                         <div class="col-md-2">
                             <select class="form-control text-uppercase" [ngClass]="{ 'is-invalid': tableType.invalid }"
                             name="table-type-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
@@ -74,6 +77,7 @@
                                 <div *ngIf="tableType.errors?.required">This is required.</div>
                             </div>                            
                         </div>
+                        -->
                         <div class="col-md-1">
                             <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableSize.invalid }"
                             [(ngModel)]="d.definition.type && d.definition.type.length"

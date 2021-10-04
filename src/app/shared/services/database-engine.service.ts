@@ -14,7 +14,7 @@ export class DatabaseEngine {
 	| TIMESTAMP   | <input type="text" class="datepicker"/> //from datepicker plugin
 	| VARCHAR2    | <textarea></textarea>
 	*/	
-	public static engines = {
+	public static ENGINES = {
 		ORACLE: {
 			logo: 'https://tulula.sfo2.cdn.digitaloceanspaces.com/prod/images/cf2cf79cde738047d3dfdc8a5287ee87c909c9035bb61f32857f7536e4622505.png',
 			types: {
@@ -66,32 +66,40 @@ export class DatabaseEngine {
 	};
 	
 	public static getDatabaseEngines() {
-		return Object.keys(this.engines).map(
-			item => { 
+		return Object.keys(this.ENGINES)
+			.reduce((acc: string[], engineName: string) => {
+				if(engineName == 'ORACLE'){
+					acc.push(engineName);
+				}
+
+				return acc;
+			}, []) 
+			.map((engineName: string) => { 
 				return {
 					database: {
-						engine: item.toLowerCase(), 
-						logo: this.engines[item].logo
+						engine: engineName.toLowerCase(), 
+						logo: this.ENGINES[engineName].logo
 					},
-					ddl: this.engines[item].ddl
+					ddl: this.ENGINES[engineName].ddl
 				};
-			}
-		);
+			});
 	}
 	
 	//Default is "ORACLE"
    	public static get(dbName: string = "ORACLE") { 
-		let engineExists = Object.keys(this.engines).find((item) => {
-			return item == dbName;
-		});
+		let engineExists = Object.keys(this.ENGINES)
+			.find((item) => {
+				return item == dbName;
+			});
 		
 		if(engineExists){
 			var t = {};
-			for(let key in this.engines[dbName].types){
-				if(this.engines[dbName].types.hasOwnProperty(key)){
-					t[key] = this.engines[dbName].types[key].toLowerCase();
+			for(let key in this.ENGINES[dbName].types){
+				if(this.ENGINES[dbName].types.hasOwnProperty(key)){
+					t[key] = this.ENGINES[dbName].types[key].toLowerCase();
 				}
 			}
+
 			return t;
 		}
 		return {};
@@ -102,24 +110,28 @@ export class DatabaseEngine {
 	static oracle(): string{
 		return [
 			'create table if not exists hadouken (',
-			'state varchar2(25),',
-			'supplier_id number(10) not null primary key,',
-			'`cod_user` number(10) not null,',
-			'`favorite_fruit` varchar2(10) default 10 not null,',
-			'supplier_name varchar2(50) not null,',
-			'status_supplier CHAR(1) default "Ok",',
-			'address varchar2(50),',
-			'city varchar2(50),',
-			'state varchar2(25),',
-			'dat_now date,',
-			'zip_code number(10,2),price number(102),',
-			'title VARCHAR(255) NOT NULL,',
-			'start_date DATE,',
-			'due_date DATE',
+			[
+				'state varchar2(25),',
+				'supplier_id number(10) not null primary key,',
+				'`cod_user` number(10) not null,',
+				'`favorite_fruit` varchar2(10) default 10 not null,',
+				'supplier_name varchar2(50) not null,',
+				'status_supplier CHAR(1) default "Ok",',
+				'address varchar2(50),',
+				'city varchar2(50),',
+				'state varchar2(25),',
+				'dat_now date,',
+				'zip_code number(10,2),price number(102),',
+				'title VARCHAR(255) NOT NULL,',
+				'start_date DATE,',
+				'due_date DATE',
+			].map(d => `\t${d}`).join("\n"),
 			');',
 			`CREATE TABLE shoryuken (`,
-			`ID NUMBER(11) NOT NULL,`,
-			`your_column NUMBER(100) NOT NULL`,
+			[
+				`ID NUMBER(11) NOT NULL,`,
+				`your_column NUMBER(100) NOT NULL`,
+			].map(d => `\t${d}`).join("\n"),
 			');'
 		].join("\n");
 	}	

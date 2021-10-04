@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as nearley from 'nearley';
 import * as oracle_grammar from './../_parser/create-table-oracle-to-json';
-import * as Parser from './../_parser/lib/parser';
+//import * as Parser from './../_parser/lib/parser';
 //const Parser = require('./../_parser/lib/parser');
 import { Content, IHtml, IDefinition, Page } from "./../_core/model";
 
@@ -44,12 +44,6 @@ export class CreateTableToJsonService{
 		definitions?: Array<any>,
 		pages?: Page
 	}>;
-	/*_rawSchema: {
-		create_table_statement: {
-			table_name: string
-		},
-		create_definition: Array<any>
-	};*/
 	_rawSchema: any;
 
 	_table_name: string;
@@ -76,24 +70,24 @@ export class CreateTableToJsonService{
 	parse(): void{
 		this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
 		let p = new nearley.Parser(oracle_grammar);
-		if(this.getDataBase() == 'mysql'){
+		/*if(this.getDataBase() == 'mysql'){
 			p = new Parser('mysql');
-		}
+		}*/
 		try {
 			const options = {};
-			if(this.getDataBase() == 'mysql'){
+			/*if(this.getDataBase() == 'mysql'){
 				const options = {};
 				p.feed(this._sql);
 				const parsedJsonFormat = p.results;
 				const compactJsonTablesArray = p.toCompactJson(parsedJsonFormat);
 				this._rawSchema = compactJsonTablesArray;
 				this.convertDataMysql();
-			}
-			/*if(this.getDataBase() == 'oracle'){
+			}*/
+			if(this.getDataBase() == 'oracle'){
 				const results = p.feed(this._sql.replaceAllDecimalCommaToDecimalDot()).results;
 				this._rawSchema = results[0];
 				this.convertDataOracle();
-			}*/
+			}
 		} catch(error){
 			//this._errors.push(error);
 			this._errors = this.reportError(error, p);
@@ -130,10 +124,8 @@ export class CreateTableToJsonService{
 			};
 				
 		}
+		
 		return {};
-		//console.log(parser.lexer.buffer);
-		//console.log(`Instead of a ${JSON.stringify(token)}, I was expecting to see one of the following:`);
-		//console.log(lastColumn.states);
 	}
 	
 	replaceBetween(str, start, end, what) {
@@ -148,30 +140,31 @@ export class CreateTableToJsonService{
 
 	convertDataMysql(): void{
 		if(this._rawSchema.length > 0){	
-			this._rawSchema.forEach(schema => {
-				var data = [];
-				var primaryKey =  typeof schema.primaryKey != 'undefined'? schema.primaryKey: [];
-				var foreignKeys = typeof schema.foreignKeys != 'undefined'? schema.foreignKeys: [];
-				var uniqueKeys = typeof schema.uniqueKeys != 'undefined'? schema.uniqueKeys: [];
-				schema.columns.forEach(column => {
-					
-					data.push({
+			this._schemas = this._rawSchema.map(schema => {
+				let data = schema.columns.map(column => {
+					return {
 						html: {
 							category: this.category,
 							tag: column.definition || 'text',
 							label: this.customLabelName(column.name)
 						},
 						definition: column
-					});
+					};
 				});
-				this._schemas.push({
+				
+				let unique_keys = schema.uniqueKeys || [];
+				let primary_key = schema.primaryKey || [];
+
+
+				return {
 					name: schema.name,
 					data: data,
-					primaryKey: primaryKey,
-					foreignKeys: foreignKeys,
-					uniqueKeys: uniqueKeys,
-					definitions: schema.columns
-				});
+					//columns: schema.columns,
+					primary_key: primary_key.columns.map(item => item.column),
+					unique_keys: unique_keys
+						.map(item => item.columns.map(d => d.column))
+						.map(item => item[0]),
+				};
 			});
 			console.log('schema', this._schemas);
 			console.log('rawSchema', this._rawSchema);
@@ -245,16 +238,16 @@ export class CreateTableToJsonService{
 
 	customLabelName(column_name: string): string {
 		return column_name
-		.split('_')
-        .map(partialName => {
-            let value = this._customLabel[partialName];
-            if (typeof value !== 'undefined')
-                partialName = value;
+			.split('_')
+			.map(partialName => {
+				let value = this._customLabel[partialName];
+				if (typeof value !== 'undefined')
+					partialName = value;
 
-            return partialName.charAt(0).toUpperCase() + partialName.substr(1);
-        })
-        .join(' ')
-        .trim();
+				return partialName.charAt(0).toUpperCase() + partialName.substr(1);
+			})
+			.join(' ')
+			.trim();
     }
 
 	hasError(): boolean{

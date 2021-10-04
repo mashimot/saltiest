@@ -2,15 +2,20 @@
 <div class="card bg-white">
 	<div class="card-body">
 		<section id="page-menu" class="pt-2">
-			<!--div dragula="pages" [(dragulaModel)]="pageModel" class="menu-page-sortable"-->
-				<button (click)="newPage()" class="btn btn-dark btn-block btn-sm">
-					<i class="fa fa-file"></i> New Page
-				</button>
-			<!--/div-->
+			<!--
+			<div dragula="pages" [(dragulaModel)]="pageModel" class="menu-page-sortable">
+				<div class="p-1 mx-1 mt-1 border border-dark page-handle">
+					<span class="text-dark text-capitalize page-handle">New Page</span>
+				</div>
+			</div>
+			-->
+			<button (click)="newPage()" class="btn btn-dark btn-block btn-sm">
+				<i class="fa fa-file"></i> New Page
+			</button>
 		</section>
-		<section id="grid-menu" class="pt-2">
-			<h3 class="text-center">Grid System</h3>
-			<fieldset name="bootstrap_container" dragula="rowSortable" [(dragulaModel)]="bootstrap" class="menu-row-sortable">
+		<fieldset id="grid-menu" class="border p-1">
+			<legend class="text-center w-auto">Grid System</legend>
+			<div name="bootstrap_container" dragula="rowSortable" [(dragulaModel)]="bootstrap" class="menu-row-sortable">
 				<div *ngFor="let b of bootstrap; let bIndex = index;">
 					<form #f="ngForm">
 						<div [hidden]="f.invalid" [ngStyle]="{ cursor: 'move' }">
@@ -41,10 +46,10 @@
 						</div>
 					</form>
 				</div>
-			</fieldset>
-		</section>
-		<section id="tool-menu" class="pt-2" *ngIf="(tools$ | async) as tools">
-			<h3 class="text-center">Tools</h3>
+			</div>
+		</fieldset>
+		<fieldset id="tool-menu" class="border p-1" *ngIf="(tools$ | async) as tools">
+			<legend class="text-center w-auto">Tools</legend>
 			<div *ngFor="let tool of tools | keyvalue; let toolCategoryIndex = index;">
 				<div class="border-bottom border-dark p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">
 					{{ tool.key }}
@@ -60,17 +65,16 @@
 				>
 					<div *ngFor="let t of tool.value"
 						[ngStyle]="{ 'cursor': 'move' }"
-						class="text-white content-handle menu-content-sortable col-md-6 "
+						class="text-white content-handle menu-content-sortable col-md-12 "
 						[attr.data-content]="t | json"
-						>
-
+					>
 						<div class="p-1 mx-1 mt-1 border border-dark content-handle">
 							<span class="text-dark text-capitalize content-handle">{{ t.html.tag }}</span>
 						</div>
 					</div>
 				</div>
 			</div>
-		</section>
-		<app-config-choices></app-config-choices>
+			<app-config-choices></app-config-choices>
+		</fieldset>
 	</div>
 </div>

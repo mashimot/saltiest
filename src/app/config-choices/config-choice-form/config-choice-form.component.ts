@@ -223,26 +223,30 @@ export class ConfigChoiceFormComponent implements OnInit {
               let cloneChoices = JSON.parse(JSON.stringify(this.choices.value));
   
               for (let i = 0; i < string.length; i++) {
-                  let str = string[i];
-                  let firstMatch = str;
-                  let secondMatch = '';
-                  if(str.indexOf('|') !== -1){
-                      let match = str.split('|');
-                      firstMatch = match[0];
-                      secondMatch = str.substring(firstMatch.length + 1); //return '' if '|' was not found
-                  }
-                  let text  = (typeof firstMatch  !== 'undefined')? firstMatch: '';
-                  let value = (typeof secondMatch !== 'undefined') ? secondMatch : '';
-  
-                  this.choices.removeAt(i);
-                  if (typeof this.choices.controls[i] === 'undefined') {
-                      this.choices.push(this.setChoice(text, value));
-                  } else {
-                      this.choices.controls[i].patchValue({
-                          text: text,
-                          value: value
-                      });
-                  }
+                    let str = string[i];
+                    let firstMatch = str;
+                    let secondMatch = '';
+                    if(str.indexOf('|') !== -1){
+                        let match = str.split('|');
+                        firstMatch = match[0];
+                        secondMatch = str.substring(firstMatch.length + 1); //return '' if '|' was not found
+                    }
+                    let text  = typeof firstMatch  !== 'undefined'
+                        ? firstMatch
+                        : '';
+                    let value = typeof secondMatch !== 'undefined'
+                        ? secondMatch
+                        : '';
+    
+                    this.choices.removeAt(i);
+                    if (typeof this.choices.controls[i] === 'undefined') {
+                        this.choices.push(this.setChoice(text, value));
+                    } else {
+                        this.choices.controls[i].patchValue({
+                            text: text,
+                            value: value
+                        });
+                    }
               }
           } else {
               while (this.choices.length !== 0) {
@@ -256,15 +260,17 @@ export class ConfigChoiceFormComponent implements OnInit {
           this.text = this.elementToString();
       }
   
-      public cloneThis(name){
+      public cloneThis(name: string){
           let choicesLength = this.choices.value.length;
           if(choicesLength > 0){
-              let cloneThisObjectName = (name === 'value')? 'text' : 'value';
-              for(let i = 0; i < choicesLength; i++){
-                  this.choices.value[i][name] = this.choices.value[i][cloneThisObjectName];
-              }
-              this.text = this.elementToString();
-              this.stringToElement();
+                let cloneThisObjectName = name === 'value'
+                    ? 'text'
+                    : 'value';
+                for(let i = 0; i < choicesLength; i++){
+                    this.choices.value[i][name] = this.choices.value[i][cloneThisObjectName];
+                }
+                this.text = this.elementToString();
+                this.stringToElement();
           }
       }
   

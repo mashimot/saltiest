@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { CreateTableToJsonComponent } from './create-table-to-json.component';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SumBeEqualsToDirective } from '../shared/directives/sum-be-equals-to.directive';
 
 
 
 @NgModule({
   declarations: [
-    CreateTableToJsonComponent
+    CreateTableToJsonComponent,
+    SumBeEqualsToDirective
   ],
   imports: [
     CommonModule,
@@ -16,7 +18,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     NgbModule
   ],
   exports:[
-    CreateTableToJsonComponent
+    CreateTableToJsonComponent,
+    SumBeEqualsToDirective
   ]
 })
 export class CreateTableToJsonModule { }

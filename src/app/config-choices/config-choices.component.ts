@@ -94,13 +94,14 @@ export class ConfigChoicesComponent implements OnInit {
                 if($e.choices.length > 0){
                     var groups  = $e.choices.map(choice => choice.text)
                     if(index != null){
-                        this.choices$ = this.choices$.pipe(
-                            map( _ => {
-                                result.data[index].html.choices = $e.choices;
-                                return result;
-                            }),
-                            tap(x => console.log(x))
-                        )
+                        this.choices$ = this.choices$
+                            .pipe(
+                                map( _ => {
+                                    result.data[index].html.choices = $e.choices;
+                                    return result;
+                                }),
+                                tap(x => console.log(x))
+                            )
                     } else {
                         myAss.html.choices = $e.choices;
                         myAss.description = groups.join('|');

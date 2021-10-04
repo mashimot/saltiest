@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormInfoComponent } from './form-info.component';
 import { FormsModule } from '@angular/forms';
-import { SpellCheckerComponent } from '../spell-checker/spell-checker.component';
 
 @NgModule({
 	imports: [
@@ -13,8 +12,7 @@ import { SpellCheckerComponent } from '../spell-checker/spell-checker.component'
 		FormInfoComponent
 	],
 	declarations: [
-		FormInfoComponent,
-		SpellCheckerComponent
+		FormInfoComponent
 	]
 })
 export class FormInfoModule { }

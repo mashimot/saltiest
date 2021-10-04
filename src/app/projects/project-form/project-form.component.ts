@@ -27,19 +27,20 @@ export class ProjectFormComponent implements OnInit {
 		});		
 		this.route.params.subscribe(result => {
 			let id = result.id;
+			console.log(result);
 			if(!id){
 				//this.router.navigate(['projects']);
 				return;
 			}
 			this.projectService.getProjectById(id)
-			.subscribe(res => {
-				if(res.success){
-					this.projectForm.patchValue({
-						id: id,
-						name: res.data.name
-					});
-				}
-			});
+				.subscribe(res => {
+					if(res.success){
+						this.projectForm.patchValue({
+							id: id,
+							name: res.data.name
+						});
+					}
+				});
 		});
 	}
 
@@ -49,18 +50,18 @@ export class ProjectFormComponent implements OnInit {
 
 		if(formValue.id){
 			this.projectService.updateProject(formValue.id, p)
-			.subscribe(result => {
-				if(result.success){
-					this.router.navigate(['projects', formValue.id, 'edit']);
-				}
-			});
+				.subscribe(result => {
+					if(result.success){
+						this.router.navigate(['projects', formValue.id, 'edit']);
+					}
+				});
 		} else {
 			this.projectService.storeProject(p)
-			.subscribe(result => {
-				if(result.success){
-					this.router.navigate(['projects']);
-				}
-			});
+				.subscribe(result => {
+					if(result.success){
+						this.router.navigate(['projects']);
+					}
+				});
 		}
 	}
 
