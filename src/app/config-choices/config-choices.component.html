@@ -59,14 +59,18 @@
 					</div>
 				</div>
 				<div class="border border-bottom"></div>
-				<div class="content-handle">
-					<h6 class="content-handle text-uppercase text-center"><strong>{{ content.description }}</strong></h6>
+				<fieldset class="content-handle border border-dark" [ngStyle]="{ 'cursor': 'move' }">
+					<legend class="content-handle text-center w-auto">
+						<small class="content-handle">
+							<i class="fa fa-arrows-alt content-handle"></i> {{ content.description }}
+						</small>
+					</legend>
 					<ul class="text-dark text-capitalize content-handle" [ngStyle]="{ 'cursor': 'move' }">
 						<li *ngFor="let choice of content.html.choices" class="content-handle">
 							<small class="content-handle">{{ choice.text }}</small>
 						</li>
 					</ul>
-				</div>
+				</fieldset>
 			</section>
 		</div>
 		<pagination-controls (pageChange)="pageChange($event)" class="mt-1"></pagination-controls>
