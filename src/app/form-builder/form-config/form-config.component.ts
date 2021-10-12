@@ -90,7 +90,6 @@ export class FormConfigComponent implements OnInit {
         });        
     }
 
-
     register(){
         console.log(this.configForm.value);
         this.emitData.emit(this.configForm.value);

@@ -38,8 +38,8 @@
                         (click)="this.previewMode = !this.previewMode; preview(); tabNumber = 1;" 
                         class="btn btn-md w-100" 
                         [ngClass]="{ 
-                            'btn-success': previewMode,
-                            'btn-outline-danger': !previewMode
+                            'btn-primary': previewMode,
+                            'btn-outline-dark': !previewMode
                         }"
                         [ngStyle]="{ 'opacity': tabNumber == 2 || !config?.previewMode? 0.4 : 1 }"
                     >
@@ -48,7 +48,10 @@
                     <button
                         (click)="tabNumber = 2; previewMode = false; preview();" 
                         class="btn btn-md w-100" 
-                        [ngClass]="{ 'btn-primary': tabNumber == 2, 'btn-outline-dark': tabNumber == 1 }"
+                        [ngClass]="{ 
+                            'btn-primary': tabNumber == 2, 
+                            'btn-outline-dark': tabNumber == 1 
+                        }"
                         [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }"
                     >
                         <i class="fas fa-edit fa-1x" [ngClass]="{ 'fa-beat': tabNumber == 2 }"></i> Faster entry

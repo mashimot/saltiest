@@ -25,13 +25,13 @@ export class FormContentsComponent implements OnInit {
     };
 
     @Input() column;
-	@Input() pageIndex;
-    @Input() rowIndex;
-    @Input() columnIndex;
+	@Input() pageIndex: number;
+    @Input() rowIndex: number;
+    @Input() columnIndex: number;
 
-	@Input() pageId;
-    @Input() rowId;
-    @Input() columnId;
+	@Input() pageId: number;
+    @Input() rowId: number;
+    @Input() columnId: number;
 
 
     constructor(
@@ -43,10 +43,12 @@ export class FormContentsComponent implements OnInit {
 
     ngOnInit() {
         this.showOptions = false;
-        this.formConfigService.getConfig().subscribe(data => { 
-			this.config = data; 
-			this.cd.markForCheck();
-		});
+        this.formConfigService
+            .getConfig()
+            .subscribe(data => { 
+                this.config = data; 
+                this.cd.markForCheck();
+            });
     }
 
     trackByFn(index, item){
@@ -81,10 +83,10 @@ export class FormContentsComponent implements OnInit {
     }
 
     sendDataToModal(contents, index: number): void{
-        let m = this.modalService.open(FormConfigComponent, this.options);
-        m.componentInstance.content_id = contents[index].id;
-        m.componentInstance.content = contents[index];
-        m.componentInstance.emitData.subscribe($e => {
+        const modal = this.modalService.open(FormConfigComponent, this.options);
+        modal.componentInstance.content_id = contents[index].id;
+        modal.componentInstance.content = contents[index];
+        modal.componentInstance.emitData.subscribe($e => {
             contents[index] = $e;
             this.cd.markForCheck();
             /*this.contentService.updateContent($e).subscribe(result => {
@@ -99,17 +101,18 @@ export class FormContentsComponent implements OnInit {
 
     deleteContent(contentIndex: number, content = { id: null }): void {
         if(content.id != null){
-            this.contentService.deleteContent(content.id)
-            .subscribe(result =>{
-                if(result.success){
-                    this.column.contents.forEach((cV, index) => {
-                        if(cV.id == content.id){
-                            this.column.contents.splice(index, 1);
-                        }
-                    });
-                    this.cd.markForCheck();
-                }
-            });
+            this.contentService
+                .deleteContent(content.id)
+                .subscribe(result =>{
+                    if(result.success){
+                        this.column.contents.forEach((cV, index) => {
+                            if(cV.id == content.id){
+                                this.column.contents.splice(index, 1);
+                            }
+                        });
+                        this.cd.markForCheck();
+                    }
+                });
         } else {
             this.column.contents.splice(contentIndex, 1);
         }

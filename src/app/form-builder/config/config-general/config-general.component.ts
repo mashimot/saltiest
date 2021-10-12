@@ -14,20 +14,24 @@ export class ConfigGeneralComponent implements OnInit {
 	constructor(private fb: FormBuilder) { }
 
 	ngOnInit() {
-		console.log('hue', this.content.definition);
-		this.html.get('label').setValidators([
-			Validators.required
-		]);
-		this.html.patchValue({
-			'label': this.content.html.label,
-		});
-		this.options.get('nullable').setValidators([
-			Validators.required
-		]);
-		this.options.patchValue({
-			'nullable': (this.content.definition.options && this.content.definition.options.nullable)? this.content.definition.options.nullable: true	
-		});
-		console.log(this.nullable);
+		this.html.get('label')
+			.setValidators([
+				Validators.required
+			]);
+		this.html
+			.patchValue({
+				'label': this.content.html.label,
+			});
+		this.options.get('nullable')
+			.setValidators([
+				Validators.required
+			]);
+		this.options
+			.patchValue({
+				'nullable': (this.content.definition.options && typeof this.content.definition.options.nullable != 'undefined')
+					? this.content.definition.options.nullable
+					: true	
+			});
 	}
 
 	get html() {

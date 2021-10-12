@@ -38,8 +38,9 @@ export class FormMenuComponent implements OnInit {
         this.grids = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
             grid: [
+                `12`,
                 `6 6`,
-                `2 4 4 2`,
+                `3 4 5`,
                 `4 4 4`,
                 `7 5`
             ].join("\n")

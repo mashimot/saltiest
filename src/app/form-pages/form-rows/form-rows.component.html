@@ -14,7 +14,9 @@
 	<div class="row" [hidden]="config?.previewMode">
 		<div class="col-md-12 row-handle" [ngStyle]="{ cursor: 'move' }">
 			<div class="float-left">
-				<small class="row-handle">row {{ rowIndex + 1 }}</small>
+				<small class="row-handle" [ngStyle]="{ 'cursor': 'move' }">
+					<i class="fa fa-arrows-alt"></i> row {{ rowIndex + 1 }}
+				</small>
 			</div>
 			<div class="float-right">
 				<small (click)="deleteRow(rowIndex, row)" class="badge btn-outline-danger" [ngStyle]="{ cursor: 'pointer' }">

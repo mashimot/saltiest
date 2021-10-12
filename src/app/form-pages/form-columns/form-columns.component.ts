@@ -9,11 +9,11 @@ import { FormConfigService } from './../../_services/form-config.service';
 })
 export class FormColumnsComponent implements OnInit {
 	@Input() row;
-	@Input() pageIndex;
-	@Input() rowIndex;
+	@Input() pageIndex: number;
+	@Input() rowIndex: number;
 
-	@Input() pageId;
-	@Input() rowId;
+	@Input() pageId: number;
+	@Input() rowId: number;
 
 	config: {
 		previewMode: boolean
@@ -29,10 +29,6 @@ export class FormColumnsComponent implements OnInit {
 			this.config = data; 
 			this.cd.markForCheck();
 		});
-	}
-
-	trackByFn(index, item){
-		return index;
 	}
 
 	colNumber(columnIndex: number) {

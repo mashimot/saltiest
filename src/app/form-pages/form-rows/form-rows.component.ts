@@ -11,8 +11,8 @@ import { RowService } from '../../shared/services/row.service';
 export class FormRowsComponent implements OnInit {
     @Input() page;
     //@Output() pageChange = new EventEmitter();
-    @Input() pageIndex;
-    @Input() pageId;
+    @Input() pageIndex: number;
+    @Input() pageId: number;
 
     config: {
         previewMode: boolean;

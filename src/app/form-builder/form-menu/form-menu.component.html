@@ -13,7 +13,7 @@
 				<i class="fa fa-file"></i> New Page
 			</button>
 		</section>
-		<fieldset id="grid-menu" class="border p-1">
+		<fieldset id="grid-menu" class="border border-dark p-1">
 			<legend class="text-center w-auto">Grid System</legend>
 			<div name="bootstrap_container" dragula="rowSortable" [(dragulaModel)]="bootstrap" class="menu-row-sortable">
 				<div *ngFor="let b of bootstrap; let bIndex = index;">
@@ -48,7 +48,7 @@
 				</div>
 			</div>
 		</fieldset>
-		<fieldset id="tool-menu" class="border p-1" *ngIf="(tools$ | async) as tools">
+		<fieldset id="tool-menu" class="border border-dark p-1" *ngIf="(tools$ | async) as tools">
 			<legend class="text-center w-auto">Tools</legend>
 			<div *ngFor="let tool of tools | keyvalue; let toolCategoryIndex = index;">
 				<div class="border-bottom border-dark p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">

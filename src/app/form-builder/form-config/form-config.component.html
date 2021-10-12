@@ -9,39 +9,49 @@
         <div class="card">
             <div class="card-body">
                 <app-render-content [content]="configForm.value"></app-render-content>
-                <div *ngFor="let r of render.components">
-                    <app-config-general 
-                        [parentFormGroup]="configForm"
-                        [content]="content"
-                        *ngIf="r.componentName === 'app-config-general'"></app-config-general>
-                    <app-config-img 
-                        [parentFormGroup]="configForm"
-                        [content]="content"
-                        *ngIf="r.componentName === 'app-config-img'"></app-config-img>
-                    <app-config-title
-                        [parentFormGroup]="configForm"
-                        [content]="content"
-                        *ngIf="r.componentName === 'app-config-title'"></app-config-title>
-                    <app-config-html-editor
-                        [parentFormGroup]="configForm"
-                        [content]="content"
-                        *ngIf="r.componentName === 'app-config-html-editor'"></app-config-html-editor>
-                    <app-config-choice-form
-                        [parentFormGroup]="configForm"
-                        [content]="content"
-                        *ngIf="r.componentName === 'app-config-choices'"></app-config-choice-form>
-                    <hr>
+                <div *ngFor="let renderComponent of render.components" class="card">
+                    <div class="card-body">
+                        <app-config-general 
+                            [parentFormGroup]="configForm"
+                            [content]="content"
+                            *ngIf="renderComponent.componentName === 'app-config-general'"
+                        ></app-config-general>
+                        <app-config-img 
+                            [parentFormGroup]="configForm"
+                            [content]="content"
+                            *ngIf="renderComponent.componentName === 'app-config-img'"
+                        ></app-config-img>
+                        <app-config-title
+                            [parentFormGroup]="configForm"
+                            [content]="content"
+                            *ngIf="renderComponent.componentName === 'app-config-title'"
+                        ></app-config-title>
+                        <app-config-html-editor
+                            [parentFormGroup]="configForm"
+                            [content]="content"
+                            *ngIf="renderComponent.componentName === 'app-config-html-editor'"
+                        ></app-config-html-editor>
+                        <app-config-choice-form
+                            [parentFormGroup]="configForm"
+                            [content]="content"
+                            *ngIf="renderComponent.componentName === 'app-config-choices'"
+                        ></app-config-choice-form>
+                        <hr>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" 
-        class="btn btn-outline-dark" 
-        (click)="activeModal.close('Close click')">Close</button>
-        <button type="submit"
-        [disabled]="configForm.invalid"
-        class="btn btn-outline-success" 
+        <button
+            type="button" 
+            class="btn btn-outline-dark" 
+            (click)="activeModal.close('Close click')"
+        >Close</button>
+        <button
+            type="submit"
+            [disabled]="configForm.invalid"
+            class="btn btn-outline-success" 
         >Save </button>
     </div>
 </form>
