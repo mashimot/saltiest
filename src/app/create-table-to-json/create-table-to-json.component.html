@@ -1,22 +1,26 @@
 
 <form class="card" #f="ngForm" (ngSubmit)="onSubmit()">
     <div class="card-header">
-        <h6 class="text-center text-bold">Select a Database Engine</h6>
+        <h6 class="text-center text-bold">Create Table to Form</h6>
     </div>
     <div class="card-body">
+        <div class="card-title">
+            Select a Database Engine
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="dropdown">
                     <a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-link">
-                        <img [src]="options.database.logo" width="100" height="100" class="mx-auto">
+                        <img [src]="options.database.logo" width="50" height="50" class="mx-auto w-100">
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <li *ngFor="let s of sql" (click)="setDDL(s.database)" class="dropdown-item p-1" [ngStyle]="{'cursor': 'pointer'}">
-                            <img [src]="s.database.logo" width="100" height="100" alt="{{ s.database.engine }}" class="d-block mx-auto"> 
+                            <img [src]="s.database.logo" width="50" height="50" alt="{{ s.database.engine }}" class="d-block mx-auto"> 
                         </li>
                     </ul>    
                 </div>
-                <textarea [(ngModel)]="options.ddl"
+                <textarea
+                    [(ngModel)]="options.ddl"
                     name="string"
                     [ngClass]="{ 'is-invalid' : objectLength() > 0 }"
                     class="form-control form-control-sm h-20 mt-4"

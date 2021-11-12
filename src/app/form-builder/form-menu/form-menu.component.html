@@ -1,21 +1,14 @@
 
 <div class="card bg-white">
 	<div class="card-body">
-		<section id="page-menu" class="pt-2">
-			<!--
-			<div dragula="pages" [(dragulaModel)]="pageModel" class="menu-page-sortable">
-				<div class="p-1 mx-1 mt-1 border border-dark page-handle">
-					<span class="text-dark text-capitalize page-handle">New Page</span>
-				</div>
-			</div>
-			-->
-			<button (click)="newPage()" class="btn btn-dark btn-block btn-sm">
-				<i class="fa fa-file"></i> New Page
-			</button>
-		</section>
 		<fieldset id="grid-menu" class="border border-dark p-1">
 			<legend class="text-center w-auto">Grid System</legend>
-			<div name="bootstrap_container" dragula="rowSortable" [(dragulaModel)]="bootstrap" class="menu-row-sortable">
+			<div
+				name="bootstrap_container"
+				dragula="rowSortable"
+				[(dragulaModel)]="bootstrap"
+				class="menu-row-sortable"
+			>
 				<div *ngFor="let b of bootstrap; let bIndex = index;">
 					<form #f="ngForm">
 						<div [hidden]="f.invalid" [ngStyle]="{ cursor: 'move' }">
@@ -74,6 +67,8 @@
 					</div>
 				</div>
 			</div>
+		</fieldset>
+		<fieldset>
 			<app-config-choices></app-config-choices>
 		</fieldset>
 	</div>

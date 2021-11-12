@@ -8,6 +8,9 @@ import { PageService } from '../shared/services/page.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../shared/services/project.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { map, startWith, tap } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
+import { Page } from '../_core/model';
 
 export interface MVC {
     isOpen: boolean;
@@ -21,9 +24,9 @@ export interface MVC {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormBuilderComponent implements OnInit {
-    pages: Array<any>;
-    inputs: Array<Content>;
-    mvcList: Array<MVC>;
+    pages: Page[];
+    subs: Subscription;
+    inputs: Content[];
     tableName: string = '';
     tabNumber: number;
     isTabAlreadyOpen: boolean = false;
@@ -45,28 +48,12 @@ export class FormBuilderComponent implements OnInit {
         private ngxLoader: NgxUiLoaderService,
         private cdRef: ChangeDetectorRef
     ) {
-
-        this.mvcList = [/*{
-            isOpen: false,
-            name: 'Model'
-        },*/{
-            isOpen: false,
-            name: 'View'
-        }/*,{
-            isOpen: false,
-            name: 'Controller'
-        },{
-            isOpen: false,
-            name: 'Validation'
-        }*/];
     }
 
     ngOnInit() {
-        this.pages = [];
         this.route.params.subscribe(r => {
             this.project_id = r.projectId;
         });
-        this.tabMVC = 1;
         this.tabNumber = 1; 
         this.previewMode = false; 
         this.preview();
@@ -77,44 +64,28 @@ export class FormBuilderComponent implements OnInit {
     }  
 
     loadFormBuilder(){
-        //this.homeService.getHome().subscribe((result: Array<Page>) => { this.pages = result; });
-        this.pages = this.homeService.getHomeStatic();
-        /*this.pageService.getPageByProjectId(this.project_id)
-        .subscribe(result => { 
-            console.log(result);
-            if(result.success){
-                this.pages = result.paginate.data;
-            }
-            this.ngxLoader.stop();
-        });*/
+        this.homeService.getHome()
+            .subscribe(result => {
+                this.pages = result;
+            });
     }
       
     ngAfterContentChecked() {
         this.cdRef.detectChanges();
     }
 
-    public save(){
-        this.pageService.createPage({ 
-            project_id: this.project_id,
-            pages: this.pages
-        })
-        .subscribe(result => {
-            if(result.success){
-                this.loadFormBuilder();
+    public newPage(){
+        this.pages = [
+            ...this.pages, 
+            {
+                name: 'Page ' + (this.pages.length + 1),
+                rows: []
             }
-        });
+        ];
+        //this.pagesChange.emit(this.pages);
     }
 
-    public pageNext(){
-
-    }
-
-    public pagePrevious(){
-
-    }
-    
     public preview(): void {
-        //this.previewMode = !this.previewMode;
         this.config = {
             previewMode: this.previewMode
         };
@@ -122,87 +93,21 @@ export class FormBuilderComponent implements OnInit {
         this.formConfigService.setConfig(this.config);
     }
 
-    isTabMvcOpen(tabNumber: number = 1){
-        if(this.mvcList[tabNumber].isOpen){
-            //this.laravel.setInputs(this.viewHtmlGenerator.getInputs());
-            //this.laravel.setTableName(this.tableName);
-        }
-        
-        return this.mvcList[tabNumber].isOpen;
-    }
-    
-    /*
-    get validator() {
-        return this.laravel.blanka().validator;
+    public getPages($event: Page[]){
+        this.pages = ($event);
     }
 
-    get model(){
-        return this.laravel.blanka().model;
-    }
-
-    get controller(){
-        return this.laravel.blanka().controller;
-    }
-    */
-
-    public removeDoubleQuotes(word: string){
-        if(typeof word != 'undefined')
-            return word.replace(/\"/g, "");
-        return '';            
-    }
-
-    public isNewPage(newPage: boolean): void {
-        if (newPage) {
-            /*this.pageService.createPage({ 
-                project_id: this.project_id,
-                name: `Page ${this.pages.length}`
-            })
-            .subscribe(result => {
-                if(result.success){
-                    this.pages = result.data;
-                }
-            });*/            
-        
-            this.pages = [...this.pages, {
-                name: 'Page ' + (this.pages.length + 1),
-                rows: []
-            }];
-            
-            
-            /*this.pages.push({
-                name: 'Page ' + (this.pages.length + 1),
-                rows: []
-            });*/
-        }
-    }
-
-    public newPage($event){
-        if($event.isNewPage){
-            var index = $event.pageIndex;
-            this.pages = [
-                // part of the array before the specified index
-                ...this.pages.slice(0, index),
-                // inserted item
-                {
-                    name: 'Page ' + (index + 1),
-                    rows: []
-                },
-                // part of the array after the specified index
-                ...this.pages.slice(index)
-            ];
-
-        }
-        console.log('newPage', $event);
-    }
-
-    public getSchemas($schemas): void {
-        let schemas = $schemas;
-        let pages = [];
+    public getSchemas(schemas): void {
+        let newPages = [];
         schemas.forEach(schema => {
             this.tableName = schema.name;
-            pages.push(schema.pages);
+            newPages.push(schema.pages);
         });      
-        this.pages = [...this.pages, ...pages];
-        console.log('this.pages', this.pages);
+
+        this.pages = [...this.pages, ...newPages];
+    }
+
+    ngOnDestroy(){
+        this.subs.unsubscribe();
     }
 }

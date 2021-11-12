@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as nearley from 'nearley';
 import * as oracle_grammar from './../_parser/create-table-oracle-to-json';
-//import * as Parser from './../_parser/lib/parser';
-//const Parser = require('./../_parser/lib/parser');
-import { Content, IHtml, IDefinition, Page } from "./../_core/model";
+import { Content, Page } from "./../_core/model";
 
 
 declare global {
@@ -19,13 +17,14 @@ String.prototype.replaceAllDecimalCommaToDecimalDot = function(){
 	};
 
 	return this.replace(/^\((.+)\)$/, '$1')
-	.replace(new RegExp(regex.valueBtwParentheses, "g"), (currentString, first) => {
-		let r = new RegExp(regex.onlyNumeric, 'g');
-		if(r.test(first)){
-			return "(" +  first.replace(/,/g, '.') + ")";
-		}
-		return currentString;
-	});
+		.replace(new RegExp(regex.valueBtwParentheses, "g"), (currentString, first) => {
+			let r = new RegExp(regex.onlyNumeric, 'g');
+			if(r.test(first)){
+				return "(" +  first.replace(/,/g, '.') + ")";
+			}
+			
+			return currentString;
+		});
 }
 
 @Injectable({
@@ -50,8 +49,7 @@ export class CreateTableToJsonService{
     _customLabel: {
         [key: string]: string
     };	
-	html: IHtml;
-	definition: IDefinition;
+	definition: Content;
 	category: string = 'form';
  
 	constructor() {
@@ -173,26 +171,27 @@ export class CreateTableToJsonService{
 	}
 
 	convertDataOracle(): void{
-		console.log('raw', this._rawSchema);
+
 		if(Array.isArray(this._rawSchema) && this._rawSchema.length > 0){	
 			this._rawSchema.forEach(schema => {
 				let data = [];
 				let definitions = [];
 				let primaryKey = [];
-				let create_table_statement = schema.create_table_statement;
-				let create_definition = schema.create_definition;
-				let last_create_definition = schema.last_create_definition;
+				const create_table_statement = schema.create_table_statement;
+				const create_definition = schema.create_definition;
+				const last_create_definition = schema.last_create_definition;
 
 				this._table_name = create_table_statement.table_name;
 				create_definition.push(last_create_definition);
 				create_definition.forEach(column => {
-					let column_name = column.name;
-					let data_type = column.data_type;
-					let column_definition = column.column_definition;
-					let is_primary_key = false;
+					const column_name = column.name;
+					const data_type = column.data_type;
+					const column_definition = column.column_definition;
+					const is_primary_key = false;
 					let options = {
 						nullable: true
 					};
+
 					if(column_definition instanceof Array && column_definition.length > 0){
 						column_definition.forEach(c => {
 							if(typeof c.nullable != 'undefined'){
@@ -208,21 +207,17 @@ export class CreateTableToJsonService{
 							column: column_name
 						});
 					} 
-					var definition = {
+					var content = {
 						name: column_name,
 						type: data_type,
-						options: options
-					};
-					var camera = {
+						options: options,
 						html: {
 							category: this.category,
 							tag: data_type.tag,
 							label: this.customLabelName(column_name)
-						},
-						definition: definition
+						}
 					};
-					data.push(camera);
-					definitions.push(definition);
+					data.push(content);
 				});
 
 				this._schemas.push({

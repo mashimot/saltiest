@@ -22,7 +22,6 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     NgbModalModule
   ],
   exports: [ConfigChoicesComponent, ConfigChoiceFormComponent],
-
   declarations: [ConfigChoicesComponent, ConfigChoiceFormComponent],
   entryComponents: [
     ConfigChoiceFormComponent

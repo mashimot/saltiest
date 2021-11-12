@@ -14,7 +14,7 @@ export class DatabaseEngine {
 	| TIMESTAMP   | <input type="text" class="datepicker"/> //from datepicker plugin
 	| VARCHAR2    | <textarea></textarea>
 	*/	
-	public static ENGINES = {
+	public static readonly ENGINES = {
 		ORACLE: {
 			logo: 'https://tulula.sfo2.cdn.digitaloceanspaces.com/prod/images/cf2cf79cde738047d3dfdc8a5287ee87c909c9035bb61f32857f7536e4622505.png',
 			types: {
@@ -92,17 +92,18 @@ export class DatabaseEngine {
 				return item == dbName;
 			});
 		
-		if(engineExists){
-			var t = {};
-			for(let key in this.ENGINES[dbName].types){
-				if(this.ENGINES[dbName].types.hasOwnProperty(key)){
-					t[key] = this.ENGINES[dbName].types[key].toLowerCase();
-				}
-			}
-
-			return t;
+		if(!engineExists){
+			return {}
 		}
-		return {};
+
+		var t = {};
+		for(let key in this.ENGINES[dbName].types){
+			if(this.ENGINES[dbName].types.hasOwnProperty(key)){
+				t[key] = this.ENGINES[dbName].types[key].toLowerCase();
+			}
+		}
+
+		return t;
 	}
 
 

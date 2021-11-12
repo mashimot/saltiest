@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
 import { DBOperation } from 'src/app/shared/enum';
 import { ContentService } from 'src/app/shared/services/content.service';
 import { ContentChoiceItemService } from 'src/app/shared/services/content-choice-item.service';
@@ -8,6 +8,32 @@ import { DragulaService } from 'ng2-dragula';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
+// Array Validators
+export class ArrayValidators {
+
+    // max length
+    public static maxLength(max: number): ValidatorFn | any {
+        return (control: AbstractControl[]) => {
+            if (!(control instanceof FormArray)) return;
+            return control.length > max
+            ? { arrayMaxLength: true }
+            : null;
+        }
+    }
+
+    // min length
+    public static minLength(min: number): ValidatorFn | any {
+        return (control: AbstractControl[]) => {
+            if (!(control instanceof FormArray)) return;
+            
+            return control.length < min
+                ? { arrayMinLength: true }
+                : null;
+        }
+    }
+}
+
 
 @Component({
 	selector: 'app-config-choice-form',
@@ -22,7 +48,7 @@ export class ConfigChoiceFormComponent implements OnInit {
     text: string = "";
     subs = new Subscription();
     @Input() content;
-    @Input() parentFormGroup;
+    @Input() parentFormGroup: FormGroup | undefined;
     @Output() emitData = new EventEmitter();
 
 	constructor(
@@ -45,27 +71,32 @@ export class ConfigChoiceFormComponent implements OnInit {
         //this.dbops = DBOperation.create;
         const choices = this.content.html.choices;
         this.choiceForm =  this.fb.group({
-            'choices': this.fb.array([], [Validators.required, Validators.minLength(1)])
+            'choices': this.fb.array(
+                [],
+                [
+                    ArrayValidators.minLength(1)
+                ]
+            )
         });
 
         if(typeof this.parentFormGroup != 'undefined'){
             this.choiceForm = this.parentFormGroup.get('html') as FormGroup;
         }
-        this.choiceForm.setValidators(
-            [Validators.required, Validators.minLength(1)]
-        );
-        for(let i = 0; i < choices.length; i++){
-            let item = choices[i];
-            let items = this.choiceForm.get('choices') as FormArray;
-            items.push(this.setChoice(item.text, item.value));
-        }
 
-        this.subs.add(this.dragulaService.dropModel('sortableChoices').subscribe(
-            ({ sourceModel, targetModel, item }) => {
-                this.choices.controls = sourceModel;
-                this.text = this.elementToString();
-            }
-        ));
+        choices.forEach(choice => {
+            let items = this.choiceForm.get('choices') as FormArray;
+            items.push(this.setChoice(choice.text, choice.value));
+        });
+
+        this.subs.add(
+            this.dragulaService.dropModel('sortableChoices')
+            .subscribe(
+                ({ sourceModel, targetModel, item }) => {
+                    this.choices.controls = sourceModel;
+                    this.text = this.elementToString();
+                }
+            )
+        );
         this.text = this.elementToString();
 		/*this.choiceForm = this.fb.group({
 			'id': [''],
@@ -219,8 +250,8 @@ export class ConfigChoiceFormComponent implements OnInit {
 
     public stringToElement(): void{
         if (this.text.length > 0) {
-              let string = this.text.split('\n');
-              let cloneChoices = JSON.parse(JSON.stringify(this.choices.value));
+              const string = this.text.split('\n');
+              const cloneChoices = JSON.parse(JSON.stringify(this.choices.value));
   
               for (let i = 0; i < string.length; i++) {
                     let str = string[i];
@@ -231,7 +262,7 @@ export class ConfigChoiceFormComponent implements OnInit {
                         firstMatch = match[0];
                         secondMatch = str.substring(firstMatch.length + 1); //return '' if '|' was not found
                     }
-                    let text  = typeof firstMatch  !== 'undefined'
+                    let text  = typeof firstMatch !== 'undefined'
                         ? firstMatch
                         : '';
                     let value = typeof secondMatch !== 'undefined'
@@ -261,8 +292,8 @@ export class ConfigChoiceFormComponent implements OnInit {
       }
   
       public cloneThis(name: string){
-          let choicesLength = this.choices.value.length;
-          if(choicesLength > 0){
+            const choicesLength = this.choices.value.length;
+            if(choicesLength > 0){
                 let cloneThisObjectName = name === 'value'
                     ? 'text'
                     : 'value';

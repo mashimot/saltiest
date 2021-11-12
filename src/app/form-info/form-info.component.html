@@ -1,110 +1,111 @@
-<form class="card">
-    <div *ngFor="let page of pages; let pageIndex = index;" class="px-2 py-2">
-        <span>Page {{ pageIndex + 1 }}</span>
-        <hr />
-        <div *ngFor="let row of page.rows; let rowIndex = index;">
-            <section *ngFor="let column of row.columns; let columnIndex = index;">
-                <div *ngFor="let d of column.contents; let contentIndex = index;">
-                    <section *ngIf="d.html?.category === 'form'" class="row">
-                        <!--
-                        <div class="col-md-1">
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input type="checkbox" 
-                                    [checked]="d.definition?.is_primary_key" 
-                                    [(ngModel)]="d.definition && d.definition.is_primary_key"
-                                    [ngModelOptions]="{ standalone: true }"
-                                    #is_primary_key="ngModel"                                    
-                                    class="form-check-input" 
-                                    id="is-primary-{{ pageIndex + rowIndex + columnIndex + contentIndex }}">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <section formArrayName="pages">
+        <fieldset *ngFor="let Pages1 of getPages().controls; let indexPages = index;"  [formGroupName]="indexPages" class="border border-dark p-2">
+            <legend  class="w-auto">Page {{ indexPages +1 }}</legend>
+            <fieldset formArrayName="rows">
+                <div *ngFor="let PagesRows1 of getPagesRows(indexPages).controls; let indexRows = index;"  [formGroupName]="indexRows">
+                    <fieldset formArrayName="columns" >
+                        <div *ngFor="let PagesRowsColumns1 of getPagesRowsColumns(indexPages,indexRows).controls; let indexColumns = index;"  [formGroupName]="indexColumns">
+                            <fieldset formArrayName="contents" >
+                                <div *ngFor="let PagesRowsColumnsContents of getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).controls; let indexContents = index;"  [formGroupName]="indexContents">
+                                    <ng-container *ngIf="PagesRowsColumnsContents.value.html?.category === 'form'">
+                                        <div class="row">
+                                            <div class="col-md-2">  
+                                                <div class="form-group">
+                                                    <label id="name">name</label>
+                                                    <input type="text" formControlName="name" id="name" class="form-control" [class.is-invalid]="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('name')?.valid">
+                                                    <div *ngIf="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('name')?.valid" class="invalid-feedback">
+                                                        <div *ngIf="getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('name')!.errors?.required">NAME is required</div>
+                                                    </div>
+                                                </div>
+                                            </div>     
+                                            <div formGroupName="html" class="col-md-2">  
+                                                <div class="form-group">
+                                                    <label id="html.label">html.label</label><input type="text" formControlName="label" id="html.label" class="form-control" [class.is-invalid]="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('html.label')?.valid">
+                                                    <div *ngIf="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('html.label')?.valid" class="invalid-feedback">
+                                                        <div *ngIf="getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('html.label')!.errors?.required">HTML.LABEL is required</div>
+                                                    </div>
+                                                </div>
+                                            </div>                                                                           
+                                            <div formGroupName="html" class="col-md-2">
+                                                <div class="form-group">
+                                                    <label id="html.tag">html.tag</label>
+                                                    <select
+                                                        formControlName="tag"
+                                                        class="form-control" 
+                                                        [class.is-invalid]="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('html.tag')?.valid"
+                                                    >
+                                                        <option value="">Selecione</option>
+                                                        <ng-container *ngIf="(tags$ | async) as tags">
+                                                            <option value="{{ tag }}" *ngFor="let tag of tags">{{ tag }}</option>
+                                                        </ng-container>
+                                                    </select>
+                                                    <div *ngIf="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('html.tag')?.valid" class="invalid-feedback">
+                                                        <div *ngIf="getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('html.tag')!.errors?.required">HTML.TAG is required</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">                                             
+                                                <div formGroupName="type">
+                                                    <div class="form-group">
+                                                        <label id="type.length">type.length</label>
+                                                        <input type="text" formControlName="length" id="type.length" class="form-control" [class.is-invalid]="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('type.length')?.valid">
+                                                        <div *ngIf="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('type.length')?.valid" class="invalid-feedback">
+                                                            <div *ngIf="getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('type.length')!.errors?.required">OPTIONS.NULLABLE is required</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">                                             
+                                                <div formGroupName="options">
+                                                    <div class="form-group">
+                                                        <label
+                                                            [ngClass]="{
+                                                                'badge-danger': getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('options.nullable')?.value,
+                                                                'badge-success' : !getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('options.nullable')?.value
+                                                            }"
+                                                            class="badge col-md-12"
+                                                            [ngStyle]="{ 'cursor': 'pointer' }">
+                                                            {{ 
+                                                                getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('options.nullable')?.value
+                                                                    ? 'not required'
+                                                                    : 'required' 
+                                                            }}
+
+                                                            <input
+                                                                type="checkbox"
+                                                                formControlName="nullable"
+                                                                id="options.nullable"
+                                                                [class.is-invalid]="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('options.nullable')?.valid"
+                                                                [ngStyle]="{ display: 'none' }"
+                                                            >
+                                                        </label>
+                                                        <div *ngIf="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('options.nullable')?.valid" class="invalid-feedback">
+                                                            <div *ngIf="getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('options.nullable')!.errors?.required">OPTIONS.NULLABLE is required</div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                    <button 
+                                                        type="button"
+                                                        class="btn btn-outline-danger btn-sm btn-block"
+                                                        (click)="deletePagesRowsColumnsContents(indexPages,indexRows,indexColumns,indexContents)"
+                                                    >
+                                                        <i class="far fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
                                 </div>
-                            </div>
+                            </fieldset>
                         </div>
-                        -->
-                        <div class="col-md-2">
-                            <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableColumnName.invalid }" 
-                            name="table-column-name-{{ pageIndex + rowIndex + columnIndex + contentIndex }}"
-                            [(ngModel)]="d.definition && d.definition.name" 
-                            [ngModelOptions]="{ standalone: true }"
-                            #tableColumnName="ngModel"
-                            required
-                            >
-                            <div *ngIf="tableColumnName.invalid || tableColumnName.touched" class="invalid-feedback">
-                                <div *ngIf="tableColumnName.errors?.required">This is required.</div>
-                            </div> 
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" class="form-control" [ngClass]="{ 'is-invalid': htmlLabel.invalid }" 
-                            name="html-label-{{ pageIndex + rowIndex + columnIndex + contentIndex }}"                                 
-                            [(ngModel)]="d.html.label" 
-                            [ngModelOptions]="{ standalone: true }"
-                            #htmlLabel="ngModel"
-                            required
-                            >                            
-                            <div *ngIf="htmlLabel.invalid || htmlLabel.touched" class="invalid-feedback">
-                                <div *ngIf="htmlLabel.errors?.required">This is required.</div>
-                            </div>   
-                        </div>
-                        <div class="col-md-2" >
-                            <select class="form-control" [ngClass]="{ 'is-invalid': htmlTag.invalid }"
-                            name="input-type-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
-                            [(ngModel)]="d.html.tag"
-                            [ngModelOptions]="{ standalone: true }"
-                            #htmlTag="ngModel"
-                            required
-                            >
-                                <option value="">Selecione</option>
-                                <option value="{{ tag }}" *ngFor="let tag of tags">{{ tag }}</option>
-                            </select>
-                            <div *ngIf="htmlTag.invalid || htmlTag.touched" class="invalid-feedback">
-                                <div *ngIf="htmlTag.errors?.required">This is required.</div>
-                            </div>
-                        </div>
-                        <!--
-                        <div class="col-md-2">
-                            <select class="form-control text-uppercase" [ngClass]="{ 'is-invalid': tableType.invalid }"
-                            name="table-type-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
-                            
-                            [(ngModel)]="d.definition?.type && d.definition?.type.datatype"
-                            [ngModelOptions]="{ standalone: true }"
-                            #tableType="ngModel"
-                            required
-                            >
-                                <option value="">Selecione</option>
-                                <option *ngFor="let db of database; let name = index;" [value]="db.toLowerCase()">{{ db }}</option>
-                            </select>
-                            <div *ngIf="tableType.invalid || tableType.touched" class="invalid-feedback">
-                                <div *ngIf="tableType.errors?.required">This is required.</div>
-                            </div>                            
-                        </div>
-                        -->
-                        <div class="col-md-1">
-                            <input type="text" class="form-control" [ngClass]="{ 'is-invalid': tableSize.invalid }"
-                            [(ngModel)]="d.definition.type && d.definition.type.length"
-                            [ngModelOptions]="{ standalone: true }"
-                            pattern="^[0-9]+(.[0-9])?$"
-                            name="table-size-{{ pageIndex + rowIndex + columnIndex + contentIndex }}" 
-                            #tableSize="ngModel"                            
-                            >
-                            <div *ngIf="tableSize.invalid || tableSize.touched" class="invalid-feedback">
-                            </div>                               
-                        </div>
-                        <div class="col-md-1">
-                            <div class="row">
-                                <label [ngClass]="{'badge-danger': d.definition?.options?.nullable, 'badge-success' : !d.definition?.options?.nullable}"
-                                       class="badge col-md-12"
-                                       [ngStyle]="{ 'cursor': 'pointer' }">
-                                    {{ d.definition.options.nullable? 'not required' : 'required' }}
-                                    <input type="checkbox" [(ngModel)]="d.definition && d.definition.options && d.definition.options.nullable" [ngModelOptions]="{ standalone: true }" name="" class="checkbox" [ngStyle]="{ display: 'none' }">
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-1">
-                            <button type="button" (click)="column.contents.splice(contentIndex, 1)" class="btn btn-outline-danger btn-sm btn-block"><i class="far fa-trash-alt"></i></button>
-                        </div>
-                    </section>
+                    </fieldset>
                 </div>
-            </section>
-        </div>
-    </div>
+            </fieldset>
+        </fieldset>
+    </section>
 </form>

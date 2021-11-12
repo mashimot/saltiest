@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { Page } from "./../_core/model";
 
 @Injectable()
@@ -13,22 +14,24 @@ export class BootstrapGridSystemService {
     }
   
     getGrid() {
-        return [{
-            grid: '6 6',
-            columns: []
-        },{
-            grid: '4 4 4',
-            columns: []
-        }, {
-            grid: '3 3 3 3',
-            columns: []
-        }, {
-            grid: '2 2 4 2 2',
-            columns: []
-        }, {
-            grid: '12',
-            columns: []
-        }];
+        return of(
+            [{
+                grid: '6 6',
+                columns: []
+            },{
+                grid: '4 4 4',
+                columns: []
+            }, {
+                grid: '3 3 3 3',
+                columns: []
+            }, {
+                grid: '2 2 4 2 2',
+                columns: []
+            }, {
+                grid: '12',
+                columns: []
+            }]
+        );
     }
     
     convert() {

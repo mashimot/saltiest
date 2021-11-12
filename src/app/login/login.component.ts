@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
 			email: [
 				this.email, [
 				Validators.required,
-				//Validators.email
+				Validators.email
 			]],
 			password: [
 				this.password, [
@@ -38,14 +38,14 @@ export class LoginComponent implements OnInit {
 	onSubmit(){
 		this.submitted = true;
 		this.authService.login(this.loginForm.value)
-		.subscribe((user) => {
-            if (user && user.token) {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                //this.router.navigate(['/home']);
-            }
-            return user;
-        })
+			.subscribe((user) => {
+				if (user && user.token) {
+					// store user details and jwt token in local storage to keep user logged in between page refreshes
+					localStorage.setItem('currentUser', JSON.stringify(user));
+					//this.router.navigate(['/home']);
+				}
+				return user;
+			})
 	}
 
 	get f() { return this.loginForm.controls; }

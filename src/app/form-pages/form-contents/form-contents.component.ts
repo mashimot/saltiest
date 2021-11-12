@@ -4,6 +4,7 @@ import { BootstrapHtmlTemplate } from '../../_services/bootstrap-html-template.s
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
 import { ContentService } from '../../shared/services/content.service';
+import { Content } from 'src/app/_core/model';
 
 
 @Component({
@@ -82,7 +83,7 @@ export class FormContentsComponent implements OnInit {
         }
     }
 
-    sendDataToModal(contents, index: number): void{
+    sendDataToModal(contents: Content[], index: number): void{
         const modal = this.modalService.open(FormConfigComponent, this.options);
         modal.componentInstance.content_id = contents[index].id;
         modal.componentInstance.content = contents[index];

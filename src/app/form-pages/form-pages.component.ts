@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChange, SimpleChanges } from '@angular/core';
 import { FormConfigService } from './../_services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
-import { Subscription } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { BootstrapHtmlTemplate } from '../_services/bootstrap-html-template.service';
 import { PageService } from '../shared/services/page.service';
 import { ContentService } from '../shared/services/content.service';
@@ -9,6 +9,8 @@ import { RowService } from '../shared/services/row.service';
 import { ColumnService } from '../shared/services/column.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { HomeService } from '../shared/services/home.service';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-form-pages',
@@ -19,8 +21,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 export class FormPagesComponent implements OnInit {
     @Input() pages;
     @Output() pagesChange = new EventEmitter();
-    @Output() newPageChange = new EventEmitter();
 
+    pages$: Observable<any[]>;
     config: {
         previewMode: boolean
     };
@@ -38,14 +40,86 @@ export class FormPagesComponent implements OnInit {
         private rowService: RowService,
         private columnService: ColumnService,
         private route: ActivatedRoute,
+        private homeService: HomeService,
         private ngxLoader: NgxUiLoaderService
     ) {
-   
-        this.route.params.subscribe(result => {
-            this.project_id = result.projectId;
-        });
-        
-        dragulaService.createGroup('pages', {
+        this.initDragAndDrop();            
+    }
+
+    ngOnChanges(changes: SimpleChanges){
+        console.log('changes', changes);
+        if(changes.pages){
+        }
+    }
+
+    ngOnInit() {
+        this.formConfigService.getConfig()
+            .subscribe(data => {
+                this.config = {...data};
+            });
+    }
+
+    ngAfterViewInit() {
+        this.subs.add(
+            this.dragulaService.dropModel("pages")
+            .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
+                const params = {
+                    project_id: this.project_id,
+                    pagesPos: targetModel.map(item => {
+                        return item.id;
+                    }),
+                    pageTargetIndex: targetIndex,
+                };    
+                this.dropModelPageUpdated = true;
+                /*this.pageService.updatePagesPosition(data.project_id, params)
+                .subscribe(result => {
+                    console.log(result);
+                });*/
+            })
+        );
+
+    }
+
+    ngAfterContentChecked() {
+        this.cd.detectChanges();
+    }
+
+    ngDoCheck() {    
+        if (this.dropModelPageUpdated) { // this excutes if this.dropModelUpdated is true only
+            this.pagesChange.emit(this.pages);
+        }
+    }
+
+    ngOnDestroy() {
+        this.dragulaService.destroy('pages');
+        this.dragulaService.destroy('contents');
+        this.dragulaService.destroy('columns');
+        this.dragulaService.destroy('rowSortable');
+        this.dragulaService.destroy('sortableElements');
+        this.subs.unsubscribe();
+    }
+    
+
+
+    public deletePage(pageIndex: number) {
+        this.pages.splice(pageIndex, 1);
+        this.pagesChange.emit(this.pages);
+        this.cd.detectChanges();
+    }
+
+    public loadFormBuilder(){
+        this.ngxLoader.start();
+        this.pageService.getPageByProjectId(this.project_id)
+            .subscribe(result => { 
+                if(result.success){
+                    //this.pages = result.paginate.data;
+                }
+                this.ngxLoader.stop();
+            });        
+    }
+    
+    public initDragAndDrop(){
+        this.dragulaService.createGroup('pages', {
             copy: (el, source) => {
                 return source.className === 'menu-page-sortable';
             },
@@ -65,7 +139,7 @@ export class FormPagesComponent implements OnInit {
             }
         });
 
-        dragulaService.createGroup('columns', {
+        this.dragulaService.createGroup('columns', {
             accepts: function(el, target, source, sibling) {
                 let currRowIndex    = el.getAttribute('data-current-row-index');                
                 let currPageIndex   = el.getAttribute('data-current-page-index');
@@ -82,13 +156,13 @@ export class FormPagesComponent implements OnInit {
         });
 
         this.subs.add(
-            dragulaService.dropModel("columns")
+            this.dragulaService.dropModel("columns")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 let currRowIndex    = el.getAttribute('data-current-row-index');
                 let pageIndex       = el.getAttribute('data-current-page-index');
                 let currRowId       = target.getAttribute('data-current-row-id');
                 if(pageIndex != null && currRowIndex != null){
-                    let gridArr = this.pages[pageIndex].rows[currRowIndex].grid.split(" ");
+                    /*let gridArr = this.pages[pageIndex].rows[currRowIndex].grid.split(" ");
                     let aux     = gridArr[sourceIndex];
                     
                     gridArr.splice(sourceIndex, 1);
@@ -104,20 +178,20 @@ export class FormPagesComponent implements OnInit {
                         columnPos: targetModel.map(item => {
                             return item.id? item.id: null;
                         })
-                    }
+                    }*/
                     console.info('column sorted');
-                    this.columnService.updateColumn(params.page.currRowId, params)
+                    /*this.columnService.updateColumn(params.page.currRowId, params)
                         .subscribe(result => {
                             if(result.success){
                                 this.loadFormBuilder();
                                 this.dropModelPageUpdated = true;
                             }
-                        });
+                        });*/
                 }   
             })
         );
 
-        dragulaService.createGroup('rowSortable', {
+        this.dragulaService.createGroup('rowSortable', {
             copy: (el, source) => {
                 return source.className === 'menu-row-sortable';
             },
@@ -140,11 +214,11 @@ export class FormPagesComponent implements OnInit {
         });
 
         this.subs.add(
-            dragulaService.dropModel("rowSortable")
+            this.dragulaService.dropModel("rowSortable")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
                 const targetPageId  = target.getAttribute('data-current-page-id');
                 const currRowId     = el.getAttribute('data-current-row-id');
-
+                console.log('item', item);
                 if(typeof item.grid != 'undefined' && typeof item.columns == 'undefined'){//gambiarra, mas funciona
                     //let rows = [];
                     let lines = item.grid.trim().split("\n");
@@ -191,15 +265,15 @@ export class FormPagesComponent implements OnInit {
                         rowTargetIndex: targetIndex,
                         rows: rows
                     };                
-                    console.info('row sorted');
+                    console.info('row sorted', params);
                     if(rows.length > 0){
-                        this.rowService.storeRow(params)
+                        /*this.rowService.storeRow(params)
                             .subscribe(result => {
                                 if(result.success){
                                     this.loadFormBuilder();
                                     this.dropModelPageUpdated = true;
                                 }
-                            });
+                            });*/
                     }
                 } else {
                     const params = {
@@ -212,19 +286,19 @@ export class FormPagesComponent implements OnInit {
                             return item.id? item.id: null;
                         })
                     };
-                    this.rowService.updateRow(params.page.targetPageId, params)
+                    /*this.rowService.updateRow(params.page.targetPageId, params)
                         .subscribe(result => {
                             if(result.success){
                                 this.loadFormBuilder();
                                 this.dropModelPageUpdated = true;
                             }
-                        });
+                        });*/
                 }
                 return item;                    
             })
         );
         
-        dragulaService.createGroup('contents', {
+        this.dragulaService.createGroup('contents', {
             copy: (el, source) => {
                 return source.classList.contains('menu-content-sortable');
             },
@@ -245,7 +319,7 @@ export class FormPagesComponent implements OnInit {
         });
 
         this.subs.add(
-            dragulaService.cloned("contents")
+            this.dragulaService.cloned("contents")
                 .subscribe(({ name, clone, original, cloneType }) => {
                     if (original.classList.contains('menu-content-sortable')) {
                         let currentDataAttr = JSON.parse(original.getAttribute('data-content'));
@@ -260,22 +334,22 @@ export class FormPagesComponent implements OnInit {
         );
         
         this.subs.add(
-            dragulaService.dropModel("contents")
+            this.dragulaService.dropModel("contents")
             .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
-                item.definition = item.definition || {};
+                item.definition = item || {};
                 item.html = item.html || {};
                 if (item.definition && item.html) {
                     const currRowId     = target.getAttribute('data-current-row-id');                
                     const currPageId    = target.getAttribute('data-current-page-id');
                     const currcolumnId  = target.getAttribute('data-current-column-id');
                     if(item.html.category === 'form'){
-                        if(!item.definition.name){
-                            item.definition.name = `name__${new Date().getUTCMilliseconds()}`;
+                        if(!item.name){
+                            item.name = `name__${new Date().getUTCMilliseconds()}`;
                         } 
-                        if(!item.definition.options){
-                            item.definition.options = {};
-                            if(!item.definition.options.nullable){
-                                item.definition.options.nullable = true;
+                        if(!item.options){
+                            item.options = {};
+                            if(!item.options.nullable){
+                                item.options.nullable = true;
                             }
                         }
                     }
@@ -293,7 +367,7 @@ export class FormPagesComponent implements OnInit {
                                 : null;
                         }),
                         html: item.html,
-                        definition: item.definition
+                        definition: item
                     }; 
                     console.info('content sorted', params);
                     if(typeof item.id != 'undefined'){
@@ -310,89 +384,5 @@ export class FormPagesComponent implements OnInit {
                 }
             })
         );
-    }
-
-    ngOnInit() {
-        this.pages = this.pages ? this.pages.length > 0 ? this.pages : [] : [];
-        this.formConfigService.getConfig()
-            .subscribe(data => {
-                this.config = {...data};
-            });
-    }
-    
-
-    ngAfterViewInit() {
-        this.subs.add(
-            this.dragulaService.dropModel("pages")
-            .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
-                const params = {
-                    project_id: this.project_id,
-                    pagesPos: targetModel.map(item => {
-                        return item.id;
-                    }),
-                    pageTargetIndex: targetIndex,
-                };    
-
-                this.dropModelPageUpdated = true;
-                /*this.pageService.updatePagesPosition(data.project_id, params)
-                .subscribe(result => {
-                    console.log(result);
-                });*/
-            })
-        );
-
-    }
-
-    ngAfterContentChecked() {
-        this.cd.detectChanges();
-    }
-
-    ngDoCheck() {    
-        if (this.dropModelPageUpdated) { // this excutes if this.dropModelUpdated is true only
-            this.pagesChange.emit(this.pages);
-        }
-    }
-
-    ngOnDestroy() {
-        this.dragulaService.destroy('pages');
-        this.dragulaService.destroy('contents');
-        this.dragulaService.destroy('columns');
-        this.dragulaService.destroy('rowSortable');
-        this.dragulaService.destroy('sortableElements');
-        this.subs.unsubscribe();
-    }
-
-    public deletePage(pageIndex: number) {
-        /*this.pageService.deletePage(page.id).subscribe(result => {
-            if(result.success){
-                this.pages.forEach((cV, index) => {
-                    if(cV.id == page.id){
-                        this.pages.splice(index, 1);
-                    }
-                });
-                this.cd.markForCheck();
-            }
-        });*/
-        //static
-        this.pages.splice(pageIndex, 1);
-    }
-
-    public newPage(index: number): void{
-        console.log(index);
-        this.newPageChange.emit({
-            isNewPage: true,
-            pageIndex: index
-        });
-    }
-
-    loadFormBuilder(){
-        this.ngxLoader.start();
-        this.pageService.getPageByProjectId(this.project_id)
-            .subscribe(result => { 
-                if(result.success){
-                    this.pages = result.paginate.data;
-                }
-                this.ngxLoader.stop();
-            });        
     }    
 }

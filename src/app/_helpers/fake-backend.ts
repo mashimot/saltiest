@@ -6,18 +6,19 @@ import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
 // array in local storage for registered users
 //let users = JSON.parse(localStorage.getItem('currentUser')) || [];
 let users = [
-    { id: 1, username: 'test', password: 'test', email: 'test@test.com', firstName: 'First Name', lastName: 'Last Name' }
+    { id: 1, username: 'test', password: 'test', email: 'test@test.com', firstName: 'First Name', lastName: 'Last Name' },
+    { id: 2, username: 'hadouken', password: 'hadouken', email: 'hadouken@hadouken.com', firstName: 'First Name', lastName: 'Last Name' }
 ];
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const { url, method, headers, body } = request;
-
+        console.log('request', request);
         // wrap in delayed observable to simulate server api call
         return of(null)
             .pipe(mergeMap(handleRoute))
             .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
-            .pipe(delay(500))
+            .pipe(delay(100))
             .pipe(dematerialize());
 
         function handleRoute() {
@@ -58,6 +59,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             const { email, password } = body;
             const user = users.find(x => /*x.username === username &&*/ x.email === email && x.password === password);
             if (!user) return error('Username or password is incorrect');
+
             return ok({
                 id: user.id,
                 email: user.email,

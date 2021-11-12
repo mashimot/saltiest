@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DragulaModule } from 'ng2-dragula';
+import { DragulaModule, DragulaService } from 'ng2-dragula';
 
 import { FormPagesComponent } from './form-pages.component';
 import { FormRowsComponent } from './form-rows/form-rows.component';
@@ -32,5 +32,6 @@ import { FormConfigComponent } from '../form-builder/form-config/form-config.com
     entryComponents: [
         FormConfigComponent
     ],
+    providers: [],
 })
 export class FormPagesModule { }

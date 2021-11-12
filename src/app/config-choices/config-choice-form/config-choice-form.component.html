@@ -12,13 +12,19 @@
 	</div>	
 	<div class="card-body">
 		<div [ngClass]="{ 'alert alert-danger': choiceForm.get('choices').errors }">
-			<div *ngIf="choiceForm.get('choices').errors?.required">Please insert values</div>
+			<div *ngIf="choiceForm.get('choices').errors?.arrayMinLength">
+				Please insert values
+			</div>
 		</div>		
-		<div [formGroup]="choiceForm"
-		[ngClass]="{ 'is-invalid': choiceForm.invalid }">
-			<div dragula="sortableChoices"
+		<div
+			[formGroup]="choiceForm"
+			[ngClass]="{ 'is-invalid': choiceForm.invalid }"
+		>
+			<div
+				dragula="sortableChoices"
 				[(dragulaModel)]="choices.controls"
-				formArrayName="choices">
+				formArrayName="choices"
+			>
 				<div *ngFor="let choice of choices.controls; let i = index" 
 					[formGroupName]="i" 
 					class="sortable-item-contents">

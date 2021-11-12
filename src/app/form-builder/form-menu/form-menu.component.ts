@@ -1,10 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { HtmlElementService } from '../../shared/services/html-element.service';
 import { BootstrapGridSystemService } from '../../_services/bootstrap-grid-system.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoicesComponent } from '../../config-choices/config-choices.component';
 import { Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
+import { ToolService } from 'src/app/shared/services/tool.service';
+import { Column, Content } from 'src/app/_core/model';
 
 @Component({
     selector: 'app-form-menu',
@@ -15,7 +16,10 @@ export class FormMenuComponent implements OnInit {
     tools$: Observable<any>;
     //categories: Array<any>;
     pageModel: object; 
-    grids: Array<any>;
+    grids: Observable<{
+        grid: string,
+        columns: Column[]
+    }>;
     bootstrap: Array<{
         grid: string
     }>;
@@ -27,15 +31,13 @@ export class FormMenuComponent implements OnInit {
         centered: true
     };
 
-    @Output() isNewPage = new EventEmitter();
-
     constructor(
-        private htmlElementService: HtmlElementService,
+        private toolService: ToolService,
         private modalService: NgbModal
     ) {}
 
     ngOnInit() {
-        this.grids = new BootstrapGridSystemService().getGrid();
+        //this.grids$ = new BootstrapGridSystemService().getGrid();
         this.bootstrap = [{
             grid: [
                 `12`,
@@ -45,14 +47,13 @@ export class FormMenuComponent implements OnInit {
                 `7 5`
             ].join("\n")
         }];
-        this.tools$ = this.htmlElementService
-        //.getTools()
-        .getStaticTools()
-        .pipe(
-            map(res => {
-                return res.tools;
-            })
-        );
+        this.tools$ = this.toolService
+            .getTools()
+            .pipe(
+                map(res => {
+                    return res.tools;
+                })
+            );
         this.pageModel = [{
             rows: [],
             name: "Salt - A tool for Lazy Developer"
@@ -63,13 +64,9 @@ export class FormMenuComponent implements OnInit {
         this.modalService.open(ConfigChoicesComponent, this.options);
     }
 
-    editChoices(content): void{
+    editChoices(content: Content): void{
         let m = this.modalService.open(ConfigChoicesComponent, this.options);
         m.componentInstance.content = content;
-    }
-
-    public newPage(): void {
-        this.isNewPage.emit(true);
     }
 }
 

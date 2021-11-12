@@ -18,7 +18,7 @@ constructor() {
 	validate(control: AbstractControl): ValidationErrors | null {
 		if (typeof control.value != 'undefined' && control.value != null) {
 			let lines = control.value.trim().split("\n");
-			console.log('hadouken', lines);
+
 			for(let i = 0; i < lines.length; i++){
 				let sum = 0;
 				let line = lines[i].replace(/\s+/g, ' ').trim();

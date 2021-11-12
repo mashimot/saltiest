@@ -1,4 +1,4 @@
-<div [formGroup]="parentFormGroup.controls.html">
+<div [formGroup]="parentFormGroup.get('html')">
     <div class="form-group">
       	<textarea formControlName="data" class="form-control h-100" rows="10"></textarea>
     </div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { User } from './user.model';
 import { Router } from '@angular/router';
 
@@ -21,7 +21,6 @@ export class AuthService {
     //private API_URL: string = 'http://localhost:8000/api';
     private API_URL: string = '/api';
 
-    
     constructor(
         private http: HttpClient,
         private router: Router
@@ -44,29 +43,21 @@ export class AuthService {
             password: user.password 
         }, this.httpOptions)*/
 		return this.http.post<any>(`${this.API_URL}/auth/login`, user, this.httpOptions)
-        .pipe(
-            map((user: User) => {
-                console.log(user);
-                if (user && user.token) {
-                    // store user details and jwt token in local storage to keep user logged in between page refreshes
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                    this.currentUserSubject.next(user);
-                    this.router.navigate(['/home']);
-                }
-                return user;
-            })
-        );
-        /*.pipe(map((user: User) => {
-            // login successful if there's a jwt token in the response
-            if (user && user.token) {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                this.currentUserSubject.next(user);
-                this.router.navigate(['/home']);
-            }
+            .pipe(
+                map((user: User) => {
+                    if (user && user.token) {
+                        // store user details and jwt token in local storage to keep user logged in between page refreshes
+                        localStorage.setItem('currentUser', JSON.stringify(user));
+                        this.currentUserSubject.next(user);
+                        this.router.navigate(['/home']);
+                    }
 
-            return user;
-        }));*/
+                    return user;
+                }),
+                tap(user => {
+                    console.log('user', user);
+                })
+            );
     }
 
     getUser(): User{

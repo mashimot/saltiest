@@ -1,6 +1,6 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-case.pipe';
-import { IDefinition, IHtml } from "../_core/model";
+import { Content } from "../_core/model";
 
 @Injectable({
     providedIn: 'root'
@@ -11,8 +11,7 @@ export class Laravel {
     attributes: string;
     messages: string;
     tableName: string = '';
-    html: IHtml;
-    definition: IDefinition;
+    content: Content;
 	mysql: {
 		[key:string]: string
 	} = {
@@ -75,9 +74,8 @@ export class Laravel {
         this.schema = [];
     }
 
-    setParams(d) {
-        this.html = d.html;
-        this.definition = d.definition;
+    setParams(content: Content) {
+        this.content = content;
     }
 
     setSchema(schema) {
@@ -94,7 +92,7 @@ export class Laravel {
             text: ['nullable', 'string'],
             textarea: ['nullable', 'string']
         }
-        var tag = this.html.tag.toLowerCase();
+        var tag = this.content.html.tag.toLowerCase();
         if(typeof basic[tag] != 'undefined'){
             basic[tag][0] = this.isRequired();
             basic[tag].push(
@@ -103,15 +101,15 @@ export class Laravel {
             var newBasic = basic[tag].filter(el => {
                 return el != "" && el != null;
             });
-            return [`"${this.definition.name}" => ${JSON.stringify(newBasic)}`].join(",");
+            return [`"${this.content.name}" => ${JSON.stringify(newBasic)}`].join(",");
 		}
 		
-        return [`${this.definition.name} => ${JSON.stringify(basic[tag])}`].join(",");
+        return [`${this.content.name} => ${JSON.stringify(basic[tag])}`].join(",");
     }
 
     size(){
-        if(this.definition && this.definition.type && this.definition.type.length){
-            var size = this.definition.type.length;
+        if(this.content && this.content.type && this.content.type.length){
+            var size = this.content.type.length;
             if(size != null && size != ''){
                 var list = {
                     number: `digits_between:1,${size}`,
@@ -122,7 +120,7 @@ export class Laravel {
                     select: 'max:' + size,
                     textarea: 'max:' + size,
                 }            	
-                return list[this.html.tag];
+                return list[this.content.html.tag];
             }
         }
         return null;
@@ -140,8 +138,8 @@ export class Laravel {
             this.schema.data.forEach(current => {
 				this.setParams(current);
                 this.schema.init.fillable.push(current.definition.name);
-                this.schema.init.request.push(`"${current.definition.name}" => $request->${current.definition.name}`);
-                this.schema.init.attributes.push(`'${current.definition.name}' => '${current.html.label}'`);
+                this.schema.init.request.push(`"${current.name}" => $request->${current.name}`);
+                this.schema.init.attributes.push(`'${current.name}' => '${current.html.label}'`);
 				this.schema.init.rules.push(this.getRules());
 			});			
         }
@@ -176,7 +174,7 @@ export class Laravel {
 			public $incrementing  = true; 
 			
 			protected $fillable = [
-				${this.schema.data.map(d => `'${d.definition.name}'`)}
+				${this.schema.data.map(d => `'${d.name}'`)}
 			];
 		}
 		`;
@@ -351,7 +349,7 @@ export class Laravel {
 			let _nullable = '';
 			let _unsigned = '';
 
-			let column = item.definition;
+			let column = item;
 			let _dataType = column.type.datatype.toUpperCase();
 			let _type = this.mysql[column.type.datatype.toUpperCase()];
 			_type = _type.replace(/#unsigned/g, '');
@@ -472,8 +470,8 @@ export class Laravel {
 
 
     isRequired(): string {
-        if(this.definition && this.definition.options){
-            return this.definition.options.nullable ? 'nullable' : 'required';
+        if(this.content && this.content.options){
+            return this.content.options.nullable ? 'nullable' : 'required';
         }
 
         return 'nullable';

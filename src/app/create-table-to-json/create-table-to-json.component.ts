@@ -185,12 +185,9 @@ export class CreateTableToJsonComponent implements OnInit {
 		ddl?: string
 	}>;	
 
-	tabNumber: number;
 
 	constructor(
-		private joeys: JoeysWorldTour
 	) {
-		this.tabNumber = 1;
 		this.gridModel = '4 4 4';
 		this.errors = {};
 	}
@@ -198,7 +195,6 @@ export class CreateTableToJsonComponent implements OnInit {
 
 	ngOnInit() {
 		let database = DatabaseEngine.getDatabaseEngines();
-		//this.sql = [database[0]];			
 		this.sql = database;			
 		this.options = {
 			database: {

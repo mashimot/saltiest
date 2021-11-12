@@ -8,9 +8,10 @@ import { Location } from '@angular/common';
 import { CHOICE_TYPE } from '../_core/consts/choice-type.const';
 import { Content } from '../_core/model';
 import { Observable } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, filter, switchMap, startWith, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { ContentService } from '../shared/services/content.service';
 import { ContentChoiceItemService } from '../shared/services/content-choice-item.service';
+import { FormControl } from '@angular/forms';
 
 interface ConfigChoice {
     type: string;
@@ -30,6 +31,7 @@ interface ConfigChoiceType {
 export class ConfigChoicesComponent implements OnInit {
     //choices: any;
     event: any;
+    queryField: FormControl = new FormControl();
     choices$: Observable<any>;
     choiceTypes: ConfigChoiceType;
     options: any = {
@@ -49,26 +51,65 @@ export class ConfigChoicesComponent implements OnInit {
         private contentChoiceItemService: ContentChoiceItemService,
         private activatedRoute: ActivatedRoute
     ) {
-
-        //this.choices = this.htmlElementService.getStaticOptionChoices();
     }
 
     ngOnInit() {
         this.choiceTypes = CHOICE_TYPE;
-        /*this.choices = {
-            data: []
-        };*/
         this.activatedRoute.queryParams.subscribe(x => this.loadPage(x.page || 1));
+        this.choices$ = this.queryField
+            .valueChanges
+            .pipe(
+                startWith(''),
+                map(value => value.trim()),
+                filter(value => {
+                    if(value.length > 1){
+                        return true
+                    }
+
+                    return true;
+                }),
+                distinctUntilChanged(),
+                debounceTime(1000),
+                switchMap((value) => {
+                    if(value == ''){
+                        return this.htmlElementService
+                            .getOptionChoices()
+                            .pipe(
+                                tap(value => console.log('1', value)),
+                                map((result) => {
+                                    return result.paginate;
+                                })
+                            );
+                    }
+
+                    let newData = [];
+                    return this.htmlElementService
+                        .getOptionChoices()
+                        .pipe(
+                            tap(value2 => console.log('2', value2)),
+                            map((result: any) => {
+                                let aux = result.paginate.data;
+                                aux.forEach((data) => {
+                                    if((data.description.toLowerCase()).includes(value.toLowerCase())){
+                                        newData.push(data)
+                                    }
+                                });
+    
+                                result.paginate.data = newData;
+                
+                                return result;
+                            }),
+                            map((result) => {
+                                return result.paginate;
+                            })
+                        );
+                })
+            );
     }
 
-    edit(index = null){
-        this.choices$.subscribe(result => {
-            const data = {
-                id: null,
-                content: result.data[index],
-                index: index
-            };
-            const myAss = {
+    edit(content: any = null, index: number = null){
+        if(content == null){
+            content = {
                 description: "",
                 html: {
                     category: "form",
@@ -80,66 +121,68 @@ export class ConfigChoicesComponent implements OnInit {
                     tag: "radio"
                 }
             };
-            const modal = this.modalService.open(
-                ConfigChoiceFormComponent, this.options
-            );
+        }
         
-            modal.componentInstance.content = myAss;
-            if(index != null){
-                modal.componentInstance.content = data.content;
-                modal.componentInstance.index = data.index;
-            }
+        const modal = this.modalService.open(
+            ConfigChoiceFormComponent,
+            this.options
+        );
+        
+        modal.componentInstance.content = content;
+        modal.componentInstance.index = index;
+        modal.componentInstance.emitData.subscribe($e => {
+            if($e.choices.length > 0){
+                const groups  = $e.choices.map(choice => choice.text);
 
-            modal.componentInstance.emitData.subscribe($e => {
-                if($e.choices.length > 0){
-                    var groups  = $e.choices.map(choice => choice.text)
-                    if(index != null){
-                        this.choices$ = this.choices$
-                            .pipe(
-                                map( _ => {
-                                    result.data[index].html.choices = $e.choices;
-                                    return result;
-                                }),
-                                tap(x => console.log(x))
-                            )
-                    } else {
-                        myAss.html.choices = $e.choices;
-                        myAss.description = groups.join('|');
+                if(index == null){
+                    this.choices$ = this.choices$
+                        .pipe(
+                            map((result) => {
+                                content.html.choices = $e.choices;
+                                content.description = groups.join('|');
 
-                        console.log(myAss);
-                        /*this.contentChoiceItemService.storeContentChoiceItem(myAss)
-                        .subscribe(result => {
-                            console.log(result);
-                        });*/                 
-                        this.choices$ = this.choices$.pipe(
-                            map( _ => {
-                                //result.data.push(myAss);
-                                result.data = [...result.data, myAss];
+                                result.data = [
+                                    ...result.data,
+                                    content
+                                ];
                                 
                                 return result;
                             }),
-                            tap(x => console.log(x))
-                        )
-                    }
+                            tap(x => console.log('xx', x))
+                        );
+                    return;
                 }
-                modal.dismiss();
-            });
-        });
 
-        
-        //console.log(this.choices.length);
-        /*;*/
+                this.choices$ = this.choices$
+                    .pipe(
+                        map(result => {
+                            result.data[index].html.choices = $e.choices;
+                            return result;
+                        }),
+                        tap(x => console.log(x))
+                    )
+            }
+            modal.dismiss();
+        });
     }
 
     private loadPage(page: number) {
+
         this.choices$ = this.htmlElementService
+            .getOptionChoices()
+            .pipe(
+                map((result) => {
+                    return result.paginate;
+                })
+            );
+        /*this.choices$ = this.htmlElementService
         //.queryParams({ page: page })
         .getStaticOptionChoices()
         .pipe(
             map(result => {
                 return result.paginate;
             })
-        );
+        );*/
         /*this.htmlElementService.queryParams({
             page: page
         }).subscribe(result => {

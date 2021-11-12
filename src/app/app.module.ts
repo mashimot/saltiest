@@ -17,7 +17,6 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { ConfigChoiceFormComponent } from './config-choices/config-choice-form/config-choice-form.component';
 import { ConfigChoicesComponent } from './config-choices/config-choices.component';
 
-
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     overlayColor: 'white',
     fgsType: SPINNER.rotatingPlane, // foreground spinner type
@@ -38,12 +37,10 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
         AppComponent,
         PageNotFoundComponent
     ],
-
     imports: [
         BrowserModule,
         RouterModule,
         CoreModule,
-        //DragulaModule,
         AppRoutingModule,
         HttpClientModule,
         NgbModule,

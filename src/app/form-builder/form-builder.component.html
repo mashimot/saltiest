@@ -1,96 +1,78 @@
 
 <div class="tab-content">
     <div class="row no-gutters">
-        <div class="col-md-3" [hidden]="config?.previewMode" *ngIf="tabNumber == 1">            
-            <div class="sticky-top scrollbar-near-moon thin square">                     
-                <app-create-table-to-json 
-                (schemasChange)="getSchemas($event)" 
-                ></app-create-table-to-json>
-                <app-form-menu 
-                (isNewPage)="isNewPage($event)"
-                ></app-form-menu>
-            </div>
-        </div>
-        <div [ngClass]="{ 'col-md-12': config?.previewMode || tabNumber == 2, 'col-md-9': !config?.previewMode }">
-            <div class="sticky-top">
-                <div class="btn-group d-flex bg-white" role="group">
-                    <!--<button (click)="save();"
-                    [ngClass]="{ 
-                        'btn-success': tabNumber == 1 && !previewMode, 
-                        'btn-outline-dark': tabNumber == 2 && previewMode 
-                    }"
-                    [ngStyle]="{ 'opacity': tabNumber == 2 && previewMode? 0.4 : 1 }">
-                        <i class="fas fa-save" [ngClass]="{ 'fa-beat': tabNumber == 1 && !previewMode }"></i> Save
-                    </button>
-                    -->
-                    <button
-                        (click)="tabNumber = 1; previewMode = false; preview();"
-                        class="btn btn-md w-100" 
-                        [ngClass]="{ 
-                            'btn-primary': tabNumber == 1 && !previewMode, 
-                            'btn-outline-dark': tabNumber == 2 && previewMode 
-                        }"
-                        [ngStyle]="{ 'opacity': tabNumber == 2 && previewMode? 0.4 : 1 }"
-                    >
-                        <i class="fas fa-edit fa-1x" [ngClass]="{ 'fa-beat': tabNumber == 1 && !previewMode }"></i> Editor
-                    </button>
-                    <button
-                        (click)="this.previewMode = !this.previewMode; preview(); tabNumber = 1;" 
-                        class="btn btn-md w-100" 
-                        [ngClass]="{ 
-                            'btn-primary': previewMode,
-                            'btn-outline-dark': !previewMode
-                        }"
-                        [ngStyle]="{ 'opacity': tabNumber == 2 || !config?.previewMode? 0.4 : 1 }"
-                    >
-                        <i [ngClass]="{ 'fa-eye fa-1x fa-beat': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-1x"></i> Preview
-                    </button>
-                    <button
-                        (click)="tabNumber = 2; previewMode = false; preview();" 
-                        class="btn btn-md w-100" 
-                        [ngClass]="{ 
-                            'btn-primary': tabNumber == 2, 
-                            'btn-outline-dark': tabNumber == 1 
-                        }"
-                        [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }"
-                    >
-                        <i class="fas fa-edit fa-1x" [ngClass]="{ 'fa-beat': tabNumber == 2 }"></i> Faster entry
-                    </button>
+        <ng-container *ngIf="tabNumber == 1">
+            <div class="col-md-3 " [hidden]="config?.previewMode">            
+                <div class="sticky-top scrollbar-near-moon thin square">                     
+                    <app-create-table-to-json 
+                        (schemasChange)="getSchemas($event)" 
+                    ></app-create-table-to-json>
+                    <app-form-menu></app-form-menu>
                 </div>
             </div>
-            <app-form-pages *ngIf="tabNumber == 1" [(pages)]="pages" (newPageChange)="newPage($event)"></app-form-pages>
-            <!--
-            <button class="btn btn-primary" (click)="pageNext()">Next</button>
-            <button class="btn btn-primary" (click)="pagePrevious()">Previous</button>
-            -->
-
-            <app-form-info [(pages)]="pages" *ngIf="tabNumber == 2"></app-form-info>
+        </ng-container>
+        <div [ngClass]="{ 'col-md-12': config?.previewMode || tabNumber == 2, 'col-md-9': !config?.previewMode }">
+            <div class="sticky-top">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="btn-group d-flex bg-white" role="group">
+                            <button
+                                (click)="tabNumber = 1; previewMode = false; preview();"
+                                class="btn btn-md w-100" 
+                                [ngClass]="{ 
+                                    'btn-primary': tabNumber == 1 && !previewMode, 
+                                    'btn-outline-dark': tabNumber == 2 && previewMode 
+                                }"
+                                [ngStyle]="{ 'opacity': tabNumber == 2 && previewMode? 0.4 : 1 }"
+                            >
+                                <i class="fas fa-edit fa-1x" [ngClass]="{ 'fa-beat': tabNumber == 1 && !previewMode }"></i> Editor
+                            </button>
+                            <button
+                                (click)="this.previewMode = !this.previewMode; preview(); tabNumber = 1;" 
+                                class="btn btn-md w-100" 
+                                [ngClass]="{ 
+                                    'btn-primary': previewMode,
+                                    'btn-outline-dark': !previewMode
+                                }"
+                            >
+                                <i [ngClass]="{ 'fa-eye fa-1x fa-beat': previewMode, 'fa-eye-slash': !previewMode }" class="fa fa-1x"></i> Preview
+                            </button>
+                            <button
+                                (click)="tabNumber = 2; previewMode = false; preview();" 
+                                class="btn btn-md w-100" 
+                                [ngClass]="{ 
+                                    'btn-primary': tabNumber == 2, 
+                                    'btn-outline-dark': tabNumber == 1 
+                                }"
+                                [ngStyle]="{ 'opacity': tabNumber == 1? 0.4 : 1 }"
+                            >
+                                <i class="fas fa-edit fa-1x" [ngClass]="{ 'fa-beat': tabNumber == 2 }"></i> Faster entry
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button (click)="newPage()" class="btn btn-dark btn-md">
+                    <i class="fa fa-file"></i> New Page
+                </button>
+            </div>
+            <app-form-pages
+                *ngIf="tabNumber == 1"
+                [pages]="pages"
+                (pagesChange)="getPages($event)"
+            ></app-form-pages>
+            <app-form-info
+                *ngIf="tabNumber == 2"
+                [(pages)]="pages"
+            ></app-form-info>
+            <div class="card">
+                <div class="card-body">
+                    <h1>VIEW</h1>
+                    <textarea class="form-control" rows="40">
+                        {{ bootstrapHtmlTemplate.getTemplate(pages ? pages: []) }}
+                    </textarea>
+                </div>
+            </div>
+  
         </div>            
     </div>
 </div>
-
-<ul class="list-group"> 
-    <li class="list-group-item" >
-        <div class="row">
-            <h3 
-                *ngFor="let list of mvcList; let listIndex = index;"
-                class="col-md-3" 
-                [ngClass]="{ 'text-danger': list.isOpen }" 
-                (click)="list.isOpen = !list.isOpen"
-            >
-                <div [ngStyle]="{ 'cursor': 'pointer' }" class="text-uppercase">
-                    <i class="fas" [ngClass]="{ 'fa-minus text-danger': list.isOpen, 'fa-plus': !list.isOpen }"></i> 
-                    {{ list.name }}
-                </div>
-            </h3>
-        </div>
-    </li>
-    <li class="list-group-item">
-        <div *ngIf="isTabMvcOpen(0)">
-            <h1>VIEW</h1>
-            <textarea class="form-control" rows="40">
-                {{ bootstrapHtmlTemplate.getTemplate(pages) }}
-            </textarea>
-        </div>       
-    </li>    
-</ul>

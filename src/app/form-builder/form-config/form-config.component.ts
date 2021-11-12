@@ -14,7 +14,6 @@ export class FormConfigComponent implements OnInit {
     @ViewChild('modal', { static: false }) modal: TemplateRef<any>;
     options: NgbModalOptions;
     configForm: FormGroup;
-    //content: any;
 
     @Input() content_id: number;
     @Input() content: Content;
@@ -34,66 +33,34 @@ export class FormConfigComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        /*this.contentService.showContent(this.content_id).subscribe(r => {
-            if(r.success){
-                this.content = r.data;
-                this.content['id'] = this.content_id;
-                const tag = this.content.html.tag;
-                this.render = this.formContentConfig.render()[tag];
-                this.configForm = this.fb.group({
-                    id: [this.content_id,[]],
-                    html: this.fb.group({
-                        'tag': [this.content.html.tag,[]],
-                        'content_choice_id': [this.content.html.content_choice_id,[]],
-                        'category': [this.content.html.category,[]],
-                        'fields': [this.content.html.fields,[]],
-                        'label': [this.content.html.label,[]],
-                        'src': [this.content.html.src,[]],
-                        'text': [this.content.html.text,[]],
-                        'data': [this.content.html.data]
-                    }),
-                    table: this.fb.group({
-                        'column_name': [this.content.definition.column_name,[]],
-                        'type': [this.content.definition.type,[]],
-                        'size': [this.content.definition.size,[]],
-                        'nullable': [this.content.definition.nullable]
-                    })
-                });
-            }
-        });*/
-        //this.content['id'] = this.content.;
         const tag = this.content.html.tag;
         this.render = this.formContentConfig.render()[tag];
         this.configForm = this.fb.group({
             id: [this.content_id, []],
+            name: [this.content.name, []],
             html: this.fb.group({
                 'tag': [this.content.html.tag, []],
                 'content_choice_id': [this.content.html.content_choice_id, []],
                 'choices': this.fb.array([]),
                 'category': [this.content.html.category, []],
-                'fields': [this.content.html.fields, []],
+                //'fields': [this.content.html.fields, []],
                 'label': [this.content.html.label, []],
                 'src': [this.content.html.src, []],
                 'text': [this.content.html.text, []],
                 'data': [this.content.html.data]
             }),
-            definition: this.fb.group({
-                'name': [this.content.definition.name, []],
-                'type': this.fb.group({
-                    datatype: ['', []],
-                    length: ['', []],
-                }),
-                'options': this.fb.group({
-                    'nullable': [true, []]
-                })
+            'type': this.fb.group({
+                datatype: ['', []],
+                length: ['', []],
+            }),
+            'options': this.fb.group({
+                'nullable': [true, []]
             })
         });        
     }
 
     register(){
-        console.log(this.configForm.value);
         this.emitData.emit(this.configForm.value);
-        //this.activeModal.close();
     }
 }
 
