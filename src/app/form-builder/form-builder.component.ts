@@ -97,6 +97,14 @@ export class FormBuilderComponent implements OnInit {
         this.pages = ($event);
     }
 
+    public getTemplate(){
+        return this.bootstrapHtmlTemplate.getTemplate(
+            this.pages
+                ? this.pages
+                : []
+        );
+    }
+
     public getSchemas(schemas): void {
         let newPages = [];
         schemas.forEach(schema => {
