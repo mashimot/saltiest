@@ -62,20 +62,20 @@ export class FormPagesComponent implements OnInit {
     ngAfterViewInit() {
         this.subs.add(
             this.dragulaService.dropModel("pages")
-            .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
-                const params = {
-                    project_id: this.project_id,
-                    pagesPos: targetModel.map(item => {
-                        return item.id;
-                    }),
-                    pageTargetIndex: targetIndex,
-                };    
-                this.dropModelPageUpdated = true;
-                /*this.pageService.updatePagesPosition(data.project_id, params)
-                .subscribe(result => {
-                    console.log(result);
-                });*/
-            })
+                .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
+                    const params = {
+                        project_id: this.project_id,
+                        pagesPos: targetModel.map(item => {
+                            return item.id;
+                        }),
+                        pageTargetIndex: targetIndex,
+                    };    
+                    this.dropModelPageUpdated = true;
+                    /*this.pageService.updatePagesPosition(data.project_id, params)
+                    .subscribe(result => {
+                        console.log(result);
+                    });*/
+                })
         );
 
     }
@@ -157,38 +157,37 @@ export class FormPagesComponent implements OnInit {
 
         this.subs.add(
             this.dragulaService.dropModel("columns")
-            .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
-                let currRowIndex    = el.getAttribute('data-current-row-index');
-                let pageIndex       = el.getAttribute('data-current-page-index');
-                let currRowId       = target.getAttribute('data-current-row-id');
-                if(pageIndex != null && currRowIndex != null){
-                    /*let gridArr = this.pages[pageIndex].rows[currRowIndex].grid.split(" ");
-                    let aux     = gridArr[sourceIndex];
-                    
-                    gridArr.splice(sourceIndex, 1);
-                    gridArr.splice(targetIndex, 0, aux);
-                    let newGrid = gridArr.join(" ").trim();
-                    this.pages[pageIndex].rows[currRowIndex].grid = newGrid;
-                    const params = {
-                        project_id: this.project_id,
-                        page: {
-                            currRowId: parseInt(currRowId)
-                        },
-                        newGrid: newGrid,
-                        columnPos: targetModel.map(item => {
-                            return item.id? item.id: null;
-                        })
-                    }*/
-                    console.info('column sorted');
-                    /*this.columnService.updateColumn(params.page.currRowId, params)
-                        .subscribe(result => {
-                            if(result.success){
-                                this.loadFormBuilder();
-                                this.dropModelPageUpdated = true;
-                            }
-                        });*/
-                }   
-            })
+                .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
+                    let currRowIndex    = el.getAttribute('data-current-row-index');
+                    let pageIndex       = el.getAttribute('data-current-page-index');
+                    let currRowId       = target.getAttribute('data-current-row-id');
+                    if(pageIndex != null && currRowIndex != null){
+                        let gridArr = this.pages[pageIndex].rows[currRowIndex].grid.split(" ");
+                        let aux     = gridArr[sourceIndex];
+                        
+                        gridArr.splice(sourceIndex, 1);
+                        gridArr.splice(targetIndex, 0, aux);
+                        let newGrid = gridArr.join(" ").trim();
+                        this.pages[pageIndex].rows[currRowIndex].grid = newGrid;
+                        /*const params = {
+                            project_id: this.project_id,
+                            page: {
+                                currRowId: parseInt(currRowId)
+                            },
+                            newGrid: newGrid,
+                            columnPos: targetModel.map(item => {
+                                return item.id? item.id: null;
+                            })
+                        }
+                        this.columnService.updateColumn(params.page.currRowId, params)
+                            .subscribe(result => {
+                                if(result.success){
+                                    this.loadFormBuilder();
+                                    this.dropModelPageUpdated = true;
+                                }
+                            });*/
+                    }   
+                })
         );
 
         this.dragulaService.createGroup('rowSortable', {
@@ -215,59 +214,78 @@ export class FormPagesComponent implements OnInit {
 
         this.subs.add(
             this.dragulaService.dropModel("rowSortable")
-            .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
-                const targetPageId  = target.getAttribute('data-current-page-id');
-                const currRowId     = el.getAttribute('data-current-row-id');
-                console.log('item', item);
-                if(typeof item.grid != 'undefined' && typeof item.columns == 'undefined'){//gambiarra, mas funciona
-                    //let rows = [];
-                    let lines = item.grid.trim().split("\n");
-                    delete item.grid;
-                    let rows = lines.map(line => {
-                        return line.replace(/\s+/g, ' ').trim();
-                    })
-                    .filter(line => line != '')
-                    .map(line => {
-                        let arrNumbers = line.split(' ');
-                        if (arrNumbers.length > 0) {
+                .subscribe(({ name, el, target, source, item, sourceModel, targetModel, sourceIndex, targetIndex }) => {
+                    const targetPageId  = target.getAttribute('data-current-page-id');
+                    const currRowId     = el.getAttribute('data-current-row-id');
+                    console.log('item.grid', item.grid);
+                    if(typeof item.grid != 'undefined' && typeof item.columns == 'undefined'){//gambiarra, mas funciona
+                        //let rows = [];
+                        let gridsArray = item.grid.trim().split("\n");
+                        delete item.grid;
+                        let rows = gridsArray.map(line => {
+                            return line.replace(/\s+/g, ' ').trim();
+                        })
+                        .filter(line => line)
+                        .map(line => {
+                            const arrNumbers = line.split(' ');
                             let columns = [];
-                            for (let j = 0; j < arrNumbers.length; j++) {
-                                columns.push({
-                                    contents: []
-                                });
+                            
+                            if (arrNumbers.length > 0) {
+                                for (let j = 0; j < arrNumbers.length; j++) {
+                                    columns.push({
+                                        contents: []
+                                    });
+                                }
                             }
+
                             return {
                                 grid: line,
                                 columns: columns
                             };
-                        }
-                    });
+                        });
 
-
-                    for(var i = 0 ; i < targetModel.length; i++){
-                        if(Object.keys(targetModel[i]).length <= 0){
-                            targetModel.splice(i, 1);
+                        console.log('targetModel', targetModel, 'sourceModel', sourceModel, 'targetIndex', targetIndex);
+                        targetModel.splice(targetIndex, 1);
+                        //targetIndex: Position 
+                        const totalOfRowsDragged = rows.length;
+                        for (let i = 0; i < totalOfRowsDragged; i++) {
+                            targetModel.splice(targetIndex + i, 0, rows[i]);
                         }
-                    }
-                    const numSeparators = rows.length;
-                    for (let i = 0; i < numSeparators; i++) {
-                        targetModel.splice(targetIndex + (i), 0, rows[i]);
-                    }
-                    //API
-                    const params = {
-                        project_id: this.project_id,
-                        page: {
-                            targetPageId: parseInt(targetPageId)
-                        },
-                        rowsPos: targetModel.map(item => {
-                            return item.id? item.id: null;
-                        }),
-                        rowTargetIndex: targetIndex,
-                        rows: rows
-                    };                
-                    console.info('row sorted', params);
-                    if(rows.length > 0){
-                        /*this.rowService.storeRow(params)
+                        /*
+                        //API
+                        const params = {
+                            project_id: this.project_id,
+                            page: {
+                                targetPageId: parseInt(targetPageId)
+                            },
+                            rowsPos: targetModel.map(item => {
+                                return item.id? item.id: null;
+                            }),
+                            rowTargetIndex: targetIndex,
+                            rows: rows
+                        };                
+                        console.info('row sorted', params);
+                        if(rows.length > 0){
+                            this.rowService.storeRow(params)
+                                .subscribe(result => {
+                                    if(result.success){
+                                        this.loadFormBuilder();
+                                        this.dropModelPageUpdated = true;
+                                    }
+                                });
+                        }*/
+                    } else {
+                        const params = {
+                            project_id: this.project_id,
+                            page: {
+                                currRowId: parseInt(currRowId),
+                                targetPageId: parseInt(targetPageId)
+                            },
+                            rowPos: targetModel.map(item => {
+                                return item.id? item.id: null;
+                            })
+                        };
+                        /*this.rowService.updateRow(params.page.targetPageId, params)
                             .subscribe(result => {
                                 if(result.success){
                                     this.loadFormBuilder();
@@ -275,27 +293,8 @@ export class FormPagesComponent implements OnInit {
                                 }
                             });*/
                     }
-                } else {
-                    const params = {
-                        project_id: this.project_id,
-                        page: {
-                            currRowId: parseInt(currRowId),
-                            targetPageId: parseInt(targetPageId)
-                        },
-                        rowPos: targetModel.map(item => {
-                            return item.id? item.id: null;
-                        })
-                    };
-                    /*this.rowService.updateRow(params.page.targetPageId, params)
-                        .subscribe(result => {
-                            if(result.success){
-                                this.loadFormBuilder();
-                                this.dropModelPageUpdated = true;
-                            }
-                        });*/
-                }
-                return item;                    
-            })
+                    return item;                    
+                })
         );
         
         this.dragulaService.createGroup('contents', {

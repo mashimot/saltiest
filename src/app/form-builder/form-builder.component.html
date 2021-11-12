@@ -2,7 +2,7 @@
 <div class="tab-content">
     <div class="row no-gutters">
         <ng-container *ngIf="tabNumber == 1">
-            <div class="col-md-3 " [hidden]="config?.previewMode">            
+            <div class="col-md-3" [hidden]="config?.previewMode">            
                 <div class="sticky-top scrollbar-near-moon thin square">                     
                     <app-create-table-to-json 
                         (schemasChange)="getSchemas($event)" 
@@ -16,10 +16,9 @@
                 <div class="btn-group d-flex bg-white" role="group">
                     <button
                         (click)="tabNumber = 1; previewMode = false; preview();"
-                        class="btn w-100" 
+                        class="btn border-dark btn-md" 
                         [ngClass]="{ 
-                            'btn-primary': tabNumber == 1 && !previewMode, 
-                            'btn-outline-dark': tabNumber == 2 && previewMode 
+                            'btn-primary': tabNumber == 1 && !previewMode
                         }"
                     >
                         <i class="fas fa-edit fa-1x" [ngClass]="{
@@ -28,26 +27,23 @@
                     </button>
                     <button
                         (click)="this.previewMode = !this.previewMode; preview(); tabNumber = 1;" 
-                        class="btn btn-md w-100" 
+                        class="btn border-dark btn-md" 
                         [ngClass]="{ 
-                            'btn-primary': previewMode,
-                            'btn-outline-dark': !previewMode
+                            'btn-primary': previewMode
                         }"
                     >
                         <i
                             class="fa fa-eye fa-1x"
                             [ngClass]="{ 
-                                'fa-2x fa-beat': previewMode,
-                                'fa-eye-slash': !previewMode 
+                                'fa-2x fa-beat': previewMode
                             }"
                         ></i> Preview
                     </button>
                     <button
                         (click)="tabNumber = 2; previewMode = false; preview();" 
-                        class="btn btn-md w-100" 
+                        class="btn border-dark btn-md" 
                         [ngClass]="{ 
-                            'btn-primary': tabNumber == 2, 
-                            'btn-outline-dark': tabNumber == 1 
+                            'btn-primary': tabNumber == 2
                         }"
                     >
                         <i
@@ -58,27 +54,29 @@
                         ></i> Faster entry
                     </button>
                 </div>
-                <div class="btn-group d-flex bg-white" role="group">
-                    <button
-                        (click)="newPage()"
-                        *ngIf="!previewMode && tabNumber != 2"
-                        class="btn btn-md btn-outline-dark w-100" 
-                    >
-                        <i class="fa fa-file"></i> New Page
-                    </button>
-                </div>
+                <ng-container *ngIf="!previewMode && tabNumber != 2">
+                    <div class="btn-group d-flex bg-white" role="group">
+                        <button
+                            (click)="newPage()"
+                            class="btn btn-md btn-outline-dark" 
+                        >
+                            <i class="fa fa-file"></i> New Page
+                        </button>
+                    </div>
+                </ng-container>
             </div>
-            <app-form-pages
-                *ngIf="tabNumber == 1"
-                [pages]="pages"
-                (pagesChange)="getPages($event)"
-            ></app-form-pages>
-            <app-form-info
-                *ngIf="tabNumber == 2"
-                [(pages)]="pages"
-            ></app-form-info>
-            
-            <div class="mt-5">
+            <ng-container *ngIf="tabNumber == 1">
+                <app-form-pages
+                    [pages]="pages"
+                    (pagesChange)="getPages($event)"
+                ></app-form-pages>
+            </ng-container>
+            <ng-container *ngIf="tabNumber == 2">
+                <app-form-info
+                    [(pages)]="pages"
+                ></app-form-info>
+            </ng-container>
+            <div class="mt-3">
                 <div class="card">
                     <div class="card-body">
                         <h1>VIEW</h1>
