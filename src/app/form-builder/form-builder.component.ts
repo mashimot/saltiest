@@ -64,7 +64,7 @@ export class FormBuilderComponent implements OnInit {
     }  
 
     loadFormBuilder(){
-        this.homeService.getHome()
+        this.subs = this.homeService.getHome()
             .subscribe(result => {
                 this.pages = result;
             });

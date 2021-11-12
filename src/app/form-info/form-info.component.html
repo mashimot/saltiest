@@ -19,7 +19,7 @@
                                                     </div>
                                                 </div>
                                             </div>     
-                                            <div formGroupName="html" class="col-md-2">  
+                                            <div formGroupName="html" class="col-md-5">  
                                                 <div class="form-group">
                                                     <label id="html.label">html.label</label><input type="text" formControlName="label" id="html.label" class="form-control" [class.is-invalid]="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('html.label')?.valid">
                                                     <div *ngIf="!getPagesRowsColumnsContents(indexPages,indexRows,indexColumns).at(indexContents).get('html.label')?.valid" class="invalid-feedback">
@@ -56,7 +56,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">                                             
+                                            <div class="col-md-1">                                             
                                                 <div formGroupName="options">
                                                     <div class="form-group">
                                                         <label
