@@ -7,8 +7,8 @@ import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-fo
 import { Location } from '@angular/common';
 import { CHOICE_TYPE } from '../_core/consts/choice-type.const';
 import { Content } from '../_core/model';
-import { Observable } from 'rxjs';
-import { tap, map, filter, switchMap, startWith, distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { tap, map, filter, switchMap, startWith, distinctUntilChanged, debounceTime, delay, take } from 'rxjs/operators';
 import { ContentService } from '../shared/services/content.service';
 import { ContentChoiceItemService } from '../shared/services/content-choice-item.service';
 import { FormControl } from '@angular/forms';
@@ -33,6 +33,7 @@ export class ConfigChoicesComponent implements OnInit {
     event: any;
     queryField: FormControl = new FormControl();
     choices$: Observable<any>;
+    choices: any[];
     choiceTypes: ConfigChoiceType;
     options: any = {
         size: 'lg',
@@ -40,6 +41,9 @@ export class ConfigChoicesComponent implements OnInit {
         keyboard : false,
         centered: true
     };
+
+    loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<any>(false);
+    loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
     constructor(
         private htmlElementService: HtmlElementService,
@@ -55,55 +59,60 @@ export class ConfigChoicesComponent implements OnInit {
 
     ngOnInit() {
         this.choiceTypes = CHOICE_TYPE;
-        this.activatedRoute.queryParams.subscribe(x => this.loadPage(x.page || 1));
+        //this.activatedRoute.queryParams.subscribe(x => this.loadPage(x.page || 1));
         this.choices$ = this.queryField
             .valueChanges
             .pipe(
                 startWith(''),
+                delay(0),
                 map(value => value.trim()),
+                distinctUntilChanged(),
+                tap((value) => {
+                    if(value.length > 1 || value == ''){
+                        this.loadingSubject.next(true);
+                    }
+                }),
                 filter(value => {
-                    if(value.length > 1){
-                        return true
+                    if(value == '' || value.length > 1){
+                        return true;
                     }
 
-                    return true;
+                    return false;
                 }),
-                distinctUntilChanged(),
                 debounceTime(1000),
                 switchMap((value) => {
+                    console.log('value', value)
                     if(value == ''){
                         return this.htmlElementService
-                            .getOptionChoices()
-                            .pipe(
-                                tap(value => console.log('1', value)),
-                                map((result) => {
-                                    return result.paginate;
-                                })
-                            );
+                            .getOptionChoices();
                     }
 
-                    let newData = [];
                     return this.htmlElementService
                         .getOptionChoices()
                         .pipe(
-                            tap(value2 => console.log('2', value2)),
+                            tap((d) => {
+                                console.log('jogos', d);
+                            }),
                             map((result: any) => {
-                                let aux = result.paginate.data;
-                                aux.forEach((data) => {
+                                const paginateData = result.paginate.data;
+                                let newData = [];
+
+                                paginateData.forEach((data) => {
                                     if((data.description.toLowerCase()).includes(value.toLowerCase())){
                                         newData.push(data)
                                     }
                                 });
-    
+                                console.log('paginateData', paginateData, 'newData', newData);
+
                                 result.paginate.data = newData;
                 
                                 return result;
-                            }),
-                            map((result) => {
-                                return result.paginate;
                             })
                         );
-                })
+                }),
+                tap(() => {
+                    this.loadingSubject.next(false);
+                }),
             );
     }
 
@@ -130,51 +139,35 @@ export class ConfigChoicesComponent implements OnInit {
         
         modal.componentInstance.content = content;
         modal.componentInstance.index = index;
-        modal.componentInstance.emitData.subscribe($e => {
-            if($e.choices.length > 0){
-                const groups  = $e.choices.map(choice => choice.text);
-
-                if(index == null){
+        modal.componentInstance.emitData
+            .subscribe($e => {
+                if($e.choices.length > 0){
+                    const groups  = $e.choices.map(choice => choice.text);
                     this.choices$ = this.choices$
                         .pipe(
                             map((result) => {
-                                content.html.choices = $e.choices;
-                                content.description = groups.join('|');
+                                if(index == null){
+                                    content.html.choices = $e.choices;
+                                    content.description = groups.join('|');
+                                    result.paginate.data.push(content)
 
-                                result.data = [
-                                    ...result.data,
-                                    content
-                                ];
+                                    return result;
+                                }
                                 
+                                result.paginate.data[index].html.choices = $e.choices;
                                 return result;
                             }),
-                            tap(x => console.log('xx', x))
-                        );
-                    return;
+                            tap(x => console.log(x))
+                        )
                 }
-
-                this.choices$ = this.choices$
-                    .pipe(
-                        map(result => {
-                            result.data[index].html.choices = $e.choices;
-                            return result;
-                        }),
-                        tap(x => console.log(x))
-                    )
-            }
-            modal.dismiss();
-        });
+                modal.dismiss();
+            });
     }
 
     private loadPage(page: number) {
 
         this.choices$ = this.htmlElementService
-            .getOptionChoices()
-            .pipe(
-                map((result) => {
-                    return result.paginate;
-                })
-            );
+            .getOptionChoices();
         /*this.choices$ = this.htmlElementService
         //.queryParams({ page: page })
         .getStaticOptionChoices()

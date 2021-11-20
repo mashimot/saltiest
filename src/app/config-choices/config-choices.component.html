@@ -17,12 +17,12 @@
 		<label for="query__field">Procurar</label>
 		<input type="text" id="query__field" [formControl]="queryField" class="form-control">
 	</div>
-	
-	<ng-template #loading>
-		Loading...
-	</ng-template>
+
+	<div *ngIf="(loading$ | async) as loading">
+		<h1>Loading...</h1>
+	</div>
 	<div 
-		*ngIf="(choices$ | async) as choices; else loading"
+		*ngIf="(choices$ | async)?.paginate as choices;"
 		dragula="contents"
 		[(dragulaModel)]="choices.data"
 		class="menu-content-sortable no-gutters collapse m-1 show"

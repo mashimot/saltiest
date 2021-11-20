@@ -36,27 +36,29 @@ export class FormConfigComponent implements OnInit {
         const tag = this.content.html.tag;
         this.render = this.formContentConfig.render()[tag];
         this.configForm = this.fb.group({
-            id: [this.content_id, []],
-            name: [this.content.name, []],
+            id: [null],
+            name: [null],
             html: this.fb.group({
-                'tag': [this.content.html.tag, []],
-                'content_choice_id': [this.content.html.content_choice_id, []],
+                'tag': [null],
+                'content_choice_id': [null],
                 'choices': this.fb.array([]),
-                'category': [this.content.html.category, []],
-                //'fields': [this.content.html.fields, []],
-                'label': [this.content.html.label, []],
-                'src': [this.content.html.src, []],
-                'text': [this.content.html.text, []],
-                'data': [this.content.html.data]
+                'category': [null],
+                //'fields': [this.content.html.fields],
+                'label': [null],
+                'src': [null],
+                'text': [null],
+                'data': [null]
             }),
             'type': this.fb.group({
-                datatype: ['', []],
-                length: ['', []],
+                datatype: [null],
+                length: [null],
             }),
             'options': this.fb.group({
-                'nullable': [true, []]
+                'nullable': [null]
             })
-        });        
+        });
+
+        this.configForm.patchValue(this.content);
     }
 
     register(){

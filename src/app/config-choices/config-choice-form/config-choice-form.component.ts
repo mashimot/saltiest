@@ -8,6 +8,7 @@ import { DragulaService } from 'ng2-dragula';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Content } from 'src/app/_core/model';
 
 // Array Validators
 export class ArrayValidators {
@@ -44,10 +45,10 @@ export class ConfigChoiceFormComponent implements OnInit {
 	choiceForm: FormGroup;
 	contentChoiceItemIdToUpdate = null;
 	contentChoiceId: number = -1;
-	dbops: DBOperation;
+	//dbops: DBOperation;
     text: string = "";
     subs = new Subscription();
-    @Input() content;
+    @Input() content: Content;
     @Input() parentFormGroup: FormGroup | undefined;
     @Output() emitData = new EventEmitter();
 
@@ -56,7 +57,7 @@ export class ConfigChoiceFormComponent implements OnInit {
 		private contentChoiceItemService: ContentChoiceItemService,
         private route: ActivatedRoute,
         private location: Location,
-		private fb: FormBuilder,
+		private formBuilder: FormBuilder,
         private dragulaService: DragulaService,
         private modal: NgbActiveModal
 	) { 
@@ -70,35 +71,38 @@ export class ConfigChoiceFormComponent implements OnInit {
   	ngOnInit() {
         //this.dbops = DBOperation.create;
         const choices = this.content.html.choices;
-        this.choiceForm =  this.fb.group({
-            'choices': this.fb.array(
-                [],
-                [
-                    ArrayValidators.minLength(1)
-                ]
-            )
+        this.choiceForm =  this.formBuilder.group({
+            'choices': this.formBuilder.array([])
         });
 
         if(typeof this.parentFormGroup != 'undefined'){
             this.choiceForm = this.parentFormGroup.get('html') as FormGroup;
         }
 
+        this.choiceForm.get('choices')
+            .setValidators(
+                [
+                    ArrayValidators.minLength(1)
+                ]
+            );
         choices.forEach(choice => {
             let items = this.choiceForm.get('choices') as FormArray;
-            items.push(this.setChoice(choice.text, choice.value));
+            items.push(
+                this.createChoice(choice.text, choice.value)
+            );
         });
 
         this.subs.add(
             this.dragulaService.dropModel('sortableChoices')
-            .subscribe(
-                ({ sourceModel, targetModel, item }) => {
-                    this.choices.controls = sourceModel;
-                    this.text = this.elementToString();
-                }
-            )
+                .subscribe(
+                    ({ sourceModel, targetModel, item }) => {
+                        this.choices.controls = sourceModel;
+                        this.text = this.elementToString();
+                    }
+                )
         );
         this.text = this.elementToString();
-		/*this.choiceForm = this.fb.group({
+		/*this.choiceForm = this.formBuilder.group({
 			'id': [''],
 			'content_choice_id': ['', [
 			]],
@@ -236,7 +240,7 @@ export class ConfigChoiceFormComponent implements OnInit {
     }
 
     public addChoice(){
-        this.choices.push(this.setChoice());
+        this.choices.push(this.createChoice());
     }
 
     public cancel(){
@@ -244,92 +248,86 @@ export class ConfigChoiceFormComponent implements OnInit {
     }
 
     public save(){
+        console.log(this.choices.value);
         this.emitData.emit(this.choiceForm.value);
         this.modal.close();        
     }
 
     public stringToElement(): void{
-        if (this.text.length > 0) {
-              const string = this.text.split('\n');
-              const cloneChoices = JSON.parse(JSON.stringify(this.choices.value));
-  
-              for (let i = 0; i < string.length; i++) {
-                    let str = string[i];
-                    let firstMatch = str;
-                    let secondMatch = '';
-                    if(str.indexOf('|') !== -1){
-                        let match = str.split('|');
-                        firstMatch = match[0];
-                        secondMatch = str.substring(firstMatch.length + 1); //return '' if '|' was not found
-                    }
-                    let text  = typeof firstMatch !== 'undefined'
-                        ? firstMatch
-                        : '';
-                    let value = typeof secondMatch !== 'undefined'
-                        ? secondMatch
-                        : '';
-    
-                    this.choices.removeAt(i);
-                    if (typeof this.choices.controls[i] === 'undefined') {
-                        this.choices.push(this.setChoice(text, value));
-                    } else {
-                        this.choices.controls[i].patchValue({
-                            text: text,
-                            value: value
-                        });
-                    }
-              }
-          } else {
-              while (this.choices.length !== 0) {
-                  this.choices.removeAt(0);
-              }
-          }
-      }
-  
-      public removeContent($index: number) {
-          this.choices.removeAt($index);
-          this.text = this.elementToString();
-      }
-  
-      public cloneThis(name: string){
-            const choicesLength = this.choices.value.length;
-            if(choicesLength > 0){
-                let cloneThisObjectName = name === 'value'
-                    ? 'text'
-                    : 'value';
-                for(let i = 0; i < choicesLength; i++){
-                    this.choices.value[i][name] = this.choices.value[i][cloneThisObjectName];
-                }
-                this.text = this.elementToString();
-                this.stringToElement();
-          }
-      }
-  
-      public elementToString(): string {
-          let string = '';
-          //fire the `valueChanges` manually
-          this.choices.updateValueAndValidity({ onlySelf: false, emitEvent: true });
-          let e = this.choices.value;
-  
-          if(typeof e !== 'undefined'){
-              if (e.length > 0){
-                  for (let i = 0; i < e.length; i++){
-                      let str = e[i];
-                      let pipe = (str.value === '')? '' : '|';
-                      let element = {
-                          text: typeof str.text !== 'undefined'? str.text : '',
-                          value: typeof str.value !== 'undefined'? str.value : '',
-                      };
-  
-                      string += (element.text + pipe + element.value) + (i === e.length - 1 ? '' : "\n");
-                  }
-              } 
-          }
-          return string;
-      }
+        this.choices.clear();
 
-    private setChoice(text: string = '', value: string = '') : FormGroup {
-        return this.fb.group({
+        if (this.text.length > 0) {
+            const string = this.text.split('\n');
+
+            for(let i = 0; i < string.length; i++){
+                const str = string[i];
+                let firstMatch = str;
+                let secondMatch = '';
+                if(str.indexOf('|') !== -1){
+                    let match = str.split('|');
+                    firstMatch = match[0];
+                    secondMatch = str.substring(firstMatch.length + 1); //return '' if '|' was not found
+                }
+                const text  = typeof firstMatch !== 'undefined'
+                    ? firstMatch
+                    : '';
+                const value = typeof secondMatch !== 'undefined'
+                ? secondMatch
+                : '';
+                
+                this.choices.push(this.createChoice(text, value));
+            }
+        }
+    }
+
+    public removeContent($index: number) {
+        this.choices.removeAt($index);
+        this.text = this.elementToString();
+    }
+  
+    public cloneThis(name: string){
+        const choicesLength = this.choices.value.length;
+        if(choicesLength > 0){
+            let cloneThisObjectName = name === 'value'
+                ? 'text'
+                : 'value';
+            for(let i = 0; i < choicesLength; i++){
+                this.choices.value[i][name] = this.choices.value[i][cloneThisObjectName];
+            }
+            this.text = this.elementToString();
+            this.stringToElement();
+        }
+    }
+  
+    public elementToString(): string {
+        //let string = '';
+        let string = [];
+        //fire the `valueChanges` manually
+        this.choices.updateValueAndValidity({ onlySelf: false, emitEvent: true });
+        let e = this.choices.value;
+
+        if(typeof e !== 'undefined' && e.length > 0){
+            for (let i = 0; i < e.length; i++){
+                let str = e[i];
+                let pipe = str.value === ''
+                    ? ''
+                    : '|';
+                let element = {
+                    text: typeof str.text !== 'undefined'? str.text : '',
+                    value: typeof str.value !== 'undefined'? str.value : '',
+                };
+
+                string.push(
+                    `${element.text}${pipe}${element.value}`
+                );
+            }
+        }
+        
+        return string.join("\n");
+    }
+
+    private createChoice(text: string = '', value: string = '') : FormGroup {
+        return this.formBuilder.group({
             text: [text, [
                 Validators.required,
                 Validators.minLength(1), 

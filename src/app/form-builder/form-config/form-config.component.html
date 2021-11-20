@@ -43,15 +43,16 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button
-            type="button" 
-            class="btn btn-outline-dark" 
-            (click)="activeModal.close('Close click')"
-        >Close</button>
-        <button
-            type="submit"
-            [disabled]="configForm.invalid"
-            class="btn btn-outline-success" 
-        >Save </button>
+        <div class="btn-group float-right">
+            <button 
+                class="btn btn-outline-danger" 
+                (click)="activeModal.close('Close click')"
+            >Cancel</button>						
+            <button 
+                type="submit"
+                class="btn btn-outline-primary" 
+                [disabled]="configForm.invalid"
+            >Save</button>
+        </div>
     </div>
 </form>

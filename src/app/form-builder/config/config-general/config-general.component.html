@@ -1,5 +1,5 @@
-<div class="form-group" [formGroup]="parentFormGroup">
-	<div formGroupName="options">
+<div [formGroup]="parentFormGroup">
+	<div class="form-group" formGroupName="options">
 		<label>
 			<div class="checkbox-inline">
 				<input
@@ -17,17 +17,17 @@
 			</div>
 		</label>
 	</div>	
-</div>
-<div class="form-group" [formGroup]="parentFormGroup.controls.html">
-	<label>Description:</label>
-	<input
-		type="text"
-		formControlName="label"
-		class="form-control"
-		[ngClass]="{ 'is-invalid': label.invalid }"
-	/>
-	<div *ngIf="label.invalid || label.touched" class="invalid-feedback">
-		<div *ngIf="label.errors?.required">You did not enter a field</div>
-		<div *ngIf="label.errors?.minlength">Your field is too short</div>
+	<div class="form-group" formGroupName="html">
+		<label>Description:</label>
+		<input
+			type="text"
+			formControlName="label"
+			class="form-control"
+			[ngClass]="{ 'is-invalid': label.invalid }"
+		/>
+		<div *ngIf="label.invalid || label.touched" class="invalid-feedback">
+			<div *ngIf="label.errors?.required">You did not enter a field</div>
+			<div *ngIf="label.errors?.minlength">Your field is too short</div>
+		</div>
 	</div>
 </div>

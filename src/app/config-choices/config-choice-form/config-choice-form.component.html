@@ -27,7 +27,8 @@
 			>
 				<div *ngFor="let choice of choices.controls; let i = index" 
 					[formGroupName]="i" 
-					class="sortable-item-contents">
+					class="sortable-item-contents"
+				>
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
@@ -85,25 +86,27 @@
 		<section class="mt-2">
 			<div class="form-group">
 				<label for="fast-entry">Fast Entry</label>
-				<textarea id="fast-entry"
+				<textarea
+					id="fast-entry"
+					class="form-control"
+					style="resize: none; height: 210px;"
 					[(ngModel)]="text"
 					(ngModelChange)="stringToElement()"
-					class="form-control"
-					style="resize: none; height: 210px;"></textarea>
+				></textarea>
 			</div>
-			<div class="mt-2">		
-				<div *ngIf="!parentFormGroup">
-					<div class="btn-group float-right">
-						<button 
+			<ng-container class="mt-2" *ngIf="!parentFormGroup">	
+				<div class="btn-group float-right">
+					<button 
 						class="btn btn-outline-danger" 
-						(click)="cancel()">Cancel</button>						
-						<button 
+						(click)="cancel()"
+					>Cancel</button>						
+					<button 
 						class="btn btn-outline-primary" 
 						[disabled]="choiceForm.invalid"
-						(click)="save()">Save</button>
-					</div>					
+						(click)="save()"
+					>Save</button>
 				</div>	
-			</div>
+			</ng-container>
 		</section>
 	</div>
 </div>
