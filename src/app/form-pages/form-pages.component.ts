@@ -10,7 +10,7 @@ import { ColumnService } from '../shared/services/column.service';
 import { ActivatedRoute } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { HomeService } from '../shared/services/home.service';
-import { map, tap } from 'rxjs/operators';
+import { Page } from '../_core/model';
 
 @Component({
     selector: 'app-form-pages',
@@ -22,7 +22,7 @@ export class FormPagesComponent implements OnInit {
     @Input() pages;
     @Output() pagesChange = new EventEmitter();
 
-    pages$: Observable<any[]>;
+    pages$: Observable<Page[]>;
     config: {
         previewMode: boolean
     };

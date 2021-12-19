@@ -10,10 +10,10 @@ import { Validator, AbstractControl, NG_VALIDATORS, ValidatorFn, ValidationError
 	}]
 })
 export class SumBeEqualsToDirective {
-@Input() sumBeEqualsTo;
+	@Input() sumBeEqualsTo;
 
-constructor() { 
-}
+	constructor() { 
+	}
 
 	validate(control: AbstractControl): ValidationErrors | null {
 		if (typeof control.value != 'undefined' && control.value != null) {

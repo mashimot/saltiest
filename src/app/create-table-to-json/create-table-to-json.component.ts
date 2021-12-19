@@ -3,6 +3,8 @@ import { CreateTableToJsonService } from '../_services/create-table-to-json.serv
 import { BootstrapGridSystemService } from '../_services/bootstrap-grid-system.service'
 import { DatabaseEngine } from '../shared/services/database-engine.service';
 import { Injectable } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { CustomValidators } from 'src/app/shared/validators/CustomValidators';
 
 @Injectable({
 	providedIn: 'root'
@@ -166,8 +168,7 @@ export class CreateTableToJsonComponent implements OnInit {
 	@Input() tableName: string;
 	@Output() schemasChange = new EventEmitter();
 	@ViewChild('popContent', {static: false}) popContent: ElementRef;
-	
-	gridModel: string;
+	form: FormGroup;
 	errors: Object = {};
 	primaryKeys: any[];
 	options: {
@@ -187,8 +188,8 @@ export class CreateTableToJsonComponent implements OnInit {
 
 
 	constructor(
+		private formBuilder: FormBuilder
 	) {
-		this.gridModel = '4 4 4';
 		this.errors = {};
 	}
 
@@ -196,14 +197,27 @@ export class CreateTableToJsonComponent implements OnInit {
 	ngOnInit() {
 		let database = DatabaseEngine.getDatabaseEngines();
 		this.sql = database;			
-		this.options = {
-			database: {
-				engine: 'oracle'
-			}
-		};
-		this.setDDL(this.options.database);
 		let s = new Silabalize;
 		s.silabalize();
+
+		this.form = this.formBuilder.group({
+			gridModel: ['4 4 4', [
+				Validators.required,
+				Validators.minLength(2),
+				Validators.pattern(/^(\s*(0?[1-9]|[1-9][0-9])+\s*)+$/),
+				CustomValidators.sumBeEqualsTo(12)
+			]],
+			options: this.formBuilder.group({
+				ddl: ['', [
+					Validators.required
+				]],
+				database: this.formBuilder.group({
+					logo: [''],
+					engine: ['oracle']
+				})
+			})
+		});
+		this.setDDL(this.form.get('options.database').value);
 	}
 
 	public setDDL(database){
@@ -211,8 +225,7 @@ export class CreateTableToJsonComponent implements OnInit {
 			return item.database.engine == database.engine;
 		});
 		if(index != -1){
-			this.options = this.sql[index];
-			console.log(this.options);
+			this.form.get('options').patchValue(this.sql[index]);
 		}
 	}
 
@@ -226,17 +239,14 @@ export class CreateTableToJsonComponent implements OnInit {
 
 	public createTable() {
 		let ct = new CreateTableToJsonService();
-		let sql = this.sql.find(item => {
-			return item.database.engine == this.options.database.engine;
-		});
-		ct.setDataBase(sql.database.engine);
-		ct.setSql(sql.ddl);
+		ct.setDataBase(this.f.get('options.database.engine').value);
+		ct.setSql(this.f.get('options.ddl').value);
 		ct.parse();
 		this.errors = ct.getError();
 		if (!ct.hasError()) {
 			let schemas = ct.getSchemas();
 			schemas = schemas.map(schema => {
-				let bootstrapGridSystem = new BootstrapGridSystemService(schema.data, `${this.gridModel}\n`);
+				let bootstrapGridSystem = new BootstrapGridSystemService(schema.data, `${this.gridModel.value}\n`);
 				bootstrapGridSystem.convert();
 				schema.pages = bootstrapGridSystem.getPage();
 
@@ -246,4 +256,11 @@ export class CreateTableToJsonComponent implements OnInit {
 		}
 	}
 
+	get f(){
+		return this.form;
+	}
+
+	get gridModel(): FormGroup{
+		return this.form.get('gridModel') as FormGroup;
+	}
 }

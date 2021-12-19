@@ -20,26 +20,26 @@ export class HtmlElementService {
     getTags() {
         return this.getHtmlElements()
           .pipe(
-            map((htmlElements: any) => {
-                const elements = htmlElements.reduce((previous, current) => {
-                    if (
-                        current.html &&
-                        current.html.category
-                    ) {
-                        if (current.html.category === this.category) {
-                            previous[current.html.tag] = null;
+                map((htmlElements: any) => {
+                    const elements = htmlElements.reduce((acc, item) => {
+                        if (
+                            acc.html &&
+                            acc.html.category
+                        ) {
+                            if (item.html.category === this.category) {
+                                acc[item.html.tag] = null;
+                            }
                         }
-                    }
 
-                    return previous;
-                }, {});
-                console.log('elements', elements);
-                return elements;
-            }),
-            map(elements => {
-                return Object.keys(elements);
-            }),
-            tap(result => console.log(result))
+                        return acc;
+                    }, {});
+                    console.log('elements', elements);
+                    return elements;
+                }),
+                map(elements => {
+                    return Object.keys(elements);
+                }),
+                tap(result => console.log(result))
           )
         //return of(Object.keys(tags));
     }

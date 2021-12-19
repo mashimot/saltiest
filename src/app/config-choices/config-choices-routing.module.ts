@@ -23,8 +23,8 @@ const routes: Routes = [
   },
   { 
     path: ':id/edit', 
-    canActivate: [AuthGuard],
-    component: ConfigChoiceFormComponent
+    component: ConfigChoiceFormComponent,
+    canActivate: [AuthGuard]
   }
 ];
 

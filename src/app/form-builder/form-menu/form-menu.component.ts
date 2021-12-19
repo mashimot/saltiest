@@ -3,9 +3,11 @@ import { BootstrapGridSystemService } from '../../_services/bootstrap-grid-syste
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoicesComponent } from '../../config-choices/config-choices.component';
 import { Observable } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, distinctUntilChanged } from 'rxjs/operators';
 import { ToolService } from 'src/app/shared/services/tool.service';
 import { Column, Content } from 'src/app/_core/model';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { CustomValidators } from 'src/app/shared/validators/CustomValidators';
 
 @Component({
     selector: 'app-form-menu',
@@ -14,7 +16,6 @@ import { Column, Content } from 'src/app/_core/model';
 })
 export class FormMenuComponent implements OnInit {
     tools$: Observable<any>;
-    //categories: Array<any>;
     pageModel: object; 
     grids: Observable<{
         grid: string,
@@ -23,6 +24,7 @@ export class FormMenuComponent implements OnInit {
     bootstrap: Array<{
         grid: string
     }>;
+    form: FormGroup;
     optionType: number = 1;
     options: any = {
         size: 'lg',
@@ -32,6 +34,7 @@ export class FormMenuComponent implements OnInit {
     };
 
     constructor(
+        private formBuilder: FormBuilder,
         private toolService: ToolService,
         private modalService: NgbModal
     ) {}
@@ -47,6 +50,23 @@ export class FormMenuComponent implements OnInit {
                 `7 5`
             ].join("\n")
         }];
+        this.form = this.formBuilder.group({
+            gridModel: [this.bootstrap[0].grid, [
+                Validators.required,
+                CustomValidators.sumBeEqualsTo(12),
+                Validators.pattern(/^(\s*(0?[1-9]|[1-9][0-9])+\s*)+$/),
+                Validators.minLength(2)
+            ]]
+        });
+
+        this.gridModel.valueChanges
+            .pipe(
+                //distinctUntilChanged()
+            ).subscribe(value => {
+                this.bootstrap[0] = {
+                    grid: value
+                }
+            });
         this.tools$ = this.toolService
             .getTools()
             .pipe(
@@ -67,6 +87,14 @@ export class FormMenuComponent implements OnInit {
     editChoices(content: Content): void{
         let m = this.modalService.open(ConfigChoicesComponent, this.options);
         m.componentInstance.content = content;
+    }
+
+    get f(): FormGroup{
+        return this.form;
+    }
+
+    get gridModel(): FormControl{
+        return this.f.get('gridModel') as FormControl;
     }
 }
 

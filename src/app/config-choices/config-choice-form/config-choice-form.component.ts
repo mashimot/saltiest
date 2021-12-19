@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, FormControl } from '@angular/forms';
 import { DBOperation } from 'src/app/shared/enum';
 import { ContentService } from 'src/app/shared/services/content.service';
 import { ContentChoiceItemService } from 'src/app/shared/services/content-choice-item.service';
@@ -9,6 +9,7 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Content } from 'src/app/_core/model';
+import { tap } from 'rxjs/operators';
 
 // Array Validators
 export class ArrayValidators {
@@ -46,17 +47,18 @@ export class ConfigChoiceFormComponent implements OnInit {
 	contentChoiceItemIdToUpdate = null;
 	contentChoiceId: number = -1;
 	//dbops: DBOperation;
-    text: string = "";
+    //text: string = "";
+    text: FormControl = new FormControl('');
     subs = new Subscription();
     @Input() content: Content;
     @Input() parentFormGroup: FormGroup | undefined;
     @Output() emitData = new EventEmitter();
 
 	constructor(
-		private contentService: ContentService,
+		/*private contentService: ContentService,
 		private contentChoiceItemService: ContentChoiceItemService,
         private route: ActivatedRoute,
-        private location: Location,
+        private location: Location,*/
 		private formBuilder: FormBuilder,
         private dragulaService: DragulaService,
         private modal: NgbActiveModal
@@ -70,7 +72,9 @@ export class ConfigChoiceFormComponent implements OnInit {
 
   	ngOnInit() {
         //this.dbops = DBOperation.create;
-        const choices = this.content.html.choices;
+        const choices = this.content && this.content.html && this.content.html.choices  
+            ? this.content.html.choices
+            : [];
         this.choiceForm =  this.formBuilder.group({
             'choices': this.formBuilder.array([])
         });
@@ -97,11 +101,18 @@ export class ConfigChoiceFormComponent implements OnInit {
                 .subscribe(
                     ({ sourceModel, targetModel, item }) => {
                         this.choices.controls = sourceModel;
-                        this.text = this.elementToString();
+                        this.text.patchValue(this.elementToString());
                     }
                 )
         );
-        this.text = this.elementToString();
+        this.text.patchValue(this.elementToString());
+        this.text.valueChanges
+            .subscribe(value => {
+                this.stringToElement();
+            });
+
+
+
 		/*this.choiceForm = this.formBuilder.group({
 			'id': [''],
 			'content_choice_id': ['', [
@@ -236,7 +247,9 @@ export class ConfigChoiceFormComponent implements OnInit {
     }*/
     
     public choiceChanged(): void {
-        this.text = this.elementToString();        
+        this.text.patchValue(this.elementToString(), {
+            emitEvent: false
+        });
     }
 
     public addChoice(){
@@ -255,9 +268,9 @@ export class ConfigChoiceFormComponent implements OnInit {
 
     public stringToElement(): void{
         this.choices.clear();
-
-        if (this.text.length > 0) {
-            const string = this.text.split('\n');
+        console.log('t', this.text);
+        if (this.text.value.length > 0) {
+            const string = this.text.value.split('\n');
 
             for(let i = 0; i < string.length; i++){
                 const str = string[i];
@@ -272,9 +285,9 @@ export class ConfigChoiceFormComponent implements OnInit {
                     ? firstMatch
                     : '';
                 const value = typeof secondMatch !== 'undefined'
-                ? secondMatch
-                : '';
-                
+                    ? secondMatch
+                    : '';
+                    
                 this.choices.push(this.createChoice(text, value));
             }
         }
@@ -282,7 +295,7 @@ export class ConfigChoiceFormComponent implements OnInit {
 
     public removeContent($index: number) {
         this.choices.removeAt($index);
-        this.text = this.elementToString();
+        this.text.patchValue(this.elementToString());
     }
   
     public cloneThis(name: string){
@@ -294,27 +307,27 @@ export class ConfigChoiceFormComponent implements OnInit {
             for(let i = 0; i < choicesLength; i++){
                 this.choices.value[i][name] = this.choices.value[i][cloneThisObjectName];
             }
-            this.text = this.elementToString();
+            this.text.patchValue(this.elementToString());
             this.stringToElement();
         }
     }
   
     public elementToString(): string {
-        //let string = '';
         let string = [];
+
         //fire the `valueChanges` manually
         this.choices.updateValueAndValidity({ onlySelf: false, emitEvent: true });
-        let e = this.choices.value;
+        const choices = this.choices.value;
 
-        if(typeof e !== 'undefined' && e.length > 0){
-            for (let i = 0; i < e.length; i++){
-                let str = e[i];
-                let pipe = str.value === ''
+        if(typeof choices !== 'undefined' && choices.length > 0){
+            for (let i = 0; i < choices.length; i++){
+                let choice = choices[i];
+                let pipe = choice.value === ''
                     ? ''
                     : '|';
                 let element = {
-                    text: typeof str.text !== 'undefined'? str.text : '',
-                    value: typeof str.value !== 'undefined'? str.value : '',
+                    text: typeof choice.text !== 'undefined'? choice.text : '',
+                    value: typeof choice.value !== 'undefined'? choice.value : '',
                 };
 
                 string.push(

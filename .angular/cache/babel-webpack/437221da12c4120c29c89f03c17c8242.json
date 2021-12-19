@@ -1,0 +1,1 @@
+{"ast":null,"code":"'use strict';\n\nvar eventmap = [];\nvar eventname = '';\nvar ron = /^on/;\n\nfor (eventname in global) {\n  if (ron.test(eventname)) {\n    eventmap.push(eventname.slice(2));\n  }\n}\n\nmodule.exports = eventmap;","map":null,"metadata":{},"sourceType":"script"}

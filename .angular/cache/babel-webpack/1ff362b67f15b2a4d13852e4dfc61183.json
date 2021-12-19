@@ -1,0 +1,1 @@
+{"ast":null,"code":"var si = typeof setImmediate === 'function',\n    tick;\n\nif (si) {\n  tick = function tick(fn) {\n    setImmediate(fn);\n  };\n} else {\n  tick = function tick(fn) {\n    setTimeout(fn, 0);\n  };\n}\n\nmodule.exports = tick;","map":null,"metadata":{},"sourceType":"script"}

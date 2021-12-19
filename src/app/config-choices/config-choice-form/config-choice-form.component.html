@@ -90,8 +90,7 @@
 					id="fast-entry"
 					class="form-control"
 					style="resize: none; height: 210px;"
-					[(ngModel)]="text"
-					(ngModelChange)="stringToElement()"
+					[formControl]="text"
 				></textarea>
 			</div>
 			<ng-container class="mt-2" *ngIf="!parentFormGroup">	

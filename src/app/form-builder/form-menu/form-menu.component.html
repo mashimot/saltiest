@@ -1,46 +1,41 @@
 
 <div class="card bg-white">
 	<div class="card-body">
-		<fieldset id="grid-menu" class="border border-dark p-1">
-			<legend class="text-center w-auto">Grid System</legend>
-			<div
-				name="bootstrap_container"
-				dragula="rowSortable"
-				[(dragulaModel)]="bootstrap"
-				class="menu-row-sortable"
-			>
-				<div *ngFor="let b of bootstrap; let bIndex = index;">
-					<form #f="ngForm">
+		<form [formGroup]="form">
+			<fieldset id="grid-menu" class="border border-dark p-1">
+				<legend class="text-center w-auto">Grid System</legend>
+				<div
+					name="bootstrap_container"
+					dragula="rowSortable"
+					[(dragulaModel)]="bootstrap"
+					class="menu-row-sortable"
+				>
+					<div *ngFor="let b of bootstrap; let bIndex = index;">
 						<div [hidden]="f.invalid" [ngStyle]="{ cursor: 'move' }">
-							<div class="row-handle p-1 mx-1 mt-1 border-bottom border-dark">
-								<i class="fa fa-arrows-alt fa-1x row-handle"></i><strong class="row-handle"> GRID</strong>
+							<div class="row-handle p-1 mx-1 mt-1 mb-1 border-bottom border-dark">
+								<i class="fa fa-arrows-alt fa-1x row-handle"></i>
+								<strong class="row-handle"> GRID</strong>
 							</div>
 						</div>
-						<div class="input-group input-group-sm">
-							<textarea type="text"
-								(blur)="change(bIndex)"
-								[(ngModel)]="b.grid"
-								name="grid"
-								[ngClass]="{ 'is-invalid': f.controls.grid?.invalid }"
-								class="form-control form-control-sm"
-								[ngStyle]="{ cursor: 'pointer' }"
-								sumBeEqualsTo="12"
-								minlength="2"
-								pattern="^(\s*(0?[1-9]|[1-9][0-9])+\s*)+$"
-								required
-								rows="5"
-							></textarea>
-							<div *ngIf="f.controls.grid?.invalid || f.controls.grid?.touched" class="invalid-feedback">
-								<div *ngIf="f.controls.grid?.errors?.required ">* Enter with your grid.</div>
-								<div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers (except only zero) and space.</div>
-								<div *ngIf="f.controls.grid?.errors?.minlength">* Min. Length is {{ f.controls.grid?.errors.minlength.requiredLength }}.</div>
-								<div *ngIf="f.controls.grid?.errors?.isSumInvalid">* The sum of the each line must be equals to {{ f.controls.grid.errors?.sumBeEqualsTo }}.</div>
-							</div>
+					</div>
+					<div class="input-group input-group-sm">
+						<textarea type="text"
+							formControlName="gridModel"
+							class="form-control form-control-sm"
+							[ngClass]="{ 'is-invalid': gridModel?.invalid }"
+							[ngStyle]="{ cursor: 'pointer' }"
+							rows="5"
+						></textarea>
+						<div *ngIf="gridModel?.invalid || gridModel?.touched" class="invalid-feedback">
+							<div *ngIf="gridModel?.hasError('required')">* Enter with your grid.</div>
+							<div *ngIf="gridModel?.hasError('pattern')">* Allows only numbers (except only zero) and space.</div>
+							<div *ngIf="gridModel?.hasError('minlength')">* Min. Length is {{ gridModel?.errors.minlength.requiredLength }}.</div>
+							<div *ngIf="gridModel?.hasError('isSumInvalid')">* The sum of the each line must be equals to {{ gridModel.errors?.sumBeEqualsTo }}.</div>
 						</div>
-					</form>
+					</div>
 				</div>
-			</div>
-		</fieldset>
+			</fieldset>
+		</form>
 		<fieldset id="tool-menu" class="border border-dark p-1" *ngIf="(tools$ | async) as tools">
 			<legend class="text-center w-auto">Tools</legend>
 			<div *ngFor="let tool of tools | keyvalue; let toolCategoryIndex = index;">

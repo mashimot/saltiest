@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var CHOICE_TYPE = {\n  SELECT: {\n    type: 'select',\n    value: 3,\n    icon: 'fas fa-box-open'\n  },\n  RADIO: {\n    type: 'radio',\n    value: 1,\n    icon: 'fas fa-check-circle'\n  },\n  CHECKBOX: {\n    type: 'checkbox',\n    value: 2,\n    icon: 'fas fa-check-square'\n  }\n};","map":null,"metadata":{},"sourceType":"module"}

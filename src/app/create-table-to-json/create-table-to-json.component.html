@@ -1,5 +1,6 @@
 
-<form class="card" #f="ngForm" (ngSubmit)="onSubmit()">
+
+<form class="card" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="card-header">
         <h6 class="text-center text-bold">Create Table to Form</h6>
     </div>
@@ -7,11 +8,11 @@
         <div class="card-title">
             Select a Database Engine
         </div>
-        <div class="row">
+        <div formGroupName="options" class="row">
             <div class="col-md-12">
                 <div class="dropdown">
                     <a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-link">
-                        <img [src]="options.database.logo" width="50" height="50" class="mx-auto w-100">
+                        <img [src]="f.get('options.database.logo').value" width="50" height="50" class="mx-auto w-100">
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <li *ngFor="let s of sql" (click)="setDDL(s.database)" class="dropdown-item p-1" [ngStyle]="{'cursor': 'pointer'}">
@@ -20,7 +21,7 @@
                     </ul>    
                 </div>
                 <textarea
-                    [(ngModel)]="options.ddl"
+                    formControlName="ddl"
                     name="string"
                     [ngClass]="{ 'is-invalid' : objectLength() > 0 }"
                     class="form-control form-control-sm h-20 mt-4"
@@ -43,21 +44,17 @@
         <div class="form-group mt-1">
             <label for="form_ct_grid">Bootstrap Grid</label>
             <input type="text"
+                formControlName="gridModel"
                 id="form_ct_grid"
-                [(ngModel)]="gridModel"
-                name="grid"
-                [ngClass]="{ 'is-invalid': f.controls.grid?.invalid }"
                 class="form-control form-control-sm"
+                [ngClass]="{ 'is-invalid': gridModel?.invalid }"
                 [ngStyle]="{ cursor: 'pointer' }"
-                sumBeEqualsTo="12"
-                minlength="2"
-                pattern="[0-9 \n\t]+"
-                required>
-            <div *ngIf="f.controls.grid?.invalid || f.controls.grid?.touched" class="invalid-feedback">
-                <div *ngIf="f.controls.grid?.errors?.required ">* Enter with your grid.</div>
-                <div *ngIf="f.controls.grid?.errors?.pattern">* Allows only numbers and space.</div>
-                <div *ngIf="f.controls.grid?.errors?.minlength">* Min. Length is {{ f.controls.grid?.errors.minlength.requiredLength }}.</div>
-                <div *ngIf="f.controls.grid?.errors?.isSumInvalid">* The sum must be equals to {{ f.controls.grid.errors?.sumBeEqualsTo }}.</div>
+            >
+            <div *ngIf="gridModel?.invalid || gridModel?.touched" class="invalid-feedback">
+                <div *ngIf="gridModel?.hasError('required')">* Enter with your grid.</div>
+                <div *ngIf="gridModel?.hasError('pattern')">* Allows only numbers and space.</div>
+                <div *ngIf="gridModel?.hasError('minlength')">* Min. Length is {{ gridModel?.errors?.minlength.requiredLength }}.</div>
+                <div *ngIf="gridModel?.hasError('isSumInvalid')">* The sum must be equals to {{ gridModel.errors?.sumBeEqualsTo }}.</div>
             </div>
         </div>
     </div>
@@ -65,7 +62,7 @@
         <button
             class="btn btn-dark btn-block btn-sm" 
             (click)="createTable()" 
-            [disabled]="f.controls.grid?.invalid"
+            [disabled]="gridModel?.invalid"
         >Generate</button>
     </div>
 </form>
