@@ -2,12 +2,12 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-config-general',
-  templateUrl: './config-general.component.html',
-  styleUrls: ['./config-general.component.css']
+  selector: 'app-form-config-general',
+  templateUrl: './form-config-general.component.html',
+  styleUrls: ['./form-config-general.component.css']
 })
-export class ConfigGeneralComponent implements OnInit {
-  	@Input() parentFormGroup: FormGroup;
+export class FormConfigGeneralComponent implements OnInit {
+  @Input() parentFormGroup: FormGroup;
 	@Input() content;
 
 	constructor(private fb: FormBuilder) { }
@@ -17,20 +17,10 @@ export class ConfigGeneralComponent implements OnInit {
 			.setValidators([
 				Validators.required
 			]);
-		/*this.html
-			.patchValue({
-				'label': this.content.html.label,
-			});*/
 		this.nullable
 			.setValidators([
 				Validators.required
 			]);
-		/*this.options
-			.patchValue({
-				'nullable': (this.content.options && typeof this.content.options.nullable != 'undefined')
-					? this.content.options.nullable
-					: true	
-			});*/
 	}
 
 	get html() {

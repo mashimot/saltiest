@@ -67,46 +67,7 @@
                                 "html": {
                                     "tag": "html",
                                     "category": "html",
-                                    "data": "<p class=\"f3\">This project was made with Angular 6.1.2.</p>\n<p>It's been in development since December 2017 and is <strong>currently being developed.</strong></p>"
-                                },
-                                "definition": {}
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "grid": "8 4",
-                "columns": [
-                    {
-                        "contents": [
-                            {
-                                "html": {
-                                    "label": "Type your Text",
-                                    "category": "headings",
-                                    "tag": "h1",
-                                    "text": "Features",
-                                    "class": "text-center"
-                                },
-                                "definition": {}
-                            }
-                        ]
-                    },
-                    {
-                        "contents": []
-                    }
-                ]
-            },
-            {
-                "grid": "12",
-                "columns": [
-                    {
-                        "contents": [
-                            {
-                                "html": {
-                                    "tag": "html",
-                                    "category": "html",
-                                    "data": "<a href=\"http://wiki.languagetool.org/public-http-api\" target=\"_blank\">API RESTful - Language Tool (LanguageTool Style and Grammar Checker)</a> http://wiki.languagetool.org/public-http-api"
+                                    "data": "<p class=\"f3\">This project was made with Angular 12.x</p>\n<p>It's been in development since December 2017 and is <strong>currently being developed.</strong></p>"
                                 },
                                 "definition": {}
                             }

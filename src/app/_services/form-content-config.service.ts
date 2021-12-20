@@ -17,25 +17,25 @@ export class FormContentConfigService {
     constructor() {
         this.component = {
             general: {
-                title: "General Configuration", componentName: 'app-config-general'
+                title: "General Configuration", componentName: 'app-form-config-general'
             },
             choices: {
-                title: "Choices", componentName: 'app-config-choices'
+                title: "Choices", componentName: 'app-form-config-choices'
             },
             visibleIf: {
                 title: "Vísivel Se", componentName: '<hide-when-tab content="content"></hide-when-tab>'
             },
             htmlEditor: {
-                title: "Html Editor", componentName: 'app-config-html-editor'
+                title: "Html Editor", componentName: 'app-form-config-html-editor'
             },
             title: {
-                title: "Title", componentName: 'app-config-title'
+                title: "Title", componentName: 'app-form-config-title'
             },
-            table: {
+            /*table: {
                 title: "Table", componentName: 'app-config-table-builder'
-            },
+            },*/
             img: {
-                title: "Image", componentName: 'app-config-img'
+                title: "Image", componentName: 'app-form-config-img'
             }
         };
     }
