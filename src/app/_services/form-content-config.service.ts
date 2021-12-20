@@ -20,7 +20,7 @@ export class FormContentConfigService {
                 title: "General Configuration", componentName: 'app-form-config-general'
             },
             choices: {
-                title: "Choices", componentName: 'app-form-config-choices'
+                title: "Choices", componentName: 'app-config-choices'
             },
             visibleIf: {
                 title: "Vísivel Se", componentName: '<hide-when-tab content="content"></hide-when-tab>'

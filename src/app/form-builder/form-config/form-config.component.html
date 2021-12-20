@@ -11,26 +11,26 @@
                 <app-render-content [content]="configForm.value"></app-render-content>
                 <div *ngFor="let renderComponent of render.components" class="card">
                     <div class="card-body">
-                        <app-config-general 
+                        <app-form-config-general 
                             [parentFormGroup]="configForm"
                             [content]="content"
-                            *ngIf="renderComponent.componentName === 'app-config-general'"
-                        ></app-config-general>
-                        <app-config-img 
+                            *ngIf="renderComponent.componentName === 'app-form-config-general'"
+                        ></app-form-config-general>
+                        <app-form-config-img 
                             [parentFormGroup]="configForm"
                             [content]="content"
-                            *ngIf="renderComponent.componentName === 'app-config-img'"
-                        ></app-config-img>
-                        <app-config-title
+                            *ngIf="renderComponent.componentName === 'app-form-config-img'"
+                        ></app-form-config-img>
+                        <app-form-config-title
                             [parentFormGroup]="configForm"
                             [content]="content"
-                            *ngIf="renderComponent.componentName === 'app-config-title'"
-                        ></app-config-title>
-                        <app-config-html-editor
+                            *ngIf="renderComponent.componentName === 'app-form-config-title'"
+                        ></app-form-config-title>
+                        <app-form-config-html-editor
                             [parentFormGroup]="configForm"
                             [content]="content"
-                            *ngIf="renderComponent.componentName === 'app-config-html-editor'"
-                        ></app-config-html-editor>
+                            *ngIf="renderComponent.componentName === 'app-form-config-html-editor'"
+                        ></app-form-config-html-editor>
                         <app-config-choice-form
                             [parentFormGroup]="configForm"
                             [content]="content"
