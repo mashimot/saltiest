@@ -15,7 +15,6 @@ import { SumBeEqualsToDirective } from '../shared/directives/sum-be-equals-to.di
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule,
     NgbModule
   ],
   exports:[

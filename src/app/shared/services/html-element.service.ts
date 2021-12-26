@@ -22,24 +22,24 @@ export class HtmlElementService {
           .pipe(
                 map((htmlElements: any) => {
                     const elements = htmlElements.reduce((acc, item) => {
+
                         if (
-                            acc.html &&
-                            acc.html.category
+                            item.html &&
+                            item.html.category &&
+                            item.html.category === this.category
                         ) {
-                            if (item.html.category === this.category) {
-                                acc[item.html.tag] = null;
-                            }
+                            acc[item.html.tag] = null;
                         }
 
                         return acc;
                     }, {});
-                    console.log('elements', elements);
+
                     return elements;
                 }),
                 map(elements => {
                     return Object.keys(elements);
                 }),
-                tap(result => console.log(result))
+                //tap(result => console.log('elements', result))
           )
         //return of(Object.keys(tags));
     }

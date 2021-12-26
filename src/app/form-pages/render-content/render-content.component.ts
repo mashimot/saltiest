@@ -31,6 +31,7 @@ export class RenderContentComponent implements OnInit {
             let html = bootstrapHtmlTemplate.get(this.content);
             return this.sanitizer.bypassSecurityTrustHtml(html);
         }
+        
         return 'undefined';
     }
 }

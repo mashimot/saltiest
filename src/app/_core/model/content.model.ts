@@ -19,12 +19,12 @@ export interface Content {
         }[];
     };
     type?: {
-        datatype: string,
+        datatype?: string,
         length?: string,
         width?: number,
         digits?: number,
         decimals?: number,
-        values: Array<string>
+        values?: Array<string>
     },
     options?: {
         nullable?: boolean,

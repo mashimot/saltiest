@@ -39,14 +39,14 @@ export class FormBuilderComponent implements OnInit {
 
     constructor(
         private formConfigService: FormConfigService,
-        private vueHtmlTemplate: VueHtmlTemplate,
         private bootstrapHtmlTemplate: BootstrapHtmlTemplate,
-        private projectService: ProjectService,
         private homeService: HomeService,
-        private pageService: PageService,
         private route: ActivatedRoute,
-        private ngxLoader: NgxUiLoaderService,
-        private cdRef: ChangeDetectorRef
+        private cdRef: ChangeDetectorRef,
+        /*private vueHtmlTemplate: VueHtmlTemplate,
+        private projectService: ProjectService,
+        private pageService: PageService,
+        private ngxLoader: NgxUiLoaderService,*/
     ) {
     }
 

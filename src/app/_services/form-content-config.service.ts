@@ -5,8 +5,6 @@ import { Subject, Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class FormContentConfigService {
-
-    newFormConfigSubject = new Subject<any>();
     component: {
         [key: string]: {
             title: string,
@@ -31,13 +29,14 @@ export class FormContentConfigService {
             title: {
                 title: "Title", componentName: 'app-form-config-title'
             },
-            /*table: {
-                title: "Table", componentName: 'app-config-table-builder'
-            },*/
             img: {
                 title: "Image", componentName: 'app-form-config-img'
             }
         };
+    }
+
+    getValue(){
+        return 'value2';
     }
 
     render() {

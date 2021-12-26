@@ -7,10 +7,9 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
   styleUrls: ['./form-config-general.component.css']
 })
 export class FormConfigGeneralComponent implements OnInit {
-  @Input() parentFormGroup: FormGroup;
-	@Input() content;
+  	@Input() parentFormGroup: FormGroup;
 
-	constructor(private fb: FormBuilder) { }
+	constructor() { }
 
 	ngOnInit() {
 		this.label
@@ -28,14 +27,14 @@ export class FormConfigGeneralComponent implements OnInit {
 	}
 	
 	get label() {
-		return this.parentFormGroup.get('html.label');
-	}
-
-	get nullable() {
-		return this.parentFormGroup.get('options.nullable');
+		return this.html.get('label');
 	}
 
 	get options() {
 		return this.parentFormGroup.get('options');
+	}
+
+	get nullable() {
+		return this.options.get('nullable');
 	}
 }

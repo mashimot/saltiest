@@ -22,7 +22,7 @@ export class FormConfigTitleComponent implements OnInit {
 	}
 
 	get html() {
-		return this.parentFormGroup.controls.html;
+		return this.parentFormGroup.get('html');
 	}
 
 	get text() {

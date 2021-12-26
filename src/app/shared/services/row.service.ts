@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RegisterResponse } from '../interface/register-response';
+import { of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -26,6 +27,10 @@ export class RowService {
     }	
 
 	deleteRow(id: number) {
-        return this.http.delete<RegisterResponse>(`${this.API_URL}/${id}`);
+        return this.http.get<RegisterResponse>(`https://jsonplaceholder.typicode.com/todos/${id}`);
+        return of({
+            success: true
+        });
+        //return this.http.delete<RegisterResponse>(`${this.API_URL}/${id}`);
     }	
 }

@@ -3,7 +3,7 @@ import { BootstrapGridSystemService } from '../../_services/bootstrap-grid-syste
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoicesComponent } from '../../config-choices/config-choices.component';
 import { Observable } from 'rxjs';
-import { tap, map, distinctUntilChanged } from 'rxjs/operators';
+import { tap, map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { ToolService } from 'src/app/shared/services/tool.service';
 import { Column, Content } from 'src/app/_core/model';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
@@ -61,7 +61,7 @@ export class FormMenuComponent implements OnInit {
 
         this.gridModel.valueChanges
             .pipe(
-                //distinctUntilChanged()
+                //debounceTime(300)
             ).subscribe(value => {
                 this.bootstrap[0] = {
                     grid: value

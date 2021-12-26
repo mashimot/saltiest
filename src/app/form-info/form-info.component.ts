@@ -19,10 +19,6 @@ import {
     Observable,
     of
 } from 'rxjs';
-import {
-	debounceTime,
-    delay, distinctUntilChanged, distinctUntilKeyChanged, startWith, tap
-} from 'rxjs/operators';
 import { HtmlElementService } from '../shared/services/html-element.service';
 import { Content } from '../_core/model';
 
@@ -38,7 +34,6 @@ export class FormInfoComponent implements OnInit {
 	@Input() pages;
     @Output() pagesChange = new EventEmitter();	
 
-
     constructor(
         private formBuilder: FormBuilder,
 		private htmlElementService: HtmlElementService
@@ -48,11 +43,9 @@ export class FormInfoComponent implements OnInit {
 		this.tags$ = this.htmlElementService.getTags();
 
 		this.form = this.formBuilder.group({
-			"pages": this.formBuilder.array([
-			]),
+			"pages": this.formBuilder.array([]),
 		});
 
-		//
 		this.pages.forEach((page, pageIndex: number) => {
 			this.getPages().push(
                 this.createPages()
@@ -95,15 +88,14 @@ export class FormInfoComponent implements OnInit {
 		});
 
         this.getPages().patchValue(this.pages);
-
-        this.form.valueChanges
-			.subscribe(result => {
-                this.pagesChange.emit(result.pages)
-			})
+        this.onChanges();
     }
 
-	ngOnChanges(changes: SimpleChange){
-		//this.pages = this.form.get('pages').value;
+    onChanges(){
+        this.f.valueChanges
+            .subscribe(result => {
+                this.pagesChange.emit(result.pages)
+            })
 	}
 
     onSubmit(): void {
@@ -133,14 +125,6 @@ export class FormInfoComponent implements OnInit {
 
     get f() {
         return this.form;
-    }
-
-/*    isFieldValid(field: string) {
-        return !this.f.get(field)?.valid && this.f.get(field)?.touched;
-    }*/
-
-    getField(field: string) {
-        return this.f.get(field);
     }
     
     getPagesRowsColumnsContents(indexPages: number, indexRows: number, indexColumns: number): FormArray {

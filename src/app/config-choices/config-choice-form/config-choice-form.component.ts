@@ -9,32 +9,8 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Content } from 'src/app/_core/model';
-import { tap } from 'rxjs/operators';
+import { ArrayValidators } from 'src/app/shared/validators/ArrayValidators';
 
-// Array Validators
-export class ArrayValidators {
-
-    // max length
-    public static maxLength(max: number): ValidatorFn | any {
-        return (control: AbstractControl[]) => {
-            if (!(control instanceof FormArray)) return;
-            return control.length > max
-            ? { arrayMaxLength: true }
-            : null;
-        }
-    }
-
-    // min length
-    public static minLength(min: number): ValidatorFn | any {
-        return (control: AbstractControl[]) => {
-            if (!(control instanceof FormArray)) return;
-            
-            return control.length < min
-                ? { arrayMinLength: true }
-                : null;
-        }
-    }
-}
 
 
 @Component({
@@ -76,19 +52,16 @@ export class ConfigChoiceFormComponent implements OnInit {
             ? this.content.html.choices
             : [];
         this.choiceForm =  this.formBuilder.group({
-            'choices': this.formBuilder.array([])
+            'choices': this.formBuilder.array(
+                [],
+                ArrayValidators.minLength(1)
+            )
         });
 
         if(typeof this.parentFormGroup != 'undefined'){
             this.choiceForm = this.parentFormGroup.get('html') as FormGroup;
         }
 
-        this.choiceForm.get('choices')
-            .setValidators(
-                [
-                    ArrayValidators.minLength(1)
-                ]
-            );
         choices.forEach(choice => {
             let items = this.choiceForm.get('choices') as FormArray;
             items.push(
@@ -110,8 +83,6 @@ export class ConfigChoiceFormComponent implements OnInit {
             .subscribe(value => {
                 this.stringToElement();
             });
-
-
 
 		/*this.choiceForm = this.formBuilder.group({
 			'id': [''],
@@ -136,9 +107,6 @@ export class ConfigChoiceFormComponent implements OnInit {
 			this.loadChoices();
 		})*/
   	}
-    
-    ngOnChanges() {
-    }
 
     ngOnDestroy() {
         /*this.dragulaService.destroy('pages');

@@ -20,68 +20,71 @@
 			[formGroup]="choiceForm"
 			[ngClass]="{ 'is-invalid': choiceForm.invalid }"
 		>
-			<div
-				dragula="sortableChoices"
-				[(dragulaModel)]="choices.controls"
-				formArrayName="choices"
-			>
-				<div *ngFor="let choice of choices.controls; let i = index" 
-					[formGroupName]="i" 
-					class="sortable-item-contents"
+			<ng-container *ngIf="choiceForm.get('choices')?.controls.length > 0">
+				<div
+					
+					dragula="sortableChoices"
+					[(dragulaModel)]="choices.controls"
+					formArrayName="choices"
 				>
-					<div class="row">
-						<div class="col-md-4">
-							<div class="form-group">
-								<input type="text"
-									formControlName="text"
-									(input)="choiceChanged()"
-									class="form-control form-control-sm"
-									[ngClass]="{ 'is-invalid': choice.get('text').invalid }" />
-								<div *ngIf="choice.get('text').invalid || choice.get('text').touched" class="invalid-feedback">
-									<div *ngIf="choice.get('text').errors?.required">You did not enter a field</div>
-									<div *ngIf="choice.get('text').errors?.minlength">Your field is too short</div>
+					<div *ngFor="let choice of choices.controls; let i = index" 
+						[formGroupName]="i" 
+						class="sortable-item-contents"
+					>
+						<div class="row">
+							<div class="col-md-4">
+								<div class="form-group">
+									<input type="text"
+										formControlName="text"
+										(input)="choiceChanged()"
+										class="form-control form-control-sm"
+										[ngClass]="{ 'is-invalid': choice.get('text').invalid }" />
+									<div *ngIf="choice.get('text').invalid || choice.get('text').touched" class="invalid-feedback">
+										<div *ngIf="choice.get('text').errors?.required">You did not enter a field</div>
+										<div *ngIf="choice.get('text').errors?.minlength">Your field is too short</div>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div class="col-md-4">
-							<div class="form-group">
-								<input type="text"
-									formControlName="value"
-									(input)="choiceChanged()"
-									class="form-control form-control-sm"								
-									[ngClass]="{ 'is-invalid': choice.get('value').invalid }" />
-									<div *ngIf="choice.get('value').invalid || choice.get('value').touched" class="invalid-feedback">
-										<div *ngIf="choice.get('value').errors?.required">You did not enter a field</div>
-										<div *ngIf="choice.get('value').errors?.minlength">Your field is too short</div>
-									</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<input type="text"
+										formControlName="value"
+										(input)="choiceChanged()"
+										class="form-control form-control-sm"								
+										[ngClass]="{ 'is-invalid': choice.get('value').invalid }" />
+										<div *ngIf="choice.get('value').invalid || choice.get('value').touched" class="invalid-feedback">
+											<div *ngIf="choice.get('value').errors?.required">You did not enter a field</div>
+											<div *ngIf="choice.get('value').errors?.minlength">Your field is too short</div>
+										</div>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<button type="button" class="btn btn-outline-danger btn-sm btn-block" (click)="removeContent(i)">
+									<i class="far fa-trash-alt"></i>
+								</button>
+							</div>
+							<div class="col-md-2">
+								<span class="element-handle">
+									move
+								</span>
 							</div>
 						</div>
-						<div class="col-md-2">
-							<button type="button" class="btn btn-outline-danger btn-sm btn-block" (click)="removeContent(i)">
-								<i class="far fa-trash-alt"></i>
+					</div>
+					<div class="row">
+						<div class="col-md-5">
+							<button type="button" (click)="cloneThis('value')" class="btn btn-secondary btn-sm btn-block">
+							Clone Text to Values
 							</button>
 						</div>
-						<div class="col-md-2">
-							<span class="element-handle">
-								move
-							</span>
+						<div class="col-md-5">
+							<button type="button" (click)="cloneThis('text')" class="btn btn-secondary btn-sm btn-block">
+							Clone Values To Text
+							</button>
 						</div>
 					</div>
+					<div class="border border-bottom border-primary mt-3"></div>
 				</div>
-				<div class="row">
-					<div class="col-md-5">
-						<button type="button" (click)="cloneThis('value')" class="btn btn-secondary btn-sm btn-block">
-						Clone Text to Values
-						</button>
-					</div>
-					<div class="col-md-5">
-						<button type="button" (click)="cloneThis('text')" class="btn btn-secondary btn-sm btn-block">
-						Clone Values To Text
-						</button>
-					</div>
-				</div>
-				<div class="border border-bottom border-primary mt-3"></div>
-			</div>
+			</ng-container>
 		</div>
 		<section class="mt-2">
 			<div class="form-group">

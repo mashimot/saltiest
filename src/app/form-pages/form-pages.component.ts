@@ -36,11 +36,11 @@ export class FormPagesComponent implements OnInit {
         private dragulaService: DragulaService,
         private pageService: PageService,
         private cd: ChangeDetectorRef,
-        private contentService: ContentService,
+        /*private contentService: ContentService,
         private rowService: RowService,
         private columnService: ColumnService,
         private route: ActivatedRoute,
-        private homeService: HomeService,
+        private homeService: HomeService,*/
         private ngxLoader: NgxUiLoaderService
     ) {
         this.initDragAndDrop();            

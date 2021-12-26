@@ -1,31 +1,33 @@
-<div class="px-3 py-3 bg-danger text-white" *ngIf="page.rows.length <= 0">
+<div class="px-3 py-3 bg-danger text-white" *ngIf="page && page.rows && page.rows.length <= 0; hasPages">
 	Place Bootstrap grid columns here
 </div>
-<div
-	dragula="rowSortable"
-	[(dragulaModel)]="page.rows"
-	[ngStyle]="{ 'min-height': '20px' }"
-	[attr.data-current-page-id]="pageId"
-	class="row-sortable"
->
-<div *ngFor="let row of page.rows; let rowIndex = index;"
-	[attr.data-current-row-id]="row.id"
->
-	<div class="row" [hidden]="config?.previewMode">
-		<div class="col-md-12 row-handle" [ngStyle]="{ cursor: 'move' }">
-			<div class="float-left">
-				<small class="row-handle" [ngStyle]="{ 'cursor': 'move' }">
-					<i class="fa fa-arrows-alt"></i> row {{ rowIndex + 1 }}
-				</small>
-			</div>
-			<div class="float-right">
-				<small (click)="deleteRow(rowIndex, row)" class="badge btn-outline-danger" [ngStyle]="{ cursor: 'pointer' }">
-					<i class="fas fa-window-close"></i> row {{ rowIndex + 1 }}
-				</small>
+<ng-container #hasPages>
+	<div
+		dragula="rowSortable"
+		[(dragulaModel)]="page.rows"
+		[ngStyle]="{ 'min-height': '20px' }"
+		[attr.data-current-page-id]="pageId"
+		class="row-sortable"
+	>
+	<div *ngFor="let row of page.rows; let rowIndex = index;"
+		[attr.data-current-row-id]="row.id"
+	>
+		<div class="row" [hidden]="config?.previewMode">
+			<div class="col-md-12 row-handle" [ngStyle]="{ cursor: 'move' }">
+				<div class="float-left">
+					<small class="row-handle" [ngStyle]="{ 'cursor': 'move' }">
+						<i class="fa fa-arrows-alt"></i> row {{ rowIndex + 1 }}
+					</small>
+				</div>
+				<div class="float-right">
+					<small (click)="deleteRow(rowIndex, row)" class="badge btn-outline-danger" [ngStyle]="{ cursor: 'pointer' }">
+						<i class="fas fa-window-close"></i> row {{ rowIndex + 1 }}
+					</small>
+				</div>
 			</div>
 		</div>
+		<div class="border-bottom border-secondary" [hidden]="config?.previewMode"></div>
+			<app-form-columns [row]="row" [pageIndex]="pageIndex" [rowIndex]="rowIndex" [pageId]="pageId" [rowId]="row.id"></app-form-columns>
+		</div>
 	</div>
-	<div class="border-bottom border-secondary" [hidden]="config?.previewMode"></div>
-		<app-form-columns [row]="row" [pageIndex]="pageIndex" [rowIndex]="rowIndex" [pageId]="pageId" [rowId]="row.id"></app-form-columns>
-	</div>
-</div>
+</ng-container>

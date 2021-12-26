@@ -6,7 +6,6 @@ import { FormConfigComponent } from './../../form-builder/form-config/form-confi
 import { ContentService } from '../../shared/services/content.service';
 import { Content } from 'src/app/_core/model';
 
-
 @Component({
     selector: 'app-form-contents',
     templateUrl: './form-contents.component.html',
@@ -34,7 +33,6 @@ export class FormContentsComponent implements OnInit {
     @Input() rowId: number;
     @Input() columnId: number;
 
-
     constructor(
         private formConfigService: FormConfigService,
         private modalService: NgbModal,
@@ -52,10 +50,6 @@ export class FormContentsComponent implements OnInit {
             });
     }
 
-    trackByFn(index, item){
-        return index;
-    }
-    
     copyHtml(content): void{
         let bootstrapHtmlTemplate = new BootstrapHtmlTemplate();
         let code = bootstrapHtmlTemplate.get(content);

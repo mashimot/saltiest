@@ -22,4 +22,10 @@ describe('RenderContentComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should call render()', () => {
+    spyOn(component, 'render').and.callThrough();
+    component.render();
+    expect(component.render).toHaveBeenCalled();
+  });
 });

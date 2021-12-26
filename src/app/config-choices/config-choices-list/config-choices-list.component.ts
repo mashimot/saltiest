@@ -50,10 +50,10 @@ export class ConfigChoicesListComponent implements OnInit {
         private dragulaService: DragulaService,
         private router: Router,
         private modalService: NgbModal,
-        private cd: ChangeDetectorRef,
+        /*private cd: ChangeDetectorRef,
         private location: Location,
         private contentChoiceItemService: ContentChoiceItemService,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute*/
     ) {
     }
 

@@ -1,6 +1,6 @@
 
 
-<form class="card" [formGroup]="form" (ngSubmit)="onSubmit()">
+<form class="card" [formGroup]="form">
     <div class="card-header">
         <h6 class="text-center text-bold">Create Table to Form</h6>
     </div>
@@ -20,13 +20,15 @@
                         </li>
                     </ul>    
                 </div>
-                <textarea
-                    formControlName="ddl"
-                    name="string"
-                    [ngClass]="{ 'is-invalid' : objectLength() > 0 }"
-                    class="form-control form-control-sm h-20 mt-4"
-                    rows="10"
-                ></textarea>                
+                <div class="form-group">
+                    <textarea
+                        formControlName="ddl"
+                        name="string"
+                        [ngClass]="{ 'is-invalid' : objectLength() > 0 }"
+                        class="form-control form-control-sm h-20 mt-4"
+                        rows="10"
+                    ></textarea>
+                </div>    
             </div>
         </div>
 

@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-//import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -14,8 +13,6 @@ import { fakeBackendProvider } from './_helpers/fake-backend';
 import { JwtInterceptor } from './_helpers/jwt';
 import { ErrorInterceptor } from './_helpers/error';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { ConfigChoiceFormComponent } from './config-choices/config-choice-form/config-choice-form.component';
-import { ConfigChoicesComponent } from './config-choices/config-choices.component';
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     overlayColor: 'white',
@@ -44,7 +41,6 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
         AppRoutingModule,
         HttpClientModule,
         NgbModule,
-        //NgxPaginationModule,
         HighlightModule.forRoot(),
         NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
         NgxUiLoaderHttpModule,
@@ -53,7 +49,6 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     providers: [
         //{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         //{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-        //DragulaService,
         fakeBackendProvider,
     ],
     bootstrap: [AppComponent]

@@ -1,4 +1,12 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { DragulaModule, DragulaService } from 'ng2-dragula';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
+import { ConfigChoicesListComponent } from './config-choices-list/config-choices-list.component';
 
 import { ConfigChoicesComponent } from './config-choices.component';
 
@@ -8,7 +16,22 @@ describe('ConfigChoicesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ConfigChoicesComponent ]
+      declarations: [ 
+        ConfigChoicesComponent,
+        ConfigChoiceFormComponent,
+        ConfigChoicesListComponent
+      ],
+      imports: [
+        RouterTestingModule,
+        HttpClientTestingModule,
+        ReactiveFormsModule, 
+        DragulaModule.forRoot(),
+        NgxPaginationModule,
+        NgbModalModule
+      ],
+      providers: [{
+        provide: DragulaService
+      }]
     })
     .compileComponents();
   });

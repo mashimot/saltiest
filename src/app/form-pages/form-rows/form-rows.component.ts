@@ -34,23 +34,17 @@ export class FormRowsComponent implements OnInit {
     deleteRow(rowIndex: number, row = { id: null }){
         if(row.id != null){
             this.rowService.deleteRow(row.id).subscribe(result => {
-                if(result.success){
                     this.page.rows.forEach((cV, index) => {
                         if(cV.id == row.id){
                             this.page.rows.splice(index, 1);
                         }
                     });
                     this.cd.markForCheck();
-                }
             });  
         } else {
             //static remove
             this.page.rows.splice(rowIndex, 1);
             this.cd.markForCheck();
         }
-    }
-
-    trackByFn(index, item) {
-        return index; 
     }
 }

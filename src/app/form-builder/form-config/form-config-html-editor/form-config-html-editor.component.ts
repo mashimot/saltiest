@@ -8,7 +8,6 @@ import { FormGroup, Validators } from '@angular/forms';
 })
 export class FormConfigHtmlEditorComponent implements OnInit {
 	@Input() parentFormGroup: FormGroup;
-	@Input() content;
 
 	constructor() { }
 
@@ -16,13 +15,10 @@ export class FormConfigHtmlEditorComponent implements OnInit {
 		this.data.setValidators([
 			Validators.required
 		]);
-		this.html.patchValue({
-			'data': this.content.html.data
-		});
 	}
 
 	get html(){
-		return this.parentFormGroup.controls.html;
+		return this.parentFormGroup.get('html');
 	}
 	get data() {
 		return this.html.get('data');

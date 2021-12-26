@@ -11,6 +11,7 @@ import { DragulaModule } from 'ng2-dragula';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgbActiveModal, NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ConfigChoicesListComponent } from './config-choices-list.component';
 
 describe('ConfigChoicesListComponent', () => {
   let component: ConfigChoicesComponent;
@@ -19,33 +20,41 @@ describe('ConfigChoicesListComponent', () => {
   let htmlElementServiceSpy; 
   let dragulaService: DragulaService;
   let modal: NgbActiveModal;
-  htmlElementServiceSpy = jasmine.createSpyObj([
-    'getTags',
-    'queryParams',
-    'getTools',
-    'getContentChoices',
-    'getOptionChoices',
-    'getHtmlElements'
-  ]);
+  
+
   beforeEach(async(() => {
+    htmlElementServiceSpy = jasmine.createSpyObj([
+      'getTags',
+      'queryParams',
+      'getTools',
+      'getContentChoices',
+      'getOptionChoices',
+      'getHtmlElements'
+    ]);
+  
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
         HttpClientTestingModule,
         ConfigChoicesRoutingModule,
         ReactiveFormsModule, 
-        DragulaModule.forRoot(),
+        DragulaModule,
         NgxPaginationModule,
         NgbModalModule
       ],
       declarations: [
+        ConfigChoicesListComponent,
         ConfigChoicesComponent,
         ConfigChoiceFormComponent
       ],
       providers: [
-        /*{
-          provide: htmlElementService
-        },*/
+        {
+          provide: htmlElementService,
+          useValue: htmlElementServiceSpy
+        },
+        {
+          provide: DragulaService
+        },
         NgbActiveModal,
         NgbModal
       ]

@@ -27,21 +27,21 @@ export class FormConfigComponent implements OnInit {
     };
     constructor(
         private formContentConfig: FormContentConfigService,
-        private fb: FormBuilder,
-        private contentService: ContentService,
+        private formBuilder: FormBuilder,
+        //private contentService: ContentService,
         private activeModal: NgbActiveModal
     ) { }
 
     ngOnInit() {
         const tag = this.content.html.tag;
         this.render = this.formContentConfig.render()[tag];
-        this.configForm = this.fb.group({
+        this.configForm = this.formBuilder.group({
             id: [null],
             name: [null],
-            html: this.fb.group({
+            html: this.formBuilder.group({
                 'tag': [null],
                 'content_choice_id': [null],
-                'choices': this.fb.array([]),
+                'choices': this.formBuilder.array([]),
                 'category': [null],
                 //'fields': [this.content.html.fields],
                 'label': [null],
@@ -49,11 +49,11 @@ export class FormConfigComponent implements OnInit {
                 'text': [null],
                 'data': [null]
             }),
-            'type': this.fb.group({
+            'type': this.formBuilder.group({
                 datatype: [null],
                 length: [null],
             }),
-            'options': this.fb.group({
+            'options': this.formBuilder.group({
                 'nullable': [null]
             })
         });
