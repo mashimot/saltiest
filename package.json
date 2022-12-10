@@ -30,7 +30,7 @@
     "bootstrap": "^4.6.1",
     "bson": "^3.0.2",
     "core-js": "^2.6.12",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "jquery": "^3.6.0",
     "mongoose": "^5.13.13",
     "nearley": "^2.20.1",
