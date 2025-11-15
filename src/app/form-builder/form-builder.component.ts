@@ -3,8 +3,10 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  OnDestroy,
+  AfterContentChecked,
 } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, ParamMap } from "@angular/router";
 import { Subscription } from "rxjs";
 import { Page } from "../_core/model";
 import { Content } from "../_core/model/content.model";
@@ -17,95 +19,104 @@ export interface MVC {
   name: string;
 }
 
+export interface FormBuilderConfig {
+  previewMode: boolean;
+}
+
 @Component({
   selector: "app-form-builder",
   templateUrl: "./form-builder.component.html",
   styleUrls: ["./form-builder.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormBuilderComponent implements OnInit {
-  pages: Page[];
-  subs: Subscription;
-  inputs: Content[];
+export class FormBuilderComponent implements OnInit, OnDestroy, AfterContentChecked {
+  pages: Page[] = [];
+  inputs: Content[] = [];
+  subscription: Subscription = new Subscription();
+
   tableName: string = "";
-  tabNumber: number;
+  tabNumber: number = 1;
+  tabMVC!: number;
   isTabAlreadyOpen: boolean = false;
-  tabMVC: number;
   previewMode: boolean = false;
-  config: {
-    previewMode: boolean;
-  };
-  project_id: number;
+  config!: FormBuilderConfig;
+  projectId!: number;
 
   constructor(
-    private formConfigService: FormConfigService,
-    private bootstrapHtmlTemplate: BootstrapHtmlTemplate,
-    private homeService: HomeService,
-    private route: ActivatedRoute,
-    private cdRef: ChangeDetectorRef,
+    private readonly formConfigService: FormConfigService,
+    private readonly bootstrapHtmlTemplate: BootstrapHtmlTemplate,
+    private readonly homeService: HomeService,
+    private readonly route: ActivatedRoute,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.route.params.subscribe((r) => {
-      this.project_id = r.projectId;
-    });
-    this.tabNumber = 1;
-    this.previewMode = false;
-    this.preview();
-    this.config = {
-      previewMode: this.previewMode,
-    };
+  ngOnInit(): void {
+    this.setProjectIdFromRoute();
+    this.initPreview();
     this.loadFormBuilder();
   }
 
-  loadFormBuilder() {
-    this.subs = this.homeService.getHome().subscribe((result) => {
-      this.pages = result;
+  private setProjectIdFromRoute(): void {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      const id = params.get("projectId");
+      if (id) this.projectId = +id;
     });
   }
 
-  ngAfterContentChecked() {
-    this.cdRef.detectChanges();
-  }
-
-  public newPage() {
-    this.pages = [
-      ...this.pages,
-      {
-        name: "Page " + (this.pages.length + 1),
-        rows: [],
-      },
-    ];
-    //this.pagesChange.emit(this.pages);
-  }
-
-  public preview(): void {
-    this.config = {
-      previewMode: this.previewMode,
-    };
-
+  private initPreview(): void {
+    this.previewMode = false;
+    this.config = { previewMode: this.previewMode };
     this.formConfigService.setConfig(this.config);
   }
 
-  public getPages($event: Page[]) {
-    this.pages = $event;
+  private loadFormBuilder(): void {
+    this.subscription.add(
+      this.homeService.getHome().subscribe((result: Page[]) => {
+        this.pages = result;
+        this.cdRef.markForCheck();
+      })
+    );
   }
 
-  public getTemplate() {
-    return this.bootstrapHtmlTemplate.getTemplate(this.pages ? this.pages : []);
+  ngAfterContentChecked(): void {
+    this.cdRef.detectChanges();
   }
 
-  public getSchemas(schemas): void {
-    let newPages = [];
-    schemas.forEach((schema) => {
-      this.tableName = schema.name;
-      newPages.push(schema.pages);
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
+
+  public newPage(): void {
+    const page: Page = {
+      name: `Page ${this.pages.length + 1}`,
+      rows: [],
+    };
+    this.pages = [...this.pages, page];
+  }
+
+  public getPages(updatedPages: Page[]): void {
+    this.pages = updatedPages;
+  }
+
+  public preview(): void {
+    this.config = { previewMode: this.previewMode };
+    this.formConfigService.setConfig(this.config);
+  }
+
+  public getTemplate(): string {
+    return this.bootstrapHtmlTemplate.getTemplate(this.pages ?? []);
+  }
+
+  public getSchemas(schemas: { name: string; pages: Page[] }[]): void {
+    if (!schemas.length) return;
+  
+    this.tableName = schemas[0]?.name || '';
+  
+    const newPages: Page[] = [];
+    schemas.forEach(schema => {
+      schema.pages.forEach(page => newPages.push(page));
     });
-
+  
     this.pages = [...this.pages, ...newPages];
-  }
-
-  ngOnDestroy() {
-    this.subs.unsubscribe();
   }
 }

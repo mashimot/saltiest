@@ -1,42 +1,62 @@
+import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../_core/guards/auth.service";
-import { Router } from "@angular/router";
 
 @Component({
   selector: "app-login",
+  standalone: true,
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.css"],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
+  loginForm!: FormGroup;
   submitted: boolean = false;
   email: string = "test@test.com";
   password: string = "test";
   error: string;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.createForm();
+  }
+
+
+  private createForm(): void {
     this.loginForm = this.fb.group({
       email: [this.email, [Validators.required, Validators.email]],
       password: [this.password, [Validators.required]],
     });
   }
 
-  onSubmit() {
+  public onSubmit(): void {
     this.submitted = true;
-    this.authService.login(this.loginForm.value).subscribe((user) => {
-      if (user && user.token) {
-        // store user details and jwt token in local storage to keep user logged in between page refreshes
-        localStorage.setItem("currentUser", JSON.stringify(user));
-        //this.router.navigate(['/home']);
-      }
-      return user;
+    if (this.loginForm.invalid) return;
+
+    const credentials = this.loginForm.value;
+    this.authService.login(credentials).subscribe({
+      next: (user) => this.handleLoginSuccess(user),
+      error: (err) => this.handleLoginError(err),
     });
+  }
+
+  private handleLoginSuccess(user: { token?: string; [key: string]: any }): void {
+    if (user?.token) {
+      this.storeUser(user);
+    }
+  }
+
+  private handleLoginError(err: any): void {
+    this.error = err?.message || "Login failed. Please try again.";
+  }
+
+  private storeUser(user: any): void {
+    localStorage.setItem("currentUser", JSON.stringify(user));
   }
 
   get f() {

@@ -10,9 +10,26 @@ import {
 import { Observable, of, throwError } from "rxjs";
 import { delay, mergeMap, materialize, dematerialize } from "rxjs/operators";
 
-// array in local storage for registered users
-//let users = JSON.parse(localStorage.getItem('currentUser')) || [];
-let users = [
+interface User {
+  id: number;
+  username: string;
+  password: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+// Define a strongly typed AuthResponse
+interface AuthResponse {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  token: string;
+}
+
+const users: User[] = [
   {
     id: 1,
     username: "test",
@@ -30,27 +47,27 @@ let users = [
     lastName: "Last Name",
   },
 ];
+
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
   intercept(
     request: HttpRequest<any>,
-    next: HttpHandler,
+    next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const { url, method, headers, body } = request;
-    console.log("request", request);
-    // wrap in delayed observable to simulate server api call
+
     return of(null)
       .pipe(mergeMap(handleRoute))
-      .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
+      .pipe(materialize())
       .pipe(delay(100))
       .pipe(dematerialize());
 
-    function handleRoute() {
+    function handleRoute(): Observable<HttpEvent<any>> {
       switch (true) {
         case url.endsWith("/api/auth/register") && method === "POST":
-          return register();
+          return register(body);
         case url.endsWith("/api/auth/login") && method === "POST":
-          return authenticate();
+          return authenticate(body);
         case url.endsWith("/users") && method === "GET":
           return getUsers();
         case url.match(/\/users\/\d+$/) && method === "GET":
@@ -58,16 +75,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         case url.match(/\/users\/\d+$/) && method === "DELETE":
           return deleteUser();
         default:
-          // pass through any requests not handled above
           return next.handle(request);
       }
     }
 
-    // route functions
-
-    function register() {
-      const user = body;
-
+    function register(user: User): Observable<HttpEvent<any>> {
       if (users.find((x) => x.username === user.username)) {
         return error('Username "' + user.username + '" is already taken');
       }
@@ -79,72 +91,68 @@ export class FakeBackendInterceptor implements HttpInterceptor {
       return ok();
     }
 
-    function authenticate() {
+    function authenticate(body: { email: string; password: string }): Observable<HttpEvent<AuthResponse>> {
       const { email, password } = body;
       const user = users.find(
-        (x) =>
-          /*x.username === username &&*/ x.email === email &&
-          x.password === password,
+        (x) => x.email === email && x.password === password
       );
+
       if (!user) return error("Username or password is incorrect");
 
-      return ok({
+      const response: AuthResponse = {
         id: user.id,
-        email: user.email,
         username: user.username,
+        email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         token: "fake-jwt-token",
-      });
+      };
+
+      return ok(response);
     }
 
-    function getUsers() {
+    function getUsers(): Observable<HttpEvent<User[]>> {
       if (!isLoggedIn()) return unauthorized();
       return ok(users);
     }
 
-    function getUserById() {
+    function getUserById(): Observable<HttpEvent<User | undefined>> {
       if (!isLoggedIn()) return unauthorized();
-
-      const user = users.find((x) => x.id == idFromUrl());
+      const user = users.find((x) => x.id === idFromUrl());
       return ok(user);
     }
 
-    function deleteUser() {
+    function deleteUser(): Observable<HttpEvent<any>> {
       if (!isLoggedIn()) return unauthorized();
-
-      users = users.filter((x) => x.id !== idFromUrl());
-      localStorage.setItem("currentUser", JSON.stringify(users));
+      const remainingUsers = users.filter((x) => x.id !== idFromUrl());
+      localStorage.setItem("currentUser", JSON.stringify(remainingUsers));
       return ok();
     }
 
-    // helper functions
-
-    function ok(body?) {
+    function ok<T = any>(body?: T): Observable<HttpResponse<T>> {
       return of(new HttpResponse({ status: 200, body }));
     }
 
-    function unauthorized() {
+    function unauthorized(): Observable<never> {
       return throwError({ status: 401, error: { message: "Unauthorised" } });
     }
 
-    function error(message) {
+    function error(message: string): Observable<never> {
       return throwError({ error: { message } });
     }
 
-    function isLoggedIn() {
+    function isLoggedIn(): boolean {
       return headers.get("Authorization") === "Bearer fak3e-jwt-token";
     }
 
-    function idFromUrl() {
+    function idFromUrl(): number {
       const urlParts = url.split("/");
-      return parseInt(urlParts[urlParts.length - 1]);
+      return parseInt(urlParts[urlParts.length - 1], 10);
     }
   }
 }
 
 export const fakeBackendProvider = {
-  // use fake backend in place of Http service for backend-less development
   provide: HTTP_INTERCEPTORS,
   useClass: FakeBackendInterceptor,
   multi: true,
