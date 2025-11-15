@@ -7,46 +7,79 @@
   },
   "files": {
     "includes": [
-      "**",
-      "!!**/dist",
-      "!dist",
-      "!node_modules",
-      "!src/app/_parser",
-      "!docs",
-      "!coverage"
+      "src/**/*.ts",
+      "src/**/*.js",
+      "!dist/**",
+      "!node_modules/**",
+      "!docs/**",
+      "!src/app/_parser/**"
     ]
   },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
+ "formatter": {
+		"enabled": true,
+		"indentStyle": "space",
     "indentWidth": 2,
-    "lineEnding": "lf"
-  },
-  "assist": {
-    "enabled": true,
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
-    }
-  },
-  "assist": {
-    "enabled": true,
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
-  }
+		"lineWidth": 120,
+		"formatWithErrors": true
+	},
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"complexity": {
+				"noUselessStringConcat": "error",
+				"noUselessUndefinedInitialization": "error",
+				"noVoid": "error",
+				"useDateNow": "error"
+			},
+			"correctness": {
+				"noConstantMathMinMaxClamp": "error",
+				"noUndeclaredVariables": "error",
+				"noUnusedImports": "error",
+				"noUnusedFunctionParameters": "error",
+				"noUnusedPrivateClassMembers": "error",
+				"useExhaustiveDependencies": {
+					"level": "error",
+					"options": {
+						"reportUnnecessaryDependencies": false
+					}
+				},
+				"noUnusedVariables": "error"
+			},
+			"style": {
+				"noParameterProperties": "error",
+				"noYodaExpression": "error",
+				"useConsistentBuiltinInstantiation": "error",
+				"useFragmentSyntax": "error",
+				"useShorthandAssign": "error",
+				"useArrayLiterals": "error",
+        "useImportType": "off"
+			},
+			"suspicious": {
+				"useAwait": "error",
+				"noEvolvingTypes": "error"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single",
+			"jsxQuoteStyle": "single",
+			"arrowParentheses": "asNeeded",
+			"trailingCommas": "none"
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["**/*.ts", "**/*.tsx"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUnusedVariables": "off"
+					}
+				}
+			}
+		}
+	]
 }

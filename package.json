@@ -13,7 +13,7 @@
     "prettier:fix": "npx prettier --write src",
     "format": "biome format --write .",
     "lint": "biome check .",
-    "fix": "biome check --write \"src/**/*.ts\""
+    "fix": "biome check --write ./src"
   },
   "private": true,
   "dependencies": {
