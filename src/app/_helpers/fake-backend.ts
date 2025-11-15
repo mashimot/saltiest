@@ -1,14 +1,14 @@
-import { Injectable } from "@angular/core";
 import {
-  HttpRequest,
-  HttpResponse,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
   HTTP_INTERCEPTORS,
-} from "@angular/common/http";
-import { Observable, of, throwError } from "rxjs";
-import { delay, mergeMap, materialize, dematerialize } from "rxjs/operators";
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+  HttpResponse
+} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, of, throwError } from 'rxjs';
+import { delay, dematerialize, materialize, mergeMap } from 'rxjs/operators';
 
 interface User {
   id: number;
@@ -32,47 +32,40 @@ interface AuthResponse {
 const users: User[] = [
   {
     id: 1,
-    username: "test",
-    password: "test",
-    email: "test@test.com",
-    firstName: "First Name",
-    lastName: "Last Name",
+    username: 'test',
+    password: 'test',
+    email: 'test@test.com',
+    firstName: 'First Name',
+    lastName: 'Last Name'
   },
   {
     id: 2,
-    username: "hadouken",
-    password: "hadouken",
-    email: "hadouken@hadouken.com",
-    firstName: "First Name",
-    lastName: "Last Name",
-  },
+    username: 'hadouken',
+    password: 'hadouken',
+    email: 'hadouken@hadouken.com',
+    firstName: 'First Name',
+    lastName: 'Last Name'
+  }
 ];
 
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const { url, method, headers, body } = request;
 
-    return of(null)
-      .pipe(mergeMap(handleRoute))
-      .pipe(materialize())
-      .pipe(delay(100))
-      .pipe(dematerialize());
+    return of(null).pipe(mergeMap(handleRoute)).pipe(materialize()).pipe(delay(100)).pipe(dematerialize());
 
     function handleRoute(): Observable<HttpEvent<any>> {
       switch (true) {
-        case url.endsWith("/api/auth/register") && method === "POST":
+        case url.endsWith('/api/auth/register') && method === 'POST':
           return register(body);
-        case url.endsWith("/api/auth/login") && method === "POST":
+        case url.endsWith('/api/auth/login') && method === 'POST':
           return authenticate(body);
-        case url.endsWith("/users") && method === "GET":
+        case url.endsWith('/users') && method === 'GET':
           return getUsers();
-        case url.match(/\/users\/\d+$/) && method === "GET":
+        case url.match(/\/users\/\d+$/) && method === 'GET':
           return getUserById();
-        case url.match(/\/users\/\d+$/) && method === "DELETE":
+        case url.match(/\/users\/\d+$/) && method === 'DELETE':
           return deleteUser();
         default:
           return next.handle(request);
@@ -80,24 +73,22 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     }
 
     function register(user: User): Observable<HttpEvent<any>> {
-      if (users.find((x) => x.username === user.username)) {
+      if (users.find(x => x.username === user.username)) {
         return error('Username "' + user.username + '" is already taken');
       }
 
-      user.id = users.length ? Math.max(...users.map((x) => x.id)) + 1 : 1;
+      user.id = users.length ? Math.max(...users.map(x => x.id)) + 1 : 1;
       users.push(user);
-      localStorage.setItem("currentUser", JSON.stringify(users));
+      localStorage.setItem('currentUser', JSON.stringify(users));
 
       return ok();
     }
 
     function authenticate(body: { email: string; password: string }): Observable<HttpEvent<AuthResponse>> {
       const { email, password } = body;
-      const user = users.find(
-        (x) => x.email === email && x.password === password
-      );
+      const user = users.find(x => x.email === email && x.password === password);
 
-      if (!user) return error("Username or password is incorrect");
+      if (!user) return error('Username or password is incorrect');
 
       const response: AuthResponse = {
         id: user.id,
@@ -105,7 +96,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        token: "fake-jwt-token",
+        token: 'fake-jwt-token'
       };
 
       return ok(response);
@@ -118,14 +109,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     function getUserById(): Observable<HttpEvent<User | undefined>> {
       if (!isLoggedIn()) return unauthorized();
-      const user = users.find((x) => x.id === idFromUrl());
+      const user = users.find(x => x.id === idFromUrl());
       return ok(user);
     }
 
     function deleteUser(): Observable<HttpEvent<any>> {
       if (!isLoggedIn()) return unauthorized();
-      const remainingUsers = users.filter((x) => x.id !== idFromUrl());
-      localStorage.setItem("currentUser", JSON.stringify(remainingUsers));
+      const remainingUsers = users.filter(x => x.id !== idFromUrl());
+      localStorage.setItem('currentUser', JSON.stringify(remainingUsers));
       return ok();
     }
 
@@ -134,7 +125,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     }
 
     function unauthorized(): Observable<never> {
-      return throwError({ status: 401, error: { message: "Unauthorised" } });
+      return throwError({ status: 401, error: { message: 'Unauthorised' } });
     }
 
     function error(message: string): Observable<never> {
@@ -142,11 +133,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     }
 
     function isLoggedIn(): boolean {
-      return headers.get("Authorization") === "Bearer fak3e-jwt-token";
+      return headers.get('Authorization') === 'Bearer fak3e-jwt-token';
     }
 
     function idFromUrl(): number {
-      const urlParts = url.split("/");
+      const urlParts = url.split('/');
       return parseInt(urlParts[urlParts.length - 1], 10);
     }
   }
@@ -155,5 +146,5 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 export const fakeBackendProvider = {
   provide: HTTP_INTERCEPTORS,
   useClass: FakeBackendInterceptor,
-  multi: true,
+  multi: true
 };

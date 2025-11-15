@@ -1,4 +1,4 @@
-import { AbstractControl, FormArray, ValidatorFn } from "@angular/forms";
+import { AbstractControl, FormArray, ValidatorFn } from '@angular/forms';
 
 export class ArrayValidators {
   // max length

@@ -1,26 +1,26 @@
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormPagesModule } from "../form-pages/form-pages.module";
-import { HomeService } from "../shared/services/home.service";
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormPagesModule } from '../form-pages/form-pages.module';
+import { HomeService } from '../shared/services/home.service';
 
-import { HomeComponent } from "./home.component";
+import { HomeComponent } from './home.component';
 
-describe("HomeComponent", () => {
+describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let homeService: HomeService;
 
   beforeEach(async(() => {
-    let spyHomeService = jasmine.createSpyObj("HomeService", ["getHome"]);
+    const spyHomeService = jasmine.createSpyObj('HomeService', ['getHome']);
     TestBed.configureTestingModule({
       declarations: [HomeComponent],
       imports: [HttpClientTestingModule, FormPagesModule],
       providers: [
         {
           provide: homeService,
-          useValue: spyHomeService,
-        },
-      ],
+          useValue: spyHomeService
+        }
+      ]
     }).compileComponents();
   }));
 
@@ -30,7 +30,7 @@ describe("HomeComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

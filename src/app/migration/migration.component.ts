@@ -1,16 +1,16 @@
-import { Component, OnInit, Injectable } from "@angular/core";
-import { SnakeCaseToCamelCasePipe } from "../shared/pipes/snake-case-to-camel-case.pipe";
-import { Content } from "../_core/model";
+import { Component, Injectable, OnInit } from '@angular/core';
+import { Content } from '../_core/model';
+import { SnakeCaseToCamelCasePipe } from '../shared/pipes/snake-case-to-camel-case.pipe';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root'
 })
 export class Laravel {
   schema: any;
   rules: string;
   attributes: string;
   messages: string;
-  tableName: string = "";
+  tableName: string = '';
   content: Content;
   mysql: {
     [key: string]: string;
@@ -67,7 +67,7 @@ export class Laravel {
     //TINYINT: `tinyIncrements('#columnName')#unsigned`,
     TINYINT: `tinyInteger('#columnName')#unsigned`,
     UUID: `uuid('#columnName')`,
-    YEAR: `year('#columnName')`,
+    YEAR: `year('#columnName')`
   };
 
   constructor() {
@@ -84,41 +84,39 @@ export class Laravel {
 
   getRules() {
     var basic = {
-      radio: ["nullable"],
-      checkbox: ["nullable"],
-      select: ["nullable"],
-      number: ["nullable", "numeric"],
-      date: ["nullable", 'date_format:"d/m/Y"'],
-      text: ["nullable", "string"],
-      textarea: ["nullable", "string"],
+      radio: ['nullable'],
+      checkbox: ['nullable'],
+      select: ['nullable'],
+      number: ['nullable', 'numeric'],
+      date: ['nullable', 'date_format:"d/m/Y"'],
+      text: ['nullable', 'string'],
+      textarea: ['nullable', 'string']
     };
     var tag = this.content.html.tag.toLowerCase();
-    if (typeof basic[tag] != "undefined") {
+    if (typeof basic[tag] != 'undefined') {
       basic[tag][0] = this.isRequired();
       basic[tag].push(this.size());
-      var newBasic = basic[tag].filter((el) => {
-        return el != "" && el != null;
+      var newBasic = basic[tag].filter(el => {
+        return el != '' && el != null;
       });
-      return [`"${this.content.name}" => ${JSON.stringify(newBasic)}`].join(
-        ",",
-      );
+      return [`"${this.content.name}" => ${JSON.stringify(newBasic)}`].join(',');
     }
 
-    return [`${this.content.name} => ${JSON.stringify(basic[tag])}`].join(",");
+    return [`${this.content.name} => ${JSON.stringify(basic[tag])}`].join(',');
   }
 
   size() {
     if (this.content && this.content.type && this.content.type.length) {
       var size = this.content.type.length;
-      if (size != null && size != "") {
+      if (size != null && size != '') {
         var list = {
           number: `digits_between:1,${size}`,
-          date: "max:" + size,
-          text: "max:" + size,
-          radio: "max:" + size,
-          checkbox: "max:" + size,
-          select: "max:" + size,
-          textarea: "max:" + size,
+          date: 'max:' + size,
+          text: 'max:' + size,
+          radio: 'max:' + size,
+          checkbox: 'max:' + size,
+          select: 'max:' + size,
+          textarea: 'max:' + size
         };
         return list[this.content.html.tag];
       }
@@ -131,19 +129,15 @@ export class Laravel {
       fillable: [],
       rules: [],
       attributes: [],
-      request: [],
+      request: []
     };
 
     if (this.schema.data.length > 0) {
-      this.schema.data.forEach((current) => {
+      this.schema.data.forEach(current => {
         this.setParams(current);
         this.schema.init.fillable.push(current.definition.name);
-        this.schema.init.request.push(
-          `"${current.name}" => $request->${current.name}`,
-        );
-        this.schema.init.attributes.push(
-          `'${current.name}' => '${current.html.label}'`,
-        );
+        this.schema.init.request.push(`"${current.name}" => $request->${current.name}`);
+        this.schema.init.attributes.push(`'${current.name}' => '${current.html.label}'`);
         this.schema.init.rules.push(this.getRules());
       });
     }
@@ -153,8 +147,8 @@ export class Laravel {
         validator: this.validator(),
         controller: this.controller(),
         model: this.model(),
-        migration: this.migration(),
-      },
+        migration: this.migration()
+      }
     };
   }
 
@@ -169,16 +163,16 @@ export class Laravel {
 		class ${this.schema.name} extends Model {
 			protected $table      = '${this.schema.name}';
 			protected $primaryKey = ${
-        typeof this.schema.primary_key != "undefined"
+        typeof this.schema.primary_key != 'undefined'
           ? this.schema.primary_key.length > 1
-            ? "[" + "this.schema.primary_key" + "]"
-            : "this.schema.primary_key[0]"
-          : ""
+            ? '[this.schema.primary_key]'
+            : 'this.schema.primary_key[0]'
+          : ''
       };
 			public $incrementing  = true; 
 			
 			protected $fillable = [
-				${this.schema.data.map((d) => `'${d.name}'`)}
+				${this.schema.data.map(d => `'${d.name}'`)}
 			];
 		}
 		`;
@@ -230,7 +224,7 @@ export class Laravel {
 			{
 				//
 				$r = ${this.schema.name}::create([
-					${this.schema.init.request.join("\n")}
+					${this.schema.init.request.join('\n')}
 				]);
 
 				return response()
@@ -280,7 +274,7 @@ export class Laravel {
 				//
 				$result = ${this.schema.name}::find($id);
 						->update(
-							${this.schema.init.request.join("\n")}
+							${this.schema.init.request.join('\n')}
 						);
 			}
 		
@@ -317,7 +311,7 @@ export class Laravel {
 	
 		public function rules(){
 			$rules = [
-				${this.schema.init.rules.join("\n")}
+				${this.schema.init.rules.join('\n')}
 			];
 		
 			return $rules;
@@ -330,7 +324,7 @@ export class Laravel {
 		 */
 		public function attributes(){
 			$attributes = [
-				${this.schema.init.attributes.join("\n")}
+				${this.schema.init.attributes.join('\n')}
 			];
 			return $attributes;
 		}		
@@ -344,26 +338,26 @@ export class Laravel {
       BIGINT: `bigIncrements('#columnName')`,
       MEDIUMINT: `mediumIncrements('#columnName')`,
       SMALLINT: `smallIncrements('#columnName')`,
-      TINYINT: `tinyIncrements('#columnName')`,
+      TINYINT: `tinyIncrements('#columnName')`
     };
-    let tableName = this.schema.name;
-    let schemaCreate = "";
-    $table = this.schema.data.map((item) => {
-      let _values = "";
-      let _nullable = "";
-      let _unsigned = "";
+    const tableName = this.schema.name;
+    let schemaCreate = '';
+    $table = this.schema.data.map(item => {
+      let _values = '';
+      let _nullable = '';
+      let _unsigned = '';
 
-      let column = item;
-      let _dataType = column.type.datatype.toUpperCase();
+      const column = item;
+      const _dataType = column.type.datatype.toUpperCase();
       let _type = this.mysql[column.type.datatype.toUpperCase()];
-      _type = _type.replace(/#unsigned/g, "");
+      _type = _type.replace(/#unsigned/g, '');
 
-      if (typeof _type == "undefined") {
+      if (typeof _type == 'undefined') {
         _type = `${_dataType}('#columnName')`;
       }
 
       if (column.options && column.options.autoincrement) {
-        Object.keys(autoIncrement).forEach((dataType) => {
+        Object.keys(autoIncrement).forEach(dataType => {
           if (_dataType == dataType) {
             _type = autoIncrement[dataType];
           }
@@ -376,10 +370,10 @@ export class Laravel {
 
       if (column.options) {
         if (column.options.nullable) {
-          _nullable = "->nullable()";
+          _nullable = '->nullable()';
         }
         if (column.options.unsigned) {
-          _unsigned = "->unsigned()";
+          _unsigned = '->unsigned()';
         }
       }
 
@@ -389,17 +383,13 @@ export class Laravel {
           _type = _type.replace(/#array/g, _values);
         }
         if (column.type.length) {
-          if (column.type.length != "") {
+          if (column.type.length != '') {
             _type = _type.replace(/#length/g, column.type.length);
           }
         }
         if (column.type.decimals || column.type.digits) {
-          let total_digits_comma_decimal_digits =
-            column.type.digits + ", " + column.type.decimals;
-          _type = _type.replace(
-            /#total_digits_comma_decimal_digits/g,
-            total_digits_comma_decimal_digits,
-          );
+          const total_digits_comma_decimal_digits = column.type.digits + ', ' + column.type.decimals;
+          _type = _type.replace(/#total_digits_comma_decimal_digits/g, total_digits_comma_decimal_digits);
         }
       }
 
@@ -408,16 +398,16 @@ export class Laravel {
 
     if (this.schema.primary_key) {
       if (this.schema.primary_key.length > 0) {
-        let pkColumns = this.schema.primary_key.map((item) => item.column);
+        const pkColumns = this.schema.primary_key.map(item => item.column);
         $table.push(`$table->primary(${JSON.stringify(pkColumns)})`);
       }
     }
     if (this.schema.unirque_keys) {
       if (this.schema.unirque_keys.length > 0) {
-        let ukColumns = [];
+        const ukColumns = [];
 
-        this.schema.unirque_keys.forEach((schemaUk) => {
-          schemaUk.columns.map((uk) => ukColumns.push(uk.column));
+        this.schema.unirque_keys.forEach(schemaUk => {
+          schemaUk.columns.map(uk => ukColumns.push(uk.column));
         });
         $table.push(`$table->unique(${JSON.stringify(ukColumns)});`);
       }
@@ -425,13 +415,13 @@ export class Laravel {
 
     if (this.schema.foreign_keys) {
       if (this.schema.foreign_keys.length > 0) {
-        this.schema.foreign_keys.forEach((fk) => {
-          let foreign = "";
-          let reference = "";
-          fk.columns.forEach((fk) => {
+        this.schema.foreign_keys.forEach(fk => {
+          let foreign = '';
+          let reference = '';
+          fk.columns.forEach(fk => {
             foreign = `foreign('${fk.column}')`;
           });
-          fk.reference.columns.forEach((ref) => {
+          fk.reference.columns.forEach(ref => {
             reference = `references('${ref.column}')->on('${fk.reference.table}')`;
           });
 
@@ -442,15 +432,15 @@ export class Laravel {
 
     schemaCreate = `
 		Schema::create('${tableName}', function (Blueprint $table) {
-			${$table.join("\n")}
+			${$table.join('\n')}
 		});`;
 
     return `
 			<?php
 
-			use Illuminate\Support\Facades\Schema;
-			use Illuminate\Database\Schema\Blueprint;
-			use Illuminate\Database\Migrations\Migration;
+			use IlluminateSupportFacadesSchema;
+			use IlluminateDatabaseSchemaBlueprint;
+			use IlluminateDatabaseMigrationsMigration;
 			
 			class Create${tableName}Table extends Migration
 			{
@@ -478,10 +468,10 @@ export class Laravel {
 
   isRequired(): string {
     if (this.content && this.content.options) {
-      return this.content.options.nullable ? "nullable" : "required";
+      return this.content.options.nullable ? 'nullable' : 'required';
     }
 
-    return "nullable";
+    return 'nullable';
   }
 
   setTableName(tableName: string) {
@@ -494,10 +484,10 @@ export class Laravel {
 }
 
 @Component({
-  selector: "app-migration",
-  templateUrl: "./migration.component.html",
-  styleUrls: ["./migration.component.css"],
-  providers: [SnakeCaseToCamelCasePipe],
+  selector: 'app-migration',
+  templateUrl: './migration.component.html',
+  styleUrls: ['./migration.component.css'],
+  providers: [SnakeCaseToCamelCasePipe]
 })
 export class MigrationComponent implements OnInit {
   schemas: any;
@@ -509,14 +499,14 @@ export class MigrationComponent implements OnInit {
 
   constructor(
     private snakeCaseToCamelCase: SnakeCaseToCamelCasePipe,
-    private laravel: Laravel,
+    private laravel: Laravel
   ) {}
 
   ngOnInit() {}
 
   getSchemas($schemas) {
     this.schemas = $schemas;
-    this.schemas.map((schema) => {
+    this.schemas.map(schema => {
       this.laravel.setSchema(schema);
       schema.framework = this.laravel.get().framework;
 

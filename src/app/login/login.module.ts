@@ -1,8 +1,8 @@
-import { NgModule } from "@angular/core";
+import { NgModule } from '@angular/core';
 
-import { LoginRoutingModule } from "./login-routing.module";
+import { LoginRoutingModule } from './login-routing.module';
 
 @NgModule({
-  imports: [LoginRoutingModule],
+  imports: [LoginRoutingModule]
 })
 export class LoginModule {}

@@ -1,9 +1,7 @@
-import { NgModule } from "@angular/core";
-import { HomeRoutingModule } from "./home-routing.module";
+import { NgModule } from '@angular/core';
+import { HomeRoutingModule } from './home-routing.module';
 
 @NgModule({
-  imports: [
-    HomeRoutingModule
-  ]
+  imports: [HomeRoutingModule]
 })
 export class HomeModule {}

@@ -1,11 +1,12 @@
-import { Injectable } from "@angular/core";
-import { Subject, Observable, BehaviorSubject } from "rxjs";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+
 interface Config {
   previewMode: boolean;
 }
 //Enviando parametros para componentes diferentes com Subject (Tópico, Assunto)
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root'
 })
 export class FormConfigService {
   // Instância o objeto Subject

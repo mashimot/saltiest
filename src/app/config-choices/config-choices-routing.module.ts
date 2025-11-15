@@ -1,8 +1,8 @@
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
-import { ConfigChoicesComponent } from "./config-choices.component";
-import { ConfigChoiceFormComponent } from "./config-choice-form/config-choice-form.component";
-import { AuthGuard } from "../_core/guards/auth.guard";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../_core/guards/auth.guard';
+import { ConfigChoiceFormComponent } from './config-choice-form/config-choice-form.component';
+import { ConfigChoicesComponent } from './config-choices.component';
 
 /*const routes: Routes = [
   {
@@ -17,19 +17,19 @@ import { AuthGuard } from "../_core/guards/auth.guard";
 ];*/
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: ConfigChoicesComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard]
   },
   {
-    path: ":id/edit",
+    path: ':id/edit',
     component: ConfigChoiceFormComponent,
-    canActivate: [AuthGuard],
-  },
+    canActivate: [AuthGuard]
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class ConfigChoicesRoutingModule {}

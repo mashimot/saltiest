@@ -1,12 +1,12 @@
-import { Component, OnInit } from "@angular/core";
-import { ProjectService } from "../../shared/services/project.service";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Router, ActivatedRoute } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProjectService } from '../../shared/services/project.service';
 
 @Component({
-  selector: "app-project-form",
-  templateUrl: "./project-form.component.html",
-  styleUrls: ["./project-form.component.css"],
+  selector: 'app-project-form',
+  templateUrl: './project-form.component.html',
+  styleUrls: ['./project-form.component.css']
 })
 export class ProjectFormComponent implements OnInit {
   projectForm: FormGroup;
@@ -15,26 +15,26 @@ export class ProjectFormComponent implements OnInit {
     private projectService: ProjectService,
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     this.projectForm = this.fb.group({
       id: [],
-      name: ["", [Validators.required]],
+      name: ['', [Validators.required]]
     });
-    this.route.params.subscribe((result) => {
-      let id = result.id;
+    this.route.params.subscribe(result => {
+      const id = result.id;
       console.log(result);
       if (!id) {
         //this.router.navigate(['projects']);
         return;
       }
-      this.projectService.getProjectById(id).subscribe((res) => {
+      this.projectService.getProjectById(id).subscribe(res => {
         if (res.success) {
           this.projectForm.patchValue({
             id: id,
-            name: res.data.name,
+            name: res.data.name
           });
         }
       });
@@ -42,19 +42,19 @@ export class ProjectFormComponent implements OnInit {
   }
 
   onSubmit() {
-    let formValue = this.projectForm.value;
+    const formValue = this.projectForm.value;
     const p = this.projectForm.value;
 
     if (formValue.id) {
-      this.projectService.updateProject(formValue.id, p).subscribe((result) => {
+      this.projectService.updateProject(formValue.id, p).subscribe(result => {
         if (result.success) {
-          this.router.navigate(["projects", formValue.id, "edit"]);
+          this.router.navigate(['projects', formValue.id, 'edit']);
         }
       });
     } else {
-      this.projectService.storeProject(p).subscribe((result) => {
+      this.projectService.storeProject(p).subscribe(result => {
         if (result.success) {
-          this.router.navigate(["projects"]);
+          this.router.navigate(['projects']);
         }
       });
     }

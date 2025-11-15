@@ -1,27 +1,27 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { Location } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  FormArray,
-  ValidatorFn,
   AbstractControl,
+  FormArray,
+  FormBuilder,
   FormControl,
-} from "@angular/forms";
-import { DBOperation } from "src/app/shared/enum";
-import { ContentChoiceItemService } from "src/app/shared/services/content-choice-item.service";
-import { ActivatedRoute } from "@angular/router";
-import { DragulaService } from "ng2-dragula";
-import { Location } from "@angular/common";
-import { Subscription } from "rxjs";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { Content } from "src/app/_core/model";
-import { ArrayValidators } from "src/app/shared/validators/ArrayValidators";
+  FormGroup,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { DragulaService } from 'ng2-dragula';
+import { Subscription } from 'rxjs';
+import { Content } from 'src/app/_core/model';
+import { DBOperation } from 'src/app/shared/enum';
+import { ContentChoiceItemService } from 'src/app/shared/services/content-choice-item.service';
+import { ArrayValidators } from 'src/app/shared/validators/ArrayValidators';
 
 @Component({
-  selector: "app-config-choice-form",
-  templateUrl: "./config-choice-form.component.html",
-  styleUrls: ["./config-choice-form.component.css"],
+  selector: 'app-config-choice-form',
+  templateUrl: './config-choice-form.component.html',
+  styleUrls: ['./config-choice-form.component.css']
 })
 export class ConfigChoiceFormComponent implements OnInit {
   choiceForm: FormGroup;
@@ -29,7 +29,7 @@ export class ConfigChoiceFormComponent implements OnInit {
   contentChoiceId: number = -1;
   //dbops: DBOperation;
   //text: string = "";
-  text: FormControl = new FormControl("");
+  text: FormControl = new FormControl('');
   subs = new Subscription();
   @Input() content: Content;
   @Input() parentFormGroup: FormGroup | undefined;
@@ -42,44 +42,39 @@ export class ConfigChoiceFormComponent implements OnInit {
         private location: Location,*/
     private formBuilder: FormBuilder,
     private dragulaService: DragulaService,
-    private modal: NgbActiveModal,
+    private modal: NgbActiveModal
   ) {
-    dragulaService.createGroup("sortableElements", {
+    dragulaService.createGroup('sortableElements', {
       moves: (el, container, handle) => {
-        return handle.classList.contains("element-handle");
-      },
+        return handle.classList.contains('element-handle');
+      }
     });
   }
 
   ngOnInit() {
     //this.dbops = DBOperation.create;
-    const choices =
-      this.content && this.content.html && this.content.html.choices
-        ? this.content.html.choices
-        : [];
+    const choices = this.content && this.content.html && this.content.html.choices ? this.content.html.choices : [];
     this.choiceForm = this.formBuilder.group({
-      choices: this.formBuilder.array([], ArrayValidators.minLength(1)),
+      choices: this.formBuilder.array([], ArrayValidators.minLength(1))
     });
 
-    if (typeof this.parentFormGroup != "undefined") {
-      this.choiceForm = this.parentFormGroup.get("html") as FormGroup;
+    if (typeof this.parentFormGroup != 'undefined') {
+      this.choiceForm = this.parentFormGroup.get('html') as FormGroup;
     }
 
-    choices.forEach((choice) => {
-      let items = this.choiceForm.get("choices") as FormArray;
+    choices.forEach(choice => {
+      const items = this.choiceForm.get('choices') as FormArray;
       items.push(this.createChoice(choice.text, choice.value));
     });
 
     this.subs.add(
-      this.dragulaService
-        .dropModel("sortableChoices")
-        .subscribe(({ sourceModel, targetModel, item }) => {
-          this.choices.controls = sourceModel;
-          this.text.patchValue(this.elementToString());
-        }),
+      this.dragulaService.dropModel('sortableChoices').subscribe(({ sourceModel, targetModel, item }) => {
+        this.choices.controls = sourceModel;
+        this.text.patchValue(this.elementToString());
+      })
     );
     this.text.patchValue(this.elementToString());
-    this.text.valueChanges.subscribe((value) => {
+    this.text.valueChanges.subscribe(value => {
       this.stringToElement();
     });
 
@@ -112,7 +107,7 @@ export class ConfigChoiceFormComponent implements OnInit {
         this.dragulaService.destroy('contents');
         this.dragulaService.destroy('columns');
         this.dragulaService.destroy('rowSortable');*/
-    this.dragulaService.destroy("sortableElements");
+    this.dragulaService.destroy('sortableElements');
   }
 
   /*public loadChoices(){
@@ -215,7 +210,7 @@ export class ConfigChoiceFormComponent implements OnInit {
 
   public choiceChanged(): void {
     this.text.patchValue(this.elementToString(), {
-      emitEvent: false,
+      emitEvent: false
     });
   }
 
@@ -235,21 +230,21 @@ export class ConfigChoiceFormComponent implements OnInit {
 
   public stringToElement(): void {
     this.choices.clear();
-    console.log("t", this.text);
+    console.log('t', this.text);
     if (this.text.value.length > 0) {
-      const string = this.text.value.split("\n");
+      const string = this.text.value.split('\n');
 
       for (let i = 0; i < string.length; i++) {
         const str = string[i];
         let firstMatch = str;
-        let secondMatch = "";
-        if (str.indexOf("|") !== -1) {
-          let match = str.split("|");
+        let secondMatch = '';
+        if (str.indexOf('|') !== -1) {
+          const match = str.split('|');
           firstMatch = match[0];
           secondMatch = str.substring(firstMatch.length + 1); //return '' if '|' was not found
         }
-        const text = typeof firstMatch !== "undefined" ? firstMatch : "";
-        const value = typeof secondMatch !== "undefined" ? secondMatch : "";
+        const text = typeof firstMatch !== 'undefined' ? firstMatch : '';
+        const value = typeof secondMatch !== 'undefined' ? secondMatch : '';
 
         this.choices.push(this.createChoice(text, value));
       }
@@ -264,10 +259,9 @@ export class ConfigChoiceFormComponent implements OnInit {
   public cloneThis(name: string) {
     const choicesLength = this.choices.value.length;
     if (choicesLength > 0) {
-      let cloneThisObjectName = name === "value" ? "text" : "value";
+      const cloneThisObjectName = name === 'value' ? 'text' : 'value';
       for (let i = 0; i < choicesLength; i++) {
-        this.choices.value[i][name] =
-          this.choices.value[i][cloneThisObjectName];
+        this.choices.value[i][name] = this.choices.value[i][cloneThisObjectName];
       }
       this.text.patchValue(this.elementToString());
       this.stringToElement();
@@ -275,46 +269,32 @@ export class ConfigChoiceFormComponent implements OnInit {
   }
 
   public elementToString(): string {
-    let string = [];
+    const string = [];
 
     //fire the `valueChanges` manually
     this.choices.updateValueAndValidity({ onlySelf: false, emitEvent: true });
     const choices = this.choices.value;
 
-    if (typeof choices !== "undefined" && choices.length > 0) {
+    if (typeof choices !== 'undefined' && choices.length > 0) {
       for (let i = 0; i < choices.length; i++) {
-        let choice = choices[i];
-        let pipe = choice.value === "" ? "" : "|";
-        let element = {
-          text: typeof choice.text !== "undefined" ? choice.text : "",
-          value: typeof choice.value !== "undefined" ? choice.value : "",
+        const choice = choices[i];
+        const pipe = choice.value === '' ? '' : '|';
+        const element = {
+          text: typeof choice.text !== 'undefined' ? choice.text : '',
+          value: typeof choice.value !== 'undefined' ? choice.value : ''
         };
 
         string.push(`${element.text}${pipe}${element.value}`);
       }
     }
 
-    return string.join("\n");
+    return string.join('\n');
   }
 
-  private createChoice(text: string = "", value: string = ""): FormGroup {
+  private createChoice(text: string = '', value: string = ''): FormGroup {
     return this.formBuilder.group({
-      text: [
-        text,
-        [
-          Validators.required,
-          Validators.minLength(1),
-          Validators.maxLength(2000),
-        ],
-      ],
-      value: [
-        value,
-        [
-          Validators.required,
-          Validators.minLength(1),
-          Validators.maxLength(2000),
-        ],
-      ],
+      text: [text, [Validators.required, Validators.minLength(1), Validators.maxLength(2000)]],
+      value: [value, [Validators.required, Validators.minLength(1), Validators.maxLength(2000)]]
     });
   }
 
@@ -323,6 +303,6 @@ export class ConfigChoiceFormComponent implements OnInit {
   }
 
   get choices() {
-    return this.f.get("choices") as FormArray;
+    return this.f.get('choices') as FormArray;
   }
 }

@@ -1,33 +1,16 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  ViewChild,
-  TemplateRef,
-  EventEmitter,
-} from "@angular/core";
-import { FormContentConfigService } from "./../../_services/form-content-config.service";
-import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  FormControl,
-} from "@angular/forms";
-import {
-  NgbModal,
-  NgbModalOptions,
-  NgbActiveModal,
-} from "@ng-bootstrap/ng-bootstrap";
-import { Content } from "../../_core/model";
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { NgbActiveModal, NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { Content } from '../../_core/model';
+import { FormContentConfigService } from './../../_services/form-content-config.service';
 
 @Component({
-  selector: "app-form-config",
-  templateUrl: "./form-config.component.html",
-  styleUrls: ["./form-config.component.css"],
+  selector: 'app-form-config',
+  templateUrl: './form-config.component.html',
+  styleUrls: ['./form-config.component.css']
 })
 export class FormConfigComponent implements OnInit {
-  @ViewChild("modal", { static: false }) modal: TemplateRef<any>;
+  @ViewChild('modal', { static: false }) modal: TemplateRef<any>;
   options: NgbModalOptions;
   configForm: FormGroup;
 
@@ -45,7 +28,7 @@ export class FormConfigComponent implements OnInit {
     private formContentConfig: FormContentConfigService,
     private formBuilder: FormBuilder,
     //private contentService: ContentService,
-    private activeModal: NgbActiveModal,
+    private activeModal: NgbActiveModal
   ) {}
 
   ngOnInit() {
@@ -63,15 +46,15 @@ export class FormConfigComponent implements OnInit {
         label: [null],
         src: [null],
         text: [null],
-        data: [null],
+        data: [null]
       }),
       type: this.formBuilder.group({
         datatype: [null],
-        length: [null],
+        length: [null]
       }),
       options: this.formBuilder.group({
-        nullable: [null],
-      }),
+        nullable: [null]
+      })
     });
 
     this.configForm.patchValue(this.content);

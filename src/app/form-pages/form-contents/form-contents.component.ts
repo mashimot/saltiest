@@ -1,21 +1,15 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy,
-} from "@angular/core";
-import { FormConfigService } from "./../../_services/form-config.service";
-import { BootstrapHtmlTemplate } from "../../_services/bootstrap-html-template.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { FormConfigComponent } from "./../../form-builder/form-config/form-config.component";
-import { Content } from "src/app/_core/model";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Content } from 'src/app/_core/model';
+import { BootstrapHtmlTemplate } from '../../_services/bootstrap-html-template.service';
+import { FormConfigService } from './../../_services/form-config.service';
+import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
 
 @Component({
-  selector: "app-form-contents",
-  templateUrl: "./form-contents.component.html",
-  styleUrls: ["./form-contents.component.css"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-form-contents',
+  templateUrl: './form-contents.component.html',
+  styleUrls: ['./form-contents.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormContentsComponent implements OnInit {
   showOptions: boolean;
@@ -23,10 +17,10 @@ export class FormContentsComponent implements OnInit {
     previewMode: boolean;
   };
   options: any = {
-    size: "lg",
-    backdrop: "static",
+    size: 'lg',
+    backdrop: 'static',
     keyboard: false,
-    centered: true,
+    centered: true
   };
 
   @Input() column;
@@ -41,40 +35,37 @@ export class FormContentsComponent implements OnInit {
   constructor(
     private formConfigService: FormConfigService,
     private modalService: NgbModal,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.showOptions = false;
-    this.formConfigService.getConfig().subscribe((data) => {
+    this.formConfigService.getConfig().subscribe(data => {
       this.config = data;
       this.cd.markForCheck();
     });
   }
 
   copyHtml(content): void {
-    let bootstrapHtmlTemplate = new BootstrapHtmlTemplate();
-    let code = bootstrapHtmlTemplate.get(content);
+    const bootstrapHtmlTemplate = new BootstrapHtmlTemplate();
+    const code = bootstrapHtmlTemplate.get(content);
     this.copyToClipboard(code);
   }
 
   copyToClipboard(text) {
     if ((<any>window).clipboardData && (<any>window).clipboardData.setData) {
       // IE specific code path to prevent textarea being shown while dialog is visible.
-      return (<any>window).clipboardData.setData("Text", text);
-    } else if (
-      document.queryCommandSupported &&
-      document.queryCommandSupported("copy")
-    ) {
-      var textarea = document.createElement("textarea");
+      return (<any>window).clipboardData.setData('Text', text);
+    } else if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
+      var textarea = document.createElement('textarea');
       textarea.textContent = text;
-      textarea.style.position = "fixed"; // Prevent scrolling to bottom of page in MS Edge.
+      textarea.style.position = 'fixed'; // Prevent scrolling to bottom of page in MS Edge.
       document.body.appendChild(textarea);
       textarea.select();
       try {
-        return document.execCommand("copy"); // Security exception may be thrown by some browsers.
+        return document.execCommand('copy'); // Security exception may be thrown by some browsers.
       } catch (ex) {
-        console.warn("Copy to clipboard failed.", ex);
+        console.warn('Copy to clipboard failed.', ex);
         return false;
       } finally {
         document.body.removeChild(textarea);
@@ -86,7 +77,7 @@ export class FormContentsComponent implements OnInit {
     const modal = this.modalService.open(FormConfigComponent, this.options);
     modal.componentInstance.content_id = contents[index].id;
     modal.componentInstance.content = contents[index];
-    modal.componentInstance.emitData.subscribe(($e) => {
+    modal.componentInstance.emitData.subscribe($e => {
       contents[index] = $e;
       this.cd.markForCheck();
     });

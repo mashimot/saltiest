@@ -1,27 +1,25 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { DragulaModule, DragulaService } from "ng2-dragula";
-import { FormConfigService } from "src/app/_services/form-config.service";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { DragulaModule, DragulaService } from 'ng2-dragula';
+import { FormConfigService } from 'src/app/_services/form-config.service';
 
-import { FormColumnsComponent } from "./form-columns.component";
+import { FormColumnsComponent } from './form-columns.component';
 
-describe("FormColumnsComponent", () => {
+describe('FormColumnsComponent', () => {
   let component: FormColumnsComponent;
   let fixture: ComponentFixture<FormColumnsComponent>;
   let formConfigService: FormConfigService;
   let spyFormConfigService;
 
   beforeEach(async(() => {
-    spyFormConfigService = jasmine.createSpyObj("FormConfigService", [
-      "getConfig",
-    ]);
+    spyFormConfigService = jasmine.createSpyObj('FormConfigService', ['getConfig']);
     TestBed.configureTestingModule({
       declarations: [FormColumnsComponent],
       imports: [DragulaModule],
       providers: [
         {
-          provide: DragulaService,
-        },
-      ],
+          provide: DragulaService
+        }
+      ]
     }).compileComponents();
   }));
 
@@ -33,7 +31,7 @@ describe("FormColumnsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,35 +1,26 @@
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { RegisterResponse } from "../interface/register-response";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { RegisterResponse } from '../interface/register-response';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root'
 })
 export class ContentChoiceItemService {
-  API_URL: string =
-    "https://salty-suite.herokuapp.com/api/contents_choices_items";
+  API_URL: string = 'https://salty-suite.herokuapp.com/api/contents_choices_items';
   httpOptions = {
     headers: new HttpHeaders({
-      "Content-Type": "application/json",
-    }),
+      'Content-Type': 'application/json'
+    })
   };
 
   constructor(private http: HttpClient) {}
 
   storeContentChoiceItem(contentChoiceItem) {
-    return this.http.post<RegisterResponse>(
-      `${this.API_URL}`,
-      contentChoiceItem,
-      this.httpOptions,
-    );
+    return this.http.post<RegisterResponse>(`${this.API_URL}`, contentChoiceItem, this.httpOptions);
   }
 
   updateContentChoiceItem(id: number, contentChoiceItem: any) {
-    return this.http.put<RegisterResponse>(
-      `${this.API_URL}/${id}`,
-      contentChoiceItem,
-      this.httpOptions,
-    );
+    return this.http.put<RegisterResponse>(`${this.API_URL}/${id}`, contentChoiceItem, this.httpOptions);
   }
 
   deleteContentChoiceItem(id: number) {

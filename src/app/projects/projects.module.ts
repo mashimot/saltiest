@@ -1,20 +1,14 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
-import { ProjectsComponent } from "./projects.component";
-import { ProjectsRoutingModule } from "./projects-routing.module";
-import { ProjectFormComponent } from "./project-form/project-form.component";
-import { SharedModule } from "../shared/shared.module";
-import { NgxPaginationModule } from "ngx-pagination";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { SharedModule } from '../shared/shared.module';
+import { ProjectFormComponent } from './project-form/project-form.component';
+import { ProjectsComponent } from './projects.component';
+import { ProjectsRoutingModule } from './projects-routing.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    ProjectsRoutingModule,
-    SharedModule,
-    NgxPaginationModule,
-  ],
+  imports: [CommonModule, ProjectsRoutingModule, SharedModule, NgxPaginationModule],
   exports: [ProjectsComponent],
-  declarations: [ProjectsComponent, ProjectFormComponent],
+  declarations: [ProjectsComponent, ProjectFormComponent]
 })
 export class ProjectsModule {}

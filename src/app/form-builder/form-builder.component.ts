@@ -1,18 +1,18 @@
 import {
+  AfterContentChecked,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  OnInit,
   OnDestroy,
-  AfterContentChecked,
-} from "@angular/core";
-import { ActivatedRoute, ParamMap } from "@angular/router";
-import { Subscription } from "rxjs";
-import { Page } from "../_core/model";
-import { Content } from "../_core/model/content.model";
-import { BootstrapHtmlTemplate } from "../_services/bootstrap-html-template.service";
-import { FormConfigService } from "../_services/form-config.service";
-import { HomeService } from "../shared/services/home.service";
+  OnInit
+} from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { Page } from '../_core/model';
+import { Content } from '../_core/model/content.model';
+import { BootstrapHtmlTemplate } from '../_services/bootstrap-html-template.service';
+import { FormConfigService } from '../_services/form-config.service';
+import { HomeService } from '../shared/services/home.service';
 
 export interface MVC {
   isOpen: boolean;
@@ -24,17 +24,17 @@ export interface FormBuilderConfig {
 }
 
 @Component({
-  selector: "app-form-builder",
-  templateUrl: "./form-builder.component.html",
-  styleUrls: ["./form-builder.component.css"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-form-builder',
+  templateUrl: './form-builder.component.html',
+  styleUrls: ['./form-builder.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormBuilderComponent implements OnInit, OnDestroy, AfterContentChecked {
   pages: Page[] = [];
   inputs: Content[] = [];
   subscription: Subscription = new Subscription();
 
-  tableName: string = "";
+  tableName: string = '';
   tabNumber: number = 1;
   tabMVC!: number;
   isTabAlreadyOpen: boolean = false;
@@ -58,7 +58,7 @@ export class FormBuilderComponent implements OnInit, OnDestroy, AfterContentChec
 
   private setProjectIdFromRoute(): void {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      const id = params.get("projectId");
+      const id = params.get('projectId');
       if (id) this.projectId = +id;
     });
   }
@@ -89,7 +89,7 @@ export class FormBuilderComponent implements OnInit, OnDestroy, AfterContentChec
   public newPage(): void {
     const page: Page = {
       name: `Page ${this.pages.length + 1}`,
-      rows: [],
+      rows: []
     };
     this.pages = [...this.pages, page];
   }
@@ -107,16 +107,16 @@ export class FormBuilderComponent implements OnInit, OnDestroy, AfterContentChec
     return this.bootstrapHtmlTemplate.getTemplate(this.pages ?? []);
   }
 
-  public getSchemas(schemas: { name: string; pages: Page[] }[]): void {
+  public getSchemas(schemas): void {
     if (!schemas.length) return;
-  
+
     this.tableName = schemas[0]?.name || '';
-  
     const newPages: Page[] = [];
+
     schemas.forEach(schema => {
-      schema.pages.forEach(page => newPages.push(page));
+      newPages.push(schema.pages);
     });
-  
+
     this.pages = [...this.pages, ...newPages];
   }
 }

@@ -1,18 +1,17 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { ReactiveFormsModule } from "@angular/forms";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { DragulaModule } from "ng2-dragula";
-import { of } from "rxjs";
-import { RenderContentModule } from "src/app/form-pages/render-content/render-content.module";
-import { FormContentConfigService } from "src/app/_services/form-content-config.service";
-import { FormConfigGeneralComponent } from "./form-config-general/form-config-general.component";
-import { FormConfigHtmlEditorComponent } from "./form-config-html-editor/form-config-html-editor.component";
-import { FormConfigImgComponent } from "./form-config-img/form-config-img.component";
-import { FormConfigTitleComponent } from "./form-config-title/form-config-title.component";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { DragulaModule } from 'ng2-dragula';
+import { of } from 'rxjs';
+import { FormContentConfigService } from 'src/app/_services/form-content-config.service';
+import { RenderContentModule } from 'src/app/form-pages/render-content/render-content.module';
+import { FormConfigComponent } from './form-config.component';
+import { FormConfigGeneralComponent } from './form-config-general/form-config-general.component';
+import { FormConfigHtmlEditorComponent } from './form-config-html-editor/form-config-html-editor.component';
+import { FormConfigImgComponent } from './form-config-img/form-config-img.component';
+import { FormConfigTitleComponent } from './form-config-title/form-config-title.component';
 
-import { FormConfigComponent } from "./form-config.component";
-
-describe("FormConfigComponent", () => {
+describe('FormConfigComponent', () => {
   let component: FormConfigComponent;
   let fixture: ComponentFixture<FormConfigComponent>;
   let formContentService: FormContentConfigService;
@@ -20,50 +19,43 @@ describe("FormConfigComponent", () => {
     id: null,
     name: null,
     html: {
-      tag: "text",
+      tag: 'text',
       content_choice_id: null,
       choices: [],
       category: null,
       label: null,
       src: null,
       text: null,
-      data: null,
+      data: null
     },
     type: {
       datatype: null,
-      length: null,
+      length: null
     },
     options: {
-      nullable: null,
-    },
+      nullable: null
+    }
   };
 
   beforeEach(async(() => {
-    const spyFormContentService = jasmine.createSpyObj(
-      "FormContentConfigService",
-      ["render", "getValue"],
-    );
+    const spyFormContentService = jasmine.createSpyObj('FormContentConfigService', ['render', 'getValue']);
     TestBed.configureTestingModule({
       declarations: [
         FormConfigComponent,
         FormConfigGeneralComponent,
         FormConfigHtmlEditorComponent,
         FormConfigImgComponent,
-        FormConfigTitleComponent,
+        FormConfigTitleComponent
       ],
-      imports: [
-        ReactiveFormsModule,
-        RenderContentModule,
-        DragulaModule.forRoot(),
-      ],
+      imports: [ReactiveFormsModule, RenderContentModule, DragulaModule.forRoot()],
       providers: [
         NgbActiveModal,
-        FormContentConfigService,
+        FormContentConfigService
         /*{
           provide: formContentService,
           useValue: spyFormContentService
         }*/
-      ],
+      ]
     }).compileComponents();
     formContentService = TestBed.get(FormContentConfigService); // Add this
   }));

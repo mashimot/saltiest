@@ -1,20 +1,20 @@
-import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AuthService } from "../_core/guards/auth.service";
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../_core/guards/auth.service';
 
 @Component({
-  selector: "app-login",
+  selector: 'app-login',
   standalone: true,
-  templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.css"],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css'],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule]
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   submitted: boolean = false;
-  email: string = "test@test.com";
-  password: string = "test";
+  email: string = 'test@test.com';
+  password: string = 'test';
   error: string;
 
   constructor(
@@ -26,11 +26,10 @@ export class LoginComponent implements OnInit {
     this.createForm();
   }
 
-
   private createForm(): void {
     this.loginForm = this.fb.group({
       email: [this.email, [Validators.required, Validators.email]],
-      password: [this.password, [Validators.required]],
+      password: [this.password, [Validators.required]]
     });
   }
 
@@ -40,8 +39,8 @@ export class LoginComponent implements OnInit {
 
     const credentials = this.loginForm.value;
     this.authService.login(credentials).subscribe({
-      next: (user) => this.handleLoginSuccess(user),
-      error: (err) => this.handleLoginError(err),
+      next: user => this.handleLoginSuccess(user),
+      error: err => this.handleLoginError(err)
     });
   }
 
@@ -52,11 +51,11 @@ export class LoginComponent implements OnInit {
   }
 
   private handleLoginError(err: any): void {
-    this.error = err?.message || "Login failed. Please try again.";
+    this.error = err?.message || 'Login failed. Please try again.';
   }
 
   private storeUser(user: any): void {
-    localStorage.setItem("currentUser", JSON.stringify(user));
+    localStorage.setItem('currentUser', JSON.stringify(user));
   }
 
   get f() {

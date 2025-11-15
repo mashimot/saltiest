@@ -1,4 +1,4 @@
-import { Content } from "./content.model";
+import { Content } from './content.model';
 
 export class Column {
   id?: number;

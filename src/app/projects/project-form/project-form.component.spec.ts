@@ -1,13 +1,13 @@
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { RouterTestingModule } from "@angular/router/testing";
-import { of } from "rxjs";
-import { ProjectService } from "src/app/shared/services/project.service";
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
+import { ProjectService } from 'src/app/shared/services/project.service';
 
-import { ProjectFormComponent } from "./project-form.component";
+import { ProjectFormComponent } from './project-form.component';
 
-describe("ProjectFormComponent", () => {
+describe('ProjectFormComponent', () => {
   let component: ProjectFormComponent;
   let fixture: ComponentFixture<ProjectFormComponent>;
   let formBuilder: FormBuilder;
@@ -15,24 +15,16 @@ describe("ProjectFormComponent", () => {
   let projectServiceMock;
 
   beforeEach(async(() => {
-    projectServiceMock = jasmine.createSpyObj("ProjectService", [
-      "getProjectById",
-      "updateProject",
-      "storeProject",
-    ]);
+    projectServiceMock = jasmine.createSpyObj('ProjectService', ['getProjectById', 'updateProject', 'storeProject']);
     TestBed.configureTestingModule({
       declarations: [ProjectFormComponent],
-      imports: [
-        RouterTestingModule.withRoutes([]),
-        ReactiveFormsModule,
-        HttpClientTestingModule,
-      ],
+      imports: [RouterTestingModule.withRoutes([]), ReactiveFormsModule, HttpClientTestingModule],
       providers: [
         {
           provide: ProjectService,
-          useValue: projectServiceMock,
-        },
-      ],
+          useValue: projectServiceMock
+        }
+      ]
     }).compileComponents();
   }));
 
@@ -43,21 +35,21 @@ describe("ProjectFormComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it("should test huehue", () => {
-    component.projectForm.get("id").patchValue(1);
+  it('should test huehue', () => {
+    component.projectForm.get('id').patchValue(1);
     projectServiceMock.getProjectById.and.returnValue(
       of({
         success: true,
         data: {
-          name: "name 1",
-        },
-      }),
+          name: 'name 1'
+        }
+      })
     );
-    projectServiceMock.getProjectById(1).subscribe((result) => {});
+    projectServiceMock.getProjectById(1).subscribe(result => {});
 
     //expect(component).toBeTruthy();
   });

@@ -1,23 +1,23 @@
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { RegisterResponse } from "../interface/register-response";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { RegisterResponse } from '../interface/register-response';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root'
 })
 export class ProjectService {
-  API_URL: string = "https://salty-suite.herokuapp.com/api/projects";
+  API_URL: string = 'https://salty-suite.herokuapp.com/api/projects';
   httpOptions = {
     headers: new HttpHeaders({
-      "Content-Type": "application/json",
-    }),
+      'Content-Type': 'application/json'
+    })
   };
 
   constructor(private http: HttpClient) {}
 
   getProjects(queryParams?) {
     const httpOptions = {
-      params: { ...queryParams },
+      params: { ...queryParams }
     };
     return this.http.get<any>(`${this.API_URL}`, httpOptions);
   }
@@ -27,25 +27,14 @@ export class ProjectService {
   }
 
   updateProject(id: number, data) {
-    return this.http.put<RegisterResponse>(
-      `${this.API_URL}/${id}`,
-      data,
-      this.httpOptions,
-    );
+    return this.http.put<RegisterResponse>(`${this.API_URL}/${id}`, data, this.httpOptions);
   }
 
   storeProject(data) {
-    return this.http.post<RegisterResponse>(
-      `${this.API_URL}`,
-      data,
-      this.httpOptions,
-    );
+    return this.http.post<RegisterResponse>(`${this.API_URL}`, data, this.httpOptions);
   }
 
   deleteProject(id: number) {
-    return this.http.delete<RegisterResponse>(
-      `${this.API_URL}/${id}`,
-      this.httpOptions,
-    );
+    return this.http.delete<RegisterResponse>(`${this.API_URL}/${id}`, this.httpOptions);
   }
 }
