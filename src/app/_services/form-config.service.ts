@@ -1,26 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
 interface Config {
-    previewMode: boolean
+  previewMode: boolean;
 }
-//Enviando parametros para componentes diferentes com Subject (Tópico, Assunto) 
+//Enviando parametros para componentes diferentes com Subject (Tópico, Assunto)
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class FormConfigService {
-    // Instância o objeto Subject
-    newFormConfigSubject = new BehaviorSubject<any>([]);
+  // Instância o objeto Subject
+  newFormConfigSubject = new BehaviorSubject<any>([]);
 
-    constructor() { }
+  constructor() {}
 
-    setConfig(config: Config) {
-        console.log(config);
-        //Armazena o parametro que foi enviado
-        this.newFormConfigSubject.next(config);
-    }
+  setConfig(config: Config) {
+    console.log(config);
+    //Armazena o parametro que foi enviado
+    this.newFormConfigSubject.next(config);
+  }
 
-    getConfig() {
-        //Fica "observando" por atualizações nos dados
-        return this.newFormConfigSubject.asObservable();
-    }
+  getConfig() {
+    //Fica "observando" por atualizações nos dados
+    return this.newFormConfigSubject.asObservable();
+  }
 }

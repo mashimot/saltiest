@@ -9,19 +9,15 @@ describe('ConfigChoiceFormComponent', () => {
   let fixture: ComponentFixture<ConfigChoiceFormComponent>;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        DragulaModule
-      ],
-      declarations: [ ConfigChoiceFormComponent ],
-      providers: [ 
+      imports: [ReactiveFormsModule, DragulaModule],
+      declarations: [ConfigChoiceFormComponent],
+      providers: [
         NgbActiveModal,
         {
-          provide: DragulaService
-        }
-       ]
-    })
-    .compileComponents();
+          provide: DragulaService,
+        },
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -29,11 +25,13 @@ describe('ConfigChoiceFormComponent', () => {
     component = fixture.componentInstance;
     component.content = {
       html: {
-        choices: [{
-          text: 'text 1',
-          value: 'value 1'
-        }]
-      }
+        choices: [
+          {
+            text: 'text 1',
+            value: 'value 1',
+          },
+        ],
+      },
     };
     fixture.detectChanges();
   });
@@ -44,22 +42,24 @@ describe('ConfigChoiceFormComponent', () => {
 
   it('should text be converted to array of choices', () => {
     component.text.patchValue('text 1|value 1');
-    expect(component.choiceForm.get('choices').value).toEqual([{
-      text: 'text 1',
-      value: 'value 1'
-    }])
+    expect(component.choiceForm.get('choices').value).toEqual([
+      {
+        text: 'text 1',
+        value: 'value 1',
+      },
+    ]);
   });
 
   it('should add a new element to choiceForm', () => {
     spyOn(component, 'addChoice').and.callThrough();
     component.addChoice();
-    expect(component.choiceForm.get('choices').value.length).toBe(2)
+    expect(component.choiceForm.get('choices').value.length).toBe(2);
   });
 
   it('should remove an element in choiceForm', () => {
     spyOn(component, 'removeContent').and.callThrough();
     component.removeContent(1);
-    expect(component.choiceForm.get('choices').value.length).toBe(1)
+    expect(component.choiceForm.get('choices').value.length).toBe(1);
     //expect(component.choiceForm.get('choices').value.length).toBe(2)
   });
 

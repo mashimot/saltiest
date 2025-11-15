@@ -16,24 +16,25 @@ describe('ConfigChoicesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ 
+      declarations: [
         ConfigChoicesComponent,
         ConfigChoiceFormComponent,
-        ConfigChoicesListComponent
+        ConfigChoicesListComponent,
       ],
       imports: [
         RouterTestingModule,
         HttpClientTestingModule,
-        ReactiveFormsModule, 
+        ReactiveFormsModule,
         DragulaModule.forRoot(),
         NgxPaginationModule,
-        NgbModalModule
+        NgbModalModule,
       ],
-      providers: [{
-        provide: DragulaService
-      }]
-    })
-    .compileComponents();
+      providers: [
+        {
+          provide: DragulaService,
+        },
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -11,19 +11,15 @@ describe('CreateTableToJsonComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CreateTableToJsonComponent ],
-      imports: [
-        ReactiveFormsModule
-      ]
-    })
-    .compileComponents();
-    
+      declarations: [CreateTableToJsonComponent],
+      imports: [ReactiveFormsModule],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CreateTableToJsonComponent);
     component = fixture.componentInstance;
-   
+
     fixture.detectChanges();
   });
 
@@ -33,7 +29,7 @@ describe('CreateTableToJsonComponent', () => {
 
   it('should gridModel sum must be invalid (when sum > 12)', () => {
     component.form.patchValue({
-      gridModel: '4 4 3'
+      gridModel: '4 4 3',
     });
 
     expect(component.form.valid).toBeFalsy();
@@ -41,7 +37,7 @@ describe('CreateTableToJsonComponent', () => {
 
   it('should gridModel sum must be valid (equal to 12)', () => {
     component.form.patchValue({
-      gridModel: '4 4 4'
+      gridModel: '4 4 4',
     });
 
     expect(component.form.valid).toBeTruthy();
@@ -49,12 +45,12 @@ describe('CreateTableToJsonComponent', () => {
 
   it('should gridModel accept only numbers', () => {
     component.form.patchValue({
-      gridModel: '4 4 a'
+      gridModel: '4 4 a',
     });
 
     expect(component.form.valid).toBeFalsy();
   });
-  
+
   it('should createTable have been called', () => {
     spyOn(component, 'createTable').and.callThrough();
     component.createTable();

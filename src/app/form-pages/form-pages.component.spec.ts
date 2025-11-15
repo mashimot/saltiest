@@ -19,29 +19,25 @@ describe('FormPagesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
+      declarations: [
         FormPagesComponent,
         FormRowsComponent,
         FormColumnsComponent,
-        FormContentsComponent 
+        FormContentsComponent,
       ],
-      imports: [
-        HttpClientTestingModule,
-        RenderContentModule,
-        DragulaModule,
-      ],
+      imports: [HttpClientTestingModule, RenderContentModule, DragulaModule],
       providers: [
         {
-          provide: DragulaService
-        },{
+          provide: DragulaService,
+        },
+        {
           provide: ActivatedRoute,
           useValue: {
-            params: of({id: 123})
-          }
-        }
+            params: of({ id: 123 }),
+          },
+        },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

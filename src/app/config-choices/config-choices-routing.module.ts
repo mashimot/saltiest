@@ -19,17 +19,17 @@ const routes: Routes = [
   {
     path: '',
     component: ConfigChoicesComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
-  { 
-    path: ':id/edit', 
+  {
+    path: ':id/edit',
     component: ConfigChoiceFormComponent,
-    canActivate: [AuthGuard]
-  }
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ConfigChoicesRoutingModule { }
+export class ConfigChoicesRoutingModule {}

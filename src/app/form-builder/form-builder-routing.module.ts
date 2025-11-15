@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { FormBuilderComponent } from "./form-builder.component";
+import { FormBuilderComponent } from './form-builder.component';
 import { AuthGuard } from '../_core/guards/auth.guard';
 
 /*const routes: Routes = [{
@@ -12,15 +12,16 @@ import { AuthGuard } from '../_core/guards/auth.guard';
     ]
 }];*/
 
-const routes: Routes = [{
-    path: ':projectId/edit', component: FormBuilderComponent
-}];
+const routes: Routes = [
+  {
+    path: ':projectId/edit',
+    component: FormBuilderComponent,
+  },
+];
 
 @NgModule({
-    imports: [
-        RouterModule.forChild(routes)
-    ],
-    exports: [RouterModule],
-    declarations: []
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+  declarations: [],
 })
-export class FormBuilderRoutingModule { }
+export class FormBuilderRoutingModule {}

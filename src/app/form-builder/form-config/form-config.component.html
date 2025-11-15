@@ -1,58 +1,69 @@
 <!-- MODAL -->
 <form *ngIf="configForm" [formGroup]="configForm" (ngSubmit)="register()">
-    <div class="modal-header">
-        <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <div class="card">
-            <div class="card-body">
-                <app-render-content [content]="configForm.value"></app-render-content>
-                <div *ngFor="let renderComponent of render.components" class="card">
-                    <div class="card-body">
-                        <app-form-config-general 
-                            [parentFormGroup]="configForm"
-                            [content]="content"
-                            *ngIf="renderComponent.componentName === 'app-form-config-general'"
-                        ></app-form-config-general>
-                        <app-form-config-img 
-                            [parentFormGroup]="configForm"
-                            [content]="content"
-                            *ngIf="renderComponent.componentName === 'app-form-config-img'"
-                        ></app-form-config-img>
-                        <app-form-config-title
-                            [parentFormGroup]="configForm"
-                            [content]="content"
-                            *ngIf="renderComponent.componentName === 'app-form-config-title'"
-                        ></app-form-config-title>
-                        <app-form-config-html-editor
-                            [parentFormGroup]="configForm"
-                            [content]="content"
-                            *ngIf="renderComponent.componentName === 'app-form-config-html-editor'"
-                        ></app-form-config-html-editor>
-                        <app-config-choice-form
-                            [parentFormGroup]="configForm"
-                            [content]="content"
-                            *ngIf="renderComponent.componentName === 'app-config-choices'"
-                        ></app-config-choice-form>
-                        <hr>
-                    </div>
-                </div>
-            </div>
+  <div class="modal-header">
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="activeModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <app-render-content [content]="configForm.value"></app-render-content>
+        <div *ngFor="let renderComponent of render.components" class="card">
+          <div class="card-body">
+            <app-form-config-general
+              [parentFormGroup]="configForm"
+              [content]="content"
+              *ngIf="
+                renderComponent.componentName === 'app-form-config-general'
+              "></app-form-config-general>
+            <app-form-config-img
+              [parentFormGroup]="configForm"
+              [content]="content"
+              *ngIf="
+                renderComponent.componentName === 'app-form-config-img'
+              "></app-form-config-img>
+            <app-form-config-title
+              [parentFormGroup]="configForm"
+              [content]="content"
+              *ngIf="
+                renderComponent.componentName === 'app-form-config-title'
+              "></app-form-config-title>
+            <app-form-config-html-editor
+              [parentFormGroup]="configForm"
+              [content]="content"
+              *ngIf="
+                renderComponent.componentName === 'app-form-config-html-editor'
+              "></app-form-config-html-editor>
+            <app-config-choice-form
+              [parentFormGroup]="configForm"
+              [content]="content"
+              *ngIf="
+                renderComponent.componentName === 'app-config-choices'
+              "></app-config-choice-form>
+            <hr />
+          </div>
         </div>
+      </div>
     </div>
-    <div class="modal-footer">
-        <div class="btn-group float-right">
-            <button 
-                class="btn btn-outline-danger" 
-                (click)="activeModal.close('Close click')"
-            >Cancel</button>						
-            <button 
-                type="submit"
-                class="btn btn-outline-primary" 
-                [disabled]="configForm.invalid"
-            >Save</button>
-        </div>
+  </div>
+  <div class="modal-footer">
+    <div class="btn-group float-right">
+      <button
+        class="btn btn-outline-danger"
+        (click)="activeModal.close('Close click')">
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="btn btn-outline-primary"
+        [disabled]="configForm.invalid">
+        Save
+      </button>
     </div>
+  </div>
 </form>

@@ -11,16 +11,20 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigChoicesListComponent } from './config-choices-list/config-choices-list.component';
 
 @NgModule({
-    imports: [
-        ConfigChoicesRoutingModule,
-        CommonModule,
-        SharedModule,
-        ReactiveFormsModule,
-        DragulaModule.forRoot(),
-        NgxPaginationModule,
-        NgbModalModule
-    ],
-    exports: [ConfigChoicesComponent, ConfigChoiceFormComponent],
-    declarations: [ConfigChoicesComponent, ConfigChoiceFormComponent, ConfigChoicesListComponent]
+  imports: [
+    ConfigChoicesRoutingModule,
+    CommonModule,
+    SharedModule,
+    ReactiveFormsModule,
+    DragulaModule.forRoot(),
+    NgxPaginationModule,
+    NgbModalModule,
+  ],
+  exports: [ConfigChoicesComponent, ConfigChoiceFormComponent],
+  declarations: [
+    ConfigChoicesComponent,
+    ConfigChoiceFormComponent,
+    ConfigChoicesListComponent,
+  ],
 })
-export class ConfigChoicesModule { }
+export class ConfigChoicesModule {}

@@ -10,16 +10,10 @@ describe('FormConfigHtmlEditorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FormConfigHtmlEditorComponent ],
-      imports: [
-        ReactiveFormsModule
-      ],
-      providers: [
-        FormBuilder
-      ]
-    })
-    .compileComponents();
-
+      declarations: [FormConfigHtmlEditorComponent],
+      imports: [ReactiveFormsModule],
+      providers: [FormBuilder],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -28,9 +22,9 @@ describe('FormConfigHtmlEditorComponent', () => {
     component = fixture.componentInstance;
     component.parentFormGroup = formBuilder.group({
       html: formBuilder.group({
-        data: ['', Validators.required]
-      })
-    })
+        data: ['', Validators.required],
+      }),
+    });
     fixture.detectChanges();
   });
 

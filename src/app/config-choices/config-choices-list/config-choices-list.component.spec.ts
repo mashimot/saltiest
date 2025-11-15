@@ -9,18 +9,21 @@ import { ConfigChoicesRoutingModule } from './../config-choices-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DragulaModule } from 'ng2-dragula';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgbActiveModal, NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbActiveModal,
+  NgbModal,
+  NgbModalModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ConfigChoicesListComponent } from './config-choices-list.component';
 
 describe('ConfigChoicesListComponent', () => {
   let component: ConfigChoicesComponent;
   let fixture: ComponentFixture<ConfigChoicesComponent>;
-  let htmlElementService: HtmlElementService
-  let htmlElementServiceSpy; 
+  let htmlElementService: HtmlElementService;
+  let htmlElementServiceSpy;
   let dragulaService: DragulaService;
   let modal: NgbActiveModal;
-  
 
   beforeEach(async(() => {
     htmlElementServiceSpy = jasmine.createSpyObj([
@@ -29,37 +32,36 @@ describe('ConfigChoicesListComponent', () => {
       'getTools',
       'getContentChoices',
       'getOptionChoices',
-      'getHtmlElements'
+      'getHtmlElements',
     ]);
-  
+
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
         HttpClientTestingModule,
         ConfigChoicesRoutingModule,
-        ReactiveFormsModule, 
+        ReactiveFormsModule,
         DragulaModule,
         NgxPaginationModule,
-        NgbModalModule
+        NgbModalModule,
       ],
       declarations: [
         ConfigChoicesListComponent,
         ConfigChoicesComponent,
-        ConfigChoiceFormComponent
+        ConfigChoiceFormComponent,
       ],
       providers: [
         {
           provide: htmlElementService,
-          useValue: htmlElementServiceSpy
+          useValue: htmlElementServiceSpy,
         },
         {
-          provide: DragulaService
+          provide: DragulaService,
         },
         NgbActiveModal,
-        NgbModal
-      ]
-    })
-    .compileComponents();
+        NgbModal,
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

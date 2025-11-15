@@ -3,23 +3,20 @@ import { AuthService } from '../guards/auth.service';
 import { User } from '../guards/user.model';
 
 @Component({
-	selector: 'app-header-bar',
-	templateUrl: './header-bar.component.html',
-	styleUrls: ['./header-bar.component.css']
+  selector: 'app-header-bar',
+  templateUrl: './header-bar.component.html',
+  styleUrls: ['./header-bar.component.css'],
 })
 export class HeaderBarComponent implements OnInit {
-	constructor(
-		private authService: AuthService
-	) { }
+  constructor(private authService: AuthService) {}
 
-	ngOnInit() {
-	}
+  ngOnInit() {}
 
-	onLogout(){
-		this.authService.logout();
-	}
+  onLogout() {
+    this.authService.logout();
+  }
 
-	get isUserLoggedIn(){
-		return this.authService.currentUserValue;
-	}
+  get isUserLoggedIn() {
+    return this.authService.currentUserValue;
+  }
 }

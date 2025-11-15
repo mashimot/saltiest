@@ -12,11 +12,9 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
     HomeRoutingModule,
     FormPagesModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   exports: [HomeComponent],
-  declarations: [
-    HomeComponent
-  ]
+  declarations: [HomeComponent],
 })
-export class HomeModule { }
+export class HomeModule {}

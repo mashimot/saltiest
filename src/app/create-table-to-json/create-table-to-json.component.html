@@ -1,70 +1,97 @@
-
-
 <form class="card" [formGroup]="form">
-    <div class="card-header">
-        <h6 class="text-center text-bold">Create Table to Form</h6>
+  <div class="card-header">
+    <h6 class="text-center text-bold">Create Table to Form</h6>
+  </div>
+  <div class="card-body">
+    <div class="card-title">Select a Database Engine</div>
+    <div formGroupName="options" class="row">
+      <div class="col-md-12">
+        <div class="dropdown">
+          <a
+            href="javascript:void(0)"
+            id="dropdownMenuLink"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            class="btn btn-link">
+            <img
+              [src]="f.get('options.database.logo').value"
+              width="50"
+              height="50"
+              class="mx-auto w-100" />
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <li
+              *ngFor="let s of sql"
+              (click)="setDDL(s.database)"
+              class="dropdown-item p-1"
+              [ngStyle]="{ cursor: 'pointer' }">
+              <img
+                [src]="s.database.logo"
+                width="50"
+                height="50"
+                alt="{{ s.database.engine }}"
+                class="d-block mx-auto" />
+            </li>
+          </ul>
+        </div>
+        <div class="form-group">
+          <textarea
+            formControlName="ddl"
+            name="string"
+            [ngClass]="{ 'is-invalid': objectLength() > 0 }"
+            class="form-control form-control-sm h-20 mt-4"
+            rows="10"></textarea>
+        </div>
+      </div>
     </div>
-    <div class="card-body">
-        <div class="card-title">
-            Select a Database Engine
-        </div>
-        <div formGroupName="options" class="row">
-            <div class="col-md-12">
-                <div class="dropdown">
-                    <a href="javascript:void(0)" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-link">
-                        <img [src]="f.get('options.database.logo').value" width="50" height="50" class="mx-auto w-100">
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li *ngFor="let s of sql" (click)="setDDL(s.database)" class="dropdown-item p-1" [ngStyle]="{'cursor': 'pointer'}">
-                            <img [src]="s.database.logo" width="50" height="50" alt="{{ s.database.engine }}" class="d-block mx-auto"> 
-                        </li>
-                    </ul>    
-                </div>
-                <div class="form-group">
-                    <textarea
-                        formControlName="ddl"
-                        name="string"
-                        [ngClass]="{ 'is-invalid' : objectLength() > 0 }"
-                        class="form-control form-control-sm h-20 mt-4"
-                        rows="10"
-                    ></textarea>
-                </div>    
-            </div>
-        </div>
 
-        <div *ngIf="errors && objectLength() > 0">
-            <div class="card card-body border-danger p-3 mt-2">
-                <small class="error">
-                    {{ errors.msg.strBegin }}
-                    <span [ngbPopover]="errors.title" triggers="mouseenter:mouseleave">                         
-                        <span class="text-danger text-bold">{{ errors.msg.strMiddle }}</span>
-                    </span>
-                    {{ errors.msg.strEnd }}
-                </small>                
-            </div>
-        </div>
-        <div class="form-group mt-1">
-            <label for="form_ct_grid">Bootstrap Grid</label>
-            <input type="text"
-                formControlName="gridModel"
-                id="form_ct_grid"
-                class="form-control form-control-sm"
-                [ngClass]="{ 'is-invalid': gridModel?.invalid }"
-                [ngStyle]="{ cursor: 'pointer' }"
-            >
-            <div *ngIf="gridModel?.invalid || gridModel?.touched" class="invalid-feedback">
-                <div *ngIf="gridModel?.hasError('required')">* Enter with your grid.</div>
-                <div *ngIf="gridModel?.hasError('pattern')">* Allows only numbers and space.</div>
-                <div *ngIf="gridModel?.hasError('minlength')">* Min. Length is {{ gridModel?.errors?.minlength.requiredLength }}.</div>
-                <div *ngIf="gridModel?.hasError('isSumInvalid')">* The sum must be equals to {{ gridModel.errors?.sumBeEqualsTo }}.</div>
-            </div>
-        </div>
+    <div *ngIf="errors && objectLength() > 0">
+      <div class="card card-body border-danger p-3 mt-2">
+        <small class="error">
+          {{ errors.msg.strBegin }}
+          <span [ngbPopover]="errors.title" triggers="mouseenter:mouseleave">
+            <span class="text-danger text-bold">{{
+              errors.msg.strMiddle
+            }}</span>
+          </span>
+          {{ errors.msg.strEnd }}
+        </small>
+      </div>
     </div>
-    <div class="card-footer">
-        <button
-            class="btn btn-dark btn-block btn-sm" 
-            (click)="createTable()" 
-            [disabled]="gridModel?.invalid"
-        >Generate</button>
+    <div class="form-group mt-1">
+      <label for="form_ct_grid">Bootstrap Grid</label>
+      <input
+        type="text"
+        formControlName="gridModel"
+        id="form_ct_grid"
+        class="form-control form-control-sm"
+        [ngClass]="{ 'is-invalid': gridModel?.invalid }"
+        [ngStyle]="{ cursor: 'pointer' }" />
+      <div
+        *ngIf="gridModel?.invalid || gridModel?.touched"
+        class="invalid-feedback">
+        <div *ngIf="gridModel?.hasError('required')">
+          * Enter with your grid.
+        </div>
+        <div *ngIf="gridModel?.hasError('pattern')">
+          * Allows only numbers and space.
+        </div>
+        <div *ngIf="gridModel?.hasError('minlength')">
+          * Min. Length is {{ gridModel?.errors?.minlength.requiredLength }}.
+        </div>
+        <div *ngIf="gridModel?.hasError('isSumInvalid')">
+          * The sum must be equals to {{ gridModel.errors?.sumBeEqualsTo }}.
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="card-footer">
+    <button
+      class="btn btn-dark btn-block btn-sm"
+      (click)="createTable()"
+      [disabled]="gridModel?.invalid">
+      Generate
+    </button>
+  </div>
 </form>

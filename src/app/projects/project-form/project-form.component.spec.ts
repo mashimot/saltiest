@@ -12,27 +12,28 @@ describe('ProjectFormComponent', () => {
   let fixture: ComponentFixture<ProjectFormComponent>;
   let formBuilder: FormBuilder;
   let projectService: ProjectService;
-  let projectServiceMock; 
+  let projectServiceMock;
 
   beforeEach(async(() => {
     projectServiceMock = jasmine.createSpyObj('ProjectService', [
       'getProjectById',
       'updateProject',
-      'storeProject'
-    ])
+      'storeProject',
+    ]);
     TestBed.configureTestingModule({
-      declarations: [ ProjectFormComponent ],
+      declarations: [ProjectFormComponent],
       imports: [
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
-        HttpClientTestingModule
+        HttpClientTestingModule,
       ],
-      providers: [{
-        provide: ProjectService,
-        useValue: projectServiceMock
-      }]
-    })
-    .compileComponents();
+      providers: [
+        {
+          provide: ProjectService,
+          useValue: projectServiceMock,
+        },
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -48,17 +49,16 @@ describe('ProjectFormComponent', () => {
 
   it('should test huehue', () => {
     component.projectForm.get('id').patchValue(1);
-    projectServiceMock.getProjectById.and.returnValue(of({
-      success: true,
-      data: {
-        name: 'name 1'
-      }
-    }))
-    projectServiceMock.getProjectById(1).subscribe(result => {
-
-    });
+    projectServiceMock.getProjectById.and.returnValue(
+      of({
+        success: true,
+        data: {
+          name: 'name 1',
+        },
+      })
+    );
+    projectServiceMock.getProjectById(1).subscribe(result => {});
 
     //expect(component).toBeTruthy();
   });
-
 });

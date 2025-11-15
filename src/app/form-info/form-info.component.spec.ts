@@ -10,13 +10,9 @@ describe('FormInfoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormInfoComponent ],
-      imports: [
-        HttpClientTestingModule,
-        ReactiveFormsModule
-      ]
-    })
-    .compileComponents();
+      declarations: [FormInfoComponent],
+      imports: [HttpClientTestingModule, ReactiveFormsModule],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

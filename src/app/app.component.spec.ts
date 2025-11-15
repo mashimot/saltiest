@@ -3,7 +3,11 @@ import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HighlightModule } from 'ngx-highlightjs';
-import { NgxUiLoaderHttpModule, NgxUiLoaderModule, NgxUiLoaderRouterModule } from 'ngx-ui-loader';
+import {
+  NgxUiLoaderHttpModule,
+  NgxUiLoaderModule,
+  NgxUiLoaderRouterModule,
+} from 'ngx-ui-loader';
 import { AppComponent } from './app.component';
 import { CoreModule } from './_core/core.module';
 describe('AppComponent', () => {
@@ -16,11 +20,9 @@ describe('AppComponent', () => {
         NgbModule,
         HighlightModule.forRoot(),
         NgxUiLoaderHttpModule,
-        NgxUiLoaderRouterModule
+        NgxUiLoaderRouterModule,
       ],
-      declarations: [
-        AppComponent
-      ],
+      declarations: [AppComponent],
     }).compileComponents();
   }));
   it('should create the app', async(() => {

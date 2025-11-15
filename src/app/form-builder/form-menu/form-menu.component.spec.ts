@@ -18,25 +18,22 @@ describe('FormMenuComponent', () => {
     const spy = jasmine.createSpyObj('ToolService', ['getTools']);
 
     TestBed.configureTestingModule({
-      declarations: [
-        FormMenuComponent
-      ],
+      declarations: [FormMenuComponent],
       imports: [
         HttpClientTestingModule,
         RouterTestingModule,
         ReactiveFormsModule,
         ConfigChoicesModule,
-        DragulaModule
+        DragulaModule,
       ],
       providers: [
         {
           provide: toolService,
-          useValue: spy
-        }
-      ]
-    })
-    .compileComponents();
-    toolService = TestBed.inject(ToolService)
+          useValue: spy,
+        },
+      ],
+    }).compileComponents();
+    toolService = TestBed.inject(ToolService);
   }));
 
   beforeEach(() => {
@@ -54,8 +51,7 @@ describe('FormMenuComponent', () => {
     component.gridModel.patchValue('4 4 4');
     fixture.detectChanges();
     expect(component.bootstrap[0]).toEqual({
-      grid: '4 4 4'
-    })
-
+      grid: '4 4 4',
+    });
   });
 });

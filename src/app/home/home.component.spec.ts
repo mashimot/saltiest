@@ -11,21 +11,17 @@ describe('HomeComponent', () => {
   let homeService: HomeService;
 
   beforeEach(async(() => {
-    let spyHomeService = jasmine.createSpyObj('HomeService', ['getHome'])
+    let spyHomeService = jasmine.createSpyObj('HomeService', ['getHome']);
     TestBed.configureTestingModule({
-      declarations: [ HomeComponent ],
-      imports: [
-        HttpClientTestingModule,
-        FormPagesModule
-      ],
+      declarations: [HomeComponent],
+      imports: [HttpClientTestingModule, FormPagesModule],
       providers: [
         {
           provide: homeService,
-          useValue: spyHomeService
+          useValue: spyHomeService,
         },
-      ]
-    })
-    .compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

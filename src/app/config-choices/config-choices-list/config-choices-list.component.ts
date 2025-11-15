@@ -8,167 +8,169 @@ import { Location } from '@angular/common';
 import { CHOICE_TYPE } from '../../_core/consts/choice-type.const';
 import { Content } from '../../_core/model';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { tap, map, filter, switchMap, startWith, distinctUntilChanged, debounceTime, delay, take } from 'rxjs/operators';
+import {
+  tap,
+  map,
+  filter,
+  switchMap,
+  startWith,
+  distinctUntilChanged,
+  debounceTime,
+  delay,
+  take,
+} from 'rxjs/operators';
 import { ContentService } from '../../shared/services/content.service';
 import { ContentChoiceItemService } from '../../shared/services/content-choice-item.service';
 import { FormControl } from '@angular/forms';
 
 interface ConfigChoice {
-    type: string;
-    icon: string;
-    value: number;   
+  type: string;
+  icon: string;
+  value: number;
 }
 
 interface ConfigChoiceType {
-    [key: string]: ConfigChoice
+  [key: string]: ConfigChoice;
 }
 
 @Component({
-    selector: 'app-config-choices-list',
-    templateUrl: './config-choices-list.component.html',
-    styleUrls: ['./config-choices-list.component.css']
+  selector: 'app-config-choices-list',
+  templateUrl: './config-choices-list.component.html',
+  styleUrls: ['./config-choices-list.component.css'],
 })
 export class ConfigChoicesListComponent implements OnInit {
-    //choices: any;
-    event: any;
-    queryField: FormControl = new FormControl();
-    choices$: Observable<any>;
-    choices: any[];
-    choiceTypes: ConfigChoiceType;
-    options: any = {
-        size: 'lg',
-        backdrop : 'static',
-        keyboard : false,
-        centered: true
-    };
+  //choices: any;
+  event: any;
+  queryField: FormControl = new FormControl();
+  choices$: Observable<any>;
+  choices: any[];
+  choiceTypes: ConfigChoiceType;
+  options: any = {
+    size: 'lg',
+    backdrop: 'static',
+    keyboard: false,
+    centered: true,
+  };
 
-    loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<any>(false);
-    loading$: Observable<boolean> = this.loadingSubject.asObservable();
+  loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<any>(false);
+  loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
-    constructor(
-        private htmlElementService: HtmlElementService,
-        private dragulaService: DragulaService,
-        private router: Router,
-        private modalService: NgbModal,
-        /*private cd: ChangeDetectorRef,
+  constructor(
+    private htmlElementService: HtmlElementService,
+    private dragulaService: DragulaService,
+    private router: Router,
+    private modalService: NgbModal
+    /*private cd: ChangeDetectorRef,
         private location: Location,
         private contentChoiceItemService: ContentChoiceItemService,
         private activatedRoute: ActivatedRoute*/
-    ) {
-    }
+  ) {}
 
-    ngOnInit() {
-        this.choiceTypes = CHOICE_TYPE;
-        //this.activatedRoute.queryParams.subscribe(x => this.loadPage(x.page || 1));
-        this.choices$ = this.queryField
-            .valueChanges
-            .pipe(
-                startWith(''),
-                delay(0),
-                map(value => value.trim()),
-                distinctUntilChanged(),
-                tap((value) => {
-                    if(value.length > 1 || value == ''){
-                        this.loadingSubject.next(true);
-                    }
-                }),
-                filter(value => {
-                    if(value == '' || value.length > 1){
-                        return true;
-                    }
-
-                    return false;
-                }),
-                debounceTime(1000),
-                switchMap((value) => {
-                    console.log('value', value)
-                    if(value == ''){
-                        return this.htmlElementService
-                            .getOptionChoices();
-                    }
-
-                    return this.htmlElementService
-                        .getOptionChoices()
-                        .pipe(
-                            tap((d) => {
-                                console.log('jogos', d);
-                            }),
-                            map((result: any) => {
-                                const paginateData = result.paginate.data;
-                                let newData = [];
-
-                                paginateData.forEach((data) => {
-                                    if((data.description.toLowerCase()).includes(value.toLowerCase())){
-                                        newData.push(data)
-                                    }
-                                });
-                                console.log('paginateData', paginateData, 'newData', newData);
-
-                                result.paginate.data = newData;
-                
-                                return result;
-                            })
-                        );
-                }),
-                tap(() => {
-                    this.loadingSubject.next(false);
-                }),
-            );
-    }
-
-    edit(content: any = null, index: number = null){
-        if(content == null){
-            content = {
-                description: "",
-                html: {
-                    category: "form",
-                    content_choice_id: null,
-                    content_html_tag_id: 2,
-                    choices: [],
-                    group: "",
-                    label: "Type your Text",
-                    tag: "radio"
-                }
-            };
+  ngOnInit() {
+    this.choiceTypes = CHOICE_TYPE;
+    //this.activatedRoute.queryParams.subscribe(x => this.loadPage(x.page || 1));
+    this.choices$ = this.queryField.valueChanges.pipe(
+      startWith(''),
+      delay(0),
+      map(value => value.trim()),
+      distinctUntilChanged(),
+      tap(value => {
+        if (value.length > 1 || value == '') {
+          this.loadingSubject.next(true);
         }
-        
-        const modal = this.modalService.open(
-            ConfigChoiceFormComponent,
-            this.options
-        );
-        
-        modal.componentInstance.content = content;
-        modal.componentInstance.index = index;
-        modal.componentInstance.emitData
-            .subscribe($e => {
-                if($e.choices.length > 0){
-                    const groups  = $e.choices.map(choice => choice.text);
-                    this.choices$ = this.choices$
-                        .pipe(
-                            map((result) => {
-                                if(index == null){
-                                    content.html.choices = $e.choices;
-                                    content.description = groups.join('|');
-                                    result.paginate.data.push(content)
+      }),
+      filter(value => {
+        if (value == '' || value.length > 1) {
+          return true;
+        }
 
-                                    return result;
-                                }
-                                
-                                result.paginate.data[index].html.choices = $e.choices;
-                                return result;
-                            }),
-                            tap(x => console.log(x))
-                        )
-                }
-                modal.dismiss();
+        return false;
+      }),
+      debounceTime(1000),
+      switchMap(value => {
+        console.log('value', value);
+        if (value == '') {
+          return this.htmlElementService.getOptionChoices();
+        }
+
+        return this.htmlElementService.getOptionChoices().pipe(
+          tap(d => {
+            console.log('jogos', d);
+          }),
+          map((result: any) => {
+            const paginateData = result.paginate.data;
+            let newData = [];
+
+            paginateData.forEach(data => {
+              if (
+                data.description.toLowerCase().includes(value.toLowerCase())
+              ) {
+                newData.push(data);
+              }
             });
+            console.log('paginateData', paginateData, 'newData', newData);
+
+            result.paginate.data = newData;
+
+            return result;
+          })
+        );
+      }),
+      tap(() => {
+        this.loadingSubject.next(false);
+      })
+    );
+  }
+
+  edit(content: any = null, index: number = null) {
+    if (content == null) {
+      content = {
+        description: '',
+        html: {
+          category: 'form',
+          content_choice_id: null,
+          content_html_tag_id: 2,
+          choices: [],
+          group: '',
+          label: 'Type your Text',
+          tag: 'radio',
+        },
+      };
     }
 
-    private loadPage(page: number) {
+    const modal = this.modalService.open(
+      ConfigChoiceFormComponent,
+      this.options
+    );
 
-        this.choices$ = this.htmlElementService
-            .getOptionChoices();
-        /*this.choices$ = this.htmlElementService
+    modal.componentInstance.content = content;
+    modal.componentInstance.index = index;
+    modal.componentInstance.emitData.subscribe($e => {
+      if ($e.choices.length > 0) {
+        const groups = $e.choices.map(choice => choice.text);
+        this.choices$ = this.choices$.pipe(
+          map(result => {
+            if (index == null) {
+              content.html.choices = $e.choices;
+              content.description = groups.join('|');
+              result.paginate.data.push(content);
+
+              return result;
+            }
+
+            result.paginate.data[index].html.choices = $e.choices;
+            return result;
+          }),
+          tap(x => console.log(x))
+        );
+      }
+      modal.dismiss();
+    });
+  }
+
+  private loadPage(page: number) {
+    this.choices$ = this.htmlElementService.getOptionChoices();
+    /*this.choices$ = this.htmlElementService
         //.queryParams({ page: page })
         .getStaticOptionChoices()
         .pipe(
@@ -176,38 +178,37 @@ export class ConfigChoicesListComponent implements OnInit {
                 return result.paginate;
             })
         );*/
-        /*this.htmlElementService.queryParams({
+    /*this.htmlElementService.queryParams({
             page: page
         }).subscribe(result => {
             this.choices = result.paginate;
         });*/
-    }
+  }
 
-    pageChange($e){
-        let navigationExtras = {
-            queryParams: { 
-                'page': $e
-            }
-        };
-      
-        // Navigate to the login page with extras
-        this.router.navigate([], navigationExtras);
-    }
+  pageChange($e) {
+    let navigationExtras = {
+      queryParams: {
+        page: $e,
+      },
+    };
 
-    getChoiceType(tag: string){
-        return this.choiceTypes[tag.toUpperCase()];
-    }
+    // Navigate to the login page with extras
+    this.router.navigate([], navigationExtras);
+  }
 
-    ngOnDestroy() {
-        this.dragulaService.destroy('pages');
-        this.dragulaService.destroy('contents');
-        this.dragulaService.destroy('columns');
-        this.dragulaService.destroy('rowSortable');
-        this.dragulaService.destroy('sortableElements');
-    }
+  getChoiceType(tag: string) {
+    return this.choiceTypes[tag.toUpperCase()];
+  }
 
-    setchoiceType(content: Content, choiceType: ConfigChoice){                                                                                
-        content.html.tag = choiceType.type;
-    }
+  ngOnDestroy() {
+    this.dragulaService.destroy('pages');
+    this.dragulaService.destroy('contents');
+    this.dragulaService.destroy('columns');
+    this.dragulaService.destroy('rowSortable');
+    this.dragulaService.destroy('sortableElements');
+  }
 
+  setchoiceType(content: Content, choiceType: ConfigChoice) {
+    content.html.tag = choiceType.type;
+  }
 }

@@ -10,12 +10,9 @@ describe('FormConfigTitleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FormConfigTitleComponent ],
-      imports: [
-        ReactiveFormsModule
-      ]
-    })
-    .compileComponents();
+      declarations: [FormConfigTitleComponent],
+      imports: [ReactiveFormsModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -25,9 +22,9 @@ describe('FormConfigTitleComponent', () => {
     component.parentFormGroup = formBuilder.group({
       html: formBuilder.group({
         tag: ['', Validators.required],
-        text: ['', Validators.required]
-      })
-    })
+        text: ['', Validators.required],
+      }),
+    });
     fixture.detectChanges();
   });
 

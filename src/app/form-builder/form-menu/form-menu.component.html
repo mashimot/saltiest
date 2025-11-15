@@ -1,70 +1,89 @@
-
 <div class="card bg-white">
-	<div class="card-body">
-		<form [formGroup]="form">
-			<fieldset id="grid-menu" class="border border-dark p-1">
-				<legend class="text-center w-auto">Grid System</legend>
-				<div
-					name="bootstrap_container"
-					dragula="rowSortable"
-					[(dragulaModel)]="bootstrap"
-					class="menu-row-sortable"
-				>
-					<div *ngFor="let b of bootstrap; let bIndex = index;">
-						<div [hidden]="f.invalid" [ngStyle]="{ cursor: 'move' }">
-							<div class="row-handle p-1 mx-1 mt-1 mb-1 border-bottom border-dark">
-								<i class="fa fa-arrows-alt fa-1x row-handle"></i>
-								<strong class="row-handle"> GRID</strong>
-							</div>
-						</div>
-					</div>
-					<div class="input-group input-group-sm">
-						<textarea type="text"
-							formControlName="gridModel"
-							class="form-control form-control-sm"
-							[ngClass]="{ 'is-invalid': gridModel?.invalid }"
-							[ngStyle]="{ cursor: 'pointer' }"
-							rows="5"
-						></textarea>
-						<div *ngIf="gridModel?.invalid || gridModel?.touched" class="invalid-feedback">
-							<div *ngIf="gridModel?.hasError('required')">* Enter with your grid.</div>
-							<div *ngIf="gridModel?.hasError('pattern')">* Allows only numbers (except only zero) and space.</div>
-							<div *ngIf="gridModel?.hasError('minlength')">* Min. Length is {{ gridModel?.errors.minlength.requiredLength }}.</div>
-							<div *ngIf="gridModel?.hasError('isSumInvalid')">* The sum of the each line must be equals to {{ gridModel.errors?.sumBeEqualsTo }}.</div>
-						</div>
-					</div>
-				</div>
-			</fieldset>
-		</form>
-		<fieldset id="tool-menu" class="border border-dark p-1" *ngIf="(tools$ | async) as tools">
-			<legend class="text-center w-auto">Tools</legend>
-			<div *ngFor="let tool of tools | keyvalue; let toolCategoryIndex = index;">
-				<div class="border-bottom border-dark p-1 text-uppercase" [attr.data-toggle]="'collapse'" [attr.data-target]="'#collapse-' + toolCategoryIndex" [ngStyle]="{ cursor: 'pointer' }">
-					{{ tool.key }}
-				</div>
-				<div 
-					id="collapse-{{ toolCategoryIndex }}" 
-					dragula="contents"
-					[(dragulaModel)]="tool.value"
-					class="row menu-content-sortable no-gutters collapse m-1 show"
-					[ngClass]="{ }"
-					aria-expanded="true"
-					[attr.data-parent]="'#accordion'"
-				>
-					<div *ngFor="let t of tool.value"
-						[ngStyle]="{ 'cursor': 'move' }"
-						class="text-white content-handle menu-content-sortable col-md-12 "
-						[attr.data-content]="t | json"
-					>
-						<div class="p-1 mx-1 mt-1 border border-dark content-handle">
-							<span class="text-dark text-capitalize content-handle">{{ t.html.tag }}</span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</fieldset>
-		<fieldset>
-			<app-config-choices></app-config-choices>
-		</fieldset>
-	</div>
+  <div class="card-body">
+    <form [formGroup]="form">
+      <fieldset id="grid-menu" class="border border-dark p-1">
+        <legend class="text-center w-auto">Grid System</legend>
+        <div
+          name="bootstrap_container"
+          dragula="rowSortable"
+          [(dragulaModel)]="bootstrap"
+          class="menu-row-sortable">
+          <div *ngFor="let b of bootstrap; let bIndex = index">
+            <div [hidden]="f.invalid" [ngStyle]="{ cursor: 'move' }">
+              <div
+                class="row-handle p-1 mx-1 mt-1 mb-1 border-bottom border-dark">
+                <i class="fa fa-arrows-alt fa-1x row-handle"></i>
+                <strong class="row-handle"> GRID</strong>
+              </div>
+            </div>
+          </div>
+          <div class="input-group input-group-sm">
+            <textarea
+              type="text"
+              formControlName="gridModel"
+              class="form-control form-control-sm"
+              [ngClass]="{ 'is-invalid': gridModel?.invalid }"
+              [ngStyle]="{ cursor: 'pointer' }"
+              rows="5"></textarea>
+            <div
+              *ngIf="gridModel?.invalid || gridModel?.touched"
+              class="invalid-feedback">
+              <div *ngIf="gridModel?.hasError('required')">
+                * Enter with your grid.
+              </div>
+              <div *ngIf="gridModel?.hasError('pattern')">
+                * Allows only numbers (except only zero) and space.
+              </div>
+              <div *ngIf="gridModel?.hasError('minlength')">
+                * Min. Length is
+                {{ gridModel?.errors.minlength.requiredLength }}.
+              </div>
+              <div *ngIf="gridModel?.hasError('isSumInvalid')">
+                * The sum of the each line must be equals to
+                {{ gridModel.errors?.sumBeEqualsTo }}.
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+    <fieldset
+      id="tool-menu"
+      class="border border-dark p-1"
+      *ngIf="tools$ | async as tools">
+      <legend class="text-center w-auto">Tools</legend>
+      <div *ngFor="let tool of tools | keyvalue; let toolCategoryIndex = index">
+        <div
+          class="border-bottom border-dark p-1 text-uppercase"
+          [attr.data-toggle]="'collapse'"
+          [attr.data-target]="'#collapse-' + toolCategoryIndex"
+          [ngStyle]="{ cursor: 'pointer' }">
+          {{ tool.key }}
+        </div>
+        <div
+          id="collapse-{{ toolCategoryIndex }}"
+          dragula="contents"
+          [(dragulaModel)]="tool.value"
+          class="row menu-content-sortable no-gutters collapse m-1 show"
+          [ngClass]="{}"
+          aria-expanded="true"
+          [attr.data-parent]="'#accordion'">
+          <div
+            *ngFor="let t of tool.value"
+            [ngStyle]="{ cursor: 'move' }"
+            class="text-white content-handle menu-content-sortable col-md-12"
+            [attr.data-content]="t | json">
+            <div class="p-1 mx-1 mt-1 border border-dark content-handle">
+              <span class="text-dark text-capitalize content-handle">{{
+                t.html.tag
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <app-config-choices></app-config-choices>
+    </fieldset>
+  </div>
 </div>

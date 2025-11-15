@@ -12,26 +12,26 @@ import { FormConfigHtmlEditorComponent } from './form-config-html-editor/form-co
 import { FormConfigGeneralComponent } from './form-config-general/form-config-general.component';
 
 @NgModule({
-	imports: [
-		CommonModule,
-		DragulaModule,
-		RenderContentModule,
-		SharedModule,
-		ConfigChoicesModule
-	],
-	exports: [
-		FormConfigComponent,
-		FormConfigGeneralComponent,
-		FormConfigHtmlEditorComponent,
-		FormConfigImgComponent,
-		FormConfigTitleComponent
-	],
-	declarations: [
-		FormConfigComponent,
-		FormConfigGeneralComponent,
-		FormConfigHtmlEditorComponent,
-		FormConfigImgComponent,
-		FormConfigTitleComponent
-	]
+  imports: [
+    CommonModule,
+    DragulaModule,
+    RenderContentModule,
+    SharedModule,
+    ConfigChoicesModule,
+  ],
+  exports: [
+    FormConfigComponent,
+    FormConfigGeneralComponent,
+    FormConfigHtmlEditorComponent,
+    FormConfigImgComponent,
+    FormConfigTitleComponent,
+  ],
+  declarations: [
+    FormConfigComponent,
+    FormConfigGeneralComponent,
+    FormConfigHtmlEditorComponent,
+    FormConfigImgComponent,
+    FormConfigTitleComponent,
+  ],
 })
-export class FormConfigModule { }
+export class FormConfigModule {}

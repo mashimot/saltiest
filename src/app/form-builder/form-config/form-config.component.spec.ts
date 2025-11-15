@@ -20,38 +20,41 @@ describe('FormConfigComponent', () => {
     id: null,
     name: null,
     html: {
-      'tag': 'text',
-      'content_choice_id': null,
-      'choices': [],
-      'category': null,
-      'label': null,
-      'src': null,
-      'text': null,
-      'data': null
+      tag: 'text',
+      content_choice_id: null,
+      choices: [],
+      category: null,
+      label: null,
+      src: null,
+      text: null,
+      data: null,
     },
-    'type':{
+    type: {
       datatype: null,
       length: null,
     },
-    'options': {
-      'nullable': null
-    }
+    options: {
+      nullable: null,
+    },
   };
 
   beforeEach(async(() => {
-    const spyFormContentService = jasmine.createSpyObj('FormContentConfigService', ['render', 'getValue']);
+    const spyFormContentService = jasmine.createSpyObj(
+      'FormContentConfigService',
+      ['render', 'getValue']
+    );
     TestBed.configureTestingModule({
-      declarations: [ 
+      declarations: [
         FormConfigComponent,
         FormConfigGeneralComponent,
         FormConfigHtmlEditorComponent,
         FormConfigImgComponent,
-        FormConfigTitleComponent
+        FormConfigTitleComponent,
       ],
       imports: [
         ReactiveFormsModule,
         RenderContentModule,
-        DragulaModule.forRoot()
+        DragulaModule.forRoot(),
       ],
       providers: [
         NgbActiveModal,
@@ -60,11 +63,9 @@ describe('FormConfigComponent', () => {
           provide: formContentService,
           useValue: spyFormContentService
         }*/
-      ]
-    })
-    .compileComponents();
+      ],
+    }).compileComponents();
     formContentService = TestBed.get(FormContentConfigService); // Add this
-
   }));
 
   beforeEach(() => {
@@ -75,9 +76,8 @@ describe('FormConfigComponent', () => {
 
     fixture.detectChanges();
     fixture.componentInstance.ngOnInit();
-
   });
-/*
+  /*
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -93,8 +93,8 @@ describe('FormConfigComponent', () => {
     expect(response).toEqual('value');
 
   });*/
-  
-  function updateForm(){
+
+  function updateForm() {
     component.configForm.patchValue(CONTENT);
   }
 });

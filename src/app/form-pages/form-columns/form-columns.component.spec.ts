@@ -11,19 +11,18 @@ describe('FormColumnsComponent', () => {
   let spyFormConfigService;
 
   beforeEach(async(() => {
-    spyFormConfigService = jasmine.createSpyObj('FormConfigService', ['getConfig'])
+    spyFormConfigService = jasmine.createSpyObj('FormConfigService', [
+      'getConfig',
+    ]);
     TestBed.configureTestingModule({
-      declarations: [ FormColumnsComponent ],
-      imports: [
-        DragulaModule
-      ],
+      declarations: [FormColumnsComponent],
+      imports: [DragulaModule],
       providers: [
         {
-          provide: DragulaService
-        }
-      ]
-    })
-    .compileComponents();
+          provide: DragulaService,
+        },
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

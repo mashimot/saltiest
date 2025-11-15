@@ -10,12 +10,9 @@ describe('FormConfigImgComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FormConfigImgComponent ],
-      imports: [
-        ReactiveFormsModule
-      ]
-    })
-    .compileComponents();
+      declarations: [FormConfigImgComponent],
+      imports: [ReactiveFormsModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -25,9 +22,9 @@ describe('FormConfigImgComponent', () => {
     component.parentFormGroup = formBuilder.group({
       html: formBuilder.group({
         tag: ['', Validators.required],
-        src: ['', Validators.required]
-      })
-    })
+        src: ['', Validators.required],
+      }),
+    });
     fixture.detectChanges();
   });
 

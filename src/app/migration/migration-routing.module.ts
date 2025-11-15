@@ -11,14 +11,16 @@ import { MigrationComponent } from './migration.component';
   ]
 }];*/
 
-const routes: Routes = [{
+const routes: Routes = [
+  {
     path: '',
     canActivate: [AuthGuard],
-    component: MigrationComponent
-}];
+    component: MigrationComponent,
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MigrationRoutingModule { }
+export class MigrationRoutingModule {}

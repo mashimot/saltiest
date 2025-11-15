@@ -6,27 +6,26 @@ import { PageService } from '../shared/services/page.service';
 import { Observable } from 'rxjs';
 
 @Component({
-selector: 'app-home',
-templateUrl: './home.component.html',
-styleUrls: ['./home.component.css']
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-	pages$: Observable<Page[]>;
-	config: {
-		previewMode: boolean
-	}
+  pages$: Observable<Page[]>;
+  config: {
+    previewMode: boolean;
+  };
 
-	constructor(
-		private formConfigService: FormConfigService,
-		private homeService: HomeService
-	) {
-	}
+  constructor(
+    private formConfigService: FormConfigService,
+    private homeService: HomeService
+  ) {}
 
-	ngOnInit() {
-		this.config = {
-			previewMode: true
-		};
-		this.formConfigService.setConfig(this.config);
-		this.pages$ = this.homeService.getHome();
-	}
+  ngOnInit() {
+    this.config = {
+      previewMode: true,
+    };
+    this.formConfigService.setConfig(this.config);
+    this.pages$ = this.homeService.getHome();
+  }
 }

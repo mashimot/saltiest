@@ -6,15 +6,8 @@ import { MigrationComponent } from './migration.component';
 import { CreateTableToJsonModule } from '../create-table-to-json/create-table-to-json.module';
 import { FormsModule } from '@angular/forms';
 
-
 @NgModule({
-  declarations: [
-    MigrationComponent
-  ],
-  imports: [
-    CommonModule,
-    MigrationRoutingModule,
-    CreateTableToJsonModule
-  ]
+  declarations: [MigrationComponent],
+  imports: [CommonModule, MigrationRoutingModule, CreateTableToJsonModule],
 })
-export class MigrationModule { }
+export class MigrationModule {}

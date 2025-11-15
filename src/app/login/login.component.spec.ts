@@ -12,14 +12,13 @@ describe('LoginComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LoginComponent ],
+      declarations: [LoginComponent],
       imports: [
         ReactiveFormsModule,
         RouterTestingModule,
-        HttpClientTestingModule
-      ]
-    })
-    .compileComponents();
+        HttpClientTestingModule,
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -27,17 +26,9 @@ describe('LoginComponent', () => {
     formBuilder = TestBed.inject(FormBuilder);
     component = fixture.componentInstance;
     component.loginForm = formBuilder.group({
-			email: [
-				'', [
-				Validators.required,
-				Validators.email
-			]],
-			password: [
-				'', [
-					Validators.required
-				]
-			]
-		});
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
+    });
     fixture.detectChanges();
   });
 

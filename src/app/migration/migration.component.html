@@ -1,18 +1,19 @@
 <div class="row">
-    <div class="col-md-8 offset-md-2">
-        <app-create-table-to-json (schemasChange)="getSchemas($event)"></app-create-table-to-json>
-        <div class="border mt-2" *ngFor="let schema of schemas;">
-            <div class="card" 
-                *ngFor="let framework of schema.framework | keyvalue"
-            >
-                <div class="card-header">
-                    <h1>{{ framework.key }}</h1>
-                </div>
-                
-                <div class="card-body">
-                    <textarea class="form-control" cols="30" rows="10">{{ schema.framework[framework.key] }}</textarea>
-                </div>
-            </div>
-        </div>  
+  <div class="col-md-8 offset-md-2">
+    <app-create-table-to-json
+      (schemasChange)="getSchemas($event)"></app-create-table-to-json>
+    <div class="border mt-2" *ngFor="let schema of schemas">
+      <div class="card" *ngFor="let framework of schema.framework | keyvalue">
+        <div class="card-header">
+          <h1>{{ framework.key }}</h1>
+        </div>
+
+        <div class="card-body">
+          <textarea class="form-control" cols="30" rows="10">{{
+            schema.framework[framework.key]
+          }}</textarea>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

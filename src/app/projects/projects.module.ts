@@ -12,9 +12,9 @@ import { NgxPaginationModule } from 'ngx-pagination';
     CommonModule,
     ProjectsRoutingModule,
     SharedModule,
-    NgxPaginationModule
+    NgxPaginationModule,
   ],
   exports: [ProjectsComponent],
-  declarations: [ProjectsComponent, ProjectFormComponent]
+  declarations: [ProjectsComponent, ProjectFormComponent],
 })
-export class ProjectsModule { }
+export class ProjectsModule {}

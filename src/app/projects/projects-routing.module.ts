@@ -15,14 +15,14 @@ import { AuthGuard } from '../_core/guards/auth.guard';
 	]
 }];*/
 const routes: Routes = [
-{ path: '', component: ProjectsComponent },
-{ path: 'create', component: ProjectFormComponent },
-{ path: ':id', component: ProjectsComponent },
-{ path: ':id/edit', component: ProjectFormComponent },
+  { path: '', component: ProjectsComponent },
+  { path: 'create', component: ProjectFormComponent },
+  { path: ':id', component: ProjectsComponent },
+  { path: ':id/edit', component: ProjectFormComponent },
 ];
 
 @NgModule({
-	imports: [RouterModule.forChild(routes)],
-	exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class ProjectsRoutingModule { }
+export class ProjectsRoutingModule {}

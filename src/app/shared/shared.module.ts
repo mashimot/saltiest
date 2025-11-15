@@ -5,27 +5,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModalComponent } from './modal.component';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 
-const components = [
-    ModalComponent
-];
+const components = [ModalComponent];
 
 @NgModule({
-	declarations: [
-		GroupByPipe,
-		ModalComponent,
-		SafeHtmlPipe
-	],
-	exports: [
-		GroupByPipe,
-		ModalComponent,
-		FormsModule, 
-		ReactiveFormsModule,
-		SafeHtmlPipe
-	],
-	imports: [
-		CommonModule, 
-		FormsModule, 
-		ReactiveFormsModule
-	]
+  declarations: [GroupByPipe, ModalComponent, SafeHtmlPipe],
+  exports: [
+    GroupByPipe,
+    ModalComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    SafeHtmlPipe,
+  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
-export class SharedModule { }
+export class SharedModule {}

@@ -1,13 +1,13 @@
 <div class="form-group" [formGroup]="parentFormGroup.get('html')">
-	<label for="title-text">Image source</label>
-	<input type="text"
-		id="img-src"
-		formControlName="src"
-		class="form-control"
-		[ngClass]="{ 'is-invalid': src.invalid }"
-	/>
-	<div *ngIf="src.invalid || src.touched" class="invalid-feedback">
-		<div *ngIf="src.errors?.required">You did not enter a field</div>
-		<div *ngIf="src.errors?.minlength">Your field is too short</div>
-	</div>
+  <label for="title-text">Image source</label>
+  <input
+    type="text"
+    id="img-src"
+    formControlName="src"
+    class="form-control"
+    [ngClass]="{ 'is-invalid': src.invalid }" />
+  <div *ngIf="src.invalid || src.touched" class="invalid-feedback">
+    <div *ngIf="src.errors?.required">You did not enter a field</div>
+    <div *ngIf="src.errors?.minlength">Your field is too short</div>
+  </div>
 </div>

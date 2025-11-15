@@ -11,19 +11,17 @@ import { AuthGuard } from '../_core/guards/auth.guard';
 	}]
 }];*/
 
-const routes: Routes = [{
-	canActivate: [AuthGuard],
-	path: '', 
-	component: HomeComponent
-}];
+const routes: Routes = [
+  {
+    canActivate: [AuthGuard],
+    path: '',
+    component: HomeComponent,
+  },
+];
 
 @NgModule({
-	imports: [
-		RouterModule.forChild(routes)
-	],
-	exports: [
-		RouterModule
-	],
-	declarations: []
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+  declarations: [],
 })
-export class HomeRoutingModule { }
+export class HomeRoutingModule {}

@@ -10,15 +10,10 @@ describe('FormConfigGeneralComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FormConfigGeneralComponent ],
-      imports: [
-        ReactiveFormsModule
-      ],
-      providers: [
-        FormBuilder
-      ]
-    })
-    .compileComponents();
+      declarations: [FormConfigGeneralComponent],
+      imports: [ReactiveFormsModule],
+      providers: [FormBuilder],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -30,8 +25,8 @@ describe('FormConfigGeneralComponent', () => {
         label: ['Label 1'],
       }),
       options: formBuilder.group({
-        nullable: [false]
-      })
+        nullable: [false],
+      }),
     });
 
     fixture.detectChanges();

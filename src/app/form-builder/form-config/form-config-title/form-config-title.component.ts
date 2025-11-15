@@ -1,31 +1,34 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormControl,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-form-config-title',
   templateUrl: './form-config-title.component.html',
-  styleUrls: ['./form-config-title.component.css']
+  styleUrls: ['./form-config-title.component.css'],
 })
 export class FormConfigTitleComponent implements OnInit {
-	@Input() parentFormGroup: FormGroup;
+  @Input() parentFormGroup: FormGroup;
 
-	headingTypes: Array<string>;
+  headingTypes: Array<string>;
 
-	constructor() { }
+  constructor() {}
 
-	ngOnInit() {
-		this.headingTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+  ngOnInit() {
+    this.headingTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
-		this.text.setValidators([
-			Validators.required
-		]);
-	}
+    this.text.setValidators([Validators.required]);
+  }
 
-	get html() {
-		return this.parentFormGroup.get('html');
-	}
+  get html() {
+    return this.parentFormGroup.get('html');
+  }
 
-	get text() {
-		return this.html.get('text');
-	}
+  get text() {
+    return this.html.get('text');
+  }
 }
