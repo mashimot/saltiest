@@ -46,7 +46,8 @@
           *ngIf="
             content?.options &&
             content.html.category === 'form' &&
-            !content?.options?.nullable && content.html.category === 'form'
+            !content?.options?.nullable &&
+            content.html.category === 'form'
           "
           class="badge badge-success"
           >required</span

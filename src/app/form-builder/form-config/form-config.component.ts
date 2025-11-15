@@ -19,7 +19,6 @@ import {
   NgbModalOptions,
   NgbActiveModal,
 } from '@ng-bootstrap/ng-bootstrap';
-import { ContentService } from 'src/app/shared/services/content.service';
 import { Content } from '../../_core/model';
 
 @Component({

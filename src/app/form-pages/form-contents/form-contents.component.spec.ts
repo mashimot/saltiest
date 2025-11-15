@@ -7,7 +7,6 @@ import {
 } from '@angular/core/testing';
 import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { of } from 'rxjs';
-import { ContentService } from 'src/app/shared/services/content.service';
 import { RenderContentModule } from '../render-content/render-content.module';
 
 import { FormContentsComponent } from './form-contents.component';
@@ -55,10 +54,6 @@ describe('FormContentsComponent', () => {
       providers: [
         {
           provide: DragulaService,
-        },
-        {
-          provide: ContentService,
-          useValue: mockContentService,
         },
       ],
     }).compileComponents();

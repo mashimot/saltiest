@@ -19,7 +19,6 @@ import {
   delay,
   take,
 } from 'rxjs/operators';
-import { ContentService } from '../../shared/services/content.service';
 import { ContentChoiceItemService } from '../../shared/services/content-choice-item.service';
 import { FormControl } from '@angular/forms';
 

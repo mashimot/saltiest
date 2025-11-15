@@ -1,14 +1,11 @@
 import {
-  Component,
-  OnInit,
-  Input,
-  Output,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  EventEmitter,
+  Component,
+  Input,
+  OnInit,
 } from '@angular/core';
 import { FormConfigService } from './../../_services/form-config.service';
-import { RowService } from '../../shared/services/row.service';
 
 @Component({
   selector: 'app-form-rows',
@@ -28,8 +25,7 @@ export class FormRowsComponent implements OnInit {
 
   constructor(
     private formConfigService: FormConfigService,
-    private cd: ChangeDetectorRef,
-    private rowService: RowService
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -40,19 +36,7 @@ export class FormRowsComponent implements OnInit {
   }
 
   deleteRow(rowIndex: number, row = { id: null }) {
-    if (row.id != null) {
-      this.rowService.deleteRow(row.id).subscribe(result => {
-        this.page.rows.forEach((cV, index) => {
-          if (cV.id == row.id) {
-            this.page.rows.splice(index, 1);
-          }
-        });
-        this.cd.markForCheck();
-      });
-    } else {
-      //static remove
-      this.page.rows.splice(rowIndex, 1);
-      this.cd.markForCheck();
-    }
+    this.page.rows.splice(rowIndex, 1);
+    this.cd.markForCheck();
   }
 }

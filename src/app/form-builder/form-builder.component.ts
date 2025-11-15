@@ -1,22 +1,16 @@
 import {
-  Component,
-  OnInit,
-  Injectable,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  OnInit,
 } from '@angular/core';
-import { HomeService } from '../shared/services/home.service';
-import { VueHtmlTemplate } from '../_services/vue-html-template.service';
-import { BootstrapHtmlTemplate } from '../_services/bootstrap-html-template.service';
-import { Content } from '../_core/model/content.model';
-import { FormConfigService } from '../_services/form-config.service';
-import { PageService } from '../shared/services/page.service';
 import { ActivatedRoute } from '@angular/router';
-import { ProjectService } from '../shared/services/project.service';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { map, startWith, tap } from 'rxjs/operators';
-import { Observable, of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Page } from '../_core/model';
+import { Content } from '../_core/model/content.model';
+import { BootstrapHtmlTemplate } from '../_services/bootstrap-html-template.service';
+import { FormConfigService } from '../_services/form-config.service';
+import { HomeService } from '../shared/services/home.service';
 
 export interface MVC {
   isOpen: boolean;
@@ -49,10 +43,6 @@ export class FormBuilderComponent implements OnInit {
     private homeService: HomeService,
     private route: ActivatedRoute,
     private cdRef: ChangeDetectorRef
-    /*private vueHtmlTemplate: VueHtmlTemplate,
-        private projectService: ProjectService,
-        private pageService: PageService,
-        private ngxLoader: NgxUiLoaderService,*/
   ) {}
 
   ngOnInit() {

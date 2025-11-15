@@ -9,7 +9,6 @@ import {
   FormControl,
 } from '@angular/forms';
 import { DBOperation } from 'src/app/shared/enum';
-import { ContentService } from 'src/app/shared/services/content.service';
 import { ContentChoiceItemService } from 'src/app/shared/services/content-choice-item.service';
 import { ActivatedRoute } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';

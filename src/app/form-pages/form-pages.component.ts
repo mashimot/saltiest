@@ -1,26 +1,18 @@
 import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  SimpleChange,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormConfigService } from './../_services/form-config.service';
 import { DragulaService } from 'ng2-dragula';
-import { Observable, of, Subscription } from 'rxjs';
-import { BootstrapHtmlTemplate } from '../_services/bootstrap-html-template.service';
-import { PageService } from '../shared/services/page.service';
-import { ContentService } from '../shared/services/content.service';
-import { RowService } from '../shared/services/row.service';
-import { ColumnService } from '../shared/services/column.service';
-import { ActivatedRoute } from '@angular/router';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { HomeService } from '../shared/services/home.service';
+import { Observable, Subscription } from 'rxjs';
 import { Page } from '../_core/model';
+import { BootstrapHtmlTemplate } from '../_services/bootstrap-html-template.service';
+import { FormConfigService } from './../_services/form-config.service';
 
 @Component({
   selector: 'app-form-pages',
@@ -44,14 +36,7 @@ export class FormPagesComponent implements OnInit {
   constructor(
     private formConfigService: FormConfigService,
     private dragulaService: DragulaService,
-    private pageService: PageService,
-    private cd: ChangeDetectorRef,
-    /*private contentService: ContentService,
-        private rowService: RowService,
-        private columnService: ColumnService,
-        private route: ActivatedRoute,
-        private homeService: HomeService,*/
-    private ngxLoader: NgxUiLoaderService
+    private cd: ChangeDetectorRef
   ) {
     this.initDragAndDrop();
   }
@@ -84,18 +69,7 @@ export class FormPagesComponent implements OnInit {
             sourceIndex,
             targetIndex,
           }) => {
-            const params = {
-              project_id: this.project_id,
-              pagesPos: targetModel.map(item => {
-                return item.id;
-              }),
-              pageTargetIndex: targetIndex,
-            };
             this.dropModelPageUpdated = true;
-            /*this.pageService.updatePagesPosition(data.project_id, params)
-                    .subscribe(result => {
-                        console.log(result);
-                    });*/
           }
         )
     );
@@ -127,16 +101,6 @@ export class FormPagesComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-  public loadFormBuilder() {
-    this.ngxLoader.start();
-    this.pageService.getPageByProjectId(this.project_id).subscribe(result => {
-      if (result.success) {
-        //this.pages = result.paginate.data;
-      }
-      this.ngxLoader.stop();
-    });
-  }
-
   public initDragAndDrop() {
     this.dragulaService.createGroup('pages', {
       copy: (el, source) => {
@@ -144,10 +108,8 @@ export class FormPagesComponent implements OnInit {
       },
       copyItem: el => {
         return el;
-        //console.log(el);
       },
       accepts: (el, target, source, sibling) => {
-        // To avoid dragging from right to left container
         return target.className !== 'menu-page-sortable';
       },
       moves: (el, container, handle) => {
@@ -201,23 +163,6 @@ export class FormPagesComponent implements OnInit {
               gridArr.splice(targetIndex, 0, aux);
               let newGrid = gridArr.join(' ').trim();
               this.pages[pageIndex].rows[currRowIndex].grid = newGrid;
-              /*const params = {
-                            project_id: this.project_id,
-                            page: {
-                                currRowId: parseInt(currRowId)
-                            },
-                            newGrid: newGrid,
-                            columnPos: targetModel.map(item => {
-                                return item.id? item.id: null;
-                            })
-                        }
-                        this.columnService.updateColumn(params.page.currRowId, params)
-                            .subscribe(result => {
-                                if(result.success){
-                                    this.loadFormBuilder();
-                                    this.dropModelPageUpdated = true;
-                                }
-                            });*/
             }
           }
         )
@@ -267,8 +212,6 @@ export class FormPagesComponent implements OnInit {
               typeof item.grid != 'undefined' &&
               typeof item.columns == 'undefined'
             ) {
-              //gambiarra, mas funciona
-              //let rows = [];
               let gridsArray = item.grid.trim().split('\n');
               delete item.grid;
               let rows = gridsArray
@@ -308,29 +251,6 @@ export class FormPagesComponent implements OnInit {
               for (let i = 0; i < totalOfRowsDragged; i++) {
                 targetModel.splice(targetIndex + i, 0, rows[i]);
               }
-              /*
-                        //API
-                        const params = {
-                            project_id: this.project_id,
-                            page: {
-                                targetPageId: parseInt(targetPageId)
-                            },
-                            rowsPos: targetModel.map(item => {
-                                return item.id? item.id: null;
-                            }),
-                            rowTargetIndex: targetIndex,
-                            rows: rows
-                        };                
-                        console.info('row sorted', params);
-                        if(rows.length > 0){
-                            this.rowService.storeRow(params)
-                                .subscribe(result => {
-                                    if(result.success){
-                                        this.loadFormBuilder();
-                                        this.dropModelPageUpdated = true;
-                                    }
-                                });
-                        }*/
             } else {
               const params = {
                 project_id: this.project_id,
@@ -342,13 +262,6 @@ export class FormPagesComponent implements OnInit {
                   return item.id ? item.id : null;
                 }),
               };
-              /*this.rowService.updateRow(params.page.targetPageId, params)
-                            .subscribe(result => {
-                                if(result.success){
-                                    this.loadFormBuilder();
-                                    this.dropModelPageUpdated = true;
-                                }
-                            });*/
             }
             return item;
           }
@@ -453,14 +366,6 @@ export class FormPagesComponent implements OnInit {
               if (typeof item.id != 'undefined') {
                 params['id'] = item.id;
               }
-              /*this.contentService.storeContent(params)
-                        .subscribe(result => {
-                            if(result.success){
-                                this.loadFormBuilder();
-                                this.dropModelPageUpdated = true;
-                            }
-                        });
-                    */
             }
           }
         )

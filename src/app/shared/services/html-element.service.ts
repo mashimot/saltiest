@@ -8,10 +8,8 @@ import { map, tap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class HtmlElementService {
-  category: string;
-  //API_URL: string = 'https://salty-suite.herokuapp.com/api/tools';
-  API_URL2: string = 'https://salty-suite.herokuapp.com/api/contents_choices';
-  readonly API_URL: string = '/assets/_mock/';
+  private category: string;
+  private readonly API_URL: string = '/assets/_mock/';
 
   constructor(private http: HttpClient) {
     this.category = 'form';
@@ -37,25 +35,11 @@ export class HtmlElementService {
       map(elements => {
         return Object.keys(elements);
       })
-      //tap(result => console.log('elements', result))
     );
-    //return of(Object.keys(tags));
-  }
-
-  queryParams(query) {
-    const httpOptions = {
-      params: { ...query },
-    };
-
-    return this.http.get<Pageable>(this.API_URL2, httpOptions);
   }
 
   getTools() {
     return this.http.get<any>(`${this.API_URL}`);
-  }
-
-  getContentChoices() {
-    return this.http.get<Pageable>(`${this.API_URL2}`);
   }
 
   getOptionChoices() {

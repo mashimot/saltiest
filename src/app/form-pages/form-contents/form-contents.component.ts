@@ -9,7 +9,6 @@ import { FormConfigService } from './../../_services/form-config.service';
 import { BootstrapHtmlTemplate } from '../../_services/bootstrap-html-template.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormConfigComponent } from './../../form-builder/form-config/form-config.component';
-import { ContentService } from '../../shared/services/content.service';
 import { Content } from 'src/app/_core/model';
 
 @Component({
@@ -42,8 +41,7 @@ export class FormContentsComponent implements OnInit {
   constructor(
     private formConfigService: FormConfigService,
     private modalService: NgbModal,
-    private cd: ChangeDetectorRef,
-    private contentService: ContentService
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -91,30 +89,10 @@ export class FormContentsComponent implements OnInit {
     modal.componentInstance.emitData.subscribe($e => {
       contents[index] = $e;
       this.cd.markForCheck();
-      /*this.contentService.updateContent($e).subscribe(result => {
-                console.log(result);
-                if(result.success){
-                    contents[index] = result.data;
-                    this.cd.markForCheck();
-                }
-            });*/
     });
   }
 
   deleteContent(contentIndex: number, content = { id: null }): void {
-    if (content.id != null) {
-      this.contentService.deleteContent(content.id).subscribe(result => {
-        if (result.success) {
-          this.column.contents.forEach((cV, index) => {
-            if (cV.id == content.id) {
-              this.column.contents.splice(index, 1);
-            }
-          });
-          this.cd.markForCheck();
-        }
-      });
-    } else {
-      this.column.contents.splice(contentIndex, 1);
-    }
+    this.column.contents.splice(contentIndex, 1);
   }
 }

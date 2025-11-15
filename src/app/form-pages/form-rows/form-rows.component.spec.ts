@@ -11,14 +11,11 @@ import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { HighlightModule } from 'ngx-highlightjs';
 import { NgxUiLoaderHttpModule, NgxUiLoaderRouterModule } from 'ngx-ui-loader';
 import { of } from 'rxjs';
-import { RowService } from 'src/app/shared/services/row.service';
-
 import { FormRowsComponent } from './form-rows.component';
 
 describe('FormRowsComponent', () => {
   let component: FormRowsComponent;
   let fixture: ComponentFixture<FormRowsComponent>;
-  let rowService: RowService;
   let spyRowService;
 
   beforeEach(async(() => {
@@ -31,10 +28,6 @@ describe('FormRowsComponent', () => {
       declarations: [FormRowsComponent],
       imports: [HttpClientTestingModule, DragulaModule],
       providers: [
-        {
-          provide: RowService,
-          useValue: spyRowService,
-        },
         {
           provide: DragulaService,
         },

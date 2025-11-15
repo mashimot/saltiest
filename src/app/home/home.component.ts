@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormConfigService } from './../_services/form-config.service';
 import { HomeService } from './../shared/services/home.service';
 import { Page } from './../_core/model';
-import { PageService } from '../shared/services/page.service';
 import { Observable } from 'rxjs';
 
 @Component({
