@@ -85,6 +85,15 @@
               "src/assets"
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     },
@@ -107,5 +116,11 @@
       }
     }
   },
-  "defaultProject": "saltiest"
+  "defaultProject": "saltiest",
+  "cli": {
+    "analytics": false,
+      "schematicCollections": [
+        "@angular-eslint/schematics"
+      ]
+    }
 }
