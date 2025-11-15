@@ -11,27 +11,24 @@ import { FormConfigModule } from '../form-builder/form-config/form-config.module
 import { FormConfigComponent } from '../form-builder/form-config/form-config.component';
 
 @NgModule({
-	imports: [
-		CommonModule,
-		DragulaModule.forRoot(),
-		RenderContentModule,
-		FormConfigModule
-	],
-	exports: [
-		FormPagesComponent,
-		FormRowsComponent,
-		FormColumnsComponent,
-		FormContentsComponent
-	],
-	declarations: [
-		FormPagesComponent,
-		FormRowsComponent,
-		FormColumnsComponent,
-		FormContentsComponent
-	],
-    entryComponents: [
-        FormConfigComponent
+    imports: [
+        CommonModule,
+        DragulaModule.forRoot(),
+        RenderContentModule,
+        FormConfigModule
     ],
-    providers: [],
+    exports: [
+        FormPagesComponent,
+        FormRowsComponent,
+        FormColumnsComponent,
+        FormContentsComponent
+    ],
+    declarations: [
+        FormPagesComponent,
+        FormRowsComponent,
+        FormColumnsComponent,
+        FormContentsComponent
+    ],
+    providers: []
 })
 export class FormPagesModule { }

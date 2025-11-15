@@ -42,10 +42,7 @@ import { CreateTableToJsonModule } from '../create-table-to-json/create-table-to
         FormBuilderComponent,
         SnakeCaseToCamelCasePipe
     ],
-    providers: [],
-    entryComponents: [
-        //ConfigChoicesComponent
-    ]
+    providers: []
 })
 
 export class FormBuilderModule { }
