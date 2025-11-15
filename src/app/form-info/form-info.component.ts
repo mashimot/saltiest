@@ -5,7 +5,7 @@ import {
   OnInit,
   EventEmitter,
   SimpleChange,
-} from '@angular/core';
+} from "@angular/core";
 import {
   Validators,
   FormControl,
@@ -14,15 +14,15 @@ import {
   FormBuilder,
   FormArray,
   ValidatorFn,
-} from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { HtmlElementService } from '../shared/services/html-element.service';
-import { Content } from '../_core/model';
+} from "@angular/forms";
+import { Observable, of } from "rxjs";
+import { HtmlElementService } from "../shared/services/html-element.service";
+import { Content } from "../_core/model";
 
 @Component({
-  selector: 'app-form-info',
-  templateUrl: './form-info.component.html',
-  styleUrls: ['./form-info.component.css'],
+  selector: "app-form-info",
+  templateUrl: "./form-info.component.html",
+  styleUrls: ["./form-info.component.css"],
 })
 export class FormInfoComponent implements OnInit {
   form!: FormGroup;
@@ -33,7 +33,7 @@ export class FormInfoComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private htmlElementService: HtmlElementService
+    private htmlElementService: HtmlElementService,
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +57,7 @@ export class FormInfoComponent implements OnInit {
           const contentsFormArray = this.getPagesRowsColumnsContents(
             pageIndex,
             rowIndex,
-            columnIndex
+            columnIndex,
           );
           column.contents.forEach((content: Content, contentIndex: number) => {
             contentsFormArray.push(this.createPagesRowsColumnsContents());
@@ -68,15 +68,15 @@ export class FormInfoComponent implements OnInit {
                   pageIndex,
                   rowIndex,
                   columnIndex,
-                  contentIndex
-                ).get('html.choices') as FormArray;
+                  contentIndex,
+                ).get("html.choices") as FormArray;
 
-              content.html.choices.forEach(choice => {
+              content.html.choices.forEach((choice) => {
                 htmlChoicesFormArray.push(
                   this.formBuilder.group({
-                    text: ['', Validators.required],
-                    value: ['', Validators.required],
-                  })
+                    text: ["", Validators.required],
+                    value: ["", Validators.required],
+                  }),
                 );
               });
             }
@@ -90,7 +90,7 @@ export class FormInfoComponent implements OnInit {
   }
 
   onChanges() {
-    this.f.valueChanges.subscribe(result => {
+    this.f.valueChanges.subscribe((result) => {
       this.pagesChange.emit(result.pages);
     });
   }
@@ -98,7 +98,7 @@ export class FormInfoComponent implements OnInit {
   onSubmit(): void {
     this.formSubmitAttempt = true;
     if (this.f.valid) {
-      console.log('form submitted');
+      console.log("form submitted");
     } else {
       this.validateAllFormFields(this.f);
     }
@@ -117,7 +117,7 @@ export class FormInfoComponent implements OnInit {
     } else if (control instanceof FormArray) {
       const controlAsFormArray = control as FormArray;
       controlAsFormArray.controls.forEach((arrayControl: AbstractControl) =>
-        this.validateAllFormFields(arrayControl)
+        this.validateAllFormFields(arrayControl),
       );
     }
   }
@@ -129,39 +129,39 @@ export class FormInfoComponent implements OnInit {
   getPagesRowsColumnsContents(
     indexPages: number,
     indexRows: number,
-    indexColumns: number
+    indexColumns: number,
   ): FormArray {
     return (
       (
-        (this.form.get('pages') as FormArray)
+        (this.form.get("pages") as FormArray)
           .at(indexPages)
-          .get('rows') as FormArray
+          .get("rows") as FormArray
       )
         .at(indexRows)
-        .get('columns') as FormArray
+        .get("columns") as FormArray
     )
       .at(indexColumns)
-      .get('contents') as FormArray;
+      .get("contents") as FormArray;
   }
 
   getPagesRowsColumnsContentsChoices(
     indexPages: number,
     indexRows: number,
     indexColumns: number,
-    indexContents: number
+    indexContents: number,
   ): FormArray {
     return (
       (
         (
-          (this.form.get('pages') as FormArray)
+          (this.form.get("pages") as FormArray)
             .at(indexPages)
-            .get('rows') as FormArray
+            .get("rows") as FormArray
         )
           .at(indexRows)
-          .get('columns') as FormArray
+          .get("columns") as FormArray
       )
         .at(indexColumns)
-        .get('contents') as FormArray
+        .get("contents") as FormArray
     ).at(indexContents) as FormArray;
   }
 
@@ -169,53 +169,53 @@ export class FormInfoComponent implements OnInit {
     indexPages: number,
     indexRows: number,
     indexColumns: number,
-    indexContents: number
+    indexContents: number,
   ): void {
     this.getPagesRowsColumnsContents(
       indexPages,
       indexRows,
-      indexColumns
+      indexColumns,
     ).removeAt(indexContents);
   }
 
   createPagesRowsColumnsContents() {
     return this.formBuilder.group({
-      name: ['', Validators.required],
+      name: ["", Validators.required],
       html: this.formBuilder.group({
-        content_choice_id: ['', Validators.required],
-        label: ['', Validators.required],
-        category: ['', Validators.required],
-        text: ['', Validators.required],
-        tag: ['', Validators.required],
+        content_choice_id: ["", Validators.required],
+        label: ["", Validators.required],
+        category: ["", Validators.required],
+        text: ["", Validators.required],
+        tag: ["", Validators.required],
         choices: this.formBuilder.array([]),
-        class: [''],
-        src: [''],
-        data: [''],
-        required: [''],
+        class: [""],
+        src: [""],
+        data: [""],
+        required: [""],
       }),
       type: this.formBuilder.group({
-        length: ['', [Validators.pattern('^[0-9]+(.[0-9])?$')]],
+        length: ["", [Validators.pattern("^[0-9]+(.[0-9])?$")]],
       }),
       options: this.formBuilder.group({
-        nullable: ['', Validators.required],
+        nullable: ["", Validators.required],
       }),
     });
   }
 
   getPagesRowsColumns(indexPages: number, indexRows: number): FormArray {
     return (
-      (this.form.get('pages') as FormArray)
+      (this.form.get("pages") as FormArray)
         .at(indexPages)
-        .get('rows') as FormArray
+        .get("rows") as FormArray
     )
       .at(indexRows)
-      .get('columns') as FormArray;
+      .get("columns") as FormArray;
   }
 
   deletePagesRowsColumns(
     indexPages: number,
     indexRows: number,
-    indexColumns: number
+    indexColumns: number,
   ): void {
     this.getPagesRowsColumns(indexPages, indexRows).removeAt(indexColumns);
   }
@@ -229,9 +229,9 @@ export class FormInfoComponent implements OnInit {
   }
 
   getPagesRows(indexPages: number): FormArray {
-    return (this.form.get('pages') as FormArray)
+    return (this.form.get("pages") as FormArray)
       .at(indexPages)
-      .get('rows') as FormArray;
+      .get("rows") as FormArray;
   }
 
   deletePagesRows(indexPages: number, indexRows: number): void {
@@ -240,7 +240,7 @@ export class FormInfoComponent implements OnInit {
 
   createPagesRows() {
     return this.formBuilder.group({
-      grid: ['', [Validators.required]],
+      grid: ["", [Validators.required]],
       columns: this.formBuilder.array([
         //this.createPagesRowsColumns()
       ]),
@@ -248,7 +248,7 @@ export class FormInfoComponent implements OnInit {
   }
 
   getPages(): FormArray {
-    return this.form.get('pages') as FormArray;
+    return this.form.get("pages") as FormArray;
   }
 
   deletePages(indexPages: number): void {

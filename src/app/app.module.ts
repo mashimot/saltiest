@@ -1,12 +1,12 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { CoreModule } from './_core/core.module';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { RouterModule } from "@angular/router";
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { PageNotFoundComponent } from "./page-not-found/page-not-found.component";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { CoreModule } from "./_core/core.module";
 import {
   NgxUiLoaderModule,
   NgxUiLoaderHttpModule,
@@ -15,21 +15,21 @@ import {
   SPINNER,
   PB_DIRECTION,
   NgxUiLoaderRouterModule,
-} from 'ngx-ui-loader';
-import { fakeBackendProvider } from './_helpers/fake-backend';
-import { JwtInterceptor } from './_helpers/jwt';
-import { ErrorInterceptor } from './_helpers/error';
-import { NgxPaginationModule } from 'ngx-pagination';
+} from "ngx-ui-loader";
+import { fakeBackendProvider } from "./_helpers/fake-backend";
+import { JwtInterceptor } from "./_helpers/jwt";
+import { ErrorInterceptor } from "./_helpers/error";
+import { NgxPaginationModule } from "ngx-pagination";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
-  overlayColor: 'white',
+  overlayColor: "white",
   fgsType: SPINNER.rotatingPlane, // foreground spinner type
   fgsPosition: POSITION.topRight,
-  fgsColor: 'dark-blue',
+  fgsColor: "dark-blue",
   fgsSize: 50,
   bgsType: SPINNER.rotatingPlane, // background spinner type
   bgsPosition: POSITION.bottomRight,
-  bgsColor: 'dark-blue',
+  bgsColor: "dark-blue",
   bgsSize: 50,
   bgsOpacity: 1,
   pbDirection: PB_DIRECTION.leftToRight, // progress bar direction

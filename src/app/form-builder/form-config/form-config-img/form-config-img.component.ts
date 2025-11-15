@@ -1,10 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from "@angular/core";
+import { FormGroup, Validators } from "@angular/forms";
 
 @Component({
-  selector: 'app-form-config-img',
-  templateUrl: './form-config-img.component.html',
-  styleUrls: ['./form-config-img.component.css'],
+  selector: "app-form-config-img",
+  templateUrl: "./form-config-img.component.html",
+  styleUrls: ["./form-config-img.component.css"],
 })
 export class FormConfigImgComponent implements OnInit {
   @Input() parentFormGroup: FormGroup;
@@ -18,14 +18,14 @@ export class FormConfigImgComponent implements OnInit {
   }
 
   get tag() {
-    return this.html.get('tag');
+    return this.html.get("tag");
   }
 
   get src() {
-    return this.html.get('src');
+    return this.html.get("src");
   }
 
   get html() {
-    return this.parentFormGroup.get('html');
+    return this.parentFormGroup.get("html");
   }
 }

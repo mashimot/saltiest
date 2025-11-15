@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { RegisterResponse } from '../interface/register-response';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { RegisterResponse } from "../interface/register-response";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class ProjectService {
-  API_URL: string = 'https://salty-suite.herokuapp.com/api/projects';
+  API_URL: string = "https://salty-suite.herokuapp.com/api/projects";
   httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     }),
   };
 
@@ -30,7 +30,7 @@ export class ProjectService {
     return this.http.put<RegisterResponse>(
       `${this.API_URL}/${id}`,
       data,
-      this.httpOptions
+      this.httpOptions,
     );
   }
 
@@ -38,14 +38,14 @@ export class ProjectService {
     return this.http.post<RegisterResponse>(
       `${this.API_URL}`,
       data,
-      this.httpOptions
+      this.httpOptions,
     );
   }
 
   deleteProject(id: number) {
     return this.http.delete<RegisterResponse>(
       `${this.API_URL}/${id}`,
-      this.httpOptions
+      this.httpOptions,
     );
   }
 }

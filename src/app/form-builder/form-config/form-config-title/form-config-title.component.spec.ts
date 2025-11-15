@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 
-import { FormConfigTitleComponent } from './form-config-title.component';
+import { FormConfigTitleComponent } from "./form-config-title.component";
 
-describe('FormConfigTitleComponent', () => {
+describe("FormConfigTitleComponent", () => {
   let component: FormConfigTitleComponent;
   let fixture: ComponentFixture<FormConfigTitleComponent>;
   let formBuilder: FormBuilder;
@@ -21,14 +21,14 @@ describe('FormConfigTitleComponent', () => {
     component = fixture.componentInstance;
     component.parentFormGroup = formBuilder.group({
       html: formBuilder.group({
-        tag: ['', Validators.required],
-        text: ['', Validators.required],
+        tag: ["", Validators.required],
+        text: ["", Validators.required],
       }),
     });
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

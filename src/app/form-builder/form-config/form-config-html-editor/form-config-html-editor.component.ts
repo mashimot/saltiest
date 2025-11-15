@@ -1,10 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Input } from "@angular/core";
+import { FormGroup, Validators } from "@angular/forms";
 
 @Component({
-  selector: 'app-form-config-html-editor',
-  templateUrl: './form-config-html-editor.component.html',
-  styleUrls: ['./form-config-html-editor.component.css'],
+  selector: "app-form-config-html-editor",
+  templateUrl: "./form-config-html-editor.component.html",
+  styleUrls: ["./form-config-html-editor.component.css"],
 })
 export class FormConfigHtmlEditorComponent implements OnInit {
   @Input() parentFormGroup: FormGroup;
@@ -16,9 +16,9 @@ export class FormConfigHtmlEditorComponent implements OnInit {
   }
 
   get html() {
-    return this.parentFormGroup.get('html');
+    return this.parentFormGroup.get("html");
   }
   get data() {
-    return this.html.get('data');
+    return this.html.get("data");
   }
 }

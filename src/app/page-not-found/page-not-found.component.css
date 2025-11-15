@@ -37,7 +37,7 @@ body {
 }
 
 .notfound .notfound-404 h1 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 236px;
   font-weight: 200;
   margin: 0px;
@@ -52,7 +52,7 @@ body {
 }
 
 .notfound .notfound-404 h2 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 28px;
   font-weight: 400;
   text-transform: uppercase;
@@ -68,7 +68,7 @@ body {
 }
 
 .notfound a {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   display: inline-block;
   font-weight: 700;
   text-decoration: none;

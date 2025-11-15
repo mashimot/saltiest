@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+} from "@angular/common/http";
+import { Observable } from "rxjs";
 
-import { AuthService } from '../_core/guards/auth.service';
+import { AuthService } from "../_core/guards/auth.service";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -15,7 +15,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(
     request: HttpRequest<any>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<any>> {
     // add authorization header with jwt token if available
     let currentUser = this.authService.getUser();

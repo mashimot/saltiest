@@ -1,21 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { ProjectService } from '../shared/services/project.service';
-import { Project } from '../_core/model';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { map, tap, filter } from 'rxjs/operators';
+import { Component, OnInit } from "@angular/core";
+import { ProjectService } from "../shared/services/project.service";
+import { Project } from "../_core/model";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Observable, of } from "rxjs";
+import { map, tap, filter } from "rxjs/operators";
 
 @Component({
-  selector: 'app-project',
-  templateUrl: './projects.component.html',
-  styleUrls: ['./projects.component.css'],
+  selector: "app-project",
+  templateUrl: "./projects.component.html",
+  styleUrls: ["./projects.component.css"],
 })
 export class ProjectsComponent implements OnInit {
   //projects: Array<Project>;
   projects$: Observable<any>;
   joeysWorldTour$: Observable<any>;
   projectToDelete: Project;
-  message: string = '?';
+  message: string = "?";
   showModal: boolean = false;
   pageNumber: number;
   staticProjects$: {
@@ -36,17 +36,17 @@ export class ProjectsComponent implements OnInit {
     data: [
       {
         id: 2,
-        name: 'Teste',
-        created_at: '2021-05-23 23:53:15',
-        updated_at: '2021-05-23 23:53:15',
+        name: "Teste",
+        created_at: "2021-05-23 23:53:15",
+        updated_at: "2021-05-23 23:53:15",
       },
     ],
-    first_page_url: 'http://salty-suite.herokuapp.com/api/projects?page=1',
+    first_page_url: "http://salty-suite.herokuapp.com/api/projects?page=1",
     from: 1,
     last_page: 1,
-    last_page_url: 'http://salty-suite.herokuapp.com/api/projects?page=1',
+    last_page_url: "http://salty-suite.herokuapp.com/api/projects?page=1",
     next_page_url: null,
-    path: 'http://salty-suite.herokuapp.com/api/projects',
+    path: "http://salty-suite.herokuapp.com/api/projects",
     per_page: 10,
     prev_page_url: null,
     to: 1,
@@ -56,11 +56,11 @@ export class ProjectsComponent implements OnInit {
   constructor(
     private projectService: ProjectService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe(result => {
+    this.activatedRoute.queryParams.subscribe((result) => {
       this.pageNumber = result.page || 1;
       this.loadProjects();
     });
@@ -101,12 +101,12 @@ export class ProjectsComponent implements OnInit {
     if (this.projectToDelete) {
       const id = this.projectToDelete.id;
       this.joeysWorldTour$ = this.projectService.deleteProject(id).pipe(
-        tap(result => {
-          console.log('response from server:', result);
+        tap((result) => {
+          console.log("response from server:", result);
         }),
-        map(result => {
+        map((result) => {
           return result;
-        })
+        }),
       );
       /*.subscribe(result => {
 					console.log('aqui');
@@ -140,9 +140,9 @@ export class ProjectsComponent implements OnInit {
         page: this.pageNumber,
       })
       .pipe(
-        map(result => {
+        map((result) => {
           return result.paginate;
-        })
+        }),
       );
   }
 }

@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { FormConfigService } from './../_services/form-config.service';
-import { HomeService } from './../shared/services/home.service';
-import { Page } from './../_core/model';
-import { Observable } from 'rxjs';
+import { Component, OnInit } from "@angular/core";
+import { FormConfigService } from "./../_services/form-config.service";
+import { HomeService } from "./../shared/services/home.service";
+import { Page } from "./../_core/model";
+import { Observable } from "rxjs";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
+  selector: "app-home",
+  templateUrl: "./home.component.html",
+  styleUrls: ["./home.component.css"],
 })
 export class HomeComponent implements OnInit {
   pages$: Observable<Page[]>;
@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private formConfigService: FormConfigService,
-    private homeService: HomeService
+    private homeService: HomeService,
   ) {}
 
   ngOnInit() {

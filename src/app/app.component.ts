@@ -1,18 +1,3 @@
-
-
 export class AppComponent {
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  title = 'saltiest';
+  title = "saltiest";
 }

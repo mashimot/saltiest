@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 
-import { FormConfigHtmlEditorComponent } from './form-config-html-editor.component';
+import { FormConfigHtmlEditorComponent } from "./form-config-html-editor.component";
 
-describe('FormConfigHtmlEditorComponent', () => {
+describe("FormConfigHtmlEditorComponent", () => {
   let component: FormConfigHtmlEditorComponent;
   let fixture: ComponentFixture<FormConfigHtmlEditorComponent>;
   let formBuilder: FormBuilder;
@@ -22,13 +22,13 @@ describe('FormConfigHtmlEditorComponent', () => {
     component = fixture.componentInstance;
     component.parentFormGroup = formBuilder.group({
       html: formBuilder.group({
-        data: ['', Validators.required],
+        data: ["", Validators.required],
       }),
     });
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

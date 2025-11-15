@@ -1,10 +1,10 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ReactiveFormsModule } from "@angular/forms";
 
-import { FormInfoComponent } from './form-info.component';
+import { FormInfoComponent } from "./form-info.component";
 
-describe('FormInfoComponent', () => {
+describe("FormInfoComponent", () => {
   let component: FormInfoComponent;
   let fixture: ComponentFixture<FormInfoComponent>;
 
@@ -22,7 +22,7 @@ describe('FormInfoComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

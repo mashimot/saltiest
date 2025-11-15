@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import * as nearley from 'nearley';
-import * as oracle_grammar from './../_parser/create-table-oracle-to-json';
-import { Content, Page } from './../_core/model';
+import { Injectable } from "@angular/core";
+import * as nearley from "nearley";
+import * as oracle_grammar from "./../_parser/create-table-oracle-to-json";
+import { Content, Page } from "./../_core/model";
 
 declare global {
   interface String {
@@ -15,21 +15,21 @@ String.prototype.replaceAllDecimalCommaToDecimalDot = function () {
     onlyNumeric: `(([0-9]+(\\,[0-9]+)?)(\\.[0-9]+)?)`,
   };
 
-  return this.replace(/^\((.+)\)$/, '$1').replace(
-    new RegExp(regex.valueBtwParentheses, 'g'),
+  return this.replace(/^\((.+)\)$/, "$1").replace(
+    new RegExp(regex.valueBtwParentheses, "g"),
     (currentString, first) => {
-      let r = new RegExp(regex.onlyNumeric, 'g');
+      let r = new RegExp(regex.onlyNumeric, "g");
       if (r.test(first)) {
-        return '(' + first.replace(/,/g, '.') + ')';
+        return "(" + first.replace(/,/g, ".") + ")";
       }
 
       return currentString;
-    }
+    },
   );
 };
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class CreateTableToJsonService {
   _sql: string;
@@ -51,7 +51,7 @@ export class CreateTableToJsonService {
     [key: string]: string;
   };
   definition: Content;
-  category: string = 'form';
+  category: string = "form";
 
   constructor() {
     this._customLabel = this.getCustomLabelName();
@@ -67,7 +67,7 @@ export class CreateTableToJsonService {
   }
 
   parse(): void {
-    this._sql = this._sql.replace(/\s+/g, ' ').toLowerCase();
+    this._sql = this._sql.replace(/\s+/g, " ").toLowerCase();
     let p = new nearley.Parser(oracle_grammar);
     /*if(this.getDataBase() == 'mysql'){
 			p = new Parser('mysql');
@@ -82,9 +82,9 @@ export class CreateTableToJsonService {
 				this._rawSchema = compactJsonTablesArray;
 				this.convertDataMysql();
 			}*/
-      if (this.getDataBase() == 'oracle') {
+      if (this.getDataBase() == "oracle") {
         const results = p.feed(
-          this._sql.replaceAllDecimalCommaToDecimalDot()
+          this._sql.replaceAllDecimalCommaToDecimalDot(),
         ).results;
         this._rawSchema = results[0];
         this.convertDataOracle();
@@ -100,8 +100,8 @@ export class CreateTableToJsonService {
 
     if (parser.table) {
       var s = parser.lexer.buffer;
-      var i = s.lastIndexOf(' ', parser.current);
-      var j = s.indexOf(' ', i + 1);
+      var i = s.lastIndexOf(" ", parser.current);
+      var j = s.indexOf(" ", i + 1);
       console.log(s.substr(i, j - i));
       //var afterbang = s.substring(parser.current, s.indexOf(' ', parser.current));
       //console.log(afterbang);
@@ -135,12 +135,12 @@ export class CreateTableToJsonService {
 
   convertDataMysql(): void {
     if (this._rawSchema.length > 0) {
-      this._schemas = this._rawSchema.map(schema => {
-        let data = schema.columns.map(column => {
+      this._schemas = this._rawSchema.map((schema) => {
+        let data = schema.columns.map((column) => {
           return {
             html: {
               category: this.category,
-              tag: column.definition || 'text',
+              tag: column.definition || "text",
               label: this.customLabelName(column.name),
             },
             definition: column,
@@ -154,20 +154,20 @@ export class CreateTableToJsonService {
           name: schema.name,
           data: data,
           //columns: schema.columns,
-          primary_key: primary_key.columns.map(item => item.column),
+          primary_key: primary_key.columns.map((item) => item.column),
           unique_keys: unique_keys
-            .map(item => item.columns.map(d => d.column))
-            .map(item => item[0]),
+            .map((item) => item.columns.map((d) => d.column))
+            .map((item) => item[0]),
         };
       });
-      console.log('schema', this._schemas);
-      console.log('rawSchema', this._rawSchema);
+      console.log("schema", this._schemas);
+      console.log("rawSchema", this._rawSchema);
     }
   }
 
   convertDataOracle(): void {
     if (Array.isArray(this._rawSchema) && this._rawSchema.length > 0) {
-      this._rawSchema.forEach(schema => {
+      this._rawSchema.forEach((schema) => {
         let data = [];
         let definitions = [];
         let primaryKey = [];
@@ -177,7 +177,7 @@ export class CreateTableToJsonService {
 
         this._table_name = create_table_statement.table_name;
         create_definition.push(last_create_definition);
-        create_definition.forEach(column => {
+        create_definition.forEach((column) => {
           const column_name = column.name;
           const data_type = column.data_type;
           const column_definition = column.column_definition;
@@ -190,11 +190,11 @@ export class CreateTableToJsonService {
             column_definition instanceof Array &&
             column_definition.length > 0
           ) {
-            column_definition.forEach(c => {
-              if (typeof c.nullable != 'undefined') {
+            column_definition.forEach((c) => {
+              if (typeof c.nullable != "undefined") {
                 options.nullable = c.nullable;
               }
-              if (typeof c.values != 'undefined') {
+              if (typeof c.values != "undefined") {
                 data_type.values = c.values;
               }
             });
@@ -230,14 +230,14 @@ export class CreateTableToJsonService {
 
   customLabelName(column_name: string): string {
     return column_name
-      .split('_')
-      .map(partialName => {
+      .split("_")
+      .map((partialName) => {
         let value = this._customLabel[partialName];
-        if (typeof value !== 'undefined') partialName = value;
+        if (typeof value !== "undefined") partialName = value;
 
         return partialName.charAt(0).toUpperCase() + partialName.substr(1);
       })
-      .join(' ')
+      .join(" ")
       .trim();
   }
 
@@ -269,32 +269,32 @@ export class CreateTableToJsonService {
     [key: string]: string;
   } {
     return {
-      dat: 'Data',
-      qtd: 'Quantidade',
-      cod: 'Código',
-      dsc: 'Descrição',
-      ind: '',
-      usu: 'Usuário',
-      tpo: 'Tipo',
-      nom: 'Nome',
-      est: 'Estado',
-      acao: 'Ação',
-      psv: 'Processo Seletivo',
-      per: 'Porcentagem',
-      abv: 'Abreviatura',
-      obs: 'Observação',
-      num: 'Número',
-      usuario: 'Usuário',
-      docto: 'Documento',
-      doc: 'Documento',
-      val: 'Valor',
-      valor: 'Valor',
-      sta: 'Status',
-      config: 'Configuração',
-      inicio: 'Ínicio',
-      termino: 'Término',
-      situacao: 'Situação',
-      nivel: 'Nível',
+      dat: "Data",
+      qtd: "Quantidade",
+      cod: "Código",
+      dsc: "Descrição",
+      ind: "",
+      usu: "Usuário",
+      tpo: "Tipo",
+      nom: "Nome",
+      est: "Estado",
+      acao: "Ação",
+      psv: "Processo Seletivo",
+      per: "Porcentagem",
+      abv: "Abreviatura",
+      obs: "Observação",
+      num: "Número",
+      usuario: "Usuário",
+      docto: "Documento",
+      doc: "Documento",
+      val: "Valor",
+      valor: "Valor",
+      sta: "Status",
+      config: "Configuração",
+      inicio: "Ínicio",
+      termino: "Término",
+      situacao: "Situação",
+      nivel: "Nível",
     };
   }
 }

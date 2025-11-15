@@ -5,14 +5,14 @@ import {
   OnChanges,
   OnInit,
   inject,
-} from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { BootstrapHtmlTemplate } from './../../_services/bootstrap-html-template.service';
+} from "@angular/core";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
+import { BootstrapHtmlTemplate } from "./../../_services/bootstrap-html-template.service";
 
 @Component({
-  selector: 'app-render-content',
-  templateUrl: './render-content.component.html',
-  styleUrls: ['./render-content.component.css'],
+  selector: "app-render-content",
+  templateUrl: "./render-content.component.html",
+  styleUrls: ["./render-content.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RenderContentComponent implements OnInit, OnChanges {
@@ -23,7 +23,7 @@ export class RenderContentComponent implements OnInit, OnChanges {
 
   private sanitizer: DomSanitizer = inject(DomSanitizer);
 
-  public htmlToRender: SafeHtml | string = 'undefined';
+  public htmlToRender: SafeHtml | string = "undefined";
 
   ngOnInit() {}
 
@@ -32,12 +32,12 @@ export class RenderContentComponent implements OnInit, OnChanges {
   }
 
   public renderHtml(): SafeHtml | string {
-    if (typeof this.content !== 'undefined') {
+    if (typeof this.content !== "undefined") {
       let bootstrapHtmlTemplate = new BootstrapHtmlTemplate();
       let html = bootstrapHtmlTemplate.get(this.content);
       return this.sanitizer.bypassSecurityTrustHtml(html);
     }
 
-    return 'undefined';
+    return "undefined";
   }
 }

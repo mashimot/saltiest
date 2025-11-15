@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { BootstrapGridSystemService } from '../../_services/bootstrap-grid-system.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfigChoicesComponent } from '../../config-choices/config-choices.component';
-import { Observable } from 'rxjs';
-import { tap, map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { ToolService } from 'src/app/shared/services/tool.service';
-import { Column, Content } from 'src/app/_core/model';
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { BootstrapGridSystemService } from "../../_services/bootstrap-grid-system.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ConfigChoicesComponent } from "../../config-choices/config-choices.component";
+import { Observable } from "rxjs";
+import { tap, map, distinctUntilChanged, debounceTime } from "rxjs/operators";
+import { ToolService } from "src/app/shared/services/tool.service";
+import { Column, Content } from "src/app/_core/model";
 import {
   AbstractControl,
   FormBuilder,
@@ -13,13 +13,13 @@ import {
   FormGroup,
   ValidationErrors,
   Validators,
-} from '@angular/forms';
-import { CustomValidators } from 'src/app/shared/validators/CustomValidators';
+} from "@angular/forms";
+import { CustomValidators } from "src/app/shared/validators/CustomValidators";
 
 @Component({
-  selector: 'app-form-menu',
-  templateUrl: './form-menu.component.html',
-  styleUrls: ['./form-menu.component.css'],
+  selector: "app-form-menu",
+  templateUrl: "./form-menu.component.html",
+  styleUrls: ["./form-menu.component.css"],
 })
 export class FormMenuComponent implements OnInit {
   tools$: Observable<any>;
@@ -34,8 +34,8 @@ export class FormMenuComponent implements OnInit {
   form: FormGroup;
   optionType: number = 1;
   options: any = {
-    size: 'lg',
-    backdrop: 'static',
+    size: "lg",
+    backdrop: "static",
     keyboard: false,
     centered: true,
   };
@@ -43,14 +43,14 @@ export class FormMenuComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private toolService: ToolService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
   ) {}
 
   ngOnInit() {
     //this.grids$ = new BootstrapGridSystemService().getGrid();
     this.bootstrap = [
       {
-        grid: [`12`, `6 6`, `3 4 5`, `4 4 4`, `7 5`].join('\n'),
+        grid: [`12`, `6 6`, `3 4 5`, `4 4 4`, `7 5`].join("\n"),
       },
     ];
     this.form = this.formBuilder.group({
@@ -66,23 +66,23 @@ export class FormMenuComponent implements OnInit {
     });
 
     this.gridModel.valueChanges
-      .pipe
-      //debounceTime(300)
-      ()
-      .subscribe(value => {
+      .pipe(
+        //debounceTime(300)
+      )
+      .subscribe((value) => {
         this.bootstrap[0] = {
           grid: value,
         };
       });
     this.tools$ = this.toolService.getTools().pipe(
-      map(res => {
+      map((res) => {
         return res.tools;
-      })
+      }),
     );
     this.pageModel = [
       {
         rows: [],
-        name: 'Salt - A tool for Lazy Developer',
+        name: "Salt - A tool for Lazy Developer",
       },
     ];
   }
@@ -101,6 +101,6 @@ export class FormMenuComponent implements OnInit {
   }
 
   get gridModel(): FormControl {
-    return this.f.get('gridModel') as FormControl;
+    return this.f.get("gridModel") as FormControl;
   }
 }

@@ -1,4 +1,4 @@
-import { Row } from './row.model';
+import { Row } from "./row.model";
 
 export class Page {
   id?: number;

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
   HttpRequest,
   HttpResponse,
@@ -6,38 +6,38 @@ import {
   HttpEvent,
   HttpInterceptor,
   HTTP_INTERCEPTORS,
-} from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
+} from "@angular/common/http";
+import { Observable, of, throwError } from "rxjs";
+import { delay, mergeMap, materialize, dematerialize } from "rxjs/operators";
 
 // array in local storage for registered users
 //let users = JSON.parse(localStorage.getItem('currentUser')) || [];
 let users = [
   {
     id: 1,
-    username: 'test',
-    password: 'test',
-    email: 'test@test.com',
-    firstName: 'First Name',
-    lastName: 'Last Name',
+    username: "test",
+    password: "test",
+    email: "test@test.com",
+    firstName: "First Name",
+    lastName: "Last Name",
   },
   {
     id: 2,
-    username: 'hadouken',
-    password: 'hadouken',
-    email: 'hadouken@hadouken.com',
-    firstName: 'First Name',
-    lastName: 'Last Name',
+    username: "hadouken",
+    password: "hadouken",
+    email: "hadouken@hadouken.com",
+    firstName: "First Name",
+    lastName: "Last Name",
   },
 ];
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
   intercept(
     request: HttpRequest<any>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<any>> {
     const { url, method, headers, body } = request;
-    console.log('request', request);
+    console.log("request", request);
     // wrap in delayed observable to simulate server api call
     return of(null)
       .pipe(mergeMap(handleRoute))
@@ -47,15 +47,15 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     function handleRoute() {
       switch (true) {
-        case url.endsWith('/api/auth/register') && method === 'POST':
+        case url.endsWith("/api/auth/register") && method === "POST":
           return register();
-        case url.endsWith('/api/auth/login') && method === 'POST':
+        case url.endsWith("/api/auth/login") && method === "POST":
           return authenticate();
-        case url.endsWith('/users') && method === 'GET':
+        case url.endsWith("/users") && method === "GET":
           return getUsers();
-        case url.match(/\/users\/\d+$/) && method === 'GET':
+        case url.match(/\/users\/\d+$/) && method === "GET":
           return getUserById();
-        case url.match(/\/users\/\d+$/) && method === 'DELETE':
+        case url.match(/\/users\/\d+$/) && method === "DELETE":
           return deleteUser();
         default:
           // pass through any requests not handled above
@@ -68,13 +68,13 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     function register() {
       const user = body;
 
-      if (users.find(x => x.username === user.username)) {
+      if (users.find((x) => x.username === user.username)) {
         return error('Username "' + user.username + '" is already taken');
       }
 
-      user.id = users.length ? Math.max(...users.map(x => x.id)) + 1 : 1;
+      user.id = users.length ? Math.max(...users.map((x) => x.id)) + 1 : 1;
       users.push(user);
-      localStorage.setItem('currentUser', JSON.stringify(users));
+      localStorage.setItem("currentUser", JSON.stringify(users));
 
       return ok();
     }
@@ -82,11 +82,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     function authenticate() {
       const { email, password } = body;
       const user = users.find(
-        x =>
+        (x) =>
           /*x.username === username &&*/ x.email === email &&
-          x.password === password
+          x.password === password,
       );
-      if (!user) return error('Username or password is incorrect');
+      if (!user) return error("Username or password is incorrect");
 
       return ok({
         id: user.id,
@@ -94,7 +94,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         username: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
-        token: 'fake-jwt-token',
+        token: "fake-jwt-token",
       });
     }
 
@@ -106,15 +106,15 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     function getUserById() {
       if (!isLoggedIn()) return unauthorized();
 
-      const user = users.find(x => x.id == idFromUrl());
+      const user = users.find((x) => x.id == idFromUrl());
       return ok(user);
     }
 
     function deleteUser() {
       if (!isLoggedIn()) return unauthorized();
 
-      users = users.filter(x => x.id !== idFromUrl());
-      localStorage.setItem('currentUser', JSON.stringify(users));
+      users = users.filter((x) => x.id !== idFromUrl());
+      localStorage.setItem("currentUser", JSON.stringify(users));
       return ok();
     }
 
@@ -125,7 +125,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     }
 
     function unauthorized() {
-      return throwError({ status: 401, error: { message: 'Unauthorised' } });
+      return throwError({ status: 401, error: { message: "Unauthorised" } });
     }
 
     function error(message) {
@@ -133,11 +133,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     }
 
     function isLoggedIn() {
-      return headers.get('Authorization') === 'Bearer fak3e-jwt-token';
+      return headers.get("Authorization") === "Bearer fak3e-jwt-token";
     }
 
     function idFromUrl() {
-      const urlParts = url.split('/');
+      const urlParts = url.split("/");
       return parseInt(urlParts[urlParts.length - 1]);
     }
   }

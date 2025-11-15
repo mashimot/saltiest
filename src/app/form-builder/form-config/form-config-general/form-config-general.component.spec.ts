@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 
-import { FormConfigGeneralComponent } from './form-config-general.component';
+import { FormConfigGeneralComponent } from "./form-config-general.component";
 
-describe('FormConfigGeneralComponent', () => {
+describe("FormConfigGeneralComponent", () => {
   let component: FormConfigGeneralComponent;
   let fixture: ComponentFixture<FormConfigGeneralComponent>;
   let formBuilder: FormBuilder;
@@ -22,7 +22,7 @@ describe('FormConfigGeneralComponent', () => {
     component = fixture.componentInstance;
     component.parentFormGroup = formBuilder.group({
       html: formBuilder.group({
-        label: ['Label 1'],
+        label: ["Label 1"],
       }),
       options: formBuilder.group({
         nullable: [false],
@@ -32,7 +32,7 @@ describe('FormConfigGeneralComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 

@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
-import { Page } from './../_core/model';
+import { Injectable } from "@angular/core";
+import { of } from "rxjs";
+import { Page } from "./../_core/model";
 
 @Injectable()
 export class BootstrapGridSystemService {
@@ -8,7 +8,7 @@ export class BootstrapGridSystemService {
   _grid: string;
   _page: Page;
 
-  constructor(data?: any[], grid: string = '4 4 4') {
+  constructor(data?: any[], grid: string = "4 4 4") {
     this._data = data;
     this._grid = grid;
   }
@@ -16,23 +16,23 @@ export class BootstrapGridSystemService {
   getGrid() {
     return of([
       {
-        grid: '6 6',
+        grid: "6 6",
         columns: [],
       },
       {
-        grid: '4 4 4',
+        grid: "4 4 4",
         columns: [],
       },
       {
-        grid: '3 3 3 3',
+        grid: "3 3 3 3",
         columns: [],
       },
       {
-        grid: '2 2 4 2 2',
+        grid: "2 2 4 2 2",
         columns: [],
       },
       {
-        grid: '12',
+        grid: "12",
         columns: [],
       },
     ]);
@@ -40,8 +40,8 @@ export class BootstrapGridSystemService {
 
   convert() {
     let groups = [];
-    let grid = this._grid.replace(/ +/g, ' ').trim();
-    let arrGrid = grid.split(' ');
+    let grid = this._grid.replace(/ +/g, " ").trim();
+    let arrGrid = grid.split(" ");
 
     let chunkSize = arrGrid.length;
 
@@ -53,14 +53,14 @@ export class BootstrapGridSystemService {
       if (!page.rows) {
         page = {
           rows: [],
-          name: 'Page ' + (index + 1),
+          name: "Page " + (index + 1),
         };
       }
       page.rows.push({
         grid: grid,
         columns: [],
       });
-      group.map(data => {
+      group.map((data) => {
         return page.rows[index].columns.push({
           contents: [data],
         });

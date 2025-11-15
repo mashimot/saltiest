@@ -10,7 +10,10 @@
     "preinstall": "npm install -g @angular/cli @angular/compiler-cli typescript",
     "postinstall": "ng build --aot --prod",
     "heroku-postbuild": "ng build --configuration=production",
-    "prettier:fix": "npx prettier --write src"
+    "prettier:fix": "npx prettier --write src",
+    "format": "biome format --write .",
+    "lint": "biome check .",
+    "fix": "biome check --write ."
   },
   "private": true,
   "dependencies": {
@@ -52,6 +55,7 @@
     "@angular/cli": "^15.2.11",
     "@angular/compiler-cli": "^15.2.10",
     "@angular/language-service": "^15.2.10",
+    "@biomejs/biome": "2.3.5",
     "@types/jasmine": "^2.8.18",
     "@types/jasminewd2": "^2.0.10",
     "@types/node": "^14.18.1",

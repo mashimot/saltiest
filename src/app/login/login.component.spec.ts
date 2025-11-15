@@ -1,11 +1,11 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { RouterTestingModule } from "@angular/router/testing";
 
-import { LoginComponent } from './login.component';
+import { LoginComponent } from "./login.component";
 
-describe('LoginComponent', () => {
+describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let formBuilder: FormBuilder;
@@ -26,13 +26,13 @@ describe('LoginComponent', () => {
     formBuilder = TestBed.inject(FormBuilder);
     component = fixture.componentInstance;
     component.loginForm = formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
+      email: ["", [Validators.required, Validators.email]],
+      password: ["", [Validators.required]],
     });
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

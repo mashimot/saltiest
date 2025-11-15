@@ -6,28 +6,28 @@ import {
   ViewChild,
   TemplateRef,
   EventEmitter,
-} from '@angular/core';
-import { FormContentConfigService } from './../../_services/form-content-config.service';
+} from "@angular/core";
+import { FormContentConfigService } from "./../../_services/form-content-config.service";
 import {
   FormGroup,
   FormBuilder,
   Validators,
   FormControl,
-} from '@angular/forms';
+} from "@angular/forms";
 import {
   NgbModal,
   NgbModalOptions,
   NgbActiveModal,
-} from '@ng-bootstrap/ng-bootstrap';
-import { Content } from '../../_core/model';
+} from "@ng-bootstrap/ng-bootstrap";
+import { Content } from "../../_core/model";
 
 @Component({
-  selector: 'app-form-config',
-  templateUrl: './form-config.component.html',
-  styleUrls: ['./form-config.component.css'],
+  selector: "app-form-config",
+  templateUrl: "./form-config.component.html",
+  styleUrls: ["./form-config.component.css"],
 })
 export class FormConfigComponent implements OnInit {
-  @ViewChild('modal', { static: false }) modal: TemplateRef<any>;
+  @ViewChild("modal", { static: false }) modal: TemplateRef<any>;
   options: NgbModalOptions;
   configForm: FormGroup;
 
@@ -45,7 +45,7 @@ export class FormConfigComponent implements OnInit {
     private formContentConfig: FormContentConfigService,
     private formBuilder: FormBuilder,
     //private contentService: ContentService,
-    private activeModal: NgbActiveModal
+    private activeModal: NgbActiveModal,
   ) {}
 
   ngOnInit() {

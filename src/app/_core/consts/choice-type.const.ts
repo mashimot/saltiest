@@ -1,17 +1,17 @@
 export const CHOICE_TYPE = {
   SELECT: {
-    type: 'select',
+    type: "select",
     value: 3,
-    icon: 'fas fa-box-open',
+    icon: "fas fa-box-open",
   },
   RADIO: {
-    type: 'radio',
+    type: "radio",
     value: 1,
-    icon: 'fas fa-check-circle',
+    icon: "fas fa-check-circle",
   },
   CHECKBOX: {
-    type: 'checkbox',
+    type: "checkbox",
     value: 2,
-    icon: 'fas fa-check-square',
+    icon: "fas fa-check-square",
   },
 };

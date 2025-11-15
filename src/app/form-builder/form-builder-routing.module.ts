@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { FormBuilderComponent } from './form-builder.component';
-import { AuthGuard } from '../_core/guards/auth.guard';
+import { NgModule } from "@angular/core";
+import { Routes, RouterModule } from "@angular/router";
+import { FormBuilderComponent } from "./form-builder.component";
+import { AuthGuard } from "../_core/guards/auth.guard";
 
 /*const routes: Routes = [{
     path: 'form-builder',
@@ -14,7 +14,7 @@ import { AuthGuard } from '../_core/guards/auth.guard';
 
 const routes: Routes = [
   {
-    path: ':projectId/edit',
+    path: ":projectId/edit",
     component: FormBuilderComponent,
   },
 ];

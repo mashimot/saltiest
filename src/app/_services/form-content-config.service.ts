@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { Subject, Observable } from "rxjs";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class FormContentConfigService {
   component: {
@@ -15,34 +15,34 @@ export class FormContentConfigService {
   constructor() {
     this.component = {
       general: {
-        title: 'General Configuration',
-        componentName: 'app-form-config-general',
+        title: "General Configuration",
+        componentName: "app-form-config-general",
       },
       choices: {
-        title: 'Choices',
-        componentName: 'app-config-choices',
+        title: "Choices",
+        componentName: "app-config-choices",
       },
       visibleIf: {
-        title: 'Vísivel Se',
+        title: "Vísivel Se",
         componentName: '<hide-when-tab content="content"></hide-when-tab>',
       },
       htmlEditor: {
-        title: 'Html Editor',
-        componentName: 'app-form-config-html-editor',
+        title: "Html Editor",
+        componentName: "app-form-config-html-editor",
       },
       title: {
-        title: 'Title',
-        componentName: 'app-form-config-title',
+        title: "Title",
+        componentName: "app-form-config-title",
       },
       img: {
-        title: 'Image',
-        componentName: 'app-form-config-img',
+        title: "Image",
+        componentName: "app-form-config-img",
       },
     };
   }
 
   getValue() {
-    return 'value2';
+    return "value2";
   }
 
   render() {

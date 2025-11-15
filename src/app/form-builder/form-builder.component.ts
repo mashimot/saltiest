@@ -3,14 +3,14 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
-} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { Page } from '../_core/model';
-import { Content } from '../_core/model/content.model';
-import { BootstrapHtmlTemplate } from '../_services/bootstrap-html-template.service';
-import { FormConfigService } from '../_services/form-config.service';
-import { HomeService } from '../shared/services/home.service';
+} from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { Subscription } from "rxjs";
+import { Page } from "../_core/model";
+import { Content } from "../_core/model/content.model";
+import { BootstrapHtmlTemplate } from "../_services/bootstrap-html-template.service";
+import { FormConfigService } from "../_services/form-config.service";
+import { HomeService } from "../shared/services/home.service";
 
 export interface MVC {
   isOpen: boolean;
@@ -18,16 +18,16 @@ export interface MVC {
 }
 
 @Component({
-  selector: 'app-form-builder',
-  templateUrl: './form-builder.component.html',
-  styleUrls: ['./form-builder.component.css'],
+  selector: "app-form-builder",
+  templateUrl: "./form-builder.component.html",
+  styleUrls: ["./form-builder.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormBuilderComponent implements OnInit {
   pages: Page[];
   subs: Subscription;
   inputs: Content[];
-  tableName: string = '';
+  tableName: string = "";
   tabNumber: number;
   isTabAlreadyOpen: boolean = false;
   tabMVC: number;
@@ -42,11 +42,11 @@ export class FormBuilderComponent implements OnInit {
     private bootstrapHtmlTemplate: BootstrapHtmlTemplate,
     private homeService: HomeService,
     private route: ActivatedRoute,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    this.route.params.subscribe(r => {
+    this.route.params.subscribe((r) => {
       this.project_id = r.projectId;
     });
     this.tabNumber = 1;
@@ -59,7 +59,7 @@ export class FormBuilderComponent implements OnInit {
   }
 
   loadFormBuilder() {
-    this.subs = this.homeService.getHome().subscribe(result => {
+    this.subs = this.homeService.getHome().subscribe((result) => {
       this.pages = result;
     });
   }
@@ -72,7 +72,7 @@ export class FormBuilderComponent implements OnInit {
     this.pages = [
       ...this.pages,
       {
-        name: 'Page ' + (this.pages.length + 1),
+        name: "Page " + (this.pages.length + 1),
         rows: [],
       },
     ];
@@ -97,7 +97,7 @@ export class FormBuilderComponent implements OnInit {
 
   public getSchemas(schemas): void {
     let newPages = [];
-    schemas.forEach(schema => {
+    schemas.forEach((schema) => {
       this.tableName = schema.name;
       newPages.push(schema.pages);
     });

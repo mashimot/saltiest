@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { RenderContentComponent } from './render-content.component';
+import { RenderContentComponent } from "./render-content.component";
 
-describe('RenderContentComponent', () => {
+describe("RenderContentComponent", () => {
   let component: RenderContentComponent;
   let fixture: ComponentFixture<RenderContentComponent>;
 
@@ -18,12 +18,12 @@ describe('RenderContentComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call render()', () => {
-    spyOn(component, 'render').and.callThrough();
+  it("should call render()", () => {
+    spyOn(component, "render").and.callThrough();
     component.render();
     expect(component.render).toHaveBeenCalled();
   });

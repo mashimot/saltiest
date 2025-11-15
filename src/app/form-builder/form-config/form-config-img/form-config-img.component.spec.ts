@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 
-import { FormConfigImgComponent } from './form-config-img.component';
+import { FormConfigImgComponent } from "./form-config-img.component";
 
-describe('FormConfigImgComponent', () => {
+describe("FormConfigImgComponent", () => {
   let component: FormConfigImgComponent;
   let fixture: ComponentFixture<FormConfigImgComponent>;
   let formBuilder: FormBuilder;
@@ -21,14 +21,14 @@ describe('FormConfigImgComponent', () => {
     component = fixture.componentInstance;
     component.parentFormGroup = formBuilder.group({
       html: formBuilder.group({
-        tag: ['', Validators.required],
-        src: ['', Validators.required],
+        tag: ["", Validators.required],
+        src: ["", Validators.required],
       }),
     });
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

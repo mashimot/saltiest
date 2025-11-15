@@ -7,17 +7,17 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-} from '@angular/core';
-import { DragulaService } from 'ng2-dragula';
-import { Observable, Subscription } from 'rxjs';
-import { Page } from '../_core/model';
-import { BootstrapHtmlTemplate } from '../_services/bootstrap-html-template.service';
-import { FormConfigService } from './../_services/form-config.service';
+} from "@angular/core";
+import { DragulaService } from "ng2-dragula";
+import { Observable, Subscription } from "rxjs";
+import { Page } from "../_core/model";
+import { BootstrapHtmlTemplate } from "../_services/bootstrap-html-template.service";
+import { FormConfigService } from "./../_services/form-config.service";
 
 @Component({
-  selector: 'app-form-pages',
-  templateUrl: './form-pages.component.html',
-  styleUrls: ['./form-pages.component.css'],
+  selector: "app-form-pages",
+  templateUrl: "./form-pages.component.html",
+  styleUrls: ["./form-pages.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormPagesComponent implements OnInit {
@@ -36,19 +36,19 @@ export class FormPagesComponent implements OnInit {
   constructor(
     private formConfigService: FormConfigService,
     private dragulaService: DragulaService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
   ) {
     this.initDragAndDrop();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('changes', changes);
+    console.log("changes", changes);
     if (changes.pages) {
     }
   }
 
   ngOnInit() {
-    this.formConfigService.getConfig().subscribe(data => {
+    this.formConfigService.getConfig().subscribe((data) => {
       this.config = { ...data };
     });
   }
@@ -56,7 +56,7 @@ export class FormPagesComponent implements OnInit {
   ngAfterViewInit() {
     this.subs.add(
       this.dragulaService
-        .dropModel('pages')
+        .dropModel("pages")
         .subscribe(
           ({
             name,
@@ -70,8 +70,8 @@ export class FormPagesComponent implements OnInit {
             targetIndex,
           }) => {
             this.dropModelPageUpdated = true;
-          }
-        )
+          },
+        ),
     );
   }
 
@@ -87,11 +87,11 @@ export class FormPagesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.dragulaService.destroy('pages');
-    this.dragulaService.destroy('contents');
-    this.dragulaService.destroy('columns');
-    this.dragulaService.destroy('rowSortable');
-    this.dragulaService.destroy('sortableElements');
+    this.dragulaService.destroy("pages");
+    this.dragulaService.destroy("contents");
+    this.dragulaService.destroy("columns");
+    this.dragulaService.destroy("rowSortable");
+    this.dragulaService.destroy("sortableElements");
     this.subs.unsubscribe();
   }
 
@@ -102,35 +102,35 @@ export class FormPagesComponent implements OnInit {
   }
 
   public initDragAndDrop() {
-    this.dragulaService.createGroup('pages', {
+    this.dragulaService.createGroup("pages", {
       copy: (el, source) => {
-        return source.className === 'menu-page-sortable';
+        return source.className === "menu-page-sortable";
       },
-      copyItem: el => {
+      copyItem: (el) => {
         return el;
       },
       accepts: (el, target, source, sibling) => {
-        return target.className !== 'menu-page-sortable';
+        return target.className !== "menu-page-sortable";
       },
       moves: (el, container, handle) => {
         if (handle.classList) {
-          return handle.classList.contains('page-handle');
+          return handle.classList.contains("page-handle");
         }
         return false;
       },
     });
 
-    this.dragulaService.createGroup('columns', {
+    this.dragulaService.createGroup("columns", {
       accepts: function (el, target, source, sibling) {
-        let currRowIndex = el.getAttribute('data-current-row-index');
-        let currPageIndex = el.getAttribute('data-current-page-index');
-        let currentClass = 'page-' + currPageIndex + '_row-' + currRowIndex;
+        let currRowIndex = el.getAttribute("data-current-row-index");
+        let currPageIndex = el.getAttribute("data-current-page-index");
+        let currentClass = "page-" + currPageIndex + "_row-" + currRowIndex;
         return target.classList.contains(currentClass);
       },
       moves: (el, container, handle) => {
         //let currColumnIndex = handle.getAttribute('data-current-column-index');
         if (handle.classList) {
-          return handle.classList.contains('column-handle');
+          return handle.classList.contains("column-handle");
         }
         return false;
       },
@@ -138,7 +138,7 @@ export class FormPagesComponent implements OnInit {
 
     this.subs.add(
       this.dragulaService
-        .dropModel('columns')
+        .dropModel("columns")
         .subscribe(
           ({
             name,
@@ -151,40 +151,40 @@ export class FormPagesComponent implements OnInit {
             sourceIndex,
             targetIndex,
           }) => {
-            let currRowIndex = el.getAttribute('data-current-row-index');
-            let pageIndex = el.getAttribute('data-current-page-index');
-            let currRowId = target.getAttribute('data-current-row-id');
+            let currRowIndex = el.getAttribute("data-current-row-index");
+            let pageIndex = el.getAttribute("data-current-page-index");
+            let currRowId = target.getAttribute("data-current-row-id");
             if (pageIndex != null && currRowIndex != null) {
               let gridArr =
-                this.pages[pageIndex].rows[currRowIndex].grid.split(' ');
+                this.pages[pageIndex].rows[currRowIndex].grid.split(" ");
               let aux = gridArr[sourceIndex];
 
               gridArr.splice(sourceIndex, 1);
               gridArr.splice(targetIndex, 0, aux);
-              let newGrid = gridArr.join(' ').trim();
+              let newGrid = gridArr.join(" ").trim();
               this.pages[pageIndex].rows[currRowIndex].grid = newGrid;
             }
-          }
-        )
+          },
+        ),
     );
 
-    this.dragulaService.createGroup('rowSortable', {
+    this.dragulaService.createGroup("rowSortable", {
       copy: (el, source) => {
-        return source.className === 'menu-row-sortable';
+        return source.className === "menu-row-sortable";
       },
-      copyItem: el => {
+      copyItem: (el) => {
         return JSON.parse(JSON.stringify(el));
       },
       accepts: function (el, target, source, sibling) {
         // To avoid draggin from right to left container
-        if (target.className !== 'menu-row-sortable') {
+        if (target.className !== "menu-row-sortable") {
           return true;
         }
         return false;
       },
       moves: (el, container, handle) => {
         if (handle.classList) {
-          return handle.classList.contains('row-handle');
+          return handle.classList.contains("row-handle");
         }
         return false;
       },
@@ -192,7 +192,7 @@ export class FormPagesComponent implements OnInit {
 
     this.subs.add(
       this.dragulaService
-        .dropModel('rowSortable')
+        .dropModel("rowSortable")
         .subscribe(
           ({
             name,
@@ -205,22 +205,22 @@ export class FormPagesComponent implements OnInit {
             sourceIndex,
             targetIndex,
           }) => {
-            const targetPageId = target.getAttribute('data-current-page-id');
-            const currRowId = el.getAttribute('data-current-row-id');
-            console.log('item.grid', item.grid);
+            const targetPageId = target.getAttribute("data-current-page-id");
+            const currRowId = el.getAttribute("data-current-row-id");
+            console.log("item.grid", item.grid);
             if (
-              typeof item.grid != 'undefined' &&
-              typeof item.columns == 'undefined'
+              typeof item.grid != "undefined" &&
+              typeof item.columns == "undefined"
             ) {
-              let gridsArray = item.grid.trim().split('\n');
+              let gridsArray = item.grid.trim().split("\n");
               delete item.grid;
               let rows = gridsArray
-                .map(line => {
-                  return line.replace(/\s+/g, ' ').trim();
+                .map((line) => {
+                  return line.replace(/\s+/g, " ").trim();
                 })
-                .filter(line => line)
-                .map(line => {
-                  const arrNumbers = line.split(' ');
+                .filter((line) => line)
+                .map((line) => {
+                  const arrNumbers = line.split(" ");
                   let columns = [];
 
                   if (arrNumbers.length > 0) {
@@ -238,12 +238,12 @@ export class FormPagesComponent implements OnInit {
                 });
 
               console.log(
-                'targetModel',
+                "targetModel",
                 targetModel,
-                'sourceModel',
+                "sourceModel",
                 sourceModel,
-                'targetIndex',
-                targetIndex
+                "targetIndex",
+                targetIndex,
               );
               targetModel.splice(targetIndex, 1);
               //targetIndex: Position
@@ -258,31 +258,31 @@ export class FormPagesComponent implements OnInit {
                   currRowId: parseInt(currRowId),
                   targetPageId: parseInt(targetPageId),
                 },
-                rowPos: targetModel.map(item => {
+                rowPos: targetModel.map((item) => {
                   return item.id ? item.id : null;
                 }),
               };
             }
             return item;
-          }
-        )
+          },
+        ),
     );
 
-    this.dragulaService.createGroup('contents', {
+    this.dragulaService.createGroup("contents", {
       copy: (el, source) => {
-        return source.classList.contains('menu-content-sortable');
+        return source.classList.contains("menu-content-sortable");
       },
-      copyItem: el => {
+      copyItem: (el) => {
         console.log(el);
         return JSON.parse(JSON.stringify(el));
       },
       accepts: (el, target, source, sibling) => {
         // To avoid dragging from right to left container
-        return !target.classList.contains('menu-content-sortable');
+        return !target.classList.contains("menu-content-sortable");
       },
       moves: (el, container, handle) => {
         if (handle.classList) {
-          return handle.classList.contains('content-handle');
+          return handle.classList.contains("content-handle");
         }
         return false;
       },
@@ -290,34 +290,34 @@ export class FormPagesComponent implements OnInit {
 
     this.subs.add(
       this.dragulaService
-        .cloned('contents')
+        .cloned("contents")
         .subscribe(({ name, clone, original, cloneType }) => {
-          if (original.classList.contains('menu-content-sortable')) {
+          if (original.classList.contains("menu-content-sortable")) {
             let currentDataAttr = JSON.parse(
-              original.getAttribute('data-content')
+              original.getAttribute("data-content"),
             );
             let r = new BootstrapHtmlTemplate();
             clone.classList.remove(
-              'badge',
-              'bg-dark',
-              'col-md-6',
-              'bg-primary',
-              'text-white'
+              "badge",
+              "bg-dark",
+              "col-md-6",
+              "bg-primary",
+              "text-white",
             );
-            clone.innerHTML = '';
+            clone.innerHTML = "";
             clone.insertAdjacentHTML(
-              'afterbegin',
+              "afterbegin",
               '<div class="px-1 py-1 bg-white text-dark" style="min-width: 300px;">' +
                 r.get(currentDataAttr) +
-                '</div>'
+                "</div>",
             );
           }
-        })
+        }),
     );
 
     this.subs.add(
       this.dragulaService
-        .dropModel('contents')
+        .dropModel("contents")
         .subscribe(
           ({
             name,
@@ -333,12 +333,12 @@ export class FormPagesComponent implements OnInit {
             item.definition = item || {};
             item.html = item.html || {};
             if (item.definition && item.html) {
-              const currRowId = target.getAttribute('data-current-row-id');
-              const currPageId = target.getAttribute('data-current-page-id');
+              const currRowId = target.getAttribute("data-current-row-id");
+              const currPageId = target.getAttribute("data-current-page-id");
               const currcolumnId = target.getAttribute(
-                'data-current-column-id'
+                "data-current-column-id",
               );
-              if (item.html.category === 'form') {
+              if (item.html.category === "form") {
                 if (!item.name) {
                   item.name = `name__${new Date().getUTCMilliseconds()}`;
                 }
@@ -356,19 +356,19 @@ export class FormPagesComponent implements OnInit {
                   currRowId: currRowId,
                   currColumnId: currcolumnId,
                 },
-                contentPos: targetModel.map(item => {
+                contentPos: targetModel.map((item) => {
                   return item.id ? item.id : null;
                 }),
                 html: item.html,
                 definition: item,
               };
-              console.info('content sorted', params);
-              if (typeof item.id != 'undefined') {
-                params['id'] = item.id;
+              console.info("content sorted", params);
+              if (typeof item.id != "undefined") {
+                params["id"] = item.id;
               }
             }
-          }
-        )
+          },
+        ),
     );
   }
 }
